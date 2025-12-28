@@ -14,7 +14,7 @@ I’m a **Full Stack Developer** with 5+ years of experience building **scalable
 
 I work with:  
 - 🖥️ **Frontend:** React.js, Vue.js, Nuxt.js, Tailwind CSS, Angular, SCSS  
-- ⚙️ **Backend:** Node.js, Express.js, .NET Core, ASP.NET  
+- ⚙️ **Backend:** Node.js, Express.js, Laravel, .NET Core, ASP.NET  
 - 🗄️ **Databases:** PostgreSQL, SQL, MongoDB  
 - ⚡ **DevOps & Tools:** Git, GitLab CI, Docker, REST APIs, CI/CD  
 
@@ -35,34 +35,38 @@ I enjoy collaborating in **Agile environments** and delivering **enterprise-grad
 ## 🚀 Featured Projects
 
 ### **Twlm‑App** (Large‑Scale POS + Wallet Integrations)
-![Twlm-App](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)
+![Twlm-App](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB) ![Node.js](https://img.shields.io/badge/Node.js-339933?logo=node.js&logoColor=white)
+- **Frontend:** React.js | **Backend:** Node.js  
 - POS application for **restaurants, retail stores, and shops**  
-- **Loyalty card integrations** with Apple Wallet & Google Wallet  
+- **Apple Wallet and Google Wallet integrations** for loyalty cards  
 - Scalable architecture for **high-concurrency systems**  
 - Customer **eCommerce/menu pages**  
 
 ### **Aatourism** (Large-Scale Tourism Platform)
-![Aatourism](https://img.shields.io/badge/Node.js-339933?logo=node.js&logoColor=white)
-- Multi-feature tourism platform for **businesses and travelers**  
+![Aatourism](https://img.shields.io/badge/Vue.js-42b883?logo=vue.js&logoColor=white) ![Laravel](https://img.shields.io/badge/Laravel-ff2d20?logo=laravel&logoColor=white)
+- **Frontend:** Vue.js | **Backend:** Laravel  
+- Integrated with **Saber and Amadeus** APIs for booking and travel services  
 - Features: booking systems, dashboards, reporting tools, interactive UIs  
 - Focused on **performance, scalability, and modular design**
+
+### **D‑Ocean Fisheries** (Full-Stack Laravel Project)
+![D-Ocean](https://img.shields.io/badge/Laravel-ff2d20?logo=laravel&logoColor=white)
+- Full-stack project using **Laravel for backend and frontend**  
+- Stabilized and refactored legacy code for performance and UI consistency  
+- Built reusable modules, interactive interfaces, and optimized workflows  
+- Focused on **enterprise-grade, scalable web application architecture**
 
 ### **My Portfolio**
 ![Portfolio](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)
 - Built with **React, Redux, Tailwind**  
 - Features: animated cursor, lazy loading, image optimization, Gmail/email.js integration  
 
-### **D‑Ocean Fisheries**
-![DOcean](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)
-- Refactored legacy code, improved performance & UI consistency  
-- Utilized **React.js, REST APIs, CSS animations**
-
 ---
 
 ## 🛠 Skills
 
 **Frontend:** React.js, Vue.js, Nuxt.js, Tailwind CSS, SCSS, Angular  
-**Backend:** Node.js, Express.js, .NET Core, ASP.NET  
+**Backend:** Node.js, Express.js, Laravel, .NET Core, ASP.NET  
 **Database:** PostgreSQL, SQL, MongoDB  
 **DevOps & Tools:** Git, GitLab CI, Docker, REST APIs, CI/CD, Agile  
 **Other:** Pixel-perfect UI, Performance Optimization, API Design  
