@@ -79,6 +79,14 @@ export default function ProjectDetail() {
                     {'Github >='}
                   </Button>
                 )}
+                {project.githubBackendUrl && (
+                  <Button
+                    className={`cursor-scale-0 cursor-pointer`}
+                    onClick={() => window.open(project.githubBackendUrl, '_blank')}
+                  >
+                    {'Backend >='}
+                  </Button>
+                )}
               </div>
             </div>
           </div>

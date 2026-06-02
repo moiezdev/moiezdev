@@ -3,6 +3,30 @@ const initialState = {
     projects: [
 
         {
+            id: 'twlm-pos',
+            title: "TWLM - POS",
+            subtitle: "Point of Sale System with Loyalty & Wallet Integrations",
+            description:
+                [
+                    "TWLM - POS – Comprehensive Point of Sale System",
+                    [
+                        "A comprehensive Point of Sale (POS) system focused on enhancing customer experience, loyalty engagement, and business growth through modern UI/UX, loyalty systems, and wallet integrations.",
+                        "Improved the overall UI/UX, making features more intuitive and user-friendly, which reduced support center requests by approximately 70%.",
+                        "Designed and developed loyalty program features including a Loyalty Points System, Loyalty Cards, a Gift Card System with Apple Wallet and Google Wallet integration, and real-time notification support.",
+                        "Built a centralized promotional messaging system with Apple Wallet loyalty passes, smart geo-location targeting, and branch-based tracking and visibility.",
+                        "Developed a dynamic Page Builder and a Flutter-based mobile application that allows businesses to create customizable storefront pages and enables customers to place orders online easily.",
+                        "Optimized backend APIs, reducing latency by approximately 64% and improving system performance.",
+                        "Refactored a large portion of the codebase—improved code structure and maintainability, eliminated side effects caused by rapid development, and enhanced overall application stability.",
+                    ]
+                ],
+            technologies: ["React.js", "Flutter", "Nest.js", "Fastify", "Node.js", "Apple Wallet", "Google Wallet", "REST APIs", "Zustand", "TanStack Query"],
+            imageUrl: "/projects-media/twlm-pos/main.webp",
+            projectUrl: "https://twlm.solutions",
+            githubUrl: "https://github.com/Twlm-App/twlm-solutions",
+            githubBackendUrl: "https://github.com/Twlm-App/twlm-solutions-backend",
+            media: ['main.webp', 'img1.webp', 'img2.webp']
+        },
+        {
             id: 'eims',
             title: "EIMS (Backend)",
             subtitle: "Learning Management System FullStack (Under Development)",

@@ -3,7 +3,18 @@ import Button from './Button';
 import Floating from './Floating';
 import LazyImage from './LazyImage';
 
-const Card = ({ className, title, description, techStack, liveLink, codeLink, image, altText }) => {
+const Card = ({
+  className,
+  title,
+  description,
+  techStack,
+  liveLink,
+  codeLink,
+  codeLinkSecondary,
+  codeLinkSecondaryLabel = 'Backend >=',
+  image,
+  altText,
+}) => {
   return (
     <Floating duration={5}>
       <div
@@ -33,7 +44,7 @@ const Card = ({ className, title, description, techStack, liveLink, codeLink, im
           <div className="flex flex-col gap-[16px] p-[16px]">
             <h2 className="text-large font-semibold text-white cursor-pointer">{title}</h2>
             <p className=" cursor-pointer">{description}</p>
-            <div className="flex gap-[16px]">
+            <div className="flex flex-wrap gap-[16px]">
               {liveLink && (
                 <Button
                   className={`cursor-scale-0 cursor-pointer`}
@@ -45,6 +56,11 @@ const Card = ({ className, title, description, techStack, liveLink, codeLink, im
               )}
               {codeLink && (
                 <Button onClick={() => window.open(codeLink, '_blank')}>{'Github >='}</Button>
+              )}
+              {codeLinkSecondary && (
+                <Button onClick={() => window.open(codeLinkSecondary, '_blank')}>
+                  {codeLinkSecondaryLabel}
+                </Button>
               )}
             </div>
           </div>

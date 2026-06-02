@@ -68,6 +68,7 @@ const Projects = () => {
                   techStack={project.technologies}
                   liveLink={project.projectUrl}
                   codeLink={project.githubUrl}
+                  codeLinkSecondary={project.githubBackendUrl}
                   image={project.imageUrl}
                   altText={`${project.title} image`}
                 />
