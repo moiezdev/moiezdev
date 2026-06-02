@@ -4,9 +4,11 @@ const initialState = {
     about:
     {
         title: "Hello, I'm Moiz!",
-        subtitle: "A Frontend Developer",
-        description: ["A Frontend Engineer and UI/ UX Specialist based in Saudi Arabia.Over the past 5 + years, I’ve been turning complex ideas into clean, responsive, and user - friendly web applications using React, Vue.js, Next.js, Nuxt.js, and Tailwind CSS.I have experience collaborating with international clients on Flight & Car Booking platforms, E-Commerce, and other B2B / B2C projects, focusing on improving user experiences and delivering high - performing interfaces.",
-            "I’m passionate about bridging design and development, crafting scalable, visually engaging solutions, and staying up-to-date with the latest technologies and frameworks. Whether it’s creating reusable UI components, integrating APIs, or optimizing performance, I always aim to build modern digital experiences that users love and businesses value."
+        subtitle: "A Software Engineer",
+        description: [
+            "Over the past five years, I've been working as a software engineer building and improving digital products across POS systems, booking platforms, e-commerce, and internal business tools. My work has focused on turning complex requirements into reliable, scalable systems while keeping the user experience simple and intuitive. I've been involved in everything from architecture decisions to feature delivery, always aiming to balance performance, usability, and maintainability.",
+            "A significant part of my experience comes from working on a large-scale POS platform where I contributed to both product and engineering layers. I helped improve the user experience, which reduced support load significantly, and built core features like loyalty systems, gift cards, and wallet integrations with Apple Wallet and Google Wallet. I also worked on promotional systems with geo-targeting, branch tracking, and notification flows, while improving backend performance by optimizing APIs and reducing latency.",
+            "Alongside this, I've built and supported multiple real-world platforms including flight and travel booking systems and learning management tools. These projects involved working with real-time data, integrating external APIs, and ensuring smooth, responsive interfaces across devices. Across all my work, I focus on writing clean, scalable code and building systems that are easy to maintain, extend, and trust in production.",
         ]
     },
 };
