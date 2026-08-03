@@ -187,7 +187,7 @@ const ChatBot = () => {
       {open && (
         <div
           ref={panelRef}
-          className="w-[min(100vw-2.5rem,380px)] max-h-full h-[min(80vh,1000px)] flex flex-col border border-gray-a bg-gray-b origin-bottom-right"
+          className="w-[min(100vw-1rem,380px)] sm:w-[min(100vw-2.5rem,380px)] max-h-full h-[min(80vh,1000px)] flex flex-col border border-gray-a bg-gray-b origin-bottom-right"
           role="dialog"
           aria-label={`${BOT_NAME} portfolio chat`}
         >
