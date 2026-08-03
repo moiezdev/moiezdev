@@ -182,7 +182,9 @@ const ChatBot = () => {
   return (
     <div
       ref={rootRef}
-      className="fixed bottom-1 right-1 sm:bottom-5 sm:right-5 z-50 flex flex-col items-end gap-0"
+      className={`fixed right-1 sm:bottom-5 sm:right-5 z-50 flex flex-col items-end gap-0 ${
+        open && inputRef.current?.focus ? 'bottom-0' : 'bottom-1'
+      }`}
     >
       {open && (
         <div
