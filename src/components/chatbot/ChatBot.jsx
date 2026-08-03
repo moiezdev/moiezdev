@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { gsap } from 'gsap';
 import RobotAvatar from './RobotAvatar';
@@ -57,11 +57,6 @@ const ChatBot = () => {
     );
   }, [open]);
 
-  useLayoutEffect(() => {
-    if (!open) return;
-    inputRef.current?.focus({ preventScroll: true });
-  }, [open]);
-
   useEffect(() => {
     if (!listRef.current) return;
     listRef.current.scrollTop = listRef.current.scrollHeight;
@@ -97,17 +92,18 @@ const ChatBot = () => {
   };
 
   const openChat = () => {
-    // Open immediately so focus (and mobile keyboard) stays tied to the tap gesture
-    setOpen(true);
-
     const fab = fabRef.current;
-    if (!fab) return;
+    if (!fab) {
+      setOpen(true);
+      return;
+    }
 
     gsap.to(fab, {
       scale: 0.7,
       opacity: 0,
       duration: 0.22,
       ease: 'power2.in',
+      onComplete: () => setOpen(true),
     });
   };
 
@@ -182,14 +178,14 @@ const ChatBot = () => {
   return (
     <div
       ref={rootRef}
-      className={`fixed right-1 sm:bottom-5 sm:right-5 z-50 flex flex-col items-end gap-0 ${
+      className={`fixed sm:bottom-5 right-5 z-50 flex flex-col items-end gap-0 ${
         open && inputRef.current?.focus ? 'bottom-0' : 'bottom-1'
       }`}
     >
       {open && (
         <div
           ref={panelRef}
-          className="w-[min(100vw-1rem,380px)] sm:w-[min(100vw-2.5rem,380px)] max-h-full h-[min(80vh,1000px)] flex flex-col border border-gray-a bg-gray-b origin-bottom-right"
+          className="w-[min(100vw-2.5rem,380px)] max-h-full h-[min(80vh,1000px)] flex flex-col border border-gray-a bg-gray-b origin-bottom-right"
           role="dialog"
           aria-label={`${BOT_NAME} portfolio chat`}
         >
@@ -294,8 +290,6 @@ const ChatBot = () => {
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask about Moiz…"
                 disabled={loading}
-                autoComplete="off"
-                enterKeyHint="send"
                 className="flex-1 min-w-0 bg-transparent px-3 py-3 text-base text-white placeholder:text-gray-a/50 focus:outline-none disabled:opacity-50 cursor-scale-0"
               />
               <button
