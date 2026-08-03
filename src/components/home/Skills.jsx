@@ -4,6 +4,7 @@ import Logo from '../ui/Logo';
 import Floating from '../ui/Floating';
 import Magnetic from '../ui/Magnetic';
 import { getSkillIcon } from '../../utils/skillIcons';
+import { getProjectsForSkill, getSkillExperienceMessage } from '../../utils/skillProjects';
 import { skills } from '../../data';
 
 const TECHNICAL_CATEGORIES = new Set([
@@ -18,18 +19,51 @@ const TECHNICAL_CATEGORIES = new Set([
 const technicalSkills = skills.filter((skill) => TECHNICAL_CATEGORIES.has(skill.category));
 const otherSkills = skills.filter((skill) => !TECHNICAL_CATEGORIES.has(skill.category));
 
+/** Chat-bubble tip listing projects that used this skill. */
+const SkillExperienceTip = ({ name }) => {
+  const message = getSkillExperienceMessage(name);
+  const related = getProjectsForSkill(name);
+  if (!message) return null;
+
+  return (
+    <div
+      className="pointer-events-none absolute left-1/2 bottom-full z-30 mb-2 w-max max-w-[240px] -translate-x-1/2 opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 group-focus-within:opacity-100 group-focus-within:scale-100 transition-all duration-200 origin-bottom"
+      role="tooltip"
+    >
+      <div className="border border-gray-a bg-gray-b px-3 py-2.5 text-left shadow-[0_0_0_1px_rgba(40,44,51,1)]">
+        <p className="text-primary text-[10px] mb-1.5 tracking-wide">
+          <span className="bg-primary w-1.5 h-1.5 inline-block mr-1.5 mb-px align-middle" />
+          {name}
+        </p>
+        <p className="text-gray-a text-xs leading-relaxed">{message}</p>
+        {related.length > 0 && (
+          <p className="text-[10px] text-gray-a/70 mt-1.5 border-t border-gray-a pt-1.5">
+            {related.length} project{related.length === 1 ? '' : 's'}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+};
+
 const SkillIconBadge = ({ name }) => {
   const skillIcon = getSkillIcon(name);
   const Icon = skillIcon?.Icon;
+  const hasProjects = getProjectsForSkill(name).length > 0;
   if (!Icon) return null;
 
   return (
     <span
-      className="inline-flex items-center justify-center size-9 bg-gray-a/20 hover:scale-110 transition-all cursor-pointer cursor-scale-0 hover:bg-primary/20"
-      title={name}
-      aria-label={name}
+      className="group relative inline-flex items-center justify-center size-9 bg-gray-a/20 hover:scale-110 transition-all cursor-pointer cursor-scale-0 hover:bg-primary/20 focus-within:bg-primary/20"
+      tabIndex={hasProjects ? 0 : undefined}
+      aria-label={
+        hasProjects
+          ? `${name}. ${getSkillExperienceMessage(name)}`
+          : name
+      }
     >
       <Icon className="text-[18px] shrink-0" style={{ color: skillIcon.color }} aria-hidden />
+      <SkillExperienceTip name={name} />
     </span>
   );
 };
@@ -37,16 +71,23 @@ const SkillIconBadge = ({ name }) => {
 const SkillTextBadge = ({ name }) => {
   const skillIcon = getSkillIcon(name);
   const Icon = skillIcon?.Icon;
+  const hasProjects = getProjectsForSkill(name).length > 0;
 
   return (
     <span
-      className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-gray-a/20 hover:scale-110 transition-all cursor-pointer cursor-scale-0 hover:bg-primary/20"
-      title={name}
+      className="group relative inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-gray-a/20 hover:scale-110 transition-all cursor-pointer cursor-scale-0 hover:bg-primary/20 focus-within:bg-primary/20"
+      tabIndex={hasProjects ? 0 : undefined}
+      aria-label={
+        hasProjects
+          ? `${name}. ${getSkillExperienceMessage(name)}`
+          : name
+      }
     >
       {Icon && (
         <Icon className="text-[14px] shrink-0" style={{ color: skillIcon.color }} aria-hidden />
       )}
       {name}
+      <SkillExperienceTip name={name} />
     </span>
   );
 };
@@ -59,13 +100,13 @@ const SkillCategoryCard = ({ skill, iconOnly = false }) => (
           <h3 className="font-semibold text-white border-b border-gray-a p-[8px] cursor-pointer cursor-white cursor-scale-1">
             {skill.category}
           </h3>
-          <div className="flex flex-wrap gap-[8px] p-[8px]">
+          <div className="flex flex-wrap gap-[8px] p-[8px] overflow-visible">
             {skill.items.map((item) =>
               iconOnly ? (
                 <SkillIconBadge key={item} name={item} />
               ) : (
                 <SkillTextBadge key={item} name={item} />
-              )
+              ),
             )}
           </div>
         </div>
@@ -82,7 +123,7 @@ const SkillSubsection = ({ title, categories, iconOnly = false }) => {
       <h2 className="text-white text-large font-semibold border-b border-gray-a pb-2 cursor-pointer cursor-white cursor-scale-1">
         {title}
       </h2>
-      <div className="grid gap-[16px] sm:grid-cols-2">
+      <div className="grid gap-[16px] sm:grid-cols-2 overflow-visible">
         {categories.map((skill) => (
           <SkillCategoryCard key={skill.category} skill={skill} iconOnly={iconOnly} />
         ))}
@@ -93,10 +134,10 @@ const SkillSubsection = ({ title, categories, iconOnly = false }) => {
 
 const Skills = () => {
   return (
-    <section className="w-full px-4 py-12" id="skills">
-      <div className="app-container mx-auto">
+    <section className="w-full px-4 py-12 overflow-visible" id="skills">
+      <div className="app-container mx-auto overflow-visible">
         <SectionTitle title="skills" />
-        <div className="grid gap-8 lg:grid-cols-7">
+        <div className="grid gap-8 lg:grid-cols-7 overflow-visible">
           <div className="col-span-3 p-5 hidden lg:block relative">
             <div className="border inline-block border-gray-a p-1 mx-auto mb-4 cursor-pointer cursor-white cursor-scale-1.7">
               <span className="bg-primary h-[16px] aspect-square inline-block mb-[-2px] mr-1"></span>
@@ -152,7 +193,7 @@ const Skills = () => {
             </div>
           </div>
 
-          <div className="lg:col-span-4 flex flex-col gap-10">
+          <div className="lg:col-span-4 flex flex-col gap-10 overflow-visible">
             <SkillSubsection title="Technical Skills" categories={technicalSkills} iconOnly />
             <SkillSubsection title="Other Skills" categories={otherSkills} />
           </div>

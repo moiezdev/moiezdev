@@ -3,7 +3,8 @@ import { BOT_NAME, PORTFOLIO_CONTEXT, SYSTEM_PROMPT, getProfileExperienceYears }
 import { extractNavMarkers, mergeNavLinks, resolveChatNav, SITE_NAV } from './chatNav';
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
-const DEFAULT_MODEL = 'meta-llama/llama-3.2-3b-instruct:free';
+// Auto-picks among currently available free models (specific :free slugs rotate often)
+const DEFAULT_MODEL = 'openrouter/free';
 
 const LOW_PRIORITY_IDS = new Set(chatbot.lowPriorityProjectIds || []);
 
@@ -216,11 +217,12 @@ export async function askBot(question, { signal, history = [] } = {}) {
       method: 'POST',
       signal,
       headers: {
-        Authorization: `Bearer ${apiKey}`,
+        Authorization: `Bearer ${String(apiKey).trim()}`,
         'Content-Type': 'application/json',
         'HTTP-Referer':
           typeof window !== 'undefined' ? window.location.origin : 'https://moiezdev.com',
-        'X-Title': `${BOT_NAME} — MoiezDev Portfolio`,
+        // Header values must be ISO-8859-1 — no em dashes / fancy Unicode
+        'X-Title': 'BotFolio Portfolio Chat',
       },
       body: JSON.stringify({
         model,
