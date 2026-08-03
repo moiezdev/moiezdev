@@ -180,7 +180,10 @@ const ChatBot = () => {
   };
 
   return (
-    <div ref={rootRef} className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-0">
+    <div
+      ref={rootRef}
+      className="fixed bottom-1 right-1 sm:bottom-5 sm:right-5 z-50 flex flex-col items-end gap-0"
+    >
       {open && (
         <div
           ref={panelRef}
