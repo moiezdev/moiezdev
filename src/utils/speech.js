@@ -1,7 +1,9 @@
-/** Browser Web Speech helpers (no API keys). Chrome/Edge best; Safari/iOS needs a user-gesture unlock. */
+/** Free browser TTS + mic. Kept simple for mobile Safari/Chrome. */
 
-let speechUnlocked = false;
-let resumeWatchdog = null;
+/** Kept alive so iOS doesn't GC the utterance mid-speech. */
+let currentUtterance = null;
+let resumeTimer = null;
+let unlocked = false;
 
 export function canSpeak() {
   return typeof window !== 'undefined' && 'speechSynthesis' in window;
@@ -12,7 +14,20 @@ export function canListen() {
   return Boolean(window.SpeechRecognition || window.webkitSpeechRecognition);
 }
 
-/** Soften punctuation so TTS sounds less robotic. */
+/** Call from a click/touch handler before any await — unlocks mobile TTS. */
+export function unlockSpeech() {
+  if (!canSpeak() || unlocked) return;
+  try {
+    const warm = new SpeechSynthesisUtterance(' ');
+    warm.volume = 0;
+    window.speechSynthesis.speak(warm);
+    window.speechSynthesis.cancel();
+    unlocked = true;
+  } catch {
+    /* ignore */
+  }
+}
+
 export function cleanForSpeech(text) {
   return String(text || '')
     .replace(/\[\[nav:[^\]]+\]\]/g, '')
@@ -29,204 +44,140 @@ export function cleanForSpeech(text) {
     .trim();
 }
 
-/**
- * Must run inside a tap/click handler on iOS/Android or TTS stays silent.
- * Call on open chat, send, voice toggle, or mic.
- */
-export function unlockSpeech() {
-  if (!canSpeak()) return false;
-
-  try {
-    const synth = window.speechSynthesis;
-    // Warm voices list (often empty until first interaction on mobile)
-    synth.getVoices();
-
-    const warm = new SpeechSynthesisUtterance(' ');
-    warm.volume = 0;
-    warm.rate = 1;
-    warm.pitch = 1;
-    synth.speak(warm);
-    synth.cancel(); // clear the silent warm-up
-    if (typeof synth.resume === 'function') synth.resume();
-
-    speechUnlocked = true;
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-export function isSpeechUnlocked() {
-  return speechUnlocked;
-}
-
-/**
- * Closest free browser match to Antoni:
- * soft, friendly, approachable male — calm American / light male packs.
- */
-const ANTONI_LIKE_RE =
-  /\b(alex|aaron|tom|oliver|arthur|mark|guy|google us english male|microsoft mark|microsoft guy|microsoft david)\b/i;
-const HARSH_OR_KID_RE = /\b(junior|fred|boy|zarvox|trinoids|bad news|good news|whisper|princess|kathy)\b/i;
-const FEMALE_VOICE_RE =
-  /\b(female|samantha|victoria|karen|moira|fiona|tessa|zira|susan|kathy|princess|salli|joanna|ivy|kimberly|kendra|amy|emma|google uk english female|microsoft zira|google us english female)\b/i;
-const MALE_HINT_RE = /\bmale\b|alex|aaron|tom|daniel|david|mark|guy|oliver|arthur|james|thomas/i;
-
-function scoreAntoniLike(v) {
-  const name = v.name || '';
-  const lang = v.lang || '';
-  if (!/^en/i.test(lang)) return -100;
-  if (FEMALE_VOICE_RE.test(name) && !MALE_HINT_RE.test(name)) return -80;
-  if (HARSH_OR_KID_RE.test(name)) return -60;
-
-  let score = 0;
-  if (ANTONI_LIKE_RE.test(name)) score += 50;
-  if (/\balex\b/i.test(name)) score += 25;
-  if (MALE_HINT_RE.test(name)) score += 20;
-  if (/\bmale\b/i.test(name)) score += 15;
-  if (/en(-|_)US/i.test(lang)) score += 12;
-  if (/en(-|_)GB/i.test(lang)) score += 3;
-  if (v.localService) score += 8; // mobile prefers local packs
-  return score;
-}
-
-function pickAntoniLikeVoice() {
+function pickEnglishVoice() {
   const voices = window.speechSynthesis.getVoices?.() || [];
-  if (!voices.length) {
-    return { voice: null, pitch: 0.95, rate: 0.96 };
-  }
-
-  const ranked = [...voices].sort((a, b) => scoreAntoniLike(b) - scoreAntoniLike(a));
-  const best = ranked[0];
-  const score = best ? scoreAntoniLike(best) : -100;
-
-  if (best && score > 0) {
-    return { voice: best, pitch: 0.95, rate: 0.96 };
-  }
-
-  const fallback =
-    voices.find((v) => /^en(-|_)US/i.test(v.lang)) ||
+  return (
+    voices.find((v) => /^en-US/i.test(v.lang) && v.localService) ||
+    voices.find((v) => /^en-US/i.test(v.lang)) ||
     voices.find((v) => /^en/i.test(v.lang)) ||
-    null;
-
-  return { voice: fallback, pitch: 0.92, rate: 0.95 };
+    null
+  );
 }
 
-function clearResumeWatchdog() {
-  if (resumeWatchdog) {
-    window.clearInterval(resumeWatchdog);
-    resumeWatchdog = null;
+/** Split long replies — iOS often fails on one huge utterance. */
+function chunkText(text) {
+  const parts = text.match(/[^.!?]+[.!?]+[\s]?|[^.!?]+$/g) || [text];
+  const chunks = [];
+  let buf = '';
+  for (const part of parts) {
+    if ((buf + part).length > 160) {
+      if (buf) chunks.push(buf.trim());
+      buf = part;
+    } else {
+      buf += part;
+    }
+  }
+  if (buf.trim()) chunks.push(buf.trim());
+  return chunks.length ? chunks : [text];
+}
+
+function clearResumeTimer() {
+  if (resumeTimer) {
+    clearInterval(resumeTimer);
+    resumeTimer = null;
   }
 }
 
-/** iOS often pauses mid-utterance — keep nudging resume while speaking. */
-function startResumeWatchdog() {
-  clearResumeWatchdog();
-  resumeWatchdog = window.setInterval(() => {
-    const synth = window.speechSynthesis;
-    if (!synth.speaking) {
-      clearResumeWatchdog();
+/**
+ * Speak with default browser voice (normal pitch/rate).
+ * @returns {Promise<void>}
+ */
+export function speak(text, { onStart, onEnd } = {}) {
+  return new Promise((resolve) => {
+    if (!canSpeak()) {
+      onEnd?.();
+      resolve();
       return;
     }
-    if (synth.paused) synth.resume();
-  }, 220);
-}
 
-/** Mobile Safari truncates long utterances — speak sentence chunks. */
-function splitForMobile(text) {
-  const chunks = text.match(/[^.!?]+[.!?]+["']?|[^.!?]+$/g) || [text];
-  return chunks.map((c) => c.trim()).filter(Boolean);
-}
-
-function speakChunk(text, { voice, pitch, rate }) {
-  return new Promise((resolve) => {
-    const u = new SpeechSynthesisUtterance(text);
-    u.rate = rate;
-    u.pitch = pitch;
-    u.lang = voice?.lang || 'en-US';
-    if (voice) u.voice = voice;
-
-    u.onend = () => resolve();
-    u.onerror = () => resolve();
-
-    window.speechSynthesis.speak(u);
-    if (typeof window.speechSynthesis.resume === 'function') {
-      window.speechSynthesis.resume();
+    const cleaned = cleanForSpeech(text);
+    if (!cleaned) {
+      onEnd?.();
+      resolve();
+      return;
     }
+
+    stopSpeaking();
+
+    const chunks = chunkText(cleaned);
+    let index = 0;
+    let started = false;
+
+    const finish = () => {
+      clearResumeTimer();
+      currentUtterance = null;
+      onEnd?.();
+      resolve();
+    };
+
+    const speakNext = () => {
+      if (index >= chunks.length) {
+        finish();
+        return;
+      }
+
+      const u = new SpeechSynthesisUtterance(chunks[index]);
+      currentUtterance = u;
+      u.lang = 'en-US';
+      u.rate = 1;
+      u.pitch = 1;
+      u.volume = 1;
+
+      const voice = pickEnglishVoice();
+      if (voice) u.voice = voice;
+
+      u.onstart = () => {
+        if (!started) {
+          started = true;
+          onStart?.();
+        }
+      };
+      u.onend = () => {
+        index += 1;
+        speakNext();
+      };
+      u.onerror = () => finish();
+
+      try {
+        window.speechSynthesis.speak(u);
+      } catch {
+        finish();
+      }
+    };
+
+    // Chrome Android often pauses mid-speech — nudge it
+    resumeTimer = window.setInterval(() => {
+      if (!window.speechSynthesis.speaking) {
+        clearResumeTimer();
+        return;
+      }
+      try {
+        window.speechSynthesis.pause();
+        window.speechSynthesis.resume();
+      } catch {
+        /* ignore */
+      }
+    }, 8000);
+
+    // Brief delay after cancel helps iOS actually start the next utterance
+    window.setTimeout(speakNext, 60);
   });
 }
 
-/**
- * Speak with free browser TTS, tuned toward Antoni (soft / friendly male).
- * On mobile, call unlockSpeech() from a tap first (send / voice / open).
- * @returns {Promise<void>}
- */
-export async function speak(text, { onStart, onEnd } = {}) {
-  if (!canSpeak()) {
-    onEnd?.();
-    return;
-  }
-
-  const cleaned = cleanForSpeech(text);
-  if (!cleaned) {
-    onEnd?.();
-    return;
-  }
-
-  // Best-effort unlock if somehow missed (may still fail on locked iOS)
-  if (!speechUnlocked) unlockSpeech();
-
-  window.speechSynthesis.cancel();
-  clearResumeWatchdog();
-
-  // Let cancel settle (critical on iOS)
-  await new Promise((r) => window.setTimeout(r, 60));
-
-  const waitForVoices = () =>
-    new Promise((resolve) => {
-      const existing = window.speechSynthesis.getVoices?.() || [];
-      if (existing.length) {
-        resolve();
-        return;
-      }
-      const onVoices = () => {
-        window.speechSynthesis.removeEventListener('voiceschanged', onVoices);
-        resolve();
-      };
-      window.speechSynthesis.addEventListener('voiceschanged', onVoices);
-      window.setTimeout(() => {
-        window.speechSynthesis.removeEventListener('voiceschanged', onVoices);
-        resolve();
-      }, 400);
-    });
-
-  await waitForVoices();
-
-  const voiceOpts = pickAntoniLikeVoice();
-  const chunks = splitForMobile(cleaned);
-
-  onStart?.();
-  startResumeWatchdog();
-
-  try {
-    for (const chunk of chunks) {
-      // Stopped by user / new speak
-      if (!window.speechSynthesis) break;
-      await speakChunk(chunk, voiceOpts);
-    }
-  } finally {
-    clearResumeWatchdog();
-    onEnd?.();
-  }
-}
-
 export function stopSpeaking() {
-  clearResumeWatchdog();
-  if (canSpeak()) window.speechSynthesis.cancel();
+  clearResumeTimer();
+  currentUtterance = null;
+  if (canSpeak()) {
+    try {
+      window.speechSynthesis.cancel();
+    } catch {
+      /* ignore */
+    }
+  }
 }
 
 /**
- * Continuous speech listener — keeps the mic open across short pauses.
- * @returns {{ start: Function, stop: Function, abort: Function } | null}
+ * Mic listener (desktop Chrome/Edge best; mobile support varies).
  */
 export function createSpeechListener({
   onResult,

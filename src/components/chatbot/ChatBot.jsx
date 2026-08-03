@@ -6,14 +6,7 @@ import TypewriterText from './TypewriterText';
 import { askBot } from '../../utils/askBot';
 import { BOT_HANDLE, BOT_NAME, getProfileExperienceYears } from '../../utils/buildPortfolioContext';
 import { prepareBotReply } from '../../utils/chatNav';
-import {
-  canListen,
-  canSpeak,
-  createSpeechListener,
-  speak,
-  stopSpeaking,
-  unlockSpeech,
-} from '../../utils/speech';
+import { canListen, canSpeak, createSpeechListener, speak, stopSpeaking, unlockSpeech } from '../../utils/speech';
 
 const SUGGESTIONS = ['Who is Moiz?', 'What are his core strengths?', 'Show standout projects'];
 const VOICE_PREF_KEY = 'botfolio-voice';
@@ -24,7 +17,7 @@ const WELCOME = {
   id: 'welcome',
   role: 'bot',
   ...prepareBotReply(
-    `Hey — welcome. I'm ${BOT_NAME}, Moiz's assistant. He's a product-focused Full Stack Engineer (React, Vue, Node.js) with ~${years} years across retail and SaaS. Ask me anything, or explore [[nav:/about|About Moiz]], [[nav:/works|All works]], or [[nav:/contact|Contact page]].`,
+    `Hey — welcome. I'm ${BOT_NAME}, Moiz's assistant. He's a product-focused Full Stack Engineer (React, Vue, Node.js) with ~${years} years across retail and SaaS. Ask me anything, or explore [[nav:/about|About Moiz]], [[nav:/works|All works]], or [[nav:/contact|Contact page]].`
   ),
   typed: true,
 };
@@ -88,7 +81,7 @@ const ChatBot = () => {
     gsap.fromTo(
       fabRef.current,
       { scale: 0, opacity: 0 },
-      { scale: 1, opacity: 1, duration: 0.55, delay: 0.8, ease: 'back.out(1.7)' },
+      { scale: 1, opacity: 1, duration: 0.55, delay: 0.8, ease: 'back.out(1.7)' }
     );
   }, []);
 
@@ -106,7 +99,7 @@ const ChatBot = () => {
         duration: 0.45,
         ease: 'power3.out',
         transformOrigin: '100% 100%',
-      },
+      }
     );
   }, [open]);
 
@@ -169,7 +162,7 @@ const ChatBot = () => {
           gsap.fromTo(
             fabRef.current,
             { scale: 0.6, opacity: 0 },
-            { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(1.7)' },
+            { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(1.7)' }
           );
         });
       },
@@ -232,7 +225,7 @@ const ChatBot = () => {
     const question = (raw ?? input).trim();
     if (!question || loading || typingId != null) return;
 
-    // Unlock TTS inside this tap so mobile can speak the reply later
+    // Must run inside the tap/click — unlocks TTS on iOS/Android
     unlockSpeech();
 
     stopListen({ send: false });
@@ -273,7 +266,7 @@ const ChatBot = () => {
       if (err?.name !== 'AbortError') {
         const id = `b-${msgIdRef.current++}`;
         const fallback = prepareBotReply(
-          "Sorry about that — something didn't go through. Try again, or open [[nav:/contact|Contact page]] to reach Moiz directly.",
+          "Sorry about that — something didn't go through. Try again, or open [[nav:/contact|Contact page]] to reach Moiz directly."
         );
         setMessages((prev) => [
           ...prev,
@@ -298,6 +291,8 @@ const ChatBot = () => {
   const toggleListen = () => {
     if (!speechReady.listen || loading || typingId != null) return;
 
+    unlockSpeech();
+
     // Tap again to finish sentence and send
     if (listening) {
       stopListen({ send: true });
@@ -306,8 +301,6 @@ const ChatBot = () => {
 
     stopSpeaking();
     setSpeaking(false);
-    unlockSpeech();
-
     transcriptRef.current = '';
     clearSilenceTimer();
 
@@ -382,15 +375,8 @@ const ChatBot = () => {
               <button
                 type="button"
                 onClick={() => {
-                  setVoiceOn((v) => {
-                    const next = !v;
-                    if (next) unlockSpeech();
-                    else {
-                      stopSpeaking();
-                      setSpeaking(false);
-                    }
-                    return next;
-                  });
+                  unlockSpeech();
+                  setVoiceOn((v) => !v);
                 }}
                 className={`border px-2 py-1 text-xs transition-colors cursor-scale-0 mr-1 ${
                   voiceOn
@@ -425,7 +411,9 @@ const ChatBot = () => {
                 >
                   <div
                     className={`max-w-[90%] px-3 py-2.5 text-sm leading-relaxed border ${
-                      msg.role === 'user' ? 'border-primary text-white' : 'border-gray-a text-gray-a'
+                      msg.role === 'user'
+                        ? 'border-primary text-white'
+                        : 'border-gray-a text-gray-a'
                     }`}
                   >
                     {msg.role === 'bot' && (
@@ -508,7 +496,9 @@ const ChatBot = () => {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder={listening ? 'Keep talking — tap done when finished…' : 'Ask about Moiz…'}
+                placeholder={
+                  listening ? 'Keep talking — tap done when finished…' : 'Ask about Moiz…'
+                }
                 disabled={busy}
                 className="flex-1 min-w-0 bg-transparent px-3 py-3 text-base text-white placeholder:text-gray-a/50 focus:outline-none disabled:opacity-50 cursor-scale-0"
               />
