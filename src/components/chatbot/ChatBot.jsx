@@ -34,17 +34,25 @@ const ChatBot = () => {
     gsap.fromTo(
       fabRef.current,
       { scale: 0, opacity: 0 },
-      { scale: 1, opacity: 1, duration: 0.6, delay: 0.8, ease: 'back.out(1.6)' }
+      { scale: 1, opacity: 1, duration: 0.55, delay: 0.8, ease: 'back.out(1.7)' },
     );
   }, []);
 
   useEffect(() => {
     const panel = panelRef.current;
     if (!panel || !open) return;
+
     gsap.fromTo(
       panel,
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }
+      { opacity: 0, y: 28, scale: 0.92 },
+      {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.45,
+        ease: 'power3.out',
+        transformOrigin: '100% 100%',
+      },
     );
   }, [open]);
 
@@ -53,6 +61,54 @@ const ChatBot = () => {
     listRef.current.scrollTop = listRef.current.scrollHeight;
   }, [messages, loading, open]);
 
+  const closeChat = () => {
+    const panel = panelRef.current;
+    if (!panel) {
+      setOpen(false);
+      return;
+    }
+
+    gsap.to(panel, {
+      opacity: 0,
+      y: 20,
+      scale: 0.94,
+      duration: 0.28,
+      ease: 'power2.in',
+      transformOrigin: '100% 100%',
+      onComplete: () => {
+        setOpen(false);
+        // FAB remounts after close — entrance on next paint
+        requestAnimationFrame(() => {
+          if (!fabRef.current) return;
+          gsap.fromTo(
+            fabRef.current,
+            { scale: 0.6, opacity: 0 },
+            { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(1.7)' },
+          );
+        });
+      },
+    });
+  };
+
+  const openChat = () => {
+    const fab = fabRef.current;
+    if (!fab) {
+      setOpen(true);
+      return;
+    }
+
+    gsap.to(fab, {
+      scale: 0.7,
+      opacity: 0,
+      duration: 0.22,
+      ease: 'power2.in',
+      onComplete: () => setOpen(true),
+    });
+  };
+
+  const closeChatRef = useRef(() => {});
+  closeChatRef.current = closeChat;
+
   // Click outside the chat widget → close immediately (in-chat nav does not count)
   useEffect(() => {
     if (!open) return undefined;
@@ -60,7 +116,7 @@ const ChatBot = () => {
     const onPointerDown = (e) => {
       const root = rootRef.current;
       if (root && e.target instanceof Node && root.contains(e.target)) return;
-      setOpen(false);
+      closeChatRef.current();
     };
 
     document.addEventListener('pointerdown', onPointerDown, true);
@@ -123,7 +179,7 @@ const ChatBot = () => {
       {open && (
         <div
           ref={panelRef}
-          className="mb-[-1px] w-[min(100vw-2.5rem,380px)] h-[min(80vh,1000px)] flex flex-col border border-gray-a bg-gray-b"
+          className="w-[min(100vw-2.5rem,380px)] h-[min(80vh,1000px)] flex flex-col border border-gray-a bg-gray-b origin-bottom-right"
           role="dialog"
           aria-label={`${BOT_NAME} portfolio chat`}
         >
@@ -140,7 +196,7 @@ const ChatBot = () => {
             </div>
             <button
               type="button"
-              onClick={() => setOpen(false)}
+              onClick={closeChat}
               className="border border-gray-a text-gray-a hover:border-primary hover:text-primary px-2 py-1 text-xs transition-colors cursor-scale-0"
               aria-label="Close chat"
             >
@@ -241,27 +297,24 @@ const ChatBot = () => {
         </div>
       )}
 
-      {/* FAB — connected under panel when open (shared border) */}
-      <button
-        ref={fabRef}
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        className={`relative group border border-gray-a bg-gray-b p-2 hover:border-primary transition-colors cursor-scale-0 ${
-          open ? 'border-t-0' : ''
-        }`}
-        aria-label={open ? `Close ${BOT_NAME}` : `Open ${BOT_NAME}`}
-        aria-expanded={open}
-      >
-        <div className="absolute top-1.5 left-1.5 z-10">
-          <span className="bg-primary w-2 h-2 block" aria-hidden />
-        </div>
-        <RobotAvatar size={52} isOpen={open} isThinking={loading} />
-        {!open && (
+      {!open && (
+        <button
+          ref={fabRef}
+          type="button"
+          onClick={openChat}
+          className="relative group border border-gray-a bg-gray-b p-2 hover:border-primary transition-colors cursor-scale-0"
+          aria-label={`Open ${BOT_NAME}`}
+          aria-expanded={false}
+        >
+          <div className="absolute top-1.5 left-1.5 z-10">
+            <span className="bg-primary w-2 h-2 block" aria-hidden />
+          </div>
+          <RobotAvatar size={52} isOpen={false} isThinking={loading} />
           <span className="pointer-events-none absolute right-full mr-0 top-1/2 -translate-y-1/2 whitespace-nowrap border border-gray-a border-r-0 bg-gray-b px-2.5 py-1.5 text-xs text-gray-a opacity-0 group-hover:opacity-100 transition-opacity inline-flex items-center gap-1.5">
             <span className="bg-primary w-2 h-2 shrink-0" aria-hidden />#{BOT_HANDLE}
           </span>
-        )}
-      </button>
+        </button>
+      )}
     </div>
   );
 };
