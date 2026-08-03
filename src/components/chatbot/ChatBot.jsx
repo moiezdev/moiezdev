@@ -250,6 +250,8 @@ const ChatBot = () => {
         history: nextMessages.slice(0, -1),
       });
       const id = `b-${msgIdRef.current++}`;
+      // Start audio first — don't wait on typewriter / React paint
+      speakReply(reply.text);
       setMessages((prev) => [
         ...prev,
         {
@@ -261,13 +263,13 @@ const ChatBot = () => {
         },
       ]);
       setTypingId(id);
-      speakReply(reply.text);
     } catch (err) {
       if (err?.name !== 'AbortError') {
         const id = `b-${msgIdRef.current++}`;
         const fallback = prepareBotReply(
           "Sorry about that — something didn't go through. Try again, or open [[nav:/contact|Contact page]] to reach Moiz directly."
         );
+        speakReply(fallback.text);
         setMessages((prev) => [
           ...prev,
           {
@@ -279,7 +281,6 @@ const ChatBot = () => {
           },
         ]);
         setTypingId(id);
-        speakReply(fallback.text);
       }
     } finally {
       setLoading(false);

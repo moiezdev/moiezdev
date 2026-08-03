@@ -44,12 +44,36 @@ export function cleanForSpeech(text) {
     .trim();
 }
 
-function pickEnglishVoice() {
+/**
+ * Closest free match to ElevenLabs Antoni:
+ * soft, friendly, approachable American male.
+ */
+const PREFERRED = [
+  /\balex\b/i, // best common Mac US male
+  /google us english male/i,
+  /microsoft (mark|guy|david)/i,
+  /\b(aaron|tom|oliver|arthur)\b/i,
+  /\bmale\b/i,
+];
+const AVOID = /\b(junior|fred|zarvox|whisper|princess|samantha|victoria|karen|zira|female)\b/i;
+
+function pickAntoniLikeVoice() {
   const voices = window.speechSynthesis.getVoices?.() || [];
+  if (!voices.length) return null;
+
+  const english = voices.filter((v) => /^en/i.test(v.lang) && !AVOID.test(v.name));
+
+  for (const re of PREFERRED) {
+    const hit =
+      english.find((v) => /^en-US/i.test(v.lang) && re.test(v.name)) ||
+      english.find((v) => re.test(v.name));
+    if (hit) return hit;
+  }
+
   return (
-    voices.find((v) => /^en-US/i.test(v.lang) && v.localService) ||
-    voices.find((v) => /^en-US/i.test(v.lang)) ||
-    voices.find((v) => /^en/i.test(v.lang)) ||
+    english.find((v) => /^en-US/i.test(v.lang) && v.localService) ||
+    english.find((v) => /^en-US/i.test(v.lang)) ||
+    english[0] ||
     null
   );
 }
@@ -79,7 +103,8 @@ function clearResumeTimer() {
 }
 
 /**
- * Speak with default browser voice (normal pitch/rate).
+ * Speak with Antoni-like soft male settings (free browser TTS).
+ * Starts as soon as the reply text is ready.
  * @returns {Promise<void>}
  */
 export function speak(text, { onStart, onEnd } = {}) {
@@ -97,17 +122,37 @@ export function speak(text, { onStart, onEnd } = {}) {
       return;
     }
 
-    stopSpeaking();
+    // Cancel any prior speech without lingering in a paused/broken state
+    clearResumeTimer();
+    currentUtterance = null;
+    try {
+      window.speechSynthesis.cancel();
+    } catch {
+      /* ignore */
+    }
 
     const chunks = chunkText(cleaned);
     let index = 0;
     let started = false;
+    const voice = pickAntoniLikeVoice();
 
     const finish = () => {
       clearResumeTimer();
       currentUtterance = null;
       onEnd?.();
       resolve();
+    };
+
+    const kick = () => {
+      try {
+        if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+        else {
+          window.speechSynthesis.pause();
+          window.speechSynthesis.resume();
+        }
+      } catch {
+        /* ignore */
+      }
     };
 
     const speakNext = () => {
@@ -118,12 +163,10 @@ export function speak(text, { onStart, onEnd } = {}) {
 
       const u = new SpeechSynthesisUtterance(chunks[index]);
       currentUtterance = u;
-      u.lang = 'en-US';
-      u.rate = 1;
-      u.pitch = 1;
+      u.lang = voice?.lang || 'en-US';
+      u.rate = 0.98;
+      u.pitch = 0.94;
       u.volume = 1;
-
-      const voice = pickEnglishVoice();
       if (voice) u.voice = voice;
 
       u.onstart = () => {
@@ -140,27 +183,25 @@ export function speak(text, { onStart, onEnd } = {}) {
 
       try {
         window.speechSynthesis.speak(u);
+        // Mobile Chrome often queues speech but doesn't start — nudge immediately
+        kick();
+        window.setTimeout(kick, 40);
       } catch {
         finish();
       }
     };
 
-    // Chrome Android often pauses mid-speech — nudge it
+    // Keep long replies from stalling mid-way on Android Chrome
     resumeTimer = window.setInterval(() => {
       if (!window.speechSynthesis.speaking) {
         clearResumeTimer();
         return;
       }
-      try {
-        window.speechSynthesis.pause();
-        window.speechSynthesis.resume();
-      } catch {
-        /* ignore */
-      }
-    }, 8000);
+      kick();
+    }, 5000);
 
-    // Brief delay after cancel helps iOS actually start the next utterance
-    window.setTimeout(speakNext, 60);
+    // Start now (no artificial wait after getting the reply)
+    speakNext();
   });
 }
 

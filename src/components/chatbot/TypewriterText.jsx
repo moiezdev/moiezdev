@@ -44,10 +44,10 @@ const TypewriterText = ({
       }
 
       const ch = text[i - 1];
-      let delay = 6 + Math.random() * 5;
-      if (ch === ' ') delay = 3;
-      if (/[.,!?;:]/.test(ch)) delay = 28 + Math.random() * 18;
-      if (ch === '\n') delay = 40;
+      let delay = 4 + Math.random() * 4;
+      if (ch === ' ') delay = 2;
+      if (/[.,!?;:]/.test(ch)) delay = 18 + Math.random() * 12;
+      if (ch === '\n') delay = 24;
 
       timer = window.setTimeout(tick, delay);
     };
