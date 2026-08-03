@@ -5,18 +5,27 @@ import RobotAvatar from './RobotAvatar';
 import TypewriterText from './TypewriterText';
 import { askBot } from '../../utils/askBot';
 import { BOT_HANDLE, BOT_NAME, getProfileExperienceYears } from '../../utils/buildPortfolioContext';
-import { SITE_NAV } from '../../utils/chatNav';
+import { prepareBotReply } from '../../utils/chatNav';
+import {
+  canListen,
+  canSpeak,
+  createSpeechListener,
+  speak,
+  stopSpeaking,
+} from '../../utils/speech';
 
 const SUGGESTIONS = ['Who is Moiz?', 'What are his core strengths?', 'Show standout projects'];
+const VOICE_PREF_KEY = 'botfolio-voice';
 
 const years = getProfileExperienceYears();
 
 const WELCOME = {
   id: 'welcome',
   role: 'bot',
-  text: `Hello — I'm ${BOT_NAME}, Moiz's assistant. Moiz is a product-focused Full Stack Software Engineer (React, Vue, Node.js) with ~${years} years building scalable systems across retail and SaaS. What would you like to know?`,
-  links: [SITE_NAV.about, SITE_NAV.works, SITE_NAV.contact],
-  typed: true, // welcome shows fully (no typewriter on first paint)
+  ...prepareBotReply(
+    `Hello — I'm ${BOT_NAME}, Moiz's assistant. Moiz is a product-focused Full Stack Software Engineer (React, Vue, Node.js) with ~${years} years building scalable systems across retail and SaaS. Explore [[nav:/about|About Moiz]], [[nav:/works|All works]], or [[nav:/contact|Contact page]] — or just ask.`,
+  ),
+  typed: true,
 };
 
 const ChatBot = () => {
@@ -26,6 +35,20 @@ const ChatBot = () => {
   const [messages, setMessages] = useState([WELCOME]);
   const [loading, setLoading] = useState(false);
   const [typingId, setTypingId] = useState(null);
+  const [speaking, setSpeaking] = useState(false);
+  const [listening, setListening] = useState(false);
+  const [voiceOn, setVoiceOn] = useState(() => {
+    try {
+      const saved = localStorage.getItem(VOICE_PREF_KEY);
+      return saved == null ? true : saved === '1';
+    } catch {
+      return true;
+    }
+  });
+  const [speechReady] = useState(() => ({
+    speak: canSpeak(),
+    listen: canListen(),
+  }));
 
   const rootRef = useRef(null);
   const panelRef = useRef(null);
@@ -34,8 +57,30 @@ const ChatBot = () => {
   const fabRef = useRef(null);
   const inputRef = useRef(null);
   const msgIdRef = useRef(1);
+  const listenerRef = useRef(null);
+  const sendRef = useRef(() => {});
+  const voiceOnRef = useRef(voiceOn);
+  voiceOnRef.current = voiceOn;
 
-  const avatarMood = loading ? 'thinking' : typingId != null ? 'speaking' : 'idle';
+  const avatarMood = loading
+    ? 'thinking'
+    : listening
+      ? 'thinking'
+      : typingId != null || speaking
+        ? 'speaking'
+        : 'idle';
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(VOICE_PREF_KEY, voiceOn ? '1' : '0');
+    } catch {
+      /* ignore */
+    }
+    if (!voiceOn) {
+      stopSpeaking();
+      setSpeaking(false);
+    }
+  }, [voiceOn]);
 
   useEffect(() => {
     if (!fabRef.current) return;
@@ -73,7 +118,36 @@ const ChatBot = () => {
     scrollToBottom();
   }, [messages, loading, open, typingId]);
 
+  const silenceTimerRef = useRef(null);
+  const transcriptRef = useRef('');
+
+  const clearSilenceTimer = () => {
+    if (silenceTimerRef.current) {
+      window.clearTimeout(silenceTimerRef.current);
+      silenceTimerRef.current = null;
+    }
+  };
+
+  const stopListen = ({ send = false } = {}) => {
+    clearSilenceTimer();
+    const text = transcriptRef.current.trim();
+    listenerRef.current?.stop();
+    listenerRef.current = null;
+    setListening(false);
+    if (send && text) {
+      window.setTimeout(() => sendRef.current(text), 60);
+    }
+  };
+
+  const haltAudio = () => {
+    stopSpeaking();
+    setSpeaking(false);
+    transcriptRef.current = '';
+    stopListen({ send: false });
+  };
+
   const closeChat = () => {
+    haltAudio();
     const panel = panelRef.current;
     if (!panel) {
       setOpen(false);
@@ -133,23 +207,38 @@ const ChatBot = () => {
     return () => document.removeEventListener('pointerdown', onPointerDown, true);
   }, [open]);
 
+  useEffect(() => () => haltAudio(), []);
+
   const goTo = (to) => {
     navigate(to);
   };
 
   const finishTyping = (id) => {
     setTypingId((current) => (current === id ? null : current));
-    setMessages((prev) =>
-      prev.map((m) => (m.id === id ? { ...m, typed: true } : m)),
-    );
+    setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, typed: true } : m)));
+  };
+
+  const speakReply = (text) => {
+    if (!voiceOnRef.current || !speechReady.speak) return;
+    speak(text, {
+      onStart: () => setSpeaking(true),
+      onEnd: () => setSpeaking(false),
+    });
   };
 
   const send = async (raw) => {
     const question = (raw ?? input).trim();
     if (!question || loading || typingId != null) return;
 
+    stopListen({ send: false });
+    stopSpeaking();
+    setSpeaking(false);
+
     setInput('');
-    const nextMessages = [...messages, { role: 'user', text: question, id: `u-${msgIdRef.current++}` }];
+    const nextMessages = [
+      ...messages,
+      { role: 'user', text: question, id: `u-${msgIdRef.current++}` },
+    ];
     setMessages(nextMessages);
     setLoading(true);
 
@@ -169,29 +258,81 @@ const ChatBot = () => {
           id,
           role: 'bot',
           text: reply.text,
-          links: reply.links || [],
+          spans: reply.spans || [],
           typed: false,
         },
       ]);
       setTypingId(id);
+      speakReply(reply.text);
     } catch (err) {
       if (err?.name !== 'AbortError') {
         const id = `b-${msgIdRef.current++}`;
+        const fallback = prepareBotReply(
+          "Sorry — that didn't go through. Please try again, or open [[nav:/contact|Contact page]] to reach Moiz directly.",
+        );
         setMessages((prev) => [
           ...prev,
           {
             id,
             role: 'bot',
-            text: "Sorry — that didn't go through. Please try again, or use the Contact page to reach Moiz directly.",
-            links: [SITE_NAV.contact],
+            text: fallback.text,
+            spans: fallback.spans,
             typed: false,
           },
         ]);
         setTypingId(id);
+        speakReply(fallback.text);
       }
     } finally {
       setLoading(false);
     }
+  };
+
+  sendRef.current = send;
+
+  const toggleListen = () => {
+    if (!speechReady.listen || loading || typingId != null) return;
+
+    // Tap again to finish sentence and send
+    if (listening) {
+      stopListen({ send: true });
+      return;
+    }
+
+    stopSpeaking();
+    setSpeaking(false);
+    transcriptRef.current = '';
+    clearSilenceTimer();
+
+    const SILENCE_MS = 2800; // wait this long after last speech before auto-send
+
+    const listener = createSpeechListener({
+      onStart: () => setListening(true),
+      onEnd: () => {
+        // Only clear UI if we intentionally stopped (listener null already)
+        if (!listenerRef.current) setListening(false);
+      },
+      onError: () => {
+        clearSilenceTimer();
+        listenerRef.current = null;
+        setListening(false);
+      },
+      onResult: ({ transcript }) => {
+        if (!transcript) return;
+        transcriptRef.current = transcript;
+        setInput(transcript);
+
+        // Reset silence window on every chunk — keeps mic open while you talk
+        clearSilenceTimer();
+        silenceTimerRef.current = window.setTimeout(() => {
+          stopListen({ send: true });
+        }, SILENCE_MS);
+      },
+    });
+
+    if (!listener) return;
+    listenerRef.current = listener;
+    listener.start();
   };
 
   const onSubmit = (e) => {
@@ -222,13 +363,30 @@ const ChatBot = () => {
                 <span className="text-primary">#</span>
                 {BOT_HANDLE}
               </p>
-              {avatarMood === 'thinking' && (
+              {listening && <p className="text-[10px] text-primary mt-0.5">listening…</p>}
+              {!listening && avatarMood === 'thinking' && (
                 <p className="text-[10px] text-gray-a mt-0.5">thinking…</p>
               )}
-              {avatarMood === 'speaking' && (
+              {!listening && avatarMood === 'speaking' && (
                 <p className="text-[10px] text-primary mt-0.5">speaking…</p>
               )}
             </div>
+            {speechReady.speak && (
+              <button
+                type="button"
+                onClick={() => setVoiceOn((v) => !v)}
+                className={`border px-2 py-1 text-xs transition-colors cursor-scale-0 mr-1 ${
+                  voiceOn
+                    ? 'border-primary text-primary'
+                    : 'border-gray-a text-gray-a hover:border-primary hover:text-primary'
+                }`}
+                aria-pressed={voiceOn}
+                aria-label={voiceOn ? 'Mute voice' : 'Unmute voice'}
+                title={voiceOn ? 'Voice on' : 'Voice muted'}
+              >
+                {voiceOn ? 'voice' : 'mute'}
+              </button>
+            )}
             <button
               type="button"
               onClick={closeChat}
@@ -263,27 +421,14 @@ const ChatBot = () => {
                     {msg.role === 'bot' ? (
                       <TypewriterText
                         text={msg.text}
+                        spans={msg.spans || []}
+                        onNavigate={goTo}
                         active={isTyping}
                         onDone={() => finishTyping(msg.id)}
                         onProgress={scrollToBottom}
                       />
                     ) : (
                       <p className="whitespace-pre-wrap">{msg.text}</p>
-                    )}
-
-                    {msg.role === 'bot' && msg.typed && msg.links?.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 mt-2.5 pt-2 border-t border-gray-a">
-                        {msg.links.map((link) => (
-                          <button
-                            key={link.to}
-                            type="button"
-                            onClick={() => goTo(link.to)}
-                            className="text-[10px] leading-none border border-gray-a text-gray-a hover:border-primary hover:text-primary px-1.5 py-1 transition-colors cursor-scale-0"
-                          >
-                            {link.label} ~~{'>'}
-                          </button>
-                        ))}
-                      </div>
                     )}
                   </div>
                 </div>
@@ -324,12 +469,29 @@ const ChatBot = () => {
 
           <form onSubmit={onSubmit} className="border-t border-gray-a">
             <div className="flex">
+              {speechReady.listen && (
+                <button
+                  type="button"
+                  onClick={toggleListen}
+                  disabled={busy}
+                  className={`border-r px-3 py-3 text-xs transition-colors cursor-scale-0 shrink-0 disabled:opacity-40 ${
+                    listening
+                      ? 'border-primary text-primary bg-primary/10'
+                      : 'border-gray-a text-gray-a hover:border-primary hover:text-primary'
+                  }`}
+                  aria-pressed={listening}
+                  aria-label={listening ? 'Done speaking — send' : 'Speak a question'}
+                  title={listening ? 'Tap when finished' : 'Speak'}
+                >
+                  {listening ? 'done' : 'mic'}
+                </button>
+              )}
               <input
                 ref={inputRef}
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask about Moiz…"
+                placeholder={listening ? 'Keep talking — tap done when finished…' : 'Ask about Moiz…'}
                 disabled={busy}
                 className="flex-1 min-w-0 bg-transparent px-3 py-3 text-base text-white placeholder:text-gray-a/50 focus:outline-none disabled:opacity-50 cursor-scale-0"
               />

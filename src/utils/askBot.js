@@ -1,6 +1,6 @@
 import { chatbot, contacts, projects, skills } from '../data';
 import { BOT_NAME, PORTFOLIO_CONTEXT, SYSTEM_PROMPT, getProfileExperienceYears } from './buildPortfolioContext';
-import { extractNavMarkers, mergeNavLinks, resolveChatNav, SITE_NAV } from './chatNav';
+import { prepareBotReply } from './chatNav';
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 // Auto-picks among currently available free models (specific :free slugs rotate often)
@@ -19,6 +19,7 @@ const identityLine =
 const years = getProfileExperienceYears();
 
 const featuredProject = projects.find((p) => p.id === 'twlm-pos') || projects[0];
+const featuredNav = `[[nav:/works/${featuredProject.id}|${featuredProject.title}]]`;
 
 const contactSummary = contacts
   .map((c) => `${c.platform}: ${c.handle}`)
@@ -38,15 +39,13 @@ function pickFresh(options) {
   return chosen;
 }
 
-function pack(text, links = [], question = '') {
-  return {
-    text,
-    links: mergeNavLinks(question, links, resolveChatNav(question, text)),
-  };
+/** Prepare display text + inline nav/contact spans (no bottom chip row). */
+function pack(text) {
+  return prepareBotReply(text);
 }
 
 /**
- * Offline / no-key replies — assistant tone + navigation chips.
+ * Offline / no-key replies — inline nav links inside the message.
  */
 function localFallback(question) {
   const q = question.toLowerCase().trim();
@@ -54,12 +53,10 @@ function localFallback(question) {
   if (/^(hi|hey|hello|yo|sup|good (morning|afternoon|evening))\b/.test(q)) {
     return pack(
       pickFresh([
-        `Hello — I'm ${BOT_NAME}, Moiz's assistant. Moiz is a ${identityLine} with ~${years} years of experience. Core strengths: ${coreSkills}. What would you like to know — background, skills, projects, or how to reach him?`,
-        `Welcome. Moiz is a product-focused Full Stack Engineer — React, Vue, Node.js across the stack, plus product ownership. Ask about experience, projects, or contact.`,
-        `Hi — thanks for stopping by. Moiz is a Senior Full Stack Engineer who owns features end-to-end (frontend, APIs, databases, and product direction). How can I help?`,
+        `Hello — I'm ${BOT_NAME}, Moiz's assistant. Moiz is a ${identityLine} with ~${years} years of experience. Core strengths: ${coreSkills}. Browse [[nav:/about|About Moiz]], [[nav:/works|All works]], or [[nav:/contact|Contact page]] anytime.`,
+        `Welcome. Moiz is a product-focused Full Stack Engineer — React, Vue, Node.js across the stack, plus product ownership. See [[nav:/works|All works]] or [[nav:/about|About Moiz]].`,
+        `Hi — thanks for stopping by. Moiz is a Senior Full Stack Engineer who owns features end-to-end. Ask anything, or open [[nav:/contact|Contact page]].`,
       ]),
-      [SITE_NAV.works, SITE_NAV.about, SITE_NAV.contact],
-      question,
     );
   }
 
@@ -70,8 +67,6 @@ function localFallback(question) {
         'Glad that helped. I can also walk through his skills, projects, or how to get in touch.',
         "Of course. Let me know if you'd like more detail on any part of his profile.",
       ]),
-      [],
-      question,
     );
   }
 
@@ -82,12 +77,10 @@ function localFallback(question) {
   ) {
     return pack(
       pickFresh([
-        `Moiz's core strengths are ${coreSkills}. He's a product-focused Full Stack Engineer — deciding what to build, owning delivery across frontend/backend, and guiding UI/UX so complex requirements stay simple.`,
-        `Lead with this: product-focused fullstack ownership. Core strengths: ${coreSkills}. Stack centers on React, Vue, and Node.js with solid API and database work.`,
-        `Moiz isn't frontend-only — he's a product-focused Full Stack Engineer. Strengths: ${coreSkills}, backed by architectures, APIs, and databases in production.`,
+        `Moiz's core strengths are ${coreSkills}. He's a product-focused Full Stack Engineer — deciding what to build, owning delivery across frontend/backend, and guiding UI/UX so complex requirements stay simple. More on [[nav:/about|About Moiz]].`,
+        `Lead with this: product-focused fullstack ownership. Core strengths: ${coreSkills}. Stack centers on React, Vue, and Node.js — see [[nav:/about|About Moiz]].`,
+        `Moiz isn't frontend-only — he's a product-focused Full Stack Engineer. Strengths: ${coreSkills}. Details on [[nav:/about|About Moiz]].`,
       ]),
-      [{ label: 'View skills', to: '/about' }, SITE_NAV.about],
-      question,
     );
   }
 
@@ -97,16 +90,13 @@ function localFallback(question) {
     const dbs = skills.find((c) => c.category === 'Databases')?.items?.join(', ');
     return pack(
       pickFresh([
-        `Moiz is a product-focused Full Stack Engineer (~${years} years). Core: ${coreSkills}. Frontend: ${frontend}. Backend: ${backend}. Databases: ${dbs}.`,
-        `Think fullstack + product ownership — not frontend-only. Primary: ${coreSkills}. Delivery stack: React/Vue on the client, Node/Nest/Fastify APIs, and SQL databases.`,
-        `Skills span product ownership and the full stack: ${frontend}; ${backend}; ${dbs}. Full categories are on the About/Skills page.`,
+        `Moiz is a product-focused Full Stack Engineer (~${years} years). Core: ${coreSkills}. Frontend: ${frontend}. Backend: ${backend}. Databases: ${dbs}. Full list on [[nav:/about|About Moiz]].`,
+        `Think fullstack + product ownership — not frontend-only. Primary: ${coreSkills}. Delivery stack: React/Vue, Node APIs, SQL — see [[nav:/about|About Moiz]] or [[nav:/works|All works]].`,
+        `Skills span product ownership and the full stack: ${frontend}; ${backend}; ${dbs}. Browse [[nav:/about|About Moiz]].`,
       ]),
-      [{ label: 'View skills', to: '/about' }, SITE_NAV.works],
-      question,
     );
   }
 
-  // Match a specific project from data by id / title keywords
   for (const project of projects) {
     const keys = [
       project.id,
@@ -117,22 +107,12 @@ function localFallback(question) {
       const isLow = LOW_PRIORITY_IDS.has(project.id);
       if (isLow) {
         return pack(
-          `${project.title} is a smaller WIP piece — not what I'd highlight first. For a clearer view of Moiz's work, start with ${featuredProject.title} or his shipped products.`,
-          [
-            SITE_NAV.works,
-            { label: `Open ${featuredProject.title}`, to: `/works/${featuredProject.id}` },
-          ],
-          question,
+          `${project.title} is a smaller WIP piece — not what I'd highlight first. Start with ${featuredNav} or [[nav:/works|All works]].`,
         );
       }
-      const tech = (project.technologies || []).slice(0, 5).join(', ');
+      const blurb = (project.subtitle || '').split(/[.!?]/)[0]?.trim();
       return pack(
-        `${project.title} — ${project.subtitle}. ${tech ? `Built with ${tech}. ` : ''}You can open the project page below for the full story.`,
-        [
-          { label: `Open ${project.title}`, to: `/works/${project.id}` },
-          SITE_NAV.works,
-        ],
-        question,
+        `[[nav:/works/${project.id}|${project.title}]]${blurb ? ` — ${blurb}.` : '.'} Open it for the full story.`,
       );
     }
   }
@@ -140,60 +120,49 @@ function localFallback(question) {
   if (/project|work|portfolio|built|flight|booking/.test(q)) {
     const highlights = projects
       .filter((p) => !LOW_PRIORITY_IDS.has(p.id))
-      .slice(0, 4)
-      .map((p) => p.title)
+      .slice(0, 3)
+      .map((p) => `[[nav:/works/${p.id}|${p.title}]]`)
       .join(', ');
     return pack(
       pickFresh([
-        `For an overview of his work, lead with ${highlights}. Those best show ownership, UX, and delivery together.`,
-        `Moiz's strongest showcase starts with ${featuredProject.title}, then other shipped product and booking work. Browse Works below or ask about one by name.`,
-        `His portfolio centers on shipped product work such as ${highlights}. You can open the full list below.`,
+        `Top picks: ${highlights}.`,
+        `Start with ${featuredNav} — then see [[nav:/works|All works]].`,
+        `His strongest shipped work includes ${highlights}.`,
       ]),
-      [
-        SITE_NAV.works,
-        { label: `Open ${featuredProject.title}`, to: `/works/${featuredProject.id}` },
-      ],
-      question,
     );
   }
 
   if (/contact|email|hire|reach|linkedin|github|phone|whatsapp|available/.test(q)) {
     return pack(
       pickFresh([
-        `To connect with Moiz: ${contactSummary}. The Contact page is also ready if you'd prefer a message form.`,
-        `Best ways to reach him: ${contactSummary}.`,
-        `Use the Contact page or reach him via ${contactSummary}.`,
+        `To connect with Moiz: ${contactSummary}. Or use the [[nav:/contact|Contact page]] message form.`,
+        `Best ways to reach him: ${contactSummary}. Also on [[nav:/contact|Contact page]].`,
+        `Reach him via ${contactSummary}, or open [[nav:/contact|Contact page]].`,
       ]),
-      [SITE_NAV.contact],
-      question,
     );
   }
 
   if (/who|about|moiz|moiez|experience|background|riyadh|introduc|senior|engineer|accoina|twlm solutions/.test(q)) {
     return pack(
       pickFresh([
-        `Moiz (Moiez ur Rehman) is a product-focused Full Stack Software Engineer in Riyadh with ~${years} years across retail and SaaS. He owns features end-to-end — React/Vue, Node APIs, and databases — with strong product and UI/UX judgment.`,
-        `In short: ${identityLine}. Currently at TWLM Solutions on POS, loyalty, and wallets; previously Accoina Agua, SCM Borba, and travel platforms. Core strengths: ${coreSkills}.`,
-        `Moiz ships fullstack product work with measurable impact — e.g. ~70% fewer support requests and ~64% faster APIs on TWLM POS. Ask about skills, projects, or contact anytime.`,
+        `Moiz (Moiez ur Rehman) is a product-focused Full Stack Software Engineer in Riyadh with ~${years} years across retail and SaaS. He owns features end-to-end — React/Vue, Node APIs, and databases. More on [[nav:/about|About Moiz]] or ${featuredNav}.`,
+        `In short: ${identityLine}. Currently at TWLM Solutions on POS, loyalty, and wallets. See [[nav:/about|About Moiz]] and [[nav:/works|All works]].`,
+        `Moiz ships fullstack product work with measurable impact — e.g. ~70% fewer support requests on ${featuredNav}. Ask about skills, projects, or [[nav:/contact|Contact page]] anytime.`,
       ]),
-      [SITE_NAV.about, SITE_NAV.works],
-      question,
     );
   }
 
   return pack(
     pickFresh([
-      `I don't have that detail in Moiz's profile. I can cover his skills, a project like ${featuredProject.title}, or how to contact him — shortcuts below.`,
-      "That isn't covered in what I have. Try asking about his background, core skills, standout projects, or contact options.",
-      "I'm not able to speak to that specifically. Would you like his experience, skills, projects, or the best way to reach him?",
+      `I don't have that detail in Moiz's profile. Try [[nav:/about|About Moiz]], ${featuredNav}, or [[nav:/contact|Contact page]].`,
+      "That isn't covered in what I have. Ask about his background, core skills, standout projects, or contact options.",
+      `I'm not able to speak to that specifically. Browse [[nav:/works|All works]] or [[nav:/about|About Moiz]].`,
     ]),
-    [SITE_NAV.works, SITE_NAV.about, SITE_NAV.contact],
-    question,
   );
 }
 
 /**
- * @returns {Promise<{ text: string, links: { label: string, to: string }[] }>}
+ * @returns {Promise<{ text: string, spans: { start: number, end: number, to: string, label: string }[] }>}
  */
 export async function askBot(question, { signal, history = [] } = {}) {
   const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
@@ -252,11 +221,9 @@ export async function askBot(question, { signal, history = [] } = {}) {
     const raw = data?.choices?.[0]?.message?.content?.trim();
     if (!raw) return localFallback(question);
 
-    const { cleanText, links: markerLinks } = extractNavMarkers(raw);
-    return {
-      text: cleanText,
-      links: mergeNavLinks(question, markerLinks, resolveChatNav(question, cleanText)),
-    };
+    const prepared = prepareBotReply(raw);
+    if (!prepared.text) return localFallback(question);
+    return prepared;
   } catch (err) {
     if (err?.name === 'AbortError') throw err;
     console.warn('askBot failed:', err);

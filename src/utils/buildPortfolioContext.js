@@ -61,7 +61,15 @@ function formatProjects() {
 
 function formatContacts() {
   return contacts
-    .map((c) => `- ${c.platform}: ${c.handle}${c.url ? ` (${c.url})` : ''}`)
+    .map((c) => {
+      const url = c.url || '';
+      // Don't feed mailto:/tel: into the model — it echoes them as junk in replies
+      if (/^mailto:/i.test(url) || /^tel:/i.test(url)) {
+        return `- ${c.platform}: ${c.handle}`;
+      }
+      const clean = url.replace(/^https?:\/\//i, '').replace(/\/$/, '');
+      return `- ${c.platform}: ${c.handle}${clean ? ` — ${clean}` : ''}`;
+    })
     .join('\n');
 }
 

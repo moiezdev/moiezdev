@@ -1,10 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
+import { linkifyToNodes } from './LinkifiedText';
 
 /**
- * Reveals `text` character-by-character. Calls onDone when finished.
- * Slightly faster on spaces / punctuation for a natural “speaking” pace.
+ * Reveals `text` character-by-character. Nav / contact links become clickable
+ * once their full label has been typed.
  */
-const TypewriterText = ({ text, active = true, onDone, onProgress, className = '' }) => {
+const TypewriterText = ({
+  text,
+  spans = [],
+  onNavigate,
+  active = true,
+  onDone,
+  onProgress,
+  className = '',
+}) => {
   const [shown, setShown] = useState(active ? '' : text);
   const onDoneRef = useRef(onDone);
   const onProgressRef = useRef(onProgress);
@@ -24,7 +33,6 @@ const TypewriterText = ({ text, active = true, onDone, onProgress, className = '
 
     const tick = () => {
       if (cancelled) return;
-      // Burst 2–3 chars per tick for snappier pacing
       const step = text[i] === ' ' ? 1 : 2 + (Math.random() > 0.7 ? 1 : 0);
       i = Math.min(i + step, text.length);
       setShown(text.slice(0, i));
@@ -54,7 +62,7 @@ const TypewriterText = ({ text, active = true, onDone, onProgress, className = '
 
   return (
     <p className={`whitespace-pre-wrap ${className}`}>
-      {shown}
+      {linkifyToNodes(shown, { spans, onNavigate })}
       {active && shown.length < text.length && (
         <span
           className="inline-block w-[0.55ch] ml-px bg-primary align-baseline animate-pulse"
