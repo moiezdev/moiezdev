@@ -1,0 +1,35 @@
+{
+  "id": "aa-tourism",
+  "title": "AATourism",
+  "subtitle": "Flight Booking Platform",
+  "description": [
+    "AA Tourism – Flight Booking Platform",
+    [
+      "A site to search and book flights easily using Sabre and Amadeus APIs.",
+      "Built the frontend with Nuxt 2, Vuex, Buefy, and Bootstrap, with small animations here and there to make it feel alive.",
+      "Forms, flight lists, and booking steps are interactive but simple, so users don’t get lost.",
+      "The site works smoothly on both mobile and desktop, even with real-time flight data from the APIs.",
+      "Kept the visuals clean and consistent with the brand colors and style."
+    ]
+  ],
+  "technologies": [
+    "NuxtJs",
+    "Vuex",
+    "Buefy",
+    "Bootstrap",
+    "JavaScript",
+    "SCSS",
+    "Sabre",
+    "Amadeus"
+  ],
+  "imageUrl": "/projects-media/aa-tourism/main.webp",
+  "projectUrl": "http://aatourism.ca/",
+  "githubUrl": "https://github.com/moiezdev/AAtourism",
+  "media": [
+    "main.webp",
+    "img1.webp",
+    "img2.webp",
+    "img3.webp",
+    "img4.webp"
+  ]
+}

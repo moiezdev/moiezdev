@@ -1,0 +1,30 @@
+{
+  "id": "mian-travels",
+  "title": "Mian's Travels",
+  "subtitle": "Flight Booking Platform",
+  "description": [
+    "Mian's Travels – Flight Booking Platform",
+    [
+      "A flight booking site using Sabre API, made to feel simple and intuitive for users.",
+      "Frontend made with Nuxt 2, Vue, Buefy, Bootstrap, including small animations for better interactions.",
+      "Booking forms, flight searches, and listings are straightforward and easy to navigate.",
+      "Works well on mobile and desktop, fetching data from Sabre API without any hiccups.",
+      "Focused on keeping the design clean, readable, and consistent with the brand style."
+    ]
+  ],
+  "technologies": [
+    "NuxtJs",
+    "Vue",
+    "Buefy",
+    "Bootstrap",
+    "JavaScript",
+    "SCSS",
+    "Sabre"
+  ],
+  "imageUrl": "/projects-media/mian-travels/main.webp",
+  "githubUrl": "https://github.com/moiezdev/MiansTravels",
+  "media": [
+    "main.webp",
+    "img1.webp"
+  ]
+}

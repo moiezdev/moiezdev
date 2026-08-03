@@ -10,6 +10,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Loading from './components/Loading';
 import Cursor from './components/ui/Cursor';
+import ChatBot from './components/chatbot/ChatBot';
 import ScrollToTop from './components/functions/ScrollToTop';
 import ParallaxBackground from './components/ui/ParallaxBackground';
 
@@ -45,6 +46,7 @@ function App() {
         </div>
         <Footer />
       </div>
+      <ChatBot />
       <Cursor size={25} />
     </Router>
   );

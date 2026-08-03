@@ -1,15 +1,14 @@
 import { useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Card from '../ui/Card';
 import SectionTitle from '../ui/SectionTitle';
 import { Link } from 'react-router-dom';
+import { projects } from '../../data';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const Projects = () => {
-  const projects = useSelector((state) => state.projects.projects);
   const cardsRef = useRef([]);
 
   useEffect(() => {

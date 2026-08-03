@@ -1,0 +1,30 @@
+{
+  "id": "lms",
+  "title": "LMS",
+  "subtitle": "Learning Management System FullStack (Under Development)",
+  "description": [
+    "LMS – Learning Management System",
+    [
+      "This is my own project to make learning easier online, with features like quizzes, dashboards, and progress tracking.",
+      "The interface is simple and works well on both desktop and mobile, so learners can use it anywhere.",
+      "Added interactive parts so users can see their progress and navigate courses without confusion.",
+      "Tried to keep everything fast and clean so it doesn’t feel slow even with lots of content.",
+      "Connected it with backend stuff like Node and MongoDB to save and manage all the data smoothly."
+    ]
+  ],
+  "technologies": [
+    "HTML5",
+    "SCSS",
+    "JavaScript",
+    "React",
+    "Redux Toolkit",
+    "Node",
+    "Express",
+    "MongoDB"
+  ],
+  "imageUrl": "/projects-media/lms/main.webp",
+  "githubUrl": "https://github.com/moiezdev/LMS",
+  "media": [
+    "main.webp"
+  ]
+}

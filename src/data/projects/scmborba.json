@@ -1,0 +1,30 @@
+{
+  "id": "scmborba",
+  "title": "Scmborba",
+  "subtitle": "Social Services Website",
+  "description": [
+    "Santa Casa da Misericórdia de Borba – Institutional Website",
+    [
+      "Contributed as a Frontend Developer, focusing on UI/UX improvements and Vue.js development.",
+      "Translated complex design requirements into a clean, responsive, and accessible user interface.",
+      "Implemented dynamic components in Vue.js to enhance site navigation and user engagement.",
+      "Collaborated with the team to modernize the visual identity of a non-profit social services institution, ensuring the platform clearly communicates its mission, services, and community initiatives.",
+      "Optimized performance and usability for a wide audience, including elderly users and families seeking social support."
+    ]
+  ],
+  "technologies": [
+    "React",
+    "TailwindCSS",
+    "JavaScript",
+    "Redux Toolkit"
+  ],
+  "imageUrl": "/projects-media/scmborba/main.webp",
+  "projectUrl": "http://scmborba.pt",
+  "media": [
+    "main.webp",
+    "img1.webp",
+    "img2.webp",
+    "img3.webp",
+    "img4.webp"
+  ]
+}

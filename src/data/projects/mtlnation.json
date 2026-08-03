@@ -1,0 +1,26 @@
+{
+  "id": "mtlnation",
+  "title": "MTLnation",
+  "subtitle": "Vue.js Based Website",
+  "description": [
+    "MTLnation – Vue.js Web Platform",
+    [
+      "Built the site using Vue.js with a focus on keeping everything fast and responsive.",
+      "Structured the pages as reusable Vue components, so it’s easier to maintain and extend later.",
+      "Added dynamic sections like news, events, and media content with smooth transitions and animations.",
+      "Integrated forms and interactive parts so users can connect, subscribe, or explore content without issues.",
+      "Kept the design clean with consistent colors, fonts, and spacing to match the brand’s modern look."
+    ]
+  ],
+  "technologies": [
+    "Vue",
+    "JavaScript",
+    "SCSS",
+    "Bootstrap"
+  ],
+  "imageUrl": "/projects-media/mtlnation/main.webp",
+  "projectUrl": "https://mtlnation.com",
+  "media": [
+    "main.webp"
+  ]
+}

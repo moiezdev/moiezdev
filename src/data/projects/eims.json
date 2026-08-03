@@ -1,0 +1,23 @@
+{
+  "id": "eims",
+  "title": "EIMS (Backend)",
+  "subtitle": "Learning Management System FullStack (Under Development)",
+  "description": [
+    "EIMS – Educational Institutes Management System",
+    [
+      "This is my own project to make learning easier online, with features like dashboards, progress tracking, and track records of learners.",
+      "Working on microsoft entity framework to make the backend more robust and scalable."
+    ]
+  ],
+  "technologies": [
+    "ASP.NET",
+    "C# (C Sharp)",
+    "Entity Framework",
+    "PostGreSQL"
+  ],
+  "imageUrl": "/projects-media/eims/main.webp",
+  "githubUrl": "https://github.com/moiezdev/EIMS.WebAPI",
+  "media": [
+    "main.webp"
+  ]
+}

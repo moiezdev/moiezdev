@@ -1,0 +1,27 @@
+{
+  "id": "my-portfolio",
+  "title": "Portfolio Website",
+  "subtitle": "My Personal Portfolio",
+  "description": [
+    "MoezDev – Personal Portfolio Website",
+    [
+      "Built my personal portfolio from scratch to showcase my projects, skills, and experience as a frontend developer.",
+      "Focused on creating a clean, responsive, and intuitive design that works smoothly on both desktop and mobile devices.",
+      "Added interactive elements like project previews and smooth animations to make the site feel dynamic and engaging.",
+      "Optimized the website for fast loading and a seamless user experience, keeping performance and accessibility in mind.",
+      "Worked closely on the overall look and feel, making sure the design reflects my personal style and professional brand."
+    ]
+  ],
+  "technologies": [
+    "React",
+    "TailwindCSS",
+    "JavaScript",
+    "Redux Toolkit"
+  ],
+  "imageUrl": "/projects-media/portfolio/main.webp",
+  "projectUrl": "http://moiezdev.com",
+  "githubUrl": "https://github.com/moiezdev/my-portfolio-react",
+  "media": [
+    "main.webp"
+  ]
+}

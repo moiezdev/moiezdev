@@ -1,7 +1,6 @@
-import { useSelector } from 'react-redux';
+import { contacts } from '../../data';
 
 const SideLinks = () => {
-  const contacts = useSelector((state) => state.contacts.contacts);
   const github = contacts.find((contact) => contact.platform === 'GitHub');
   const linkedin = contacts.find((contact) => contact.platform === 'LinkedIn');
 

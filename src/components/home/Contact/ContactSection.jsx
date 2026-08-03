@@ -1,11 +1,11 @@
 import Button from '../../ui/Button';
 import SectionTitle from '../../ui/SectionTitle';
 import { ThemeProvider, FloatingLabel, createTheme } from 'flowbite-react';
-import { useSelector } from 'react-redux';
 import { useRef, useState } from 'react';
 import emailjs from '@emailjs/browser';
 import Loading from '../../Loading';
 import Floating from '../../ui/Floating';
+import { contacts } from '../../../data';
 
 const Error = ({ message, setError }) => (
   <div
@@ -104,14 +104,14 @@ const ContactSection = () => {
 
     return `${hour12.toString().padStart(2, '0')}:${minutes}${ampm} || ${day}-${month}-${year}`;
   };
-  const contacts = useSelector((state) => state.contacts.contacts);
   return (
     <>
       <div className="grid gap-4 md:grid-cols-2">
         <div className="flex flex-col justify-between order-2 md:order-1">
           <p className="my-6 cursor-pointer cursor-white cursor-scale-1.2">
-            I’m interested in freelance opportunities. However, if you have other request or
-            question, don’t hesitate to contact me.
+            Currently available for hire as a product-focused full stack software engineer. I enjoy
+            building reliable digital products — from polished interfaces to solid backend systems.
+            Whether you have a role, a project, or a question, I’d be glad to hear from you.
           </p>
           <div>
             <Floating>

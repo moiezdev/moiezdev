@@ -15,15 +15,19 @@ const Hero = () => {
           <h1 className="text-xlarge font-semibold cursor-pointer cursor-white cursor-scale-2">
             Moiz Dev is a <br className="block lg:hidden" />{' '}
             <span className="text-primary">{'<Full Stack/>'}</span> <br />
-            Developer
+            Software Engineer
           </h1>
           <p className="text-lg md:text-2xl max-w-2xl cursor-pointer cursor-white cursor-scale-1.5">
-            Specialities: React, Vue, Tailwind CSS, Node.js, Express and more. Let's build together!
+            Product-focused Full Stack Engineer — React, Vue, and Node.js. Owning features
+            end-to-end across product, UI/UX, APIs, and databases. Let's build together!
           </p>
-          <div>
+          <div className="flex flex-wrap items-center gap-3">
             <Link to="/contact">
               <Button primary={true}>{'Contact me!!'}</Button>
             </Link>
+            <a href="/Moieez%20ur%20Rehman.pdf" download="Moieez ur Rehman.pdf">
+              <Button>Download resume</Button>
+            </a>
           </div>
         </div>
         <div className="md:col-span-4 flex flex-col align-middle relative">
@@ -59,7 +63,7 @@ const Hero = () => {
           <div className="absolute top-full left-1/2 -translate-x-1/2 border border-gray-a inline-flex items-center p-1 mx-auto cursor-pointer cursor-white w-max">
             <span className="bg-primary h-[16px] aspect-square inline-block mb-[-2px] mr-1"></span>
             <p className="flex gap-1">
-              Currently working on <span className="text-white">LMS project</span>
+              Currently focused on <span className="text-white">product-focused fullstack</span>
             </p>
           </div>
         </div>
@@ -72,7 +76,7 @@ const Hero = () => {
             alt=""
           />
           <Magnetic strength={0.02}>
-            <p>Frontend is where dreams become screens.</p>
+            <p>Great products feel simple — the complexity stays under the hood.</p>
           </Magnetic>
           <img
             className="bg-gray-b w-[41px] absolute bottom-[-15px] right-[10px]"

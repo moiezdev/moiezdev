@@ -1,0 +1,28 @@
+{
+  "id": "ain-saas",
+  "title": "Ain Saas",
+  "subtitle": "Ecommerce Website",
+  "description": [
+    "Ain Saiss – Water Utility / Institutional Website",
+    [
+      "Made a simple and modern frontend to show the services and info clearly.",
+      "Works on desktops and phones, and everything adjusts nicely depending on screen size.",
+      "Added small interactive bits like menus and cards to make browsing a little more fun.",
+      "Tried to keep it fast and easy to use for everyone, including people who use assistive tech.",
+      "Worked with the team to keep colors, fonts, and visuals consistent with the brand."
+    ]
+  ],
+  "technologies": [
+    "HTML5",
+    "SCSS",
+    "JavaScript"
+  ],
+  "imageUrl": "/projects-media/ain-saas/main.webp",
+  "projectUrl": "https://ain-saiss.ma",
+  "media": [
+    "main.webp",
+    "img1.webp",
+    "img2.webp",
+    "img3.webp"
+  ]
+}

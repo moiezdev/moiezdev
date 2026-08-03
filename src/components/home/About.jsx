@@ -1,14 +1,13 @@
 import { Link } from 'react-router-dom';
 import Button from '../ui/Button';
 import SectionTitle from '../ui/SectionTitle';
-import { useSelector } from 'react-redux';
 import LazyImage from '../ui/LazyImage';
 import Floating from '../ui/Floating';
 import Magnetic from '../ui/Magnetic';
 import FloatingDotBox from '../ui/animatedSvgs/FloatingDotBox';
+import { about } from '../../data';
 
 const About = () => {
-  const about = useSelector((state) => state.about.about);
   return (
     <section className="w-full px-4 py-12" id="projects">
       <div className="app-container mx-auto">

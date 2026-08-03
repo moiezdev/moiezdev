@@ -1,0 +1,65 @@
+[
+  {
+    "title": "Sr. Software Engineer",
+    "company": "TWLM Solutions",
+    "location": "Saudi Arabia",
+    "period": "Feb 2025 – Present",
+    "highlights": [
+      "Built a POS platform with integrated loyalty, promotions, and wallet systems.",
+      "Designed and developed a block-based page builder for menus and e-commerce storefronts.",
+      "Improved user flows and UI usability, reducing customer support requests by ~70%.",
+      "Implemented loyalty systems (points, cards, gift cards) with Apple Wallet & Google Wallet and real-time notifications.",
+      "Developed geo-targeted promotional messaging with branch-level campaign tracking.",
+      "Contributed to a Flutter mobile app for storefront management and online ordering.",
+      "Optimized backend APIs (~64% faster response time) and refactored key codebase areas for maintainability."
+    ]
+  },
+  {
+    "title": "Sr. Software Engineer",
+    "company": "Accoina Agua",
+    "location": "Saudi Arabia",
+    "period": "Jan 2024 – Feb 2025",
+    "highlights": [
+      "Digitized internal workflows and reduced system downtime by ~25%.",
+      "Built internal dashboards for reporting and analytics using React and SQL.",
+      "Maintained and extended backend services and APIs for internal tools.",
+      "Resolved bottlenecks and automated routine reporting to cut manual workload."
+    ]
+  },
+  {
+    "title": "Software Engineer",
+    "company": "Santa Casa da Misericórdia de Borba (SCM Borba)",
+    "location": "Portugal (Remote)",
+    "period": "Oct 2022 – Jan 2024",
+    "highlights": [
+      "Delivered 50+ projects across SaaS, e-commerce, and education platforms.",
+      "Built scalable UIs with React, Vue, Nuxt, and Tailwind; integrated REST APIs with Node.js and Express.",
+      "Improved performance with code-splitting, lazy loading, and optimized rendering.",
+      "Deployed with CI/CD (GitLab) and Vercel; translated Figma/XD into production interfaces.",
+      "Collaborated with clients to turn business needs into scalable technical solutions."
+    ]
+  },
+  {
+    "title": "Sr. Frontend Engineer",
+    "company": "Creative Inter Tech",
+    "location": "Faisalabad, Pakistan",
+    "period": "Mar 2020 – Oct 2022",
+    "highlights": [
+      "Led frontend for B2B travel platforms (AA Tourism, City Arrivals) serving 10K+ monthly users.",
+      "Built reusable React/Vue component libraries, cutting development time by ~30%.",
+      "Improved UX and retention (~15%); upgraded legacy apps for better responsiveness (~25%).",
+      "Applied Redux, Vuex, and hooks for scalable state management."
+    ]
+  },
+  {
+    "title": "Junior PHP Developer",
+    "company": "Content Arcade",
+    "location": "Faisalabad, Pakistan",
+    "period": "May 2019 – Mar 2020",
+    "highlights": [
+      "Built responsive layouts with HTML, CSS, and Bootstrap.",
+      "Supported backend with PHP + MySQL APIs (CRUD).",
+      "Bug fixes and cross-browser testing to improve stability."
+    ]
+  }
+]

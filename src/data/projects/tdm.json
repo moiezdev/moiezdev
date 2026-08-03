@@ -1,0 +1,29 @@
+{
+  "id": "tdm",
+  "title": "TDM",
+  "subtitle": "Civil Engineering & Project Management Website",
+  "description": [
+    "TDM – Engenharia & Gestão de Projetos",
+    [
+      "Developed the frontend for TDM’s corporate website, presenting the company’s civil engineering and project management services.",
+      "Structured clear sections for services, projects, and contact, so visitors quickly understand what TDM offers.",
+      "Made the site responsive, adapting well across desktop and mobile devices.",
+      "Used a clean and professional design approach to reflect TDM’s reliability and technical expertise.",
+      "Focused on keeping the site simple to navigate while aligning visuals with the company’s brand identity."
+    ]
+  ],
+  "technologies": [
+    "HTML5",
+    "CSS3",
+    "JavaScript"
+  ],
+  "imageUrl": "/projects-media/tdm/main.webp",
+  "githubUrl": "https://github.com/moiezdev/tdm",
+  "media": [
+    "main.webp",
+    "img1.webp",
+    "img2.webp",
+    "img3.webp",
+    "img4.webp"
+  ]
+}

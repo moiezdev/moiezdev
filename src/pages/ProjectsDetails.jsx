@@ -1,15 +1,15 @@
 // src/pages/ProjectDetail.jsx
-import { useParams, Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import Transition from '../components/functions/Transition';
 import ImageSlider from '../components/ui/ImageSlider';
 import Button from '../components/ui/Button';
 import SectionTitle from '../components/ui/SectionTitle';
+import { getSkillIcon } from '../utils/skillIcons';
+import { getProjectById } from '../data';
 
 export default function ProjectDetail() {
   const { id } = useParams();
-  const projects = useSelector((state) => state.projects.projects);
-  const project = projects.find((p) => p.id === id);
+  const project = getProjectById(id);
   if (!project) return <p className="p-6">Project not found.</p>;
   return (
     <Transition>
@@ -54,14 +54,26 @@ export default function ProjectDetail() {
 
               {/* Tech stack */}
               <div className="flex flex-wrap gap-2">
-                {project.technologies.map((tech, i) => (
-                  <span
-                    className="cursor-pointer cursor-scale-0 px-2.5 py-0.5 bg-gray-a/20 hover:scale-110 hover:bg-primary/20 transition-all"
-                    key={i}
-                  >
-                    {tech}
-                  </span>
-                ))}
+                {project.technologies.map((tech, i) => {
+                  const skillIcon = getSkillIcon(tech);
+                  const Icon = skillIcon?.Icon;
+                  return (
+                    <span
+                      className="inline-flex items-center gap-1.5 cursor-pointer cursor-scale-0 px-2.5 py-0.5 bg-gray-a/20 hover:scale-110 hover:bg-primary/20 transition-all"
+                      key={i}
+                      title={tech}
+                    >
+                      {Icon && (
+                        <Icon
+                          className="text-[14px] shrink-0"
+                          style={{ color: skillIcon.color }}
+                          aria-hidden
+                        />
+                      )}
+                      {tech}
+                    </span>
+                  );
+                })}
               </div>
 
               {/* Links */}

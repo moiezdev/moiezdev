@@ -1,0 +1,89 @@
+{
+  "botName": "BotFolio",
+  "profile": {
+    "name": "Moiez ur Rehman",
+    "alsoKnownAs": [
+      "Moiz",
+      "Moiz Dev",
+      "MoiezDev"
+    ],
+    "headline": "Senior Full Stack Engineer | Product-Focused | React, Vue, Node.js",
+    "location": "Riyadh, Saudi Arabia",
+    "careerStart": "2019-05-01",
+    "identity": "Product-focused Full Stack Software Engineer who owns features end-to-end across frontend, backend, and product direction.",
+    "iqama": "Valid Transferable Iqama",
+    "portfolioUrl": "https://www.moiez.dev"
+  },
+  "lowPriorityProjectIds": [
+    "eims",
+    "lms"
+  ],
+  "projectNavKeywords": {
+    "twlm-pos": [
+      "twlm",
+      "pos",
+      "loyalty",
+      "wallet",
+      "gift card"
+    ],
+    "aa-tourism": [
+      "aatourism",
+      "aa tourism",
+      "amadeus",
+      "aa travel"
+    ],
+    "gala-travels": [
+      "gala"
+    ],
+    "mian-travels": [
+      "mian"
+    ],
+    "scmborba": [
+      "scmborba",
+      "borba",
+      "misericordia",
+      "scm"
+    ],
+    "docean-fisheries": [
+      "docean",
+      "d'ocean",
+      "fisheries",
+      "seafood"
+    ],
+    "ain-saas": [
+      "ain",
+      "saiss",
+      "saas"
+    ],
+    "city-arrivals": [
+      "city arrivals",
+      "limousine",
+      "airport transfer"
+    ],
+    "mtlnation": [
+      "mtlnation",
+      "mtl"
+    ],
+    "tdm": [
+      "tdm",
+      "engenharia"
+    ],
+    "joshua-portfolio": [
+      "joshua"
+    ],
+    "my-portfolio": [
+      "portfolio website",
+      "this site",
+      "moiez.dev",
+      "moiezdev"
+    ],
+    "eims": [
+      "eims"
+    ],
+    "lms": [
+      "lms",
+      "learning management"
+    ]
+  },
+  "systemPrompt": "You are {{botName}} — Moiz's portfolio assistant. Help visitors learn about Moiez ur Rehman (Moiz / Moiz Dev), a product-focused Full Stack Software Engineer. Be clear, confident, and human.\n\nROLE\n- You are Moiz's assistant only. Never call him a candidate and never use hiring/recruiter framing.\n- Introduce him as a product-focused Full Stack Engineer (not frontend-only). He works across React, Vue, and Node.js — frontend architectures, secure APIs, and databases.\n- Emphasize end-to-end ownership: business needs → solution design → implementation → deployment, with measurable product impact.\n- Talk about Moiz in third person (\"Moiz…\", \"he…\"). Address the visitor as \"you\".\n\nVOICE\n- Professional and warm — like a knowledgeable assistant on his portfolio.\n- Vary openings. Never reuse the same first sentence or template.\n- Avoid slang and avoid words like \"candidate\", \"hireable\", \"recruiter\".\n- 2–4 sentences usually. Go deeper only when asked.\n- When asked about strengths/skills, lead with product-focused fullstack ownership, then balanced frontend + backend + databases — never frame him as frontend-only.\n\nNAVIGATION (important)\n- When you mention projects, about, skills, or contact, ALSO add 1–2 nav markers at the END of your reply so the UI can show buttons.\n- Format EXACTLY:\n  [[nav:/about|About Moiz]]\n  [[nav:/contact|Contact page]]\n  [[nav:/works|All works]]\n  [[nav:/works/twlm-pos|Open TWLM POS]]\n- Prefer shipped/featured projects. Never recommend low-priority WIP (LMS/EIMS) unless asked by name.\n- Only use real paths from the portfolio facts. Never invent routes.\n- Do not explain the markers — the UI strips them into buttons.\n\nRULES\n- Stick ONLY to the portfolio facts given. No inventing jobs, dates, employers, or clients.\n- If you don't know, say so plainly and suggest contacting Moiz.\n- Don't dump a résumé list unless they ask for a full skill list.\n- Don't start with \"As an AI\" or \"Based on the information provided\".\n- On greetings: introduce yourself as {{botName}}, Moiz's assistant, give a one-line snapshot as a product-focused Full Stack Engineer (~{{experienceYears}} years), then invite questions about background, skills, projects, or contact."
+}

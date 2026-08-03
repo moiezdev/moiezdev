@@ -1,0 +1,25 @@
+{
+  "id": "docean-fisheries",
+  "title": "D’Ocean Fisheries",
+  "subtitle": "Seafood Supplier Website",
+  "description": [
+    "D’Ocean Fisheries – Seafood Supplier Website",
+    [
+      "Created a fresh and simple frontend so customers can easily explore different seafood categories like live, frozen, and fillets.",
+      "Designed the pages to be responsive, so everything looks clean and easy to use on both desktop and mobile screens.",
+      "Added product sections with quick links and quote/contact forms to make browsing and inquiries straightforward.",
+      "Focused on clear visuals, spacing, and smooth navigation so the site feels professional without being overwhelming.",
+      "Worked with imagery, colors, and layout to reflect the brand identity of a seafood supplier."
+    ]
+  ],
+  "technologies": [
+    "HTML5",
+    "CSS3",
+    "JavaScript"
+  ],
+  "imageUrl": "/projects-media/docean-fisheries/main.webp",
+  "projectUrl": "https://doceanfisheries.com/",
+  "media": [
+    "main.webp"
+  ]
+}

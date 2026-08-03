@@ -1,0 +1,124 @@
+[
+  {
+    "category": "Core Skills",
+    "items": [
+      "Product Ownership",
+      "Feature Ownership",
+      "Product Management",
+      "Feature Management",
+      "UI/UX Management",
+      "End-to-End Delivery"
+    ]
+  },
+  {
+    "category": "Architectures",
+    "items": [
+      "MVC",
+      "HMVC",
+      "MVP",
+      "MVVM",
+      "Component Based",
+      "Microservices"
+    ]
+  },
+  {
+    "category": "Frontend",
+    "items": [
+      "React",
+      "NextJs",
+      "Vue",
+      "NuxtJs",
+      "Zustand",
+      "Redux Toolkit",
+      "TanStack Query",
+      "Context API",
+      "Pinia",
+      "Vuex",
+      "TailwindCSS",
+      "MaterialUI",
+      "Bootstrap",
+      "Buefy",
+      "Jquery",
+      "Flutter"
+    ]
+  },
+  {
+    "category": "Backend",
+    "items": [
+      "Node",
+      "Express",
+      "NestJs",
+      "Fastify",
+      "REST APIs",
+      "ASP.NET",
+      "DotNET",
+      "Laravel",
+      "PHP"
+    ]
+  },
+  {
+    "category": "Databases",
+    "items": [
+      "PostGreSQL",
+      "MySQL",
+      "SQL Server",
+      "MongoDB"
+    ]
+  },
+  {
+    "category": "Programming Languages",
+    "items": [
+      "JavaScript",
+      "TypeScript",
+      "HTML5",
+      "CSS3",
+      "SCSS",
+      "C# (C Sharp)",
+      "Python"
+    ]
+  },
+  {
+    "category": "Performance & Security",
+    "items": [
+      "Code Splitting",
+      "Lazy Loading",
+      "Caching",
+      "Authentication & Authorization"
+    ]
+  },
+  {
+    "category": "Tools & Platforms",
+    "items": [
+      "Git",
+      "GitHub",
+      "GitLab",
+      "Jira",
+      "Trello",
+      "Vite",
+      "Vercel",
+      "Netlify",
+      "Apple Wallet",
+      "Google Wallet",
+      "Entity Framework",
+      "Sabre",
+      "Amadeus",
+      "CI/CD"
+    ]
+  },
+  {
+    "category": "Collaboration",
+    "items": [
+      "Agile Methodologies",
+      "Scrum",
+      "Test-Driven Development"
+    ]
+  },
+  {
+    "category": "Design & Prototyping",
+    "items": [
+      "Figma",
+      "Adobe XD",
+      "Sketch"
+    ]
+  }
+]

@@ -1,7 +1,6 @@
-import { useSelector } from 'react-redux';
+import { contacts } from '../data';
 
 const Footer = () => {
-  const contacts = useSelector((state) => state.contacts.contacts);
   return (
     <footer className="relative w-full border-t border-t-gray-300/20  px-4 py-6 mt-12 z-0">
       <div className="app-container mx-auto text-sm text-gray-500">
@@ -13,7 +12,7 @@ const Footer = () => {
                 moiezdev@gmail.com
               </a>
             </p>
-            <p className="text-white">FullStack Developer | Frontend Specialist</p>
+            <p className="text-white">Product-Focused Full Stack Software Engineer</p>
           </div>
           <div>
             <h1 className="text-large text-white">Media</h1>

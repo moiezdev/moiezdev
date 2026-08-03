@@ -1,0 +1,27 @@
+{
+  "id": "joshua-portfolio",
+  "title": "Joshua Portfolio",
+  "subtitle": "Personal Portfolio Website",
+  "description": [
+    "Joshua – Developer Portfolio (React.js)",
+    [
+      "Built a modern and responsive personal portfolio site for Joshua using React.js.",
+      "Structured the site with reusable components to keep it easy to maintain and extend later.",
+      "Added sections like About, Projects, and Contact, making the content flow simple and clear.",
+      "Included smooth animations and transitions so the site feels more dynamic and engaging.",
+      "Kept the design minimal and professional, highlighting Joshua’s skills and experience as a developer."
+    ]
+  ],
+  "technologies": [
+    "React",
+    "JavaScript",
+    "CSS3",
+    "Bootstrap"
+  ],
+  "imageUrl": "/projects-media/joshua-portfolio/main.webp",
+  "projectUrl": "https://joshua-portfolio.com",
+  "githubUrl": "https://github.com/moiezdev/joshua-portfolio",
+  "media": [
+    "main.webp"
+  ]
+}
