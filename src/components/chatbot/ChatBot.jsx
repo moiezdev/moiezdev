@@ -227,7 +227,7 @@ const ChatBot = () => {
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask about Moiz…"
                 disabled={loading}
-                className="flex-1 min-w-0 bg-transparent px-3 py-3 text-sm text-white placeholder:text-gray-a/50 focus:outline-none disabled:opacity-50 cursor-scale-0"
+                className="flex-1 min-w-0 bg-transparent px-3 py-3 text-base text-white placeholder:text-gray-a/50 focus:outline-none disabled:opacity-50 cursor-scale-0"
               />
               <button
                 type="submit"
