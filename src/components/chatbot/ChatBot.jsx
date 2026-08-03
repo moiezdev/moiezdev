@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { gsap } from 'gsap';
 import RobotAvatar from './RobotAvatar';
@@ -28,6 +28,7 @@ const ChatBot = () => {
   const listRef = useRef(null);
   const abortRef = useRef(null);
   const fabRef = useRef(null);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     if (!fabRef.current) return;
@@ -54,6 +55,11 @@ const ChatBot = () => {
         transformOrigin: '100% 100%',
       },
     );
+  }, [open]);
+
+  useLayoutEffect(() => {
+    if (!open) return;
+    inputRef.current?.focus({ preventScroll: true });
   }, [open]);
 
   useEffect(() => {
@@ -91,18 +97,17 @@ const ChatBot = () => {
   };
 
   const openChat = () => {
+    // Open immediately so focus (and mobile keyboard) stays tied to the tap gesture
+    setOpen(true);
+
     const fab = fabRef.current;
-    if (!fab) {
-      setOpen(true);
-      return;
-    }
+    if (!fab) return;
 
     gsap.to(fab, {
       scale: 0.7,
       opacity: 0,
       duration: 0.22,
       ease: 'power2.in',
-      onComplete: () => setOpen(true),
     });
   };
 
@@ -278,11 +283,14 @@ const ChatBot = () => {
           <form onSubmit={onSubmit} className="border-t border-gray-a">
             <div className="flex">
               <input
+                ref={inputRef}
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask about Moiz…"
                 disabled={loading}
+                autoComplete="off"
+                enterKeyHint="send"
                 className="flex-1 min-w-0 bg-transparent px-3 py-3 text-base text-white placeholder:text-gray-a/50 focus:outline-none disabled:opacity-50 cursor-scale-0"
               />
               <button
