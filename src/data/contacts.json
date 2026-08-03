@@ -33,12 +33,5 @@
     "categories": ["contact"],
     "url": "https://wa.me/qr/CCKSULC4NRAZI1",
     "icon": "/socialMediaIcons/Whatsapp.svg"
-  },
-  {
-    "platform": "Portfolio",
-    "handle": "www.moiez.dev",
-    "categories": ["portfolio", "media"],
-    "url": "https://www.moiez.dev",
-    "icon": "/socialMediaIcons/Github.svg"
   }
 ]
