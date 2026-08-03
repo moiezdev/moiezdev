@@ -35,7 +35,7 @@ const ChatBot = () => {
     gsap.fromTo(
       fabRef.current,
       { scale: 0, opacity: 0 },
-      { scale: 1, opacity: 1, duration: 0.55, delay: 0.8, ease: 'back.out(1.7)' },
+      { scale: 1, opacity: 1, duration: 0.55, delay: 0.8, ease: 'back.out(1.7)' }
     );
   }, []);
 
@@ -53,7 +53,7 @@ const ChatBot = () => {
         duration: 0.45,
         ease: 'power3.out',
         transformOrigin: '100% 100%',
-      },
+      }
     );
   }, [open]);
 
@@ -89,7 +89,7 @@ const ChatBot = () => {
           gsap.fromTo(
             fabRef.current,
             { scale: 0.6, opacity: 0 },
-            { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(1.7)' },
+            { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(1.7)' }
           );
         });
       },
@@ -184,7 +184,7 @@ const ChatBot = () => {
       {open && (
         <div
           ref={panelRef}
-          className="w-[min(100vw-2.5rem,380px)] h-[min(80vh,1000px)] flex flex-col border border-gray-a bg-gray-b origin-bottom-right"
+          className="w-[min(100vw-2.5rem,380px)] max-h-full h-[min(80vh,1000px)] flex flex-col border border-gray-a bg-gray-b origin-bottom-right"
           role="dialog"
           aria-label={`${BOT_NAME} portfolio chat`}
         >
