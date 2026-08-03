@@ -44,34 +44,22 @@ export function cleanForSpeech(text) {
     .trim();
 }
 
-/**
- * Closest free match to ElevenLabs Antoni:
- * soft, friendly, approachable American male.
- */
-const PREFERRED = [
-  /\balex\b/i, // best common Mac US male
-  /google us english male/i,
-  /microsoft (mark|guy|david)/i,
-  /\b(aaron|tom|oliver|arthur)\b/i,
-  /\bmale\b/i,
-];
-const AVOID = /\b(junior|fred|zarvox|whisper|princess|samantha|victoria|karen|zira|female)\b/i;
+/** Prefer a normal English male system voice. */
+const MALE_RE =
+  /\b(male|david|daniel|alex|mark|guy|james|tom|aaron|oliver|arthur|microsoft david|microsoft mark|microsoft guy|google us english male)\b/i;
+const FEMALE_RE =
+  /\b(female|samantha|victoria|karen|moira|fiona|tessa|zira|susan|amy|emma|salli|joanna)\b/i;
 
-function pickAntoniLikeVoice() {
+function pickMaleVoice() {
   const voices = window.speechSynthesis.getVoices?.() || [];
   if (!voices.length) return null;
 
-  const english = voices.filter((v) => /^en/i.test(v.lang) && !AVOID.test(v.name));
-
-  for (const re of PREFERRED) {
-    const hit =
-      english.find((v) => /^en-US/i.test(v.lang) && re.test(v.name)) ||
-      english.find((v) => re.test(v.name));
-    if (hit) return hit;
-  }
-
+  const english = voices.filter((v) => /^en/i.test(v.lang));
   return (
-    english.find((v) => /^en-US/i.test(v.lang) && v.localService) ||
+    english.find((v) => /^en-US/i.test(v.lang) && MALE_RE.test(v.name)) ||
+    english.find((v) => MALE_RE.test(v.name)) ||
+    english.find((v) => /^en-US/i.test(v.lang) && !FEMALE_RE.test(v.name)) ||
+    english.find((v) => !FEMALE_RE.test(v.name)) ||
     english.find((v) => /^en-US/i.test(v.lang)) ||
     english[0] ||
     null
@@ -103,7 +91,7 @@ function clearResumeTimer() {
 }
 
 /**
- * Speak with Antoni-like soft male settings (free browser TTS).
+ * Speak with a normal male browser voice.
  * Starts as soon as the reply text is ready.
  * @returns {Promise<void>}
  */
@@ -134,7 +122,7 @@ export function speak(text, { onStart, onEnd } = {}) {
     const chunks = chunkText(cleaned);
     let index = 0;
     let started = false;
-    const voice = pickAntoniLikeVoice();
+    const voice = pickMaleVoice();
 
     const finish = () => {
       clearResumeTimer();
@@ -164,8 +152,8 @@ export function speak(text, { onStart, onEnd } = {}) {
       const u = new SpeechSynthesisUtterance(chunks[index]);
       currentUtterance = u;
       u.lang = voice?.lang || 'en-US';
-      u.rate = 0.98;
-      u.pitch = 0.94;
+      u.rate = 1;
+      u.pitch = 1;
       u.volume = 1;
       if (voice) u.voice = voice;
 
