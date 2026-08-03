@@ -23,7 +23,7 @@ const WELCOME = {
   id: 'welcome',
   role: 'bot',
   ...prepareBotReply(
-    `Hello — I'm ${BOT_NAME}, Moiz's assistant. Moiz is a product-focused Full Stack Software Engineer (React, Vue, Node.js) with ~${years} years building scalable systems across retail and SaaS. Explore [[nav:/about|About Moiz]], [[nav:/works|All works]], or [[nav:/contact|Contact page]] — or just ask.`,
+    `Hey — welcome. I'm ${BOT_NAME}, Moiz's assistant. He's a product-focused Full Stack Engineer (React, Vue, Node.js) with ~${years} years across retail and SaaS. Ask me anything, or explore [[nav:/about|About Moiz]], [[nav:/works|All works]], or [[nav:/contact|Contact page]].`,
   ),
   typed: true,
 };
@@ -268,7 +268,7 @@ const ChatBot = () => {
       if (err?.name !== 'AbortError') {
         const id = `b-${msgIdRef.current++}`;
         const fallback = prepareBotReply(
-          "Sorry — that didn't go through. Please try again, or open [[nav:/contact|Contact page]] to reach Moiz directly.",
+          "Sorry about that — something didn't go through. Try again, or open [[nav:/contact|Contact page]] to reach Moiz directly.",
         );
         setMessages((prev) => [
           ...prev,

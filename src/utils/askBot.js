@@ -53,9 +53,9 @@ function localFallback(question) {
   if (/^(hi|hey|hello|yo|sup|good (morning|afternoon|evening))\b/.test(q)) {
     return pack(
       pickFresh([
-        `Hello — I'm ${BOT_NAME}, Moiz's assistant. Moiz is a ${identityLine} with ~${years} years of experience. Core strengths: ${coreSkills}. Browse [[nav:/about|About Moiz]], [[nav:/works|All works]], or [[nav:/contact|Contact page]] anytime.`,
-        `Welcome. Moiz is a product-focused Full Stack Engineer — React, Vue, Node.js across the stack, plus product ownership. See [[nav:/works|All works]] or [[nav:/about|About Moiz]].`,
-        `Hi — thanks for stopping by. Moiz is a Senior Full Stack Engineer who owns features end-to-end. Ask anything, or open [[nav:/contact|Contact page]].`,
+        `Hey — welcome. I'm ${BOT_NAME}, Moiz's assistant. He's a product-focused Full Stack Engineer (~${years} years) — happy to walk you through [[nav:/about|About Moiz]], [[nav:/works|All works]], or [[nav:/contact|Contact page]].`,
+        `Nice to meet you. Moiz builds end-to-end with React, Vue, and Node.js — ask me anything, or peek at ${featuredNav}.`,
+        `Hi there. I'm here to help you explore Moiz's work — start with [[nav:/works|All works]] or [[nav:/about|About Moiz]] whenever you're ready.`,
       ]),
     );
   }
@@ -63,9 +63,9 @@ function localFallback(question) {
   if (/thank|thanks|thx|cool|awesome|nice/.test(q) && q.length < 40) {
     return pack(
       pickFresh([
-        "You're welcome. Happy to cover anything else about Moiz's work.",
-        'Glad that helped. I can also walk through his skills, projects, or how to get in touch.',
-        "Of course. Let me know if you'd like more detail on any part of his profile.",
+        "You're very welcome — glad that helped. Want to look at another project or his skills next?",
+        'Happy to help. I can also show his standout work or the best way to reach him.',
+        'Anytime. Just say the word if you want more detail on anything.',
       ]),
     );
   }
@@ -77,9 +77,9 @@ function localFallback(question) {
   ) {
     return pack(
       pickFresh([
-        `Moiz's core strengths are ${coreSkills}. He's a product-focused Full Stack Engineer — deciding what to build, owning delivery across frontend/backend, and guiding UI/UX so complex requirements stay simple. More on [[nav:/about|About Moiz]].`,
-        `Lead with this: product-focused fullstack ownership. Core strengths: ${coreSkills}. Stack centers on React, Vue, and Node.js — see [[nav:/about|About Moiz]].`,
-        `Moiz isn't frontend-only — he's a product-focused Full Stack Engineer. Strengths: ${coreSkills}. Details on [[nav:/about|About Moiz]].`,
+        `Moiz's strengths sit in product-focused ownership — ${coreSkills} — with balanced frontend and backend delivery. More on [[nav:/about|About Moiz]].`,
+        `He's strongest where product judgment meets fullstack delivery: ${coreSkills}. Peek at [[nav:/about|About Moiz]] for the full picture.`,
+        `Think product-minded Full Stack — not frontend-only. Core strengths: ${coreSkills}. Details live on [[nav:/about|About Moiz]].`,
       ]),
     );
   }
@@ -90,9 +90,9 @@ function localFallback(question) {
     const dbs = skills.find((c) => c.category === 'Databases')?.items?.join(', ');
     return pack(
       pickFresh([
-        `Moiz is a product-focused Full Stack Engineer (~${years} years). Core: ${coreSkills}. Frontend: ${frontend}. Backend: ${backend}. Databases: ${dbs}. Full list on [[nav:/about|About Moiz]].`,
-        `Think fullstack + product ownership — not frontend-only. Primary: ${coreSkills}. Delivery stack: React/Vue, Node APIs, SQL — see [[nav:/about|About Moiz]] or [[nav:/works|All works]].`,
-        `Skills span product ownership and the full stack: ${frontend}; ${backend}; ${dbs}. Browse [[nav:/about|About Moiz]].`,
+        `Glad you asked — Moiz works across the stack (~${years} years): ${frontend}; ${backend}; ${dbs}. Full list on [[nav:/about|About Moiz]].`,
+        `He's a product-focused Full Stack Engineer — React/Vue, Node APIs, and solid databases. Browse [[nav:/about|About Moiz]] or [[nav:/works|All works]].`,
+        `Quick snapshot: ${coreSkills}, plus ${frontend} and ${backend}. More on [[nav:/about|About Moiz]].`,
       ]),
     );
   }
@@ -107,12 +107,12 @@ function localFallback(question) {
       const isLow = LOW_PRIORITY_IDS.has(project.id);
       if (isLow) {
         return pack(
-          `${project.title} is a smaller WIP piece — not what I'd highlight first. Start with ${featuredNav} or [[nav:/works|All works]].`,
+          `Thanks for asking — ${project.title} is a smaller WIP, so I'd start with ${featuredNav} or [[nav:/works|All works]] instead.`,
         );
       }
       const blurb = (project.subtitle || '').split(/[.!?]/)[0]?.trim();
       return pack(
-        `[[nav:/works/${project.id}|${project.title}]]${blurb ? ` — ${blurb}.` : '.'} Open it for the full story.`,
+        `Sure — [[nav:/works/${project.id}|${project.title}]]${blurb ? `: ${blurb}.` : '.'} Tap the name for the full story.`,
       );
     }
   }
@@ -125,9 +125,9 @@ function localFallback(question) {
       .join(', ');
     return pack(
       pickFresh([
-        `Top picks: ${highlights}.`,
-        `Start with ${featuredNav} — then see [[nav:/works|All works]].`,
-        `His strongest shipped work includes ${highlights}.`,
+        `Happy to share — standouts include ${highlights}.`,
+        `A great place to start is ${featuredNav}; more is on [[nav:/works|All works]].`,
+        `Here are a few highlights: ${highlights}.`,
       ]),
     );
   }
@@ -135,9 +135,9 @@ function localFallback(question) {
   if (/contact|email|hire|reach|linkedin|github|phone|whatsapp|available/.test(q)) {
     return pack(
       pickFresh([
-        `To connect with Moiz: ${contactSummary}. Or use the [[nav:/contact|Contact page]] message form.`,
-        `Best ways to reach him: ${contactSummary}. Also on [[nav:/contact|Contact page]].`,
-        `Reach him via ${contactSummary}, or open [[nav:/contact|Contact page]].`,
+        `Of course — you can reach Moiz at ${contactSummary}, or use the [[nav:/contact|Contact page]].`,
+        `Sure thing. Best contacts: ${contactSummary}. The [[nav:/contact|Contact page]] works too.`,
+        `Happy to help with that — ${contactSummary}, or open [[nav:/contact|Contact page]].`,
       ]),
     );
   }
@@ -145,18 +145,18 @@ function localFallback(question) {
   if (/who|about|moiz|moiez|experience|background|riyadh|introduc|senior|engineer|accoina|twlm solutions/.test(q)) {
     return pack(
       pickFresh([
-        `Moiz (Moiez ur Rehman) is a product-focused Full Stack Software Engineer in Riyadh with ~${years} years across retail and SaaS. He owns features end-to-end — React/Vue, Node APIs, and databases. More on [[nav:/about|About Moiz]] or ${featuredNav}.`,
-        `In short: ${identityLine}. Currently at TWLM Solutions on POS, loyalty, and wallets. See [[nav:/about|About Moiz]] and [[nav:/works|All works]].`,
-        `Moiz ships fullstack product work with measurable impact — e.g. ~70% fewer support requests on ${featuredNav}. Ask about skills, projects, or [[nav:/contact|Contact page]] anytime.`,
+        `Moiz is a product-focused Full Stack Engineer in Riyadh with ~${years} years across retail and SaaS — React/Vue, Node APIs, and databases. More on [[nav:/about|About Moiz]] or ${featuredNav}.`,
+        `Glad you asked — ${identityLine}. He's currently at TWLM Solutions; see [[nav:/about|About Moiz]] and [[nav:/works|All works]].`,
+        `In short, Moiz owns fullstack product work end-to-end — including impactful work on ${featuredNav}. Ask me anything, or visit [[nav:/contact|Contact page]].`,
       ]),
     );
   }
 
   return pack(
     pickFresh([
-      `I don't have that detail in Moiz's profile. Try [[nav:/about|About Moiz]], ${featuredNav}, or [[nav:/contact|Contact page]].`,
-      "That isn't covered in what I have. Ask about his background, core skills, standout projects, or contact options.",
-      `I'm not able to speak to that specifically. Browse [[nav:/works|All works]] or [[nav:/about|About Moiz]].`,
+      `I don't have that detail handy — try [[nav:/about|About Moiz]], ${featuredNav}, or [[nav:/contact|Contact page]].`,
+      "I'm not sure about that one, but I can help with his background, skills, projects, or contact info.",
+      `Hmm, that isn't in what I know — [[nav:/works|All works]] or [[nav:/about|About Moiz]] are good next stops.`,
     ]),
   );
 }

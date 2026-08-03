@@ -26,82 +26,78 @@ export function cleanForSpeech(text) {
     .trim();
 }
 
-/** Prefer younger/male English voices. macOS "Junior" is the classic boy voice. */
-const BOY_VOICE_RE = /\b(junior|boy)\b/i;
-const MALE_VOICE_RE =
-  /\b(male|david|daniel|alex|fred|bruce|tom|nathan|mark|guy|james|oliver|rishi|aaron|albert|ralph|jorge|diego|thomas|arthur|google us english male|microsoft david|microsoft mark|microsoft guy)\b/i;
+/**
+ * Closest free browser match to Antoni:
+ * soft, friendly, approachable male — calm American / light male packs.
+ */
+const ANTONI_LIKE_RE =
+  /\b(alex|aaron|tom|oliver|arthur|mark|guy|google us english male|microsoft mark|microsoft guy|microsoft david)\b/i;
+const HARSH_OR_KID_RE = /\b(junior|fred|boy|zarvox|trinoids|bad news|good news|whisper|princess|kathy)\b/i;
 const FEMALE_VOICE_RE =
   /\b(female|samantha|victoria|karen|moira|fiona|tessa|zira|susan|kathy|princess|salli|joanna|ivy|kimberly|kendra|amy|emma|google uk english female|microsoft zira|google us english female)\b/i;
+const MALE_HINT_RE = /\bmale\b|alex|aaron|tom|daniel|david|mark|guy|oliver|arthur|james|thomas/i;
 
-function scoreBoyVoice(v) {
+function scoreAntoniLike(v) {
   const name = v.name || '';
   const lang = v.lang || '';
   if (!/^en/i.test(lang)) return -100;
-  if (FEMALE_VOICE_RE.test(name) && !MALE_VOICE_RE.test(name)) return -80;
+  if (FEMALE_VOICE_RE.test(name) && !MALE_HINT_RE.test(name)) return -80;
+  if (HARSH_OR_KID_RE.test(name)) return -60;
 
   let score = 0;
-  if (BOY_VOICE_RE.test(name)) score += 60; // Junior / boy
-  if (/\bfred\b/i.test(name)) score += 45; // young-sounding Mac male
-  if (/\balbert\b/i.test(name)) score += 40;
-  if (MALE_VOICE_RE.test(name)) score += 30;
-  if (/\bmale\b/i.test(name)) score += 25;
-  if (/en(-|_)US/i.test(lang)) score += 8;
-  if (/en(-|_)GB/i.test(lang)) score += 5;
-  if (v.localService) score += 4;
+  if (ANTONI_LIKE_RE.test(name)) score += 50;
+  if (/\balex\b/i.test(name)) score += 25; // usually the softest natural US male on Mac
+  if (MALE_HINT_RE.test(name)) score += 20;
+  if (/\bmale\b/i.test(name)) score += 15;
+  if (/en(-|_)US/i.test(lang)) score += 12; // Antoni is American
+  if (/en(-|_)GB/i.test(lang)) score += 3;
+  if (v.localService) score += 5;
   return score;
 }
 
-/**
- * Pick a boy/male English voice + pitch settings.
- * @returns {{ voice: SpeechSynthesisVoice | null, pitch: number, rate: number }}
- */
-function pickBoyVoice() {
+/** Soft, friendly male settings (Antoni-like, free browser TTS). */
+function pickAntoniLikeVoice() {
   const voices = window.speechSynthesis.getVoices?.() || [];
   if (!voices.length) {
-    return { voice: null, pitch: 0.85, rate: 1.05 };
+    return { voice: null, pitch: 0.95, rate: 0.96 };
   }
 
-  const ranked = [...voices].sort((a, b) => scoreBoyVoice(b) - scoreBoyVoice(a));
+  const ranked = [...voices].sort((a, b) => scoreAntoniLike(b) - scoreAntoniLike(a));
   const best = ranked[0];
-  const bestScore = best ? scoreBoyVoice(best) : -100;
+  const score = best ? scoreAntoniLike(best) : -100;
 
-  if (best && bestScore >= 40) {
-    // True boy / young male voice
+  if (best && score > 0) {
     return {
       voice: best,
-      pitch: BOY_VOICE_RE.test(best.name) ? 1.08 : 1.0,
-      rate: 1.05,
+      // Slightly lower pitch + calm rate ≈ soft / approachable
+      pitch: 0.95,
+      rate: 0.96,
     };
   }
 
-  if (best && bestScore > 0) {
-    // Adult male — slight lift so it reads younger
-    return { voice: best, pitch: 1.06, rate: 1.04 };
-  }
-
-  const nonFemale =
-    voices.find((v) => /^en/i.test(v.lang) && !FEMALE_VOICE_RE.test(v.name)) ||
+  const fallback =
+    voices.find((v) => /^en(-|_)US/i.test(v.lang) && !FEMALE_VOICE_RE.test(v.name)) ||
     voices.find((v) => /^en/i.test(v.lang)) ||
     null;
 
-  // No male pack available — drop pitch to masculinize the default voice
-  return { voice: nonFemale, pitch: 0.78, rate: 1.02 };
+  return { voice: fallback, pitch: 0.92, rate: 0.95 };
 }
 
 /**
- * Speak text aloud. Cancels any current utterance first.
- * Uses a boy / male English voice when the browser provides one.
+ * Speak with free browser TTS, tuned toward Antoni (soft / friendly male).
  * @returns {Promise<void>}
  */
 export function speak(text, { onStart, onEnd } = {}) {
   return new Promise((resolve) => {
     if (!canSpeak()) {
+      onEnd?.();
       resolve();
       return;
     }
 
     const cleaned = cleanForSpeech(text);
     if (!cleaned) {
+      onEnd?.();
       resolve();
       return;
     }
@@ -109,7 +105,7 @@ export function speak(text, { onStart, onEnd } = {}) {
     window.speechSynthesis.cancel();
 
     const start = () => {
-      const { voice, pitch, rate } = pickBoyVoice();
+      const { voice, pitch, rate } = pickAntoniLikeVoice();
       const u = new SpeechSynthesisUtterance(cleaned);
       u.rate = rate;
       u.pitch = pitch;
@@ -129,14 +125,12 @@ export function speak(text, { onStart, onEnd } = {}) {
       window.speechSynthesis.speak(u);
     };
 
-    // Voices often load async in Chrome
     if ((window.speechSynthesis.getVoices() || []).length === 0) {
       const onVoices = () => {
         window.speechSynthesis.removeEventListener('voiceschanged', onVoices);
         start();
       };
       window.speechSynthesis.addEventListener('voiceschanged', onVoices);
-      // Fallback if event never fires
       window.setTimeout(() => {
         window.speechSynthesis.removeEventListener('voiceschanged', onVoices);
         start();
@@ -153,8 +147,6 @@ export function stopSpeaking() {
 
 /**
  * Continuous speech listener — keeps the mic open across short pauses.
- * Call stop()/abort() when the user (or silence timer) finishes.
- * Chrome often ends sessions on silence; we auto-restart until stop/abort.
  * @returns {{ start: Function, stop: Function, abort: Function } | null}
  */
 export function createSpeechListener({
@@ -185,7 +177,6 @@ export function createSpeechListener({
 
   rec.onend = () => {
     active = false;
-    // Keep listening through brief pauses (Chrome ends the session early)
     if (!intentionalStop) {
       window.setTimeout(() => {
         if (intentionalStop) return;
@@ -201,7 +192,6 @@ export function createSpeechListener({
   };
 
   rec.onerror = (e) => {
-    // "no-speech" / "aborted" are normal — don't tear down unless intentional
     const code = e?.error;
     if (code === 'no-speech' || code === 'aborted') return;
     if (code === 'network') {
