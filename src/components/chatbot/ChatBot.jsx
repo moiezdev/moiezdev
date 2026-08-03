@@ -12,6 +12,7 @@ import {
   createSpeechListener,
   speak,
   stopSpeaking,
+  unlockSpeech,
 } from '../../utils/speech';
 
 const SUGGESTIONS = ['Who is Moiz?', 'What are his core strengths?', 'Show standout projects'];
@@ -176,6 +177,7 @@ const ChatBot = () => {
   };
 
   const openChat = () => {
+    unlockSpeech();
     const fab = fabRef.current;
     if (!fab) {
       setOpen(true);
@@ -229,6 +231,9 @@ const ChatBot = () => {
   const send = async (raw) => {
     const question = (raw ?? input).trim();
     if (!question || loading || typingId != null) return;
+
+    // Unlock TTS inside this tap so mobile can speak the reply later
+    unlockSpeech();
 
     stopListen({ send: false });
     stopSpeaking();
@@ -301,6 +306,8 @@ const ChatBot = () => {
 
     stopSpeaking();
     setSpeaking(false);
+    unlockSpeech();
+
     transcriptRef.current = '';
     clearSilenceTimer();
 
@@ -374,7 +381,17 @@ const ChatBot = () => {
             {speechReady.speak && (
               <button
                 type="button"
-                onClick={() => setVoiceOn((v) => !v)}
+                onClick={() => {
+                  setVoiceOn((v) => {
+                    const next = !v;
+                    if (next) unlockSpeech();
+                    else {
+                      stopSpeaking();
+                      setSpeaking(false);
+                    }
+                    return next;
+                  });
+                }}
                 className={`border px-2 py-1 text-xs transition-colors cursor-scale-0 mr-1 ${
                   voiceOn
                     ? 'border-primary text-primary'

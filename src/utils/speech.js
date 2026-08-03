@@ -1,4 +1,7 @@
-/** Browser Web Speech helpers (no API keys). Chrome/Edge best; Safari partial; Firefox limited. */
+/** Browser Web Speech helpers (no API keys). Chrome/Edge best; Safari/iOS needs a user-gesture unlock. */
+
+let speechUnlocked = false;
+let resumeWatchdog = null;
 
 export function canSpeak() {
   return typeof window !== 'undefined' && 'speechSynthesis' in window;
@@ -27,6 +30,37 @@ export function cleanForSpeech(text) {
 }
 
 /**
+ * Must run inside a tap/click handler on iOS/Android or TTS stays silent.
+ * Call on open chat, send, voice toggle, or mic.
+ */
+export function unlockSpeech() {
+  if (!canSpeak()) return false;
+
+  try {
+    const synth = window.speechSynthesis;
+    // Warm voices list (often empty until first interaction on mobile)
+    synth.getVoices();
+
+    const warm = new SpeechSynthesisUtterance(' ');
+    warm.volume = 0;
+    warm.rate = 1;
+    warm.pitch = 1;
+    synth.speak(warm);
+    synth.cancel(); // clear the silent warm-up
+    if (typeof synth.resume === 'function') synth.resume();
+
+    speechUnlocked = true;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function isSpeechUnlocked() {
+  return speechUnlocked;
+}
+
+/**
  * Closest free browser match to Antoni:
  * soft, friendly, approachable male — calm American / light male packs.
  */
@@ -46,16 +80,15 @@ function scoreAntoniLike(v) {
 
   let score = 0;
   if (ANTONI_LIKE_RE.test(name)) score += 50;
-  if (/\balex\b/i.test(name)) score += 25; // usually the softest natural US male on Mac
+  if (/\balex\b/i.test(name)) score += 25;
   if (MALE_HINT_RE.test(name)) score += 20;
   if (/\bmale\b/i.test(name)) score += 15;
-  if (/en(-|_)US/i.test(lang)) score += 12; // Antoni is American
+  if (/en(-|_)US/i.test(lang)) score += 12;
   if (/en(-|_)GB/i.test(lang)) score += 3;
-  if (v.localService) score += 5;
+  if (v.localService) score += 8; // mobile prefers local packs
   return score;
 }
 
-/** Soft, friendly male settings (Antoni-like, free browser TTS). */
 function pickAntoniLikeVoice() {
   const voices = window.speechSynthesis.getVoices?.() || [];
   if (!voices.length) {
@@ -67,81 +100,127 @@ function pickAntoniLikeVoice() {
   const score = best ? scoreAntoniLike(best) : -100;
 
   if (best && score > 0) {
-    return {
-      voice: best,
-      // Slightly lower pitch + calm rate ≈ soft / approachable
-      pitch: 0.95,
-      rate: 0.96,
-    };
+    return { voice: best, pitch: 0.95, rate: 0.96 };
   }
 
   const fallback =
-    voices.find((v) => /^en(-|_)US/i.test(v.lang) && !FEMALE_VOICE_RE.test(v.name)) ||
+    voices.find((v) => /^en(-|_)US/i.test(v.lang)) ||
     voices.find((v) => /^en/i.test(v.lang)) ||
     null;
 
   return { voice: fallback, pitch: 0.92, rate: 0.95 };
 }
 
-/**
- * Speak with free browser TTS, tuned toward Antoni (soft / friendly male).
- * @returns {Promise<void>}
- */
-export function speak(text, { onStart, onEnd } = {}) {
+function clearResumeWatchdog() {
+  if (resumeWatchdog) {
+    window.clearInterval(resumeWatchdog);
+    resumeWatchdog = null;
+  }
+}
+
+/** iOS often pauses mid-utterance — keep nudging resume while speaking. */
+function startResumeWatchdog() {
+  clearResumeWatchdog();
+  resumeWatchdog = window.setInterval(() => {
+    const synth = window.speechSynthesis;
+    if (!synth.speaking) {
+      clearResumeWatchdog();
+      return;
+    }
+    if (synth.paused) synth.resume();
+  }, 220);
+}
+
+/** Mobile Safari truncates long utterances — speak sentence chunks. */
+function splitForMobile(text) {
+  const chunks = text.match(/[^.!?]+[.!?]+["']?|[^.!?]+$/g) || [text];
+  return chunks.map((c) => c.trim()).filter(Boolean);
+}
+
+function speakChunk(text, { voice, pitch, rate }) {
   return new Promise((resolve) => {
-    if (!canSpeak()) {
-      onEnd?.();
-      resolve();
-      return;
-    }
+    const u = new SpeechSynthesisUtterance(text);
+    u.rate = rate;
+    u.pitch = pitch;
+    u.lang = voice?.lang || 'en-US';
+    if (voice) u.voice = voice;
 
-    const cleaned = cleanForSpeech(text);
-    if (!cleaned) {
-      onEnd?.();
-      resolve();
-      return;
-    }
+    u.onend = () => resolve();
+    u.onerror = () => resolve();
 
-    window.speechSynthesis.cancel();
-
-    const start = () => {
-      const { voice, pitch, rate } = pickAntoniLikeVoice();
-      const u = new SpeechSynthesisUtterance(cleaned);
-      u.rate = rate;
-      u.pitch = pitch;
-      u.lang = voice?.lang || 'en-US';
-      if (voice) u.voice = voice;
-
-      u.onstart = () => onStart?.();
-      u.onend = () => {
-        onEnd?.();
-        resolve();
-      };
-      u.onerror = () => {
-        onEnd?.();
-        resolve();
-      };
-
-      window.speechSynthesis.speak(u);
-    };
-
-    if ((window.speechSynthesis.getVoices() || []).length === 0) {
-      const onVoices = () => {
-        window.speechSynthesis.removeEventListener('voiceschanged', onVoices);
-        start();
-      };
-      window.speechSynthesis.addEventListener('voiceschanged', onVoices);
-      window.setTimeout(() => {
-        window.speechSynthesis.removeEventListener('voiceschanged', onVoices);
-        start();
-      }, 250);
-    } else {
-      start();
+    window.speechSynthesis.speak(u);
+    if (typeof window.speechSynthesis.resume === 'function') {
+      window.speechSynthesis.resume();
     }
   });
 }
 
+/**
+ * Speak with free browser TTS, tuned toward Antoni (soft / friendly male).
+ * On mobile, call unlockSpeech() from a tap first (send / voice / open).
+ * @returns {Promise<void>}
+ */
+export async function speak(text, { onStart, onEnd } = {}) {
+  if (!canSpeak()) {
+    onEnd?.();
+    return;
+  }
+
+  const cleaned = cleanForSpeech(text);
+  if (!cleaned) {
+    onEnd?.();
+    return;
+  }
+
+  // Best-effort unlock if somehow missed (may still fail on locked iOS)
+  if (!speechUnlocked) unlockSpeech();
+
+  window.speechSynthesis.cancel();
+  clearResumeWatchdog();
+
+  // Let cancel settle (critical on iOS)
+  await new Promise((r) => window.setTimeout(r, 60));
+
+  const waitForVoices = () =>
+    new Promise((resolve) => {
+      const existing = window.speechSynthesis.getVoices?.() || [];
+      if (existing.length) {
+        resolve();
+        return;
+      }
+      const onVoices = () => {
+        window.speechSynthesis.removeEventListener('voiceschanged', onVoices);
+        resolve();
+      };
+      window.speechSynthesis.addEventListener('voiceschanged', onVoices);
+      window.setTimeout(() => {
+        window.speechSynthesis.removeEventListener('voiceschanged', onVoices);
+        resolve();
+      }, 400);
+    });
+
+  await waitForVoices();
+
+  const voiceOpts = pickAntoniLikeVoice();
+  const chunks = splitForMobile(cleaned);
+
+  onStart?.();
+  startResumeWatchdog();
+
+  try {
+    for (const chunk of chunks) {
+      // Stopped by user / new speak
+      if (!window.speechSynthesis) break;
+      await speakChunk(chunk, voiceOpts);
+    }
+  } finally {
+    clearResumeWatchdog();
+    onEnd?.();
+  }
+}
+
 export function stopSpeaking() {
+  clearResumeWatchdog();
   if (canSpeak()) window.speechSynthesis.cancel();
 }
 
