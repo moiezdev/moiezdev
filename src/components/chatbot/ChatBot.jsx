@@ -8,7 +8,7 @@ import { BOT_HANDLE, BOT_NAME, getProfileExperienceYears } from '../../utils/bui
 import { prepareBotReply } from '../../utils/chatNav';
 import { canListen, canSpeak, createSpeechListener, speak, stopSpeaking, unlockSpeech } from '../../utils/speech';
 
-const SUGGESTIONS = ['Who is Moiz?', 'What are his core strengths?', 'Show standout projects'];
+const SUGGESTIONS = ['Show projects', 'What did he build?', 'Why hire him?'];
 const VOICE_PREF_KEY = 'botfolio-voice';
 
 const years = getProfileExperienceYears();

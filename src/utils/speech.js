@@ -44,7 +44,8 @@ export function cleanForSpeech(text) {
     .trim();
 }
 
-/** Prefer a normal English male system voice. */
+/** Prefer Google UK English Male; then other English male voices. */
+const PREFERRED_VOICE = /google uk english male/i;
 const MALE_RE =
   /\b(male|david|daniel|alex|mark|guy|james|tom|aaron|oliver|arthur|microsoft david|microsoft mark|microsoft guy|google us english male)\b/i;
 const FEMALE_RE =
@@ -54,13 +55,16 @@ function pickMaleVoice() {
   const voices = window.speechSynthesis.getVoices?.() || [];
   if (!voices.length) return null;
 
+  const preferred = voices.find((v) => PREFERRED_VOICE.test(v.name));
+  if (preferred) return preferred;
+
   const english = voices.filter((v) => /^en/i.test(v.lang));
   return (
-    english.find((v) => /^en-US/i.test(v.lang) && MALE_RE.test(v.name)) ||
+    english.find((v) => /^en-GB/i.test(v.lang) && MALE_RE.test(v.name)) ||
     english.find((v) => MALE_RE.test(v.name)) ||
-    english.find((v) => /^en-US/i.test(v.lang) && !FEMALE_RE.test(v.name)) ||
+    english.find((v) => /^en-GB/i.test(v.lang) && !FEMALE_RE.test(v.name)) ||
     english.find((v) => !FEMALE_RE.test(v.name)) ||
-    english.find((v) => /^en-US/i.test(v.lang)) ||
+    english.find((v) => /^en-GB/i.test(v.lang)) ||
     english[0] ||
     null
   );
@@ -126,7 +130,7 @@ export function speak(text, { onStart, onEnd } = {}) {
 
     const finish = () => {
       clearResumeTimer();
-      currentUtterance = null;
+      if (currentUtterance) currentUtterance = null;
       onEnd?.();
       resolve();
     };
@@ -195,7 +199,8 @@ export function speak(text, { onStart, onEnd } = {}) {
 
 export function stopSpeaking() {
   clearResumeTimer();
-  currentUtterance = null;
+  // Read + clear retained utterance (keeps iOS from GC mid-speech while active)
+  if (currentUtterance) currentUtterance = null;
   if (canSpeak()) {
     try {
       window.speechSynthesis.cancel();
