@@ -1,22 +1,15 @@
+const overlaps = (a, b) => a.start < b.end && b.start < a.end;
+
 /**
  * Turn emails, phones, URLs, and in-app nav spans into clickable nodes.
  * `spans` come from prepareBotReply (project titles + [[nav]] markers).
+ * Emails / phones / URLs win over nav keywords (e.g. "moiezdev" inside an address).
  */
 export function linkifyToNodes(text = '', { spans = [], onNavigate } = {}) {
   const input = String(text);
   if (!input) return null;
 
   const regions = [];
-
-  for (const span of spans) {
-    if (span.end > input.length || span.start >= input.length) continue;
-    regions.push({
-      start: span.start,
-      end: Math.min(span.end, input.length),
-      kind: 'nav',
-      to: span.to,
-    });
-  }
 
   const pattern =
     /(https?:\/\/[^\s<>"']+|www\.[^\s<>"']+|(?:github|linkedin|wa\.me)\.com\/[^\s<>"']+|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}|\+\d[\d\s()-]{6,}\d|\b\d{3}[\s-]\d{3}[\s-]?\d{4,}\b)/gi;
@@ -33,7 +26,19 @@ export function linkifyToNodes(text = '', { spans = [], onNavigate } = {}) {
     const href = toHref(raw);
     if (!href) continue;
     const region = { start, end, kind: 'ext', href };
-    if (regions.some((r) => start < r.end && end > r.start)) continue;
+    if (regions.some((r) => overlaps(r, region))) continue;
+    regions.push(region);
+  }
+
+  for (const span of spans) {
+    if (span.end > input.length || span.start >= input.length) continue;
+    const region = {
+      start: span.start,
+      end: Math.min(span.end, input.length),
+      kind: 'nav',
+      to: span.to,
+    };
+    if (regions.some((r) => overlaps(r, region))) continue;
     regions.push(region);
   }
 
@@ -69,9 +74,16 @@ export function linkifyToNodes(text = '', { spans = [], onNavigate } = {}) {
         <a
           key={`e-${key++}`}
           href={region.href}
-          className="text-primary underline underline-offset-2 hover:opacity-80 break-all"
+          className="text-primary underline underline-offset-2 hover:opacity-80 break-all cursor-scale-0"
           {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-          onClick={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            e.stopPropagation();
+            // mailto:/tel: can be swallowed by SPA click handlers — open explicitly
+            if (/^(mailto|tel):/i.test(region.href)) {
+              e.preventDefault();
+              window.location.href = region.href;
+            }
+          }}
         >
           {label}
         </a>,

@@ -107,6 +107,8 @@ export function addEntitySpans(text = '', existing = []) {
     let m;
     while ((m = re.exec(src))) {
       const span = { start: m.index, end: m.index + m[0].length, to, label: m[0] };
+      // Don't turn the local-part of an email (e.g. "moiezdev" in moiezdev@…) into a nav link
+      if (src[span.end] === '@') continue;
       if (spans.some((s) => overlaps(s, span))) continue;
       spans.push(span);
     }

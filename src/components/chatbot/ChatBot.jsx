@@ -1,12 +1,21 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { gsap } from 'gsap';
+import { HiMicrophone, HiStop, HiVolumeOff, HiVolumeUp } from 'react-icons/hi';
 import RobotAvatar from './RobotAvatar';
 import TypewriterText from './TypewriterText';
+import Button from '../ui/Button';
 import { askBot } from '../../utils/askBot';
 import { BOT_HANDLE, BOT_NAME, getProfileExperienceYears } from '../../utils/buildPortfolioContext';
 import { prepareBotReply } from '../../utils/chatNav';
-import { canListen, canSpeak, createSpeechListener, speak, stopSpeaking, unlockSpeech } from '../../utils/speech';
+import {
+  canListen,
+  canSpeak,
+  createSpeechListener,
+  speak,
+  stopSpeaking,
+  unlockSpeech,
+} from '../../utils/speech';
 
 const SUGGESTIONS = ['Show projects', 'What did he build?', 'Why hire him?'];
 const VOICE_PREF_KEY = 'botfolio-voice';
@@ -373,32 +382,27 @@ const ChatBot = () => {
               )}
             </div>
             {speechReady.speak && (
-              <button
-                type="button"
+              <Button
+                primary={voiceOn}
                 onClick={() => {
                   unlockSpeech();
                   setVoiceOn((v) => !v);
                 }}
-                className={`border px-2 py-1 text-xs transition-colors cursor-scale-0 mr-1 ${
-                  voiceOn
-                    ? 'border-primary text-primary'
-                    : 'border-gray-a text-gray-a hover:border-primary hover:text-primary'
-                }`}
+                className="!px-2 !py-1 text-xs mr-1"
                 aria-pressed={voiceOn}
                 aria-label={voiceOn ? 'Mute voice' : 'Unmute voice'}
                 title={voiceOn ? 'Voice on' : 'Voice muted'}
               >
-                {voiceOn ? 'voice' : 'mute'}
-              </button>
+                {voiceOn ? (
+                  <HiVolumeUp className="w-3.5 h-3.5" aria-hidden />
+                ) : (
+                  <HiVolumeOff className="w-3.5 h-3.5" aria-hidden />
+                )}
+              </Button>
             )}
-            <button
-              type="button"
-              onClick={closeChat}
-              className="border border-gray-a text-gray-a hover:border-primary hover:text-primary px-2 py-1 text-xs transition-colors cursor-scale-0"
-              aria-label="Close chat"
-            >
+            <Button onClick={closeChat} className="!px-2 !py-1 text-xs" aria-label="Close chat">
               close
-            </button>
+            </Button>
           </div>
 
           <div ref={listRef} className="flex-1 overflow-y-auto px-3 py-4 space-y-3">
@@ -457,16 +461,15 @@ const ChatBot = () => {
                 </p>
                 <div className="flex flex-col gap-[-1px]">
                   {SUGGESTIONS.map((s, idx) => (
-                    <button
+                    <Button
                       key={s}
-                      type="button"
                       onClick={() => send(s)}
-                      className={`text-left text-xs border border-gray-a text-gray-a hover:border-primary hover:text-primary px-2.5 py-2 transition-colors cursor-scale-0 ${
+                      className={`!w-full !justify-start text-left text-xs !px-2.5 !py-2 rounded-none ${
                         idx > 0 ? 'mt-[-1px]' : ''
                       }`}
                     >
                       {s}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
@@ -474,23 +477,25 @@ const ChatBot = () => {
           </div>
 
           <form onSubmit={onSubmit} className="border-t border-gray-a">
-            <div className="flex">
+            <div className="flex items-stretch">
               {speechReady.listen && (
-                <button
-                  type="button"
+                <Button
                   onClick={toggleListen}
                   disabled={busy}
-                  className={`border-r px-3 py-3 text-xs transition-colors cursor-scale-0 shrink-0 disabled:opacity-40 ${
-                    listening
-                      ? 'border-primary text-primary bg-primary/10'
-                      : 'border-gray-a text-gray-a hover:border-primary hover:text-primary'
+                  primary={listening}
+                  className={`!border-0 !rounded-none !px-3 !py-3 text-xs shrink-0 h-full ${
+                    listening ? 'bg-primary/10' : ''
                   }`}
                   aria-pressed={listening}
                   aria-label={listening ? 'Done speaking — send' : 'Speak a question'}
                   title={listening ? 'Tap when finished' : 'Speak'}
                 >
-                  {listening ? 'done' : 'mic'}
-                </button>
+                  {listening ? (
+                    <HiStop className="w-4 h-4 animate-pulse" aria-hidden />
+                  ) : (
+                    <HiMicrophone className="w-4 h-4" aria-hidden />
+                  )}
+                </Button>
               )}
               <input
                 ref={inputRef}
@@ -501,26 +506,26 @@ const ChatBot = () => {
                   listening ? 'Keep talking — tap done when finished…' : 'Ask about Moiz…'
                 }
                 disabled={busy}
-                className="flex-1 min-w-0 bg-transparent px-3 py-3 text-base text-white placeholder:text-gray-a/50 focus:outline-none disabled:opacity-50 cursor-scale-0"
+                className="flex-1 min-w-0 bg-transparent px-1 py-1 text-base text-white placeholder:text-gray-a/50 focus:outline-none disabled:opacity-50 cursor-scale-0"
               />
-              <button
+              <Button
                 type="submit"
+                primary
                 disabled={busy || !input.trim()}
-                className="border-l border-primary text-primary px-4 py-3 text-sm hover:bg-primary/10 disabled:opacity-40 transition-colors cursor-scale-0 shrink-0"
+                className="!border-y-0 !border-r-0 !rounded-none !px-4 !py-3 text-sm shrink-0"
               >
                 send ~~{'>'}
-              </button>
+              </Button>
             </div>
           </form>
         </div>
       )}
 
       {!open && (
-        <button
+        <Button
           ref={fabRef}
-          type="button"
           onClick={openChat}
-          className="relative group border border-gray-a bg-gray-b p-2 hover:border-primary transition-colors cursor-scale-0"
+          className="!relative group !border-gray-a bg-gray-b !p-2 hover:!border-primary"
           aria-label={`Open ${BOT_NAME}`}
           aria-expanded={false}
         >
@@ -528,10 +533,7 @@ const ChatBot = () => {
             <span className="bg-primary w-2 h-2 block" aria-hidden />
           </div>
           <RobotAvatar size={52} isOpen={false} mood="idle" />
-          <span className="pointer-events-none absolute right-full mr-0 top-1/2 -translate-y-1/2 whitespace-nowrap border border-gray-a border-r-0 bg-gray-b px-2.5 py-1.5 text-xs text-gray-a opacity-0 group-hover:opacity-100 transition-opacity inline-flex items-center gap-1.5">
-            <span className="bg-primary w-2 h-2 shrink-0" aria-hidden />#{BOT_HANDLE}
-          </span>
-        </button>
+        </Button>
       )}
     </div>
   );
