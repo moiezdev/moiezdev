@@ -11,7 +11,7 @@ const MODELS = (
 ).filter((model, index, list) => list.indexOf(model) === index);
 
 const AI_FAIL_FALLBACK =
-  "I couldn't answer that — you can explore [[nav:/works|All works]] or reach Moiez via [[nav:/contact|Contact page]].";
+  "I stay focused on Moiz's work — explore [[nav:/works|All works]] or reach him via [[nav:/contact|Contact page]].";
 
 /**
  * OpenRouter chat completion with model fallback.

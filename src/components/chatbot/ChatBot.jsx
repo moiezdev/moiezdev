@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { gsap } from 'gsap';
-import { HiMicrophone, HiStop, HiVolumeOff, HiVolumeUp } from 'react-icons/hi';
+import { HiMicrophone, HiStop, HiVolumeOff, HiVolumeUp, HiX } from 'react-icons/hi';
 import RobotAvatar from './RobotAvatar';
 import TypewriterText from './TypewriterText';
 import Button from '../ui/Button';
 import { askBot } from '../../utils/askBot';
-import { BOT_HANDLE, BOT_NAME, getProfileExperienceYears } from '../../utils/buildPortfolioContext';
+import { BOT_HANDLE, BOT_NAME } from '../../utils/buildPortfolioContext';
 import { prepareBotReply } from '../../utils/chatNav';
 import {
   canListen,
@@ -17,16 +17,14 @@ import {
   unlockSpeech,
 } from '../../utils/speech';
 
-const SUGGESTIONS = ['Show projects', 'What did he build?', 'Why hire him?'];
+const SUGGESTIONS = ['Show projects', 'Tech stack', 'How he builds'];
 const VOICE_PREF_KEY = 'botfolio-voice';
-
-const years = getProfileExperienceYears();
 
 const WELCOME = {
   id: 'welcome',
   role: 'bot',
   ...prepareBotReply(
-    `Hey — welcome. I'm ${BOT_NAME}, Moiz's assistant. He's a product-focused Full Stack Engineer (React, Vue, Node.js) with ~${years} years across retail and SaaS. Ask me anything, or explore [[nav:/about|About Moiz]], [[nav:/works|All works]], or [[nav:/contact|Contact page]].`
+    `Hey — I'm ${BOT_NAME}. I'll walk you through Moiz's work as a Full Stack Engineer. You can explore [[nav:/works|All works]], [[nav:/about|About Moiz]], or how he builds products end-to-end.`
   ),
   typed: true,
 };
@@ -401,26 +399,35 @@ const ChatBot = () => {
               </Button>
             )}
             <Button onClick={closeChat} className="!px-2 !py-1 text-xs" aria-label="Close chat">
-              close
+              <HiX className="w-3.5 h-3.5" aria-hidden />
             </Button>
           </div>
 
           <div ref={listRef} className="flex-1 overflow-y-auto px-3 py-4 space-y-3">
             {messages.map((msg) => {
               const isTyping = msg.role === 'bot' && typingId === msg.id && !msg.typed;
+              const isUser = msg.role === 'user';
 
               return (
                 <div
                   key={msg.id ?? `${msg.role}-${msg.text.slice(0, 12)}`}
-                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`max-w-[90%] px-3 py-2.5 text-sm leading-relaxed border ${
-                      msg.role === 'user'
-                        ? 'border-primary text-white'
-                        : 'border-gray-a text-gray-a'
+                    className={`relative max-w-[90%] px-3 py-2.5 text-sm leading-relaxed border bg-gray-b ${
+                      isUser ? 'border-primary text-white' : 'border-gray-a text-gray-a'
                     }`}
                   >
+                    {/* Speech hook — bottom-end (user) / bottom-start (bot) */}
+                    <span
+                      aria-hidden
+                      className={`pointer-events-none absolute bottom-0 h-2.5 w-2.5 bg-gray-b ${
+                        isUser
+                          ? 'right-0 bottom-3 translate-x-[calc(50%+0.7px)] rotate-315 border-r border-b border-primary'
+                          : 'left-0 bottom-3 -translate-x-[calc(50%+0.7px)] rotate-45 border-l border-b border-gray-a'
+                      }`}
+                    />
+
                     {msg.role === 'bot' && (
                       <p className="text-primary text-[10px] mb-1.5 tracking-wide">
                         <span className="bg-primary w-1.5 h-1.5 inline-block mr-1.5 mb-px align-middle" />
@@ -447,9 +454,19 @@ const ChatBot = () => {
 
             {loading && (
               <div className="flex justify-start">
-                <div className="border border-gray-a px-3 py-2.5 text-sm text-gray-a inline-flex items-center gap-2">
-                  <span className="bg-primary w-2 h-2 animate-pulse" />
-                  <span className="text-xs">thinking…</span>
+                <div className="relative max-w-[90%] px-3 py-2.5 text-sm leading-relaxed border border-gray-a bg-gray-b text-gray-a">
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute left-0 h-2.5 w-2.5 bottom-3 -translate-x-[calc(50%+0.7px)] rotate-45 border-l border-b border-gray-a bg-gray-b"
+                  />
+                  <p className="text-primary text-[10px] mb-1.5 tracking-wide">
+                    <span className="bg-primary w-1.5 h-1.5 inline-block mr-1.5 mb-px align-middle" />
+                    {BOT_HANDLE}
+                  </p>
+                  <p className="inline-flex items-center gap-2 text-sm">
+                    <span className="bg-primary w-2 h-2 animate-pulse shrink-0" />
+                    <span className="text-xs">thinking…</span>
+                  </p>
                 </div>
               </div>
             )}

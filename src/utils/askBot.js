@@ -1,29 +1,27 @@
 import { handleChat } from '../lib/chatHandler';
 import { AI_FAIL_FALLBACK } from '../lib/aiClient';
 import { prepareBotReply } from './chatNav';
-import { BOT_NAME, getProfileExperienceYears } from './buildPortfolioContext';
+import { BOT_NAME } from './buildPortfolioContext';
 
-const years = getProfileExperienceYears();
-
-/** Offline / missing-key replies — short + inline nav. */
+/** Offline / missing-key replies — portfolio guide tone + inline nav. */
 function localFallback(question = '') {
   const q = question.toLowerCase().trim();
 
   if (/^(hi|hey|hello|yo|sup)\b/.test(q)) {
     return prepareBotReply(
-      `Hey — I'm ${BOT_NAME}. Moiz is a product-focused Full Stack Engineer (~${years} years). Ask about [[nav:/works|All works]], [[nav:/about|About Moiz]], or [[nav:/contact|Contact page]].`,
+      `Hey — I'm ${BOT_NAME}. I'll walk you through Moiz's work as a Full Stack Engineer. Explore [[nav:/works|All works]], [[nav:/about|About Moiz]], or how he builds products end-to-end.`,
     );
   }
 
   if (/project|work|built|portfolio|show/.test(q)) {
     return prepareBotReply(
-      `Standouts include [[nav:/works/twlm-pos|TWLM - POS]] (~70% fewer support requests, ~64% faster APIs), [[nav:/works/aa-tourism|AATourism]], and more on [[nav:/works|All works]].`,
+      `Standouts include [[nav:/works/twlm-pos|TWLM - POS]] (~70% fewer support requests, ~64% faster APIs) and [[nav:/works/aa-tourism|AATourism]]. Want more on [[nav:/works|All works]]?`,
     );
   }
 
-  if (/hire|why|strength|skill|good at/.test(q)) {
+  if (/stack|tech|skill|approach|build|design|strength|hire|why|good at/.test(q)) {
     return prepareBotReply(
-      `Moiz owns product-focused fullstack delivery end-to-end — React, Vue, Node.js — with measurable impact like ~70% fewer support tickets on [[nav:/works/twlm-pos|TWLM - POS]]. See [[nav:/about|About Moiz]].`,
+      `Moiz focuses on scalable SaaS and retail systems — React, Vue, Node.js — with end-to-end ownership. See [[nav:/about|About Moiz]] or real examples on [[nav:/works|All works]].`,
     );
   }
 
@@ -33,7 +31,9 @@ function localFallback(question = '') {
     );
   }
 
-  return prepareBotReply(AI_FAIL_FALLBACK);
+  return prepareBotReply(
+    `I stay focused on Moiz's work. Want a quick overview on [[nav:/about|About Moiz]], or real project examples on [[nav:/works|All works]]?`,
+  );
 }
 
 /**
