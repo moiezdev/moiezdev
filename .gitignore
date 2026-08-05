@@ -30,5 +30,6 @@ package-lock.json
 *.mov
 *.mp4
 *.pdf
+!public/Moieez ur Rehman.pdf
 .env
 .env.local
