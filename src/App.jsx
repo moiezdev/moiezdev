@@ -1,5 +1,6 @@
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import './App.css';
 import { Component } from 'react';
 import { Suspense, lazy } from 'react';
@@ -50,6 +51,7 @@ function App() {
       <ChatBot />
       <Cursor size={25} />
       <Analytics />
+      <SpeedInsights />
     </Router>
   );
 }
