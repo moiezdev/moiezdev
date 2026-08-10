@@ -1,4 +1,5 @@
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import './App.css';
 import { Component } from 'react';
 import { Suspense, lazy } from 'react';
@@ -48,6 +49,7 @@ function App() {
       </div>
       <ChatBot />
       <Cursor size={25} />
+      <Analytics />
     </Router>
   );
 }
