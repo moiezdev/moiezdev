@@ -11,6 +11,8 @@
       "Built a centralized promotional messaging system with Apple Wallet loyalty passes, smart geo-location targeting, and branch-based tracking and visibility.",
       "Developed a dynamic Page Builder and a Flutter-based mobile application that allows businesses to create customizable storefront pages and enables customers to place orders online easily.",
       "Optimized backend APIs, reducing latency by approximately 64% and improving system performance.",
+      "Used Prisma ORM with PostgreSQL for schema migrations and faster data access; added RBAC with OAuth2/JWT and SSO for multi-role access.",
+      "Built webhook-driven workflows for wallet updates and notifications, and integrated CRM plus Gulf payment gateways (MyFatoorah, Moyasar).",
       "Refactored a large portion of the codebase—improved code structure and maintainability, eliminated side effects caused by rapid development, and enhanced overall application stability."
     ]
   ],
@@ -20,6 +22,8 @@
     "NestJs",
     "Fastify",
     "Node",
+    "Prisma",
+    "PostGreSQL",
     "Apple Wallet",
     "Google Wallet",
     "REST APIs",

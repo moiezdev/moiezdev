@@ -5,10 +5,10 @@
   "description": [
     "AA Tourism – Flight Booking Platform",
     [
-      "A site to search and book flights easily using Sabre and Amadeus APIs.",
-      "Built the frontend with Nuxt 2, Vuex, Buefy, and Bootstrap, with small animations here and there to make it feel alive.",
-      "Forms, flight lists, and booking steps are interactive but simple, so users don’t get lost.",
-      "The site works smoothly on both mobile and desktop, even with real-time flight data from the APIs.",
+      "A flight booking and tour-planning platform integrated with IATA codes, Sabre, and Amadeus for real-time flight data.",
+      "Developed high-quality UI focused on UX, animations, and seamless booking journeys.",
+      "Forms, flight lists, and booking steps stay interactive but simple so users don’t get lost.",
+      "Worked closely with backend teams to deliver reliable, consistent booking experiences on mobile and desktop.",
       "Kept the visuals clean and consistent with the brand colors and style."
     ]
   ],

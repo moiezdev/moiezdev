@@ -1,9 +1,9 @@
 {
   "title": "Hello, I'm Moiz!",
-  "subtitle": "Product-Focused Full Stack Software Engineer",
+  "subtitle": "Senior Full Stack Engineer",
   "description": [
-    "Product-focused Full Stack Engineer with {{experienceYears}} years of experience building scalable systems across retail and SaaS. I work across the stack using React, Vue, and Node.js, delivering reliable, high-quality solutions with a strong focus on real-world usability. My experience includes designing frontend architectures, developing secure APIs, and optimizing databases for high-traffic production environments.",
-    "I've worked on a wide range of applications, from enterprise systems to user-focused platforms, improving system efficiency, simplifying workflows, and reducing operational overhead. Recent work includes POS platforms, loyalty systems, and customer engagement tools — contributing to both technical architecture and product direction.",
-    "I take ownership of features end-to-end — from understanding business needs and structuring solutions to implementation and deployment — with a focus on maintainable code and systems that scale. I deliver software that solves practical business problems and creates measurable impact."
+    "Product-focused Full Stack Engineer with {{experienceYears}} years of experience building scalable systems across retail and SaaS — from POS platforms to loyalty systems and customer engagement tools. I work across the stack using React, Vue, Next.js, Node.js, and NestJS, delivering reliable, high-quality solutions with a strong focus on real-world usability.",
+    "I take ownership of features end-to-end — from understanding business needs and structuring solutions to implementation and deployment — with a focus on maintainable code, system efficiency, and software that creates measurable impact. Core strengths include POS retail systems, payment integrations (MyFatoorah, Moyasar), CRM, wallet integrations (Apple Wallet & Google Wallet), microservices and monorepo patterns, and leading UI/UX engineering.",
+    "I've revamped and stabilized unstable applications, supported management teams, and improved products by solving real problems. Recent work includes POS platforms, loyalty systems, and customer engagement tools — contributing to both technical architecture and product direction."
   ]
 }

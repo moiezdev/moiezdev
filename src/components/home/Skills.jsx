@@ -14,6 +14,7 @@ const TECHNICAL_CATEGORIES = new Set([
   'Programming Languages',
   'Tools & Platforms',
   'Design & Prototyping',
+  'Integrations',
 ]);
 
 const technicalSkills = skills.filter((skill) => TECHNICAL_CATEGORIES.has(skill.category));

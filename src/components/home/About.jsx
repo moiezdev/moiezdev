@@ -22,6 +22,9 @@ const About = () => {
                 {p}
               </p>
             ))}
+            <Link to="/experience" className="self-start">
+              <Button>View experience ~~{'>'}</Button>
+            </Link>
           </div>
           <div className="md:col-span-4 order-1 md:order-2 relative">
             <div className="absolute top-0 right-1">

@@ -11,8 +11,9 @@ const Navbar = () => {
   const navbtns = [
     { id: 1, name: 'home', link: '/' },
     { id: 2, name: 'works', link: '/works' },
-    { id: 3, name: 'about-me', link: '/about' },
-    { id: 4, name: 'contact', link: '/contact' },
+    { id: 3, name: 'experience', link: '/experience' },
+    { id: 4, name: 'about-me', link: '/about' },
+    { id: 5, name: 'contact', link: '/contact' },
   ];
 
   // Swipe detection
@@ -65,7 +66,7 @@ const Navbar = () => {
         </div>
 
         {/* Desktop Menu */}
-        <ul className="hidden md:flex space-x-6">
+        <ul className="hidden md:flex space-x-4 lg:space-x-6">
           {navbtns.map((btn) => (
             <li key={btn.id}>
               <NavLink

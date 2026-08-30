@@ -16,7 +16,7 @@ const Projects = () => {
     if (!projects || projects.length === 0) return;
     cardsRef.current = cardsRef.current.slice(0, projects.length);
 
-    ScrollTrigger.getAll().forEach((t) => t.kill());
+    // Refresh shared scroll triggers after cards mount (do not kill other sections)
 
     cardsRef.current.forEach((card) => {
       const handleMouseMove = (e) => {

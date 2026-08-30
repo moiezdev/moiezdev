@@ -3,6 +3,7 @@ import { chatbot, projects } from '../data';
 /** In-site destinations the portfolio chatbot can offer as quick navigation. */
 export const SITE_NAV = {
   about: { label: 'About Moiz', to: '/about' },
+  experience: { label: 'Experience', to: '/experience' },
   contact: { label: 'Contact page', to: '/contact' },
   works: { label: 'All works', to: '/works' },
   home: { label: 'Home', to: '/' },
@@ -93,6 +94,7 @@ export function addEntitySpans(text = '', existing = []) {
 
   candidates.push(
     { label: 'About Moiz', to: '/about' },
+    { label: 'Experience', to: '/experience' },
     { label: 'Contact page', to: '/contact' },
     { label: 'All works', to: '/works' },
     { label: 'Skills page', to: '/about' },

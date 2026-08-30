@@ -20,6 +20,7 @@ import ParallaxBackground from './components/ui/ParallaxBackground';
 
 const Home = lazy(() => import('./pages/Index'));
 const Projects = lazy(() => import('./pages/Projects'));
+const Experience = lazy(() => import('./pages/Experience'));
 const About = lazy(() => import('./pages/About'));
 const Contact = lazy(() => import('./pages/Contact'));
 const NotFound = lazy(() => import('./pages/NotFound'));
@@ -40,6 +41,7 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/works" element={<Projects />} />
               <Route path="/works/:id" element={<ProjectDetail />} />
+              <Route path="/experience" element={<Experience />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="*" element={<NotFound />} />

@@ -18,7 +18,8 @@
       "MVP",
       "MVVM",
       "Component Based",
-      "Microservices"
+      "Microservices",
+      "Event-driven architecture"
     ]
   },
   {
@@ -62,14 +63,15 @@
       "PostGreSQL",
       "MySQL",
       "SQL Server",
-      "MongoDB"
+      "MongoDB",
+      "Prisma"
     ]
   },
   {
     "category": "Programming Languages",
     "items": [
-      "JavaScript",
       "TypeScript",
+      "JavaScript",
       "HTML5",
       "CSS3",
       "SCSS",
@@ -83,7 +85,25 @@
       "Code Splitting",
       "Lazy Loading",
       "Caching",
+      "RBAC",
+      "OAuth2",
+      "OIDC",
+      "JWT",
+      "SSO",
       "Authentication & Authorization"
+    ]
+  },
+  {
+    "category": "Integrations",
+    "items": [
+      "Webhooks",
+      "CRM",
+      "MyFatoorah",
+      "Moyasar",
+      "Apple Wallet",
+      "Google Wallet",
+      "Sabre",
+      "Amadeus"
     ]
   },
   {
@@ -97,12 +117,8 @@
       "Vite",
       "Vercel",
       "Netlify",
-      "Apple Wallet",
-      "Google Wallet",
-      "Entity Framework",
-      "Sabre",
-      "Amadeus",
-      "CI/CD"
+      "CI/CD",
+      "GitHub Copilot"
     ]
   },
   {

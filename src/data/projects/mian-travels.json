@@ -5,7 +5,7 @@
   "description": [
     "Mian's Travels – Flight Booking Platform",
     [
-      "A flight booking site using Sabre API, made to feel simple and intuitive for users.",
+      "Built at Creative Inter Tech — a flight booking site using Sabre API, made to feel simple and intuitive for users.",
       "Frontend made with Nuxt 2, Vue, Buefy, Bootstrap, including small animations for better interactions.",
       "Booking forms, flight searches, and listings are straightforward and easy to navigate.",
       "Works well on mobile and desktop, fetching data from Sabre API without any hiccups.",

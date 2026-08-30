@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import SectionTitle from '../components/ui/SectionTitle';
 import Floating from '../components/ui/Floating';
 import Magnetic from '../components/ui/Magnetic';
@@ -5,6 +6,7 @@ import FloatingDotBox from '../components/ui/animatedSvgs/FloatingDotBox';
 import Transition from '../components/functions/Transition';
 import LazyImage from '../components/ui/LazyImage';
 import Skills from '../components/home/Skills';
+import Button from '../components/ui/Button';
 import { about } from '../data';
 
 const About = () => {
@@ -28,6 +30,9 @@ const About = () => {
                     {p}
                   </p>
                 ))}
+                <Link to="/experience" className="self-start">
+                  <Button primary>View experience ~~{'>'}</Button>
+                </Link>
               </div>
               <div className="md:col-span-4 order-1 md:order-2 relative">
                 <div className="absolute top-0 right-1">

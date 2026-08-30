@@ -17,14 +17,14 @@ import {
   unlockSpeech,
 } from '../../utils/speech';
 
-const SUGGESTIONS = ['Show projects', 'Tech stack', 'How he builds'];
+const SUGGESTIONS = ['Show projects', 'Experience', 'Tech stack'];
 const VOICE_PREF_KEY = 'botfolio-voice';
 
 const WELCOME = {
   id: 'welcome',
   role: 'bot',
   ...prepareBotReply(
-    `Hey — I'm ${BOT_NAME}. I'll walk you through Moiz's work as a Full Stack Engineer. You can explore [[nav:/works|All works]], [[nav:/about|About Moiz]], or how he builds products end-to-end.`
+    `Hey — I'm ${BOT_NAME}. I'll walk you through Moiz's work as a Full Stack Engineer. You can explore [[nav:/works|All works]], [[nav:/experience|Experience]], or [[nav:/about|About Moiz]].`
   ),
   typed: true,
 };

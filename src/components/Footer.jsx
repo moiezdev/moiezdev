@@ -12,7 +12,7 @@ const Footer = () => {
                 moiezdev@gmail.com
               </a>
             </p>
-            <p className="text-white">Product-Focused Full Stack Software Engineer</p>
+            <p className="text-white">Senior Full Stack Software Engineer</p>
           </div>
           <div>
             <h1 className="text-large text-white">Media</h1>

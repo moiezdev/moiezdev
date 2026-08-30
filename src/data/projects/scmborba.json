@@ -5,18 +5,20 @@
   "description": [
     "Santa Casa da Misericórdia de Borba – Institutional Website",
     [
-      "Contributed as a Frontend Developer, focusing on UI/UX improvements and Vue.js development.",
-      "Translated complex design requirements into a clean, responsive, and accessible user interface.",
-      "Implemented dynamic components in Vue.js to enhance site navigation and user engagement.",
+      "Built and maintained full-stack features using Node.js, Express.js, and Vue.js/Nuxt.js, focusing on performance, usability, and maintainability.",
+      "Developed responsive, user-focused interfaces with smooth interactions and translated Figma/XD into production UI.",
+      "Designed backend APIs and optimized data handling, refining queries and application logic for better system efficiency.",
       "Collaborated with the team to modernize the visual identity of a non-profit social services institution, ensuring the platform clearly communicates its mission, services, and community initiatives.",
       "Optimized performance and usability for a wide audience, including elderly users and families seeking social support."
     ]
   ],
   "technologies": [
-    "React",
+    "Vue",
+    "NuxtJs",
+    "Node",
+    "Express",
     "TailwindCSS",
-    "JavaScript",
-    "Redux Toolkit"
+    "JavaScript"
   ],
   "imageUrl": "/projects-media/scmborba/main.webp",
   "projectUrl": "http://scmborba.pt",

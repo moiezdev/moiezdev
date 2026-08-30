@@ -1,65 +1,127 @@
 [
   {
+    "id": "twlm",
     "title": "Sr. Software Engineer",
     "company": "TWLM Solutions",
     "location": "Saudi Arabia",
     "period": "Feb 2025 – Present",
+    "current": true,
+    "companyUrl": "https://twlm.solutions/",
+    "logo": "/company-logos/twlm.svg",
+    "summary": "POS, loyalty, and wallet platform for retail businesses across the Gulf.",
+    "stack": [
+      "React",
+      "NestJs",
+      "Prisma",
+      "PostGreSQL",
+      "Flutter",
+      "Apple Wallet",
+      "Google Wallet"
+    ],
+    "relatedProjects": ["twlm-pos"],
     "highlights": [
       "Built a POS platform with integrated loyalty, promotions, and wallet systems.",
-      "Designed and developed a block-based page builder for menus and e-commerce storefronts.",
-      "Improved user flows and UI usability, reducing customer support requests by ~70%.",
-      "Implemented loyalty systems (points, cards, gift cards) with Apple Wallet & Google Wallet and real-time notifications.",
-      "Developed geo-targeted promotional messaging with branch-level campaign tracking.",
-      "Contributed to a Flutter mobile app for storefront management and online ordering.",
-      "Optimized backend APIs (~64% faster response time) and refactored key codebase areas for maintainability."
+      "Designed and developed a block-based page builder enabling businesses to create and manage menus and e-commerce storefronts.",
+      "Improved user flows and interface usability, reducing customer support requests significantly (~70%).",
+      "Implemented loyalty systems including points, loyalty cards, and gift cards with Apple Wallet & Google Wallet integration and real-time notifications.",
+      "Improved product experience by simplifying core workflows and reducing user friction.",
+      "Developed a geo-targeted promotional messaging system with branch-level campaign tracking.",
+      "Contributed to a Flutter-based mobile app supporting storefront management and online ordering.",
+      "Optimized backend APIs, significantly reducing response time and improving system performance (~64%).",
+      "Refactored key parts of the codebase to improve maintainability, readability, and long-term stability.",
+      "Used Prisma ORM with PostgreSQL to streamline data access, schema migrations, and query performance.",
+      "Implemented RBAC and OAuth2/JWT-based authentication with SSO for secure multi-role access control.",
+      "Built webhook-driven, event-based workflows for real-time notification and wallet-update events.",
+      "Integrated CRM systems to synchronize customer and business data across the platform."
     ]
   },
   {
+    "id": "accoina",
     "title": "Sr. Software Engineer",
     "company": "Accoina Agua",
     "location": "Saudi Arabia",
     "period": "Jan 2024 – Feb 2025",
+    "current": false,
+    "companyUrl": "https://www.acciona.com/",
+    "logo": "/company-logos/acciona.jpg",
+    "logoOnLight": true,
+    "summary": "Internal tools and dashboards that digitized operations and cut downtime.",
+    "stack": ["React", "SQL", "RBAC", "OAuth2", "JWT"],
+    "relatedProjects": [],
     "highlights": [
-      "Digitized internal workflows and reduced system downtime by ~25%.",
+      "Improved internal operations by digitizing workflows and reducing system downtime by ~25%.",
       "Built internal dashboards for reporting and analytics using React and SQL.",
       "Maintained and extended backend services and APIs for internal tools.",
-      "Resolved bottlenecks and automated routine reporting to cut manual workload."
+      "Implemented RBAC and OAuth2/JWT-based authentication for internal dashboards and tools.",
+      "Identified and resolved system bottlenecks, improving performance and ensuring smoother day-to-day operations.",
+      "Automated routine processes and reporting tasks, increasing efficiency and reducing manual workload."
     ]
   },
   {
-    "title": "Software Engineer",
+    "id": "scm-borba",
+    "title": "Senior Frontend Engineer",
     "company": "Santa Casa da Misericórdia de Borba (SCM Borba)",
     "location": "Portugal (Remote)",
     "period": "Oct 2022 – Jan 2024",
+    "current": false,
+    "companyUrl": "https://www.scmborba.pt/pt",
+    "logo": "/company-logos/scm-borba.jpg",
+    "logoOnLight": true,
+    "summary": "50+ SaaS, e-commerce, and education builds delivered remotely.",
+    "stack": ["React", "Vue", "NuxtJs", "Node", "Express", "TailwindCSS"],
+    "relatedProjects": ["scmborba"],
     "highlights": [
       "Delivered 50+ projects across SaaS, e-commerce, and education platforms.",
-      "Built scalable UIs with React, Vue, Nuxt, and Tailwind; integrated REST APIs with Node.js and Express.",
-      "Improved performance with code-splitting, lazy loading, and optimized rendering.",
-      "Deployed with CI/CD (GitLab) and Vercel; translated Figma/XD into production interfaces.",
-      "Collaborated with clients to turn business needs into scalable technical solutions."
+      "Built scalable, high-performance UIs using React, Vue, Nuxt, and Tailwind.",
+      "Developed and integrated REST APIs using Node.js and Express.",
+      "Improved application performance using code-splitting, lazy loading, and optimized rendering.",
+      "Deployed applications using CI/CD pipelines (GitLab) and platforms like Vercel.",
+      "Implemented OAuth2/JWT-based authentication and SSO integration for client platforms.",
+      "Translated Figma/XD designs into production-ready, responsive interfaces.",
+      "Collaborated directly with clients to understand requirements and translate business needs into scalable technical solutions.",
+      "Debugged complex production issues and provided optimized solutions, improving system reliability and user experience.",
+      "Built reusable components and modular architectures, reducing development time and improving maintainability across projects."
     ]
   },
   {
-    "title": "Sr. Frontend Engineer",
+    "id": "creative-inter-tech",
+    "title": "Frontend Developer → Senior Frontend Developer",
     "company": "Creative Inter Tech",
     "location": "Faisalabad, Pakistan",
     "period": "Mar 2020 – Oct 2022",
+    "current": false,
+    "companyUrl": "https://creativeintertech.com/",
+    "logo": "/company-logos/cit.svg",
+    "summary": "Led frontend for B2B travel platforms serving 10K+ monthly users.",
+    "stack": ["React", "Vue", "Redux Toolkit", "Vuex", "RBAC"],
+    "relatedProjects": ["aa-tourism", "city-arrivals", "mian-travels", "gala-travels"],
     "highlights": [
-      "Led frontend for B2B travel platforms (AA Tourism, City Arrivals) serving 10K+ monthly users.",
-      "Built reusable React/Vue component libraries, cutting development time by ~30%.",
-      "Improved UX and retention (~15%); upgraded legacy apps for better responsiveness (~25%).",
-      "Applied Redux, Vuex, and hooks for scalable state management."
+      "Led frontend for B2B travel platforms (AA Tourism, City Arrivals, Mian's Travels, Gala Travels) serving 10K+ monthly users.",
+      "Built reusable component libraries in React/Vue, cutting dev time by ~30%.",
+      "Collaborated in Agile teams, improving UX and boosting user retention by 15%.",
+      "Upgraded legacy projects with React/Vue, improving responsiveness by 25%.",
+      "Applied Redux, Vuex, and hooks for scalable state management, reducing data-related bugs by 40%.",
+      "Implemented role-based access control (RBAC) for platform user permissions and admin workflows.",
+      "Enhanced performance with React.memo and render optimizations."
     ]
   },
   {
+    "id": "content-arcade",
     "title": "Junior PHP Developer",
     "company": "Content Arcade",
     "location": "Faisalabad, Pakistan",
     "period": "May 2019 – Mar 2020",
+    "current": false,
+    "companyUrl": "https://www.contentarcade.com/",
+    "logo": "/company-logos/content-arcade.png",
+    "logoWide": true,
+    "summary": "First professional role — responsive layouts and PHP/Laravel APIs.",
+    "stack": ["HTML5", "CSS3", "Bootstrap", "PHP", "Laravel", "MySQL"],
+    "relatedProjects": [],
     "highlights": [
-      "Built responsive layouts with HTML, CSS, and Bootstrap.",
-      "Supported backend with PHP + MySQL APIs (CRUD).",
-      "Bug fixes and cross-browser testing to improve stability."
+      "Built responsive layouts using HTML, CSS, and Bootstrap.",
+      "Supported backend with PHP, Laravel, and MySQL APIs (CRUD).",
+      "Performed bug fixes and cross-browser testing, improving stability."
     ]
   }
 ]

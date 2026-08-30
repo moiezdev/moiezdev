@@ -14,11 +14,11 @@ const Hero = () => {
         <div className="md:col-span-5 flex flex-col gap-4 cursor-pointer cursor-white">
           <h1 className="text-xlarge font-semibold cursor-pointer cursor-white cursor-scale-2">
             Moiz Dev is a <br className="block lg:hidden" />{' '}
-            <span className="text-primary">{'<Full Stack/>'}</span> <br />
+            <span className="text-primary">{'<Senior Full Stack/>'}</span> <br />
             Software Engineer
           </h1>
           <p className="text-lg md:text-2xl max-w-2xl cursor-pointer cursor-white cursor-scale-1.5">
-            Product-focused Full Stack Engineer — React, Vue, and Node.js. Owning features
+            Product-focused engineer — React, Vue, Next.js, Node.js, NestJS. Owning features
             end-to-end across product, UI/UX, APIs, and databases. Let's build together!
           </p>
           <div className="flex flex-wrap items-center gap-3">
@@ -63,7 +63,7 @@ const Hero = () => {
           <div className="absolute top-full left-1/2 -translate-x-1/2 border border-gray-a inline-flex items-center p-1 mx-auto cursor-pointer cursor-white w-max">
             <span className="bg-primary h-[16px] aspect-square inline-block mb-[-2px] mr-1"></span>
             <p className="flex gap-1">
-              Currently focused on <span className="text-white">product-focused fullstack</span>
+              Currently building <span className="text-white">POS, loyalty & wallet systems</span>
             </p>
           </div>
         </div>

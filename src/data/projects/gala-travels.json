@@ -5,7 +5,7 @@
   "description": [
     "Gala Travels – Flight Booking Platform",
     [
-      "A platform for booking flights using Sabre API, with a smooth and simple user experience.",
+      "Built at Creative Inter Tech — a platform for booking flights using Sabre API, with a smooth and simple user experience.",
       "Frontend built with Vue/Nuxt 2, Buefy, Bootstrap, and subtle animations to make interactions more engaging.",
       "Interactive booking forms, flight listings, and itinerary views are designed to be easy to use.",
       "The site adapts nicely to mobile and desktop screens, handling API data seamlessly.",
