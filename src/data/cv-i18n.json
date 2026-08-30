@@ -1,0 +1,157 @@
+{
+  "en": {
+    "name": "Moieez ur Rehman",
+    "headline": "Senior Full Stack Engineer | React, Vue, Next.js, Node.js, NestJS",
+    "location": "Riyadh, Saudi Arabia",
+    "iqama": "Valid Transferable Iqama",
+    "summary": "Product-focused Full Stack Engineer with {{experienceYears}} years of experience building scalable systems across retail and SaaS, from POS platforms to loyalty systems and customer engagement tools. I take ownership of features end-to-end — from understanding business needs and structuring solutions to implementation and deployment — with a focus on maintainable code, system efficiency, and software that creates measurable impact.",
+    "labels": {
+      "summary": "Professional Summary",
+      "experience": "Professional Experience",
+      "skills": "Core Skills",
+      "education": "Education",
+      "languages": "Languages",
+      "present": "Present",
+      "print": "Print",
+      "back": "Portfolio",
+      "langEn": "EN",
+      "langAr": "AR",
+      "themeLight": "Light",
+      "themeDark": "Dark"
+    },
+    "skillCategories": {
+      "Core Skills": "Core Skills",
+      "Architectures": "Architectures",
+      "Frontend": "Frontend",
+      "Backend": "Backend",
+      "Databases": "Databases",
+      "Programming Languages": "Languages",
+      "Performance & Security": "Performance & Security",
+      "Integrations": "Integrations",
+      "Tools & Platforms": "Tools",
+      "Collaboration": "Collaboration",
+      "Design & Prototyping": "Design"
+    }
+  },
+  "ar": {
+    "name": "معيز الرحمن",
+    "headline": "مهندس برمجيات متكامل أول | React، Vue، Next.js، Node.js، NestJS",
+    "location": "الرياض، المملكة العربية السعودية",
+    "iqama": "إقامة سارية وقابلة للنقل",
+    "summary": "مهندس برمجيات متكامل يركز على المنتج، بخبرة {{experienceYears}} سنوات في بناء أنظمة قابلة للتوسع في قطاعَي التجزئة والبرمجيات كخدمة — من منصات نقاط البيع إلى أنظمة الولاء وأدوات تفاعل العملاء. أتولى الميزات من البداية للنهاية: فهم احتياج العمل، وهيكلة الحل، والتنفيذ، والنشر، مع التركيز على كود قابل للصيانة وكفاءة النظام وأثر قابل للقياس.",
+    "labels": {
+      "summary": "الملخص المهني",
+      "experience": "الخبرة المهنية",
+      "skills": "المهارات الأساسية",
+      "education": "التعليم",
+      "languages": "اللغات",
+      "present": "حالياً",
+      "print": "طباعة",
+      "back": "الموقع",
+      "langEn": "EN",
+      "langAr": "عربي",
+      "themeLight": "فاتح",
+      "themeDark": "داكن"
+    },
+    "education": {
+      "degree": "بكالوريوس علوم الحاسب (BSCS Hons)",
+      "school": "كلية إدارة الأعمال والاقتصاد — لاهور",
+      "period": "2017–2021",
+      "languages": ["الإنجليزية (طلاقة)", "الأردية (أم)", "الهندية (أم)"]
+    },
+    "skillCategories": {
+      "Core Skills": "المهارات الأساسية",
+      "Architectures": "المعماريات",
+      "Frontend": "الواجهات",
+      "Backend": "الخلفية",
+      "Databases": "قواعد البيانات",
+      "Programming Languages": "اللغات",
+      "Performance & Security": "الأداء والأمان",
+      "Integrations": "التكاملات",
+      "Tools & Platforms": "الأدوات",
+      "Collaboration": "التعاون",
+      "Design & Prototyping": "التصميم"
+    },
+    "jobs": {
+      "twlm": {
+        "title": "مهندس برمجيات أول",
+        "location": "المملكة العربية السعودية",
+        "period": "فبراير 2025 – الآن",
+        "summary": "منصة نقاط بيع وولاء ومحافظ لتجارة التجزئة في الخليج.",
+        "highlights": [
+          "بناء منصة نقاط بيع مع أنظمة الولاء والعروض والمحافظ.",
+          "تصميم وتطوير منشئ صفحات بالكتل لإنشاء القوائم ومتاجر التجارة الإلكترونية وإدارتها.",
+          "تحسين تدفقات الاستخدام وسهولة الواجهة، ما خفّض طلبات الدعم بنحو 70٪.",
+          "تنفيذ أنظمة ولاء (نقاط، بطاقات، بطاقات هدايا) مع Apple Wallet وGoogle Wallet وإشعارات فورية.",
+          "تبسيط المسارات الأساسية وتقليل الاحتكاك في تجربة المنتج.",
+          "تطوير رسائل ترويجية حسب الموقع مع تتبع الحملات على مستوى الفرع.",
+          "المساهمة في تطبيق Flutter لإدارة الواجهة الأمامية والطلب عبر الإنترنت.",
+          "تحسين واجهات الخلفية وتخفيض زمن الاستجابة بنحو 64٪.",
+          "إعادة هيكلة أجزاء أساسية من الكود لرفع قابلية الصيانة والاستقرار.",
+          "استخدام Prisma مع PostgreSQL لتسهيل الوصول للبيانات والهجرات وأداء الاستعلامات.",
+          "تطبيق RBAC ومصادقة OAuth2/JWT مع SSO للتحكم متعدد الأدوار.",
+          "بناء تدفقات قائمة على الأحداث والويب هوك لتحديثات المحفظة والإشعارات.",
+          "دمج أنظمة CRM لمزامنة بيانات العملاء والأعمال عبر المنصة."
+        ]
+      },
+      "accoina": {
+        "title": "مهندس برمجيات أول",
+        "location": "المملكة العربية السعودية",
+        "period": "يناير 2024 – فبراير 2025",
+        "summary": "أدوات ولوحات داخلية رقمنت العمليات وخفّضت التوقف.",
+        "highlights": [
+          "تحسين العمليات الداخلية برقمنة المسارات وتخفيض توقف الأنظمة بنحو 25٪.",
+          "بناء لوحات تقارير وتحليلات داخلية باستخدام React وSQL.",
+          "صيانة وتوسيع خدمات الخلفية وواجهات البرمجة للأدوات الداخلية.",
+          "تطبيق RBAC ومصادقة OAuth2/JWT للوحات والأدوات الداخلية.",
+          "تحديد اختناقات النظام وحلّها لتحسين الأداء وسلاسة العمل اليومي.",
+          "أتمتة المهام والتقارير الروتينية لرفع الكفاءة وتقليل العمل اليدوي."
+        ]
+      },
+      "scm-borba": {
+        "title": "مهندس واجهات أول",
+        "location": "البرتغال (عن بُعد)",
+        "period": "أكتوبر 2022 – يناير 2024",
+        "summary": "أكثر من 50 مشروعاً في SaaS والتجارة والتعليم عن بُعد.",
+        "highlights": [
+          "تسليم أكثر من 50 مشروعاً في منصات SaaS والتجارة الإلكترونية والتعليم.",
+          "بناء واجهات قابلة للتوسع وعالية الأداء باستخدام React وVue وNuxt وTailwind.",
+          "تطوير ودمج واجهات REST باستخدام Node.js وExpress.",
+          "تحسين الأداء عبر تقسيم الكود والتحميل الكسول وتحسين الرسم.",
+          "النشر عبر أنابيب CI/CD (GitLab) ومنصات مثل Vercel.",
+          "تطبيق مصادقة OAuth2/JWT وSSO لمنصات العملاء.",
+          "تحويل تصاميم Figma/XD إلى واجهات إنتاج متجاوبة.",
+          "العمل مباشرة مع العملاء لتحويل الاحتياج التجاري إلى حلول تقنية قابلة للتوسع.",
+          "تتبع أعطال الإنتاج المعقدة وتقديم حلول محسّنة للاعتمادية وتجربة المستخدم.",
+          "بناء مكوّنات قابلة لإعادة الاستخدام وهياكل وحدات لتقليل وقت التطوير."
+        ]
+      },
+      "creative-inter-tech": {
+        "title": "مطوّر واجهات ← مطوّر واجهات أول",
+        "location": "فيصل آباد، باكستان",
+        "period": "مارس 2020 – أكتوبر 2022",
+        "summary": "قيادة الواجهات لمنصات سفر B2B لأكثر من 10 آلاف مستخدم شهرياً.",
+        "highlights": [
+          "قيادة الواجهات لمنصات سفر B2B (AA Tourism، City Arrivals، Mian's Travels، Gala Travels) لأكثر من 10 آلاف مستخدم شهرياً.",
+          "بناء مكتبات مكوّنات في React/Vue وخفض وقت التطوير بنحو 30٪.",
+          "العمل ضمن فرق Agile وتحسين تجربة الاستخدام ورفع الاحتفاظ بالمستخدمين 15٪.",
+          "تحديث مشاريع قديمة بـ React/Vue وتحسين الاستجابة 25٪.",
+          "استخدام Redux وVuex والـ hooks لإدارة حالة قابلة للتوسع وتقليل أخطاء البيانات 40٪.",
+          "تطبيق التحكم بالصلاحيات (RBAC) لمستخدمي المنصة ومسارات الإدارة.",
+          "تحسين الأداء عبر React.memo وتحسينات الرسم."
+        ]
+      },
+      "content-arcade": {
+        "title": "مطوّر PHP مبتدئ",
+        "location": "فيصل آباد، باكستان",
+        "period": "مايو 2019 – مارس 2020",
+        "summary": "أول دور مهني — تخطيطات متجاوبة وواجهات PHP/Laravel.",
+        "highlights": [
+          "بناء تخطيطات متجاوبة باستخدام HTML وCSS وBootstrap.",
+          "دعم الخلفية بواجهات PHP وLaravel وMySQL (CRUD).",
+          "إصلاح الأخطاء واختبار المتصفحات لتحسين الاستقرار."
+        ]
+      }
+    }
+  }
+}

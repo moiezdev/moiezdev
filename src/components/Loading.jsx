@@ -1,12 +1,16 @@
 import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
+import { t } from '../i18n/content';
+import { usePreferences } from '../context/Preferences';
 
 // Usage:
 // 1. npm install gsap
 // 2. import LoadingScreen from './LoadingScreen'
 // 3. <LoadingScreen message="Loading..." />
 
-export default function Loading({ height = 'h-screen', message = 'Loading...' }) {
+export default function Loading({ height = 'h-screen', message }) {
+  const { lang } = usePreferences();
+  const label = message ?? t(lang, 'common.loading');
   const container = useRef(null);
   const logoRef = useRef(null);
 
@@ -50,12 +54,12 @@ export default function Loading({ height = 'h-screen', message = 'Loading...' })
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <circle cx="12" cy="12" r="10" stroke="#fff" strokeWidth="2" />
+            <circle cx="12" cy="12" r="10" stroke="var(--color-white)" strokeWidth="2" />
           </svg>
         </div>
 
         {/* Message */}
-        <p className="font-medium">{message}</p>
+        <p className="font-medium">{label}</p>
       </div>
     </div>
   );

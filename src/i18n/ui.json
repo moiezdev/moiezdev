@@ -1,0 +1,208 @@
+{
+  "en": {
+    "nav": {
+      "home": "home",
+      "works": "works",
+      "experience": "experience",
+      "about": "about-me",
+      "contact": "contact"
+    },
+    "hero": {
+      "titleBefore": "Moiz Dev is a",
+      "titleRole": "<Senior Full Stack/>",
+      "titleAfter": "Software Engineer",
+      "lead": "Product-focused engineer — React, Vue, Next.js, Node.js, NestJS. Owning features end-to-end across product, UI/UX, APIs, and databases. Let's build together!",
+      "contact": "Contact me!!",
+      "resume": "Download resume",
+      "now": "Currently building",
+      "nowFocus": "POS, loyalty & wallet systems",
+      "quote": "Great products feel simple — the complexity stays under the hood.",
+      "quoteBy": "--- Mr Unknown"
+    },
+    "about": {
+      "section": "about me",
+      "page": "about-me",
+      "blurb": "Get to know the person behind the work.",
+      "title": "Hello, I'm Moiz!",
+      "viewExperience": "View experience ~~>",
+      "paragraphs": [
+        "Product-focused Full Stack Engineer with {{experienceYears}} years of experience building scalable systems across retail and SaaS — from POS platforms to loyalty systems and customer engagement tools. I work across the stack using React, Vue, Next.js, Node.js, and NestJS, delivering reliable, high-quality solutions with a strong focus on real-world usability.",
+        "I take ownership of features end-to-end — from understanding business needs and structuring solutions to implementation and deployment — with a focus on maintainable code, system efficiency, and software that creates measurable impact. Core strengths include POS retail systems, payment integrations (MyFatoorah, Moyasar), CRM, wallet integrations (Apple Wallet & Google Wallet), microservices and monorepo patterns, and leading UI/UX engineering.",
+        "I've revamped and stabilized unstable applications, supported management teams, and improved products by solving real problems. Recent work includes POS platforms, loyalty systems, and customer engagement tools — contributing to both technical architecture and product direction."
+      ]
+    },
+    "experience": {
+      "section": "experience",
+      "viewAll": "View all",
+      "viewAllBtn": "View all ~~>",
+      "list": "List of roles",
+      "education": "education",
+      "languages": "languages",
+      "present": "Present",
+      "resume": "Download resume"
+    },
+    "projects": {
+      "section": "projects",
+      "viewAll": "View all",
+      "list": "List of projects",
+      "back": "back to works",
+      "live": "Live <~>",
+      "github": "Github >=",
+      "backend": "Backend >=",
+      "notFound": "Project not found."
+    },
+    "skills": {
+      "section": "skills",
+      "technical": "Technical Skills",
+      "other": "Other Skills",
+      "core": "Core: product-focused fullstack — FE, BE & product",
+      "practicedOne": "This was practiced during {{name}}.",
+      "practicedTwo": "This was practiced during {{a}} and {{b}}.",
+      "practicedMany": "This was practiced during {{head}}, and {{last}}.",
+      "projectCount": "{{count}} project",
+      "projectCountPlural": "{{count}} projects"
+    },
+    "contact": {
+      "section": "contacts",
+      "blurb": "Contact me for professional advice, free of charge!",
+      "intro": "Currently available for hire as a product-focused full stack software engineer. I enjoy building reliable digital products — from polished interfaces to solid backend systems. Whether you have a role, a project, or a question, I’d be glad to hear from you.",
+      "direct": "Message Me Directly",
+      "name": "Your Name",
+      "email": "Your Email",
+      "subject": "Subject",
+      "message": "Your Message Here",
+      "send": "Send Message",
+      "sending": "Sending...",
+      "fail": "Something went wrong! Please try again."
+    },
+    "footer": {
+      "role": "Senior Full Stack Software Engineer",
+      "media": "Media",
+      "rights": "All rights reserved."
+    },
+    "notFound": {
+      "title": "Page Not Found",
+      "body": "Sorry, the page you’re looking for doesn’t exist or has been moved.",
+      "home": "Go Back Home"
+    },
+    "chat": {
+      "welcome": "Hey — I'm BotFolio. I'll walk you through Moiz's work as a Full Stack Engineer. You can explore [[nav:/works|All works]], [[nav:/experience|Experience]], or [[nav:/about|About Moiz]].",
+      "thinking": "thinking…",
+      "listening": "listening…",
+      "speaking": "speaking…",
+      "placeholder": "Ask about Moiz…",
+      "placeholderListen": "Keep talking — tap done when finished…",
+      "tryAsking": "try-asking",
+      "send": "send ~~>",
+      "suggestions": ["Show projects", "Experience", "Tech stack"],
+      "fallback": "Sorry about that — something didn't go through. Try again, or open [[nav:/contact|Contact page]] to reach Moiz directly.",
+      "fail": "I stay focused on Moiz's work — explore [[nav:/works|All works]] or reach him via [[nav:/contact|Contact page]]."
+    },
+    "common": {
+      "loading": "Loading..."
+    }
+  },
+  "ar": {
+    "nav": {
+      "home": "الرئيسية",
+      "works": "الأعمال",
+      "experience": "الخبرة",
+      "about": "نبذتي",
+      "contact": "تواصل"
+    },
+    "hero": {
+      "titleBefore": "معيز هو",
+      "titleRole": "<مهندس متكامل أول/>",
+      "titleAfter": "مهندس برمجيات",
+      "lead": "مهندس يركّز على المنتج — React وVue وNext.js وNode.js وNestJS. يتولى الميزات من البداية للنهاية: المنتج، والواجهة، وواجهات البرمجة، وقواعد البيانات. فلنبنِ معاً!",
+      "contact": "تواصل معي!!",
+      "resume": "تحميل السيرة",
+      "now": "أعمل حالياً على",
+      "nowFocus": "نقاط البيع والولاء والمحافظ",
+      "quote": "المنتجات العظيمة تبدو بسيطة — والتعقيد يبقى تحت السطح.",
+      "quoteBy": "--- مجهول"
+    },
+    "about": {
+      "section": "نبذتي",
+      "page": "نبذتي",
+      "blurb": "تعرّف على الشخص خلف العمل.",
+      "title": "مرحباً، أنا معيز!",
+      "viewExperience": "عرض الخبرة ~~>",
+      "paragraphs": [
+        "مهندس برمجيات متكامل يركّز على المنتج، بخبرة {{experienceYears}} سنوات في بناء أنظمة قابلة للتوسع في قطاعَي التجزئة والبرمجيات كخدمة — من منصات نقاط البيع إلى أنظمة الولاء وأدوات تفاعل العملاء. أعمل عبر المكدس باستخدام React وVue وNext.js وNode.js وNestJS، وأقدّم حلولاً موثوقة عالية الجودة تركز على الاستخدام الحقيقي.",
+        "أتولى الميزات من البداية للنهاية: فهم احتياج العمل، وهيكلة الحل، والتنفيذ، والنشر، مع التركيز على كود قابل للصيانة وكفاءة النظام وأثر قابل للقياس. من أبرز نقاط القوة: أنظمة نقاط البيع، وبوابات الدفع (MyFatoorah وMoyasar)، وCRM، ومحافظ Apple وGoogle، والأنماط الميكروية والـ monorepo، وقيادة هندسة الواجهات.",
+        "أعيد بناء التطبيقات غير المستقرة وأثبّتها، وأدعم فرق الإدارة، وأحسّن المنتجات بحل مشكلات حقيقية. يشمل عملي الأخير منصات نقاط البيع وأنظمة الولاء وأدوات التفاعل — في العمارة التقنية واتجاه المنتج معاً."
+      ]
+    },
+    "experience": {
+      "section": "الخبرة",
+      "viewAll": "عرض الكل",
+      "viewAllBtn": "عرض الكل ~~>",
+      "list": "قائمة الأدوار",
+      "education": "التعليم",
+      "languages": "اللغات",
+      "present": "حالياً",
+      "resume": "تحميل السيرة"
+    },
+    "projects": {
+      "section": "المشاريع",
+      "viewAll": "عرض الكل",
+      "list": "قائمة المشاريع",
+      "back": "العودة للأعمال",
+      "live": "مباشر <~>",
+      "github": "Github >=",
+      "backend": "الخلفية >=",
+      "notFound": "المشروع غير موجود."
+    },
+    "skills": {
+      "section": "المهارات",
+      "technical": "المهارات التقنية",
+      "other": "مهارات أخرى",
+      "core": "الأساس: تطوير متكامل يركّز على المنتج — واجهة وخلفية ومنتج",
+      "practicedOne": "استُخدمت هذه المهارة في {{name}}.",
+      "practicedTwo": "استُخدمت هذه المهارة في {{a}} و{{b}}.",
+      "practicedMany": "استُخدمت هذه المهارة في {{head}}، و{{last}}.",
+      "projectCount": "مشروع واحد",
+      "projectCountPlural": "{{count}} مشاريع"
+    },
+    "contact": {
+      "section": "التواصل",
+      "blurb": "تواصل معي لاستشارة مهنية مجاناً!",
+      "intro": "متاح حالياً للعمل كمهندس برمجيات متكامل يركّز على المنتج. أستمتع ببناء منتجات رقمية موثوقة — من واجهات مصقولة إلى أنظمة خلفية صلبة. إن كان لديك دور أو مشروع أو سؤال، يسعدني سماعك.",
+      "direct": "راسلني مباشرة",
+      "name": "اسمك",
+      "email": "بريدك",
+      "subject": "الموضوع",
+      "message": "رسالتك هنا",
+      "send": "إرسال",
+      "sending": "جارٍ الإرسال...",
+      "fail": "حدث خطأ! حاول مرة أخرى."
+    },
+    "footer": {
+      "role": "مهندس برمجيات متكامل أول",
+      "media": "التواصل",
+      "rights": "جميع الحقوق محفوظة."
+    },
+    "notFound": {
+      "title": "الصفحة غير موجودة",
+      "body": "عذراً، الصفحة التي تبحث عنها غير موجودة أو نُقلت.",
+      "home": "العودة للرئيسية"
+    },
+    "chat": {
+      "welcome": "مرحباً — أنا BotFolio. أعرّفك بعمل معيز كمهندس برمجيات متكامل. يمكنك استكشاف [[nav:/works|كل الأعمال]] أو [[nav:/experience|الخبرة]] أو [[nav:/about|نبذة عن معيز]].",
+      "thinking": "يفكر…",
+      "listening": "يستمع…",
+      "speaking": "يتحدث…",
+      "placeholder": "اسأل عن معيز…",
+      "placeholderListen": "استمر بالحديث — اضغط تم عند الانتهاء…",
+      "tryAsking": "جرّب السؤال",
+      "send": "إرسال ~~>",
+      "suggestions": ["عرض المشاريع", "الخبرة", "المكدس التقني"],
+      "fallback": "عذراً — لم يكتمل الطلب. حاول مرة أخرى، أو افتح [[nav:/contact|صفحة التواصل]] للوصول إلى معيز مباشرة.",
+      "fail": "أركّز على عمل معيز — استكشف [[nav:/works|كل الأعمال]] أو تواصل عبر [[nav:/contact|صفحة التواصل]]."
+    },
+    "common": {
+      "loading": "جارٍ التحميل..."
+    }
+  }
+}

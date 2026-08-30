@@ -8,7 +8,7 @@ import { SYSTEM_PROMPT } from './systemPrompt';
  * @param {{ signal?: AbortSignal, history?: { role: string, text: string }[] }} [options]
  * @returns {Promise<string>}
  */
-export async function handleChat(query, { signal, history = [] } = {}) {
+export async function handleChat(query, { signal, history = [], lang = 'en' } = {}) {
   const question = String(query || '').trim();
   if (!question) {
     return AI_FAIL_FALLBACK;
@@ -25,7 +25,13 @@ export async function handleChat(query, { signal, history = [] } = {}) {
     }));
 
   const messages = [
-    { role: 'system', content: SYSTEM_PROMPT },
+    {
+      role: 'system',
+      content:
+        lang === 'ar'
+          ? `${SYSTEM_PROMPT}\n\nThe site language is Arabic. Reply in Arabic unless the visitor writes in another language.`
+          : SYSTEM_PROMPT,
+    },
     ...prior,
     {
       role: 'user',

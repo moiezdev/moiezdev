@@ -1,4 +1,3 @@
-// src/pages/ProjectDetail.jsx
 import { useParams } from 'react-router-dom';
 import Transition from '../components/functions/Transition';
 import ImageSlider from '../components/ui/ImageSlider';
@@ -6,21 +5,26 @@ import Button from '../components/ui/Button';
 import SectionTitle from '../components/ui/SectionTitle';
 import { getSkillIcon } from '../utils/skillIcons';
 import { getProjectById } from '../data';
+import { useContent } from '../i18n/content';
 
 export default function ProjectDetail() {
   const { id } = useParams();
-  const project = getProjectById(id);
-  if (!project) return <p className="p-6">Project not found.</p>;
+  const { t, localize } = useContent();
+  const project = localize(getProjectById(id));
+  if (!project) return <p className="p-6">{t('projects.notFound')}</p>;
   return (
     <Transition>
       <section className="w-full px-4 py-12" id="projects">
         <div className="app-container mx-auto pt-[30px] md:py-[60px]">
-          {/* Title & subtitle */}
-          <SectionTitle hash={'/'} title={project.title} buttonText="back to works" link="/works" />
+          <SectionTitle
+            hash={'/'}
+            title={project.title}
+            buttonText={t('projects.back')}
+            link="/works"
+          />
           <p className="mt-[-20px] md:mb-[50px]">{project.subtitle}</p>
 
           <div className="grid gap-8 md:grid-cols-2">
-            {/* Left: slider */}
             <div className="w-full cursor-pointer cursor-white cursor-scale-3">
               <ImageSlider
                 className="cursor-pointer cursor-white cursor-scale-3"
@@ -30,9 +34,7 @@ export default function ProjectDetail() {
               />
             </div>
 
-            {/* Right: details */}
             <div className="w-full flex flex-col gap-4">
-              {/* Description */}
               <div className="leading-relaxed space-y-2">
                 {project.description.map((line, i) =>
                   Array.isArray(line) ? (
@@ -52,7 +54,6 @@ export default function ProjectDetail() {
                 )}
               </div>
 
-              {/* Tech stack */}
               <div className="flex flex-wrap gap-2">
                 {project.technologies.map((tech, i) => {
                   const skillIcon = getSkillIcon(tech);
@@ -76,11 +77,10 @@ export default function ProjectDetail() {
                 })}
               </div>
 
-              {/* Links */}
               <div className="flex gap-4 mt-2">
                 {project.projectUrl && (
                   <Button onClick={() => window.open(project.projectUrl, '_blank')} primary={true}>
-                    {'Live <~>'}
+                    {t('projects.live')}
                   </Button>
                 )}
                 {project.githubUrl && (
@@ -88,7 +88,7 @@ export default function ProjectDetail() {
                     className={`cursor-scale-0 cursor-pointer`}
                     onClick={() => window.open(project.githubUrl, '_blank')}
                   >
-                    {'Github >='}
+                    {t('projects.github')}
                   </Button>
                 )}
                 {project.githubBackendUrl && (
@@ -96,7 +96,7 @@ export default function ProjectDetail() {
                     className={`cursor-scale-0 cursor-pointer`}
                     onClick={() => window.open(project.githubBackendUrl, '_blank')}
                   >
-                    {'Backend >='}
+                    {t('projects.backend')}
                   </Button>
                 )}
               </div>

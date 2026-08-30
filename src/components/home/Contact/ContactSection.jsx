@@ -6,6 +6,7 @@ import emailjs from '@emailjs/browser';
 import Loading from '../../Loading';
 import Floating from '../../ui/Floating';
 import { contacts } from '../../../data';
+import { useContent } from '../../../i18n/content';
 
 const Error = ({ message, setError }) => (
   <div
@@ -18,7 +19,7 @@ const Error = ({ message, setError }) => (
     </p>
     <button
       type="button"
-      className="absolute top-0 right-0 text-white h-full flex items-center justify-center aspect-square hover:bg-red-700/20"
+      className="absolute top-0 end-0 text-white h-full flex items-center justify-center aspect-square hover:bg-red-700/20"
       data-dismiss-target="#alert-2"
       aria-label="Close"
       onClick={() => setError(false)}
@@ -42,6 +43,7 @@ const Error = ({ message, setError }) => (
 );
 
 const ContactSection = () => {
+  const { t } = useContent();
   const contactForm = useRef();
 
   // states
@@ -73,20 +75,25 @@ const ContactSection = () => {
       }
     );
   };
+  const labelClass =
+    'left-1 rtl:left-auto rtl:right-1 origin-top-left rtl:origin-top-right peer-focus:text-gray-a peer-focus:dark:text-gray-a dark:text-gray-a peer-focus:bg-gray-b peer-placeholder-shown:bg-gray-b bg-gray-b dark:bg-transparent text-gray-a text-normal text-start';
+  const fieldClass =
+    'border border-gray-a text-normal outline-none focus:outline-none focus:ring-0 focus:border-gray-a dark:focus:border-gray-a dark:border-gray-a text-white text-start rounded-none';
+
   const input = createTheme({
     input: {
       default: {
         outlined: {
-          sm: 'border border-gray-a text-normal focus:outline-none focus:ring-0 text-white focus:border-primary rounded-none',
-          md: 'border border-gray-a text-normal focus:outline-none focus:ring-0 text-white focus:border-primary rounded-none',
+          sm: fieldClass,
+          md: fieldClass,
         },
       },
     },
     label: {
       default: {
         outlined: {
-          sm: 'peer-focus:text-primary peer-focus:bg-gray-b peer-placeholder-shown:bg-gray-b bg-gray-b dark:bg-transparent text-gray-a text-normal ',
-          md: 'peer-focus:text-primary peer-focus:bg-gray-b peer-placeholder-shown:bg-gray-b bg-gray-b dark:bg-transparent text-gray-a text-normal ',
+          sm: labelClass,
+          md: labelClass,
         },
       },
     },
@@ -108,15 +115,11 @@ const ContactSection = () => {
     <>
       <div className="grid gap-4 md:grid-cols-2">
         <div className="flex flex-col justify-between order-2 md:order-1">
-          <p className="my-6 cursor-pointer cursor-white cursor-scale-1.2">
-            Currently available for hire as a product-focused full stack software engineer. I enjoy
-            building reliable digital products — from polished interfaces to solid backend systems.
-            Whether you have a role, a project, or a question, I’d be glad to hear from you.
-          </p>
+          <p className="my-6 cursor-pointer cursor-white cursor-scale-1.2">{t('contact.intro')}</p>
           <div>
             <Floating>
               <div className="border border-gray-a inline-flex flex-col gap-4 p-[16px]">
-                <h3>Message Me Directly</h3>
+                <h3>{t('contact.direct')}</h3>
                 {contacts
                   .filter((contact) => contact.categories.includes('contact'))
                   .map((contact, index) => (
@@ -140,19 +143,14 @@ const ContactSection = () => {
               action=""
               ref={contactForm}
               onSubmit={sendEmail}
-              className="max-w-md w-full relative"
+              className="contact-form max-w-md w-full relative"
             >
               {loading && (
-                <div className="w-full h-full absolute top-0 left-0 right-0 bottom-0 z-20">
-                  <Loading message="Sending..." height="h-full" />
+                <div className="w-full h-full absolute top-0 start-0 end-0 bottom-0 z-20">
+                  <Loading message={t('contact.sending')} height="h-full" />
                 </div>
               )}
-              {error && (
-                <Error
-                  setError={setError}
-                  message={errorMessage || 'Something went wrong! Please try again.'}
-                />
-              )}
+              {error && <Error setError={setError} message={errorMessage || t('contact.fail')} />}
               <div className="flex flex-col gap-4">
                 <input type="hidden" name="time" defaultValue={formattedDate(new Date())} />
                 <FloatingLabel
@@ -160,14 +158,14 @@ const ContactSection = () => {
                   name="name"
                   theme={input}
                   variant="outlined"
-                  label="Your Name"
+                  label={t('contact.name')}
                 />
                 <FloatingLabel
                   required
                   name="email"
                   theme={input}
                   variant="outlined"
-                  label="Your Email"
+                  label={t('contact.email')}
                   type="email"
                 />
                 <FloatingLabel
@@ -175,26 +173,26 @@ const ContactSection = () => {
                   name="subject"
                   theme={input}
                   variant="outlined"
-                  label="Subject"
+                  label={t('contact.subject')}
                 />
                 <div className="relative">
                   <textarea
                     required
                     id="contactMessage"
                     name="message"
-                    className="peer block w-full h-50 p-3 appearance-none border bg-transparent px-2.5 pb-2.5 pt-4 text-sm focus:outline-none focus:ring-0 border-gray-a text-white focus:border-primary rounded-none"
+                    className="peer block w-full h-50 p-3 appearance-none border bg-transparent px-2.5 pb-2.5 pt-4 text-sm outline-none focus:outline-none focus:ring-0 focus:border-gray-a dark:focus:border-gray-a border-gray-a text-white text-start rounded-none"
                     placeholder=" "
                   ></textarea>
                   <label
                     htmlFor="contactMessage"
-                    className="absolute left-1 top-2 z-10 origin-[0] -translate-y-4 scale-75 px-2 text-sm transition-transform duration-300 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:top-2 peer-focus:-translate-y-4 peer-focus:scale-75 peer-focus:px-2 peer-focus:text-primary peer-focus:bg-gray-b peer-placeholder-shown:bg-gray-b
+                    className="absolute left-1 rtl:left-auto rtl:right-1 top-2 z-10 origin-top-left rtl:origin-top-right -translate-y-4 scale-75 px-2 text-sm text-start transition-transform duration-300 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:top-2 peer-focus:-translate-y-4 peer-focus:scale-75 peer-focus:px-2 peer-focus:text-gray-a peer-focus:dark:text-gray-a peer-focus:bg-gray-b peer-placeholder-shown:bg-gray-b
                      bg-gray-b text-gray-a text-normal"
                   >
-                    Your Message Here
+                    {t('contact.message')}
                   </label>
                 </div>
                 <div>
-                  <Button primary={true}>Send Message</Button>
+                  <Button primary={true}>{t('contact.send')}</Button>
                 </div>
               </div>
             </form>

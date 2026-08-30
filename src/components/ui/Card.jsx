@@ -83,6 +83,8 @@ const Card = ({
   codeLink,
   codeLinkSecondary,
   codeLinkSecondaryLabel = 'Backend >=',
+  liveLabel = 'Live <~>',
+  codeLabel = 'Github >=',
   image,
   altText,
 }) => {
@@ -112,11 +114,11 @@ const Card = ({
                   onClick={() => window.open(liveLink, '_blank')}
                   primary={true}
                 >
-                  {'Live <~>'}
+                  {liveLabel}
                 </Button>
               )}
               {codeLink && (
-                <Button onClick={() => window.open(codeLink, '_blank')}>{'Github >='}</Button>
+                <Button onClick={() => window.open(codeLink, '_blank')}>{codeLabel}</Button>
               )}
               {codeLinkSecondary && (
                 <Button onClick={() => window.open(codeLinkSecondary, '_blank')}>

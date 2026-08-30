@@ -5,18 +5,17 @@ import Card from '../components/ui/Card';
 import SectionTitle from '../components/ui/SectionTitle';
 import Transition from '../components/functions/Transition';
 import { Link } from 'react-router-dom';
-import { projects } from '../data';
+import { useContent } from '../i18n/content';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const Projects = () => {
   const cardsRef = useRef([]);
+  const { t, projects } = useContent();
 
   useEffect(() => {
     if (!projects || projects.length === 0) return;
     cardsRef.current = cardsRef.current.slice(0, projects.length);
-
-    // Refresh shared scroll triggers after cards mount (do not kill other sections)
 
     cardsRef.current.forEach((card) => {
       const handleMouseMove = (e) => {
@@ -51,12 +50,12 @@ const Projects = () => {
     <Transition>
       <section className="w-full px-4 py-12" id="projects">
         <div className="app-container mx-auto pt-[20px] md:py-[60px]">
-          <SectionTitle hash={'/'} title="projects" />
-          <p className="mt-[-20px] md:mb-[50px] max-md:mb-6">List of projects</p>
+          <SectionTitle hash={'/'} title={t('projects.section')} />
+          <p className="mt-[-20px] md:mb-[50px] max-md:mb-6">{t('projects.list')}</p>
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {projects.map((project, index) => (
               <Link
-                key={index}
+                key={project.id}
                 to={`/works/${project.id}`}
                 ref={(el) => (cardsRef.current[index] = el)}
                 className="will-change-transform cursor-pointer"
@@ -70,6 +69,9 @@ const Projects = () => {
                   codeLinkSecondary={project.githubBackendUrl}
                   image={project.imageUrl}
                   altText={`${project.title} image`}
+                  liveLabel={t('projects.live')}
+                  codeLabel={t('projects.github')}
+                  codeLinkSecondaryLabel={t('projects.backend')}
                 />
               </Link>
             ))}

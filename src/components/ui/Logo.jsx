@@ -3,8 +3,8 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 const Logo = ({
-  color = '#FFFF00',
-  hoverColor = '#FFFF00',
+  color = 'var(--color-primary)',
+  hoverColor = 'var(--color-primary)',
   size = 1,
   animate = false,
   duration = 2,

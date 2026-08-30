@@ -3,8 +3,10 @@ import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { Link } from 'react-router-dom';
 import Button from '../components/ui/Button';
+import { useContent } from '../i18n/content';
 
 export default function NotFound() {
+  const { t } = useContent();
   const container = useRef(null);
   const digitsRef = useRef([]);
   const subtitleRef = useRef(null);
@@ -51,17 +53,14 @@ export default function NotFound() {
 
       {/* Subtitle */}
       <h2 ref={subtitleRef} className="mt-4 text-large font-semibold text-white">
-        Page Not Found
+        {t('notFound.title')}
       </h2>
 
-      <p className="mt-2 text-gray-a max-w-md">
-        Sorry, the page you’re looking for doesn’t exist or has been moved.
-      </p>
+      <p className="mt-2 text-gray-a max-w-md">{t('notFound.body')}</p>
 
-      {/* Back home button */}
       <Link to="/">
         <Button primary={true} className="mt-6">
-          Go Back Home
+          {t('notFound.home')}
         </Button>
       </Link>
     </div>

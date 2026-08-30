@@ -5,6 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Button from '../ui/Button';
 import { getSkillIcon } from '../../utils/skillIcons';
 import { getProjectById } from '../../data';
+import { useContent } from '../../i18n/content';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -31,7 +32,7 @@ const CompanyLogo = ({ job }) => {
   return (
     <span
       className={`inline-flex size-8 items-center justify-center overflow-hidden border border-gray-a shrink-0 ${
-        job.logoOnLight ? 'bg-white' : 'bg-gray-b'
+        job.logoOnLight ? 'bg-[#ffffff]' : 'bg-gray-b'
       }`}
     >
       <img
@@ -44,9 +45,12 @@ const CompanyLogo = ({ job }) => {
 };
 
 const ExperienceCard = ({ job, highlightLimit }) => {
+  const { t, localize } = useContent();
   const highlights =
     highlightLimit > 0 ? (job.highlights || []).slice(0, highlightLimit) : job.highlights || [];
-  const related = (job.relatedProjects || []).map((id) => getProjectById(id)).filter(Boolean);
+  const related = (job.relatedProjects || [])
+    .map((id) => localize(getProjectById(id)))
+    .filter(Boolean);
   const companyName = (
     <span className="font-semibold text-white cursor-pointer cursor-white cursor-scale-1">
       {job.companyUrl ? (
@@ -66,7 +70,7 @@ const ExperienceCard = ({ job, highlightLimit }) => {
         {job.current && (
           <span className="inline-flex items-center gap-1 shrink-0">
             <span className="bg-primary h-[10px] aspect-square inline-block mb-[-1px]" />
-            Present
+            {t('experience.present')}
           </span>
         )}
       </p>
@@ -183,7 +187,7 @@ const ExperienceCards = ({ jobs, highlightLimit = 0 }) => {
     <div ref={rootRef} className="relative">
       <span
         data-exp-line
-        className="absolute left-4 md:left-1/2 top-2 bottom-2 w-px origin-top bg-gray-a md:-translate-x-1/2"
+        className="absolute start-4 md:start-1/2 top-2 bottom-2 w-px origin-top bg-gray-a md:-translate-x-1/2 rtl:md:translate-x-1/2"
         aria-hidden
       />
 
@@ -194,27 +198,27 @@ const ExperienceCards = ({ jobs, highlightLimit = 0 }) => {
           return (
             <div
               key={job.id || `${job.company}-${job.period}`}
-              className={`relative pl-12 md:pl-0 md:w-1/2 ${
-                isLeft ? 'md:pr-8 md:mr-auto' : 'md:pl-8 md:ml-auto'
+              className={`relative ps-12 md:ps-0 md:w-1/2 ${
+                isLeft ? 'md:pe-8 md:me-auto' : 'md:ps-8 md:ms-auto'
               }`}
             >
-              <span className="md:hidden absolute left-0 top-3 z-10">
+              <span className="md:hidden absolute start-0 top-3 z-10">
                 <CompanyLogo job={job} />
               </span>
               <span
-                className="md:hidden absolute left-8 top-[29px] h-px w-4 bg-gray-a"
+                className="md:hidden absolute start-8 top-[29px] h-px w-4 bg-gray-a"
                 aria-hidden
               />
               <span
                 className={`hidden md:block absolute top-3 z-10 ${
-                  isLeft ? 'right-[-16px]' : 'left-[-16px]'
+                  isLeft ? 'end-[-16px]' : 'start-[-16px]'
                 }`}
               >
                 <CompanyLogo job={job} />
               </span>
               <span
                 className={`hidden md:block absolute top-[29px] h-px w-8 bg-gray-a ${
-                  isLeft ? 'right-0' : 'left-0'
+                  isLeft ? 'end-0' : 'start-0'
                 }`}
                 aria-hidden
               />

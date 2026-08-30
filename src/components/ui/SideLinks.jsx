@@ -5,7 +5,7 @@ const SideLinks = () => {
   const linkedin = contacts.find((contact) => contact.platform === 'LinkedIn');
 
   return (
-    <div className="hidden xl:flex fixed left-[25px] top-0 flex-col justify-end items-center z-10 p-1 bg-gray-b">
+    <div className="hidden xl:flex fixed start-[25px] top-0 flex-col justify-end items-center z-10 p-1 bg-gray-b">
       <div className="h-[200px] border border-gray-a animate-growHeight"></div>
       <div className="flex flex-col items-center mt-4 space-y-4">
         {/* GitHub */}

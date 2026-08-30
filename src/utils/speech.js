@@ -51,8 +51,17 @@ const MALE_RE =
 const FEMALE_RE =
   /\b(female|samantha|victoria|karen|moira|fiona|tessa|zira|susan|amy|emma|salli|joanna)\b/i;
 
-function pickMaleVoice() {
+function pickVoice(lang) {
   const voices = window.speechSynthesis.getVoices?.() || [];
+  if (!voices.length) return null;
+
+  if (String(lang || '').toLowerCase().startsWith('ar')) {
+    return voices.find((v) => /^ar/i.test(v.lang)) || pickMaleVoice(voices);
+  }
+  return pickMaleVoice(voices);
+}
+
+function pickMaleVoice(voices = window.speechSynthesis.getVoices?.() || []) {
   if (!voices.length) return null;
 
   const preferred = voices.find((v) => PREFERRED_VOICE.test(v.name));
@@ -99,7 +108,7 @@ function clearResumeTimer() {
  * Starts as soon as the reply text is ready.
  * @returns {Promise<void>}
  */
-export function speak(text, { onStart, onEnd } = {}) {
+export function speak(text, { onStart, onEnd, lang = 'en' } = {}) {
   return new Promise((resolve) => {
     if (!canSpeak()) {
       onEnd?.();
@@ -126,7 +135,7 @@ export function speak(text, { onStart, onEnd } = {}) {
     const chunks = chunkText(cleaned);
     let index = 0;
     let started = false;
-    const voice = pickMaleVoice();
+    const voice = pickVoice(lang);
 
     const finish = () => {
       clearResumeTimer();
@@ -155,7 +164,7 @@ export function speak(text, { onStart, onEnd } = {}) {
 
       const u = new SpeechSynthesisUtterance(chunks[index]);
       currentUtterance = u;
-      u.lang = voice?.lang || 'en-US';
+      u.lang = voice?.lang || (String(lang).startsWith('ar') ? 'ar-SA' : 'en-US');
       u.rate = 1;
       u.pitch = 1;
       u.volume = 1;

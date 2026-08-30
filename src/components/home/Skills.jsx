@@ -4,8 +4,8 @@ import Logo from '../ui/Logo';
 import Floating from '../ui/Floating';
 import Magnetic from '../ui/Magnetic';
 import { getSkillIcon } from '../../utils/skillIcons';
-import { getProjectsForSkill, getSkillExperienceMessage } from '../../utils/skillProjects';
-import { skills } from '../../data';
+import { getProjectsForSkill } from '../../utils/skillProjects';
+import { skillPracticeMessage, skillProjectCountLabel, useContent } from '../../i18n/content';
 
 const TECHNICAL_CATEGORIES = new Set([
   'Frontend',
@@ -17,12 +17,10 @@ const TECHNICAL_CATEGORIES = new Set([
   'Integrations',
 ]);
 
-const technicalSkills = skills.filter((skill) => TECHNICAL_CATEGORIES.has(skill.category));
-const otherSkills = skills.filter((skill) => !TECHNICAL_CATEGORIES.has(skill.category));
-
 /** Chat-bubble tip listing projects that used this skill. */
 const SkillExperienceTip = ({ name }) => {
-  const message = getSkillExperienceMessage(name);
+  const { lang } = useContent();
+  const message = skillPracticeMessage(lang, name);
   const related = getProjectsForSkill(name);
   if (!message) return null;
 
@@ -39,7 +37,7 @@ const SkillExperienceTip = ({ name }) => {
         <p className="text-gray-a text-xs leading-relaxed">{message}</p>
         {related.length > 0 && (
           <p className="text-[10px] text-gray-a/70 mt-1.5 border-t border-gray-a pt-1.5">
-            {related.length} project{related.length === 1 ? '' : 's'}
+            {skillProjectCountLabel(lang, related.length)}
           </p>
         )}
       </div>
@@ -48,6 +46,7 @@ const SkillExperienceTip = ({ name }) => {
 };
 
 const SkillIconBadge = ({ name }) => {
+  const { lang } = useContent();
   const skillIcon = getSkillIcon(name);
   const Icon = skillIcon?.Icon;
   const hasProjects = getProjectsForSkill(name).length > 0;
@@ -59,7 +58,7 @@ const SkillIconBadge = ({ name }) => {
       tabIndex={hasProjects ? 0 : undefined}
       aria-label={
         hasProjects
-          ? `${name}. ${getSkillExperienceMessage(name)}`
+          ? `${name}. ${skillPracticeMessage(lang, name)}`
           : name
       }
     >
@@ -70,6 +69,7 @@ const SkillIconBadge = ({ name }) => {
 };
 
 const SkillTextBadge = ({ name }) => {
+  const { lang } = useContent();
   const skillIcon = getSkillIcon(name);
   const Icon = skillIcon?.Icon;
   const hasProjects = getProjectsForSkill(name).length > 0;
@@ -80,7 +80,7 @@ const SkillTextBadge = ({ name }) => {
       tabIndex={hasProjects ? 0 : undefined}
       aria-label={
         hasProjects
-          ? `${name}. ${getSkillExperienceMessage(name)}`
+          ? `${name}. ${skillPracticeMessage(lang, name)}`
           : name
       }
     >
@@ -134,15 +134,19 @@ const SkillSubsection = ({ title, categories, iconOnly = false }) => {
 };
 
 const Skills = () => {
+  const { t, skills } = useContent();
+  const technicalSkills = skills.filter((skill) => TECHNICAL_CATEGORIES.has(skill.categoryKey));
+  const otherSkills = skills.filter((skill) => !TECHNICAL_CATEGORIES.has(skill.categoryKey));
+
   return (
     <section className="w-full px-4 py-12 overflow-visible" id="skills">
       <div className="app-container mx-auto overflow-visible">
-        <SectionTitle title="skills" />
+        <SectionTitle title={t('skills.section')} />
         <div className="grid gap-8 lg:grid-cols-7 overflow-visible">
           <div className="col-span-3 p-5 hidden lg:block relative">
             <div className="border inline-block border-gray-a p-1 mx-auto mb-4 cursor-pointer cursor-white cursor-scale-1.7">
-              <span className="bg-primary h-[16px] aspect-square inline-block mb-[-2px] mr-1"></span>
-              Core: product-focused fullstack — FE, BE & product
+              <span className="bg-primary h-[16px] aspect-square inline-block mb-[-2px] me-1"></span>
+              {t('skills.core')}
             </div>
 
             <div className="absolute bottom-1 left-0 translate-x -translate-y-1/2 z-0 cursor-pointer cursor-white cursor-scale-0">
@@ -195,8 +199,8 @@ const Skills = () => {
           </div>
 
           <div className="lg:col-span-4 flex flex-col gap-10 overflow-visible">
-            <SkillSubsection title="Technical Skills" categories={technicalSkills} iconOnly />
-            <SkillSubsection title="Other Skills" categories={otherSkills} />
+            <SkillSubsection title={t('skills.technical')} categories={technicalSkills} iconOnly />
+            <SkillSubsection title={t('skills.other')} categories={otherSkills} />
           </div>
         </div>
       </div>

@@ -1,7 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      (function () {
+        try {
+          var raw = localStorage.getItem('moiz-prefs');
+          var prefs = raw ? JSON.parse(raw) : {};
+          var theme = prefs.theme === 'light' ? 'light' : 'dark';
+          var lang =
+            prefs.lang === 'ar' || prefs.lang === 'en'
+              ? prefs.lang
+              : String(navigator.language || '')
+                    .toLowerCase()
+                    .indexOf('ar') === 0
+                ? 'ar'
+                : 'en';
+          document.documentElement.lang = lang;
+          document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <!-- Open Graph meta tags -->
     <meta property="og:title" content="Moiz ur Rehman – Developer Portfolio" />
@@ -27,6 +49,12 @@
     />
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <link rel="icon" type="image/png" href="/logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="prefetch" href="/assets/Card-BlLmEKuW.js" as="script" />
     <title>MoiezDev</title>

@@ -16,24 +16,24 @@ import {
   stopSpeaking,
   unlockSpeech,
 } from '../../utils/speech';
+import { t } from '../../i18n/content';
+import { usePreferences } from '../../context/Preferences';
 
-const SUGGESTIONS = ['Show projects', 'Experience', 'Tech stack'];
 const VOICE_PREF_KEY = 'botfolio-voice';
 
-const WELCOME = {
+const welcomeMessage = (lang) => ({
   id: 'welcome',
   role: 'bot',
-  ...prepareBotReply(
-    `Hey — I'm ${BOT_NAME}. I'll walk you through Moiz's work as a Full Stack Engineer. You can explore [[nav:/works|All works]], [[nav:/experience|Experience]], or [[nav:/about|About Moiz]].`
-  ),
+  ...prepareBotReply(t(lang, 'chat.welcome')),
   typed: true,
-};
+});
 
 const ChatBot = () => {
   const navigate = useNavigate();
+  const { lang } = usePreferences();
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState('');
-  const [messages, setMessages] = useState([WELCOME]);
+  const [messages, setMessages] = useState(() => [welcomeMessage(lang)]);
   const [loading, setLoading] = useState(false);
   const [typingId, setTypingId] = useState(null);
   const [speaking, setSpeaking] = useState(false);
@@ -70,6 +70,11 @@ const ChatBot = () => {
       : typingId != null || speaking
         ? 'speaking'
         : 'idle';
+
+  useEffect(() => {
+    setMessages([welcomeMessage(lang)]);
+    setTypingId(null);
+  }, [lang]);
 
   useEffect(() => {
     try {
@@ -223,6 +228,7 @@ const ChatBot = () => {
   const speakReply = (text) => {
     if (!voiceOnRef.current || !speechReady.speak) return;
     speak(text, {
+      lang,
       onStart: () => setSpeaking(true),
       onEnd: () => setSpeaking(false),
     });
@@ -255,6 +261,7 @@ const ChatBot = () => {
       const reply = await askBot(question, {
         signal: controller.signal,
         history: nextMessages.slice(0, -1),
+        lang,
       });
       const id = `b-${msgIdRef.current++}`;
       // Start audio first — don't wait on typewriter / React paint
@@ -273,9 +280,7 @@ const ChatBot = () => {
     } catch (err) {
       if (err?.name !== 'AbortError') {
         const id = `b-${msgIdRef.current++}`;
-        const fallback = prepareBotReply(
-          "Sorry about that — something didn't go through. Try again, or open [[nav:/contact|Contact page]] to reach Moiz directly."
-        );
+        const fallback = prepareBotReply(t(lang, 'chat.fallback'));
         speakReply(fallback.text);
         setMessages((prev) => [
           ...prev,
@@ -315,6 +320,7 @@ const ChatBot = () => {
     const SILENCE_MS = 2800; // wait this long after last speech before auto-send
 
     const listener = createSpeechListener({
+      lang: lang === 'ar' ? 'ar-SA' : 'en-US',
       onStart: () => setListening(true),
       onEnd: () => {
         // Only clear UI if we intentionally stopped (listener null already)
@@ -353,7 +359,7 @@ const ChatBot = () => {
   return (
     <div
       ref={rootRef}
-      className={`fixed bottom-1 max-h-full sm:bottom-5 right-5 z-50 flex flex-col items-end gap-0`}
+      className={`fixed bottom-1 max-h-full sm:bottom-5 end-5 z-50 flex flex-col items-end gap-0`}
     >
       {open && (
         <div
@@ -371,12 +377,12 @@ const ChatBot = () => {
                 <span className="text-primary">#</span>
                 {BOT_HANDLE}
               </p>
-              {listening && <p className="text-[10px] text-primary mt-0.5">listening…</p>}
+              {listening && <p className="text-[10px] text-primary mt-0.5">{t(lang, 'chat.listening')}</p>}
               {!listening && avatarMood === 'thinking' && (
-                <p className="text-[10px] text-gray-a mt-0.5">thinking…</p>
+                <p className="text-[10px] text-gray-a mt-0.5">{t(lang, 'chat.thinking')}</p>
               )}
               {!listening && avatarMood === 'speaking' && (
-                <p className="text-[10px] text-primary mt-0.5">speaking…</p>
+                <p className="text-[10px] text-primary mt-0.5">{t(lang, 'chat.speaking')}</p>
               )}
             </div>
             {speechReady.speak && (
@@ -465,7 +471,7 @@ const ChatBot = () => {
                   </p>
                   <p className="inline-flex items-center gap-2 text-sm">
                     <span className="bg-primary w-2 h-2 animate-pulse shrink-0" />
-                    <span className="text-xs">thinking…</span>
+                    <span className="text-xs">{t(lang, 'chat.thinking')}</span>
                   </p>
                 </div>
               </div>
@@ -474,10 +480,11 @@ const ChatBot = () => {
             {messages.length <= 1 && !busy && (
               <div className="pt-1">
                 <p className="text-[10px] text-gray-a mb-2">
-                  <span className="text-primary">#</span>try-asking
+                  <span className="text-primary">#</span>
+                  {t(lang, 'chat.tryAsking')}
                 </p>
                 <div className="flex flex-col gap-[-1px]">
-                  {SUGGESTIONS.map((s, idx) => (
+                  {(t(lang, 'chat.suggestions') || []).map((s, idx) => (
                     <Button
                       key={s}
                       onClick={() => send(s)}
@@ -520,7 +527,7 @@ const ChatBot = () => {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder={
-                  listening ? 'Keep talking — tap done when finished…' : 'Ask about Moiz…'
+                  listening ? t(lang, 'chat.placeholderListen') : t(lang, 'chat.placeholder')
                 }
                 disabled={busy}
                 className="flex-1 min-w-0 bg-transparent px-1 py-1 text-base text-white placeholder:text-gray-a/50 focus:outline-none disabled:opacity-50 cursor-scale-0"
@@ -531,7 +538,7 @@ const ChatBot = () => {
                 disabled={busy || !input.trim()}
                 className="!border-y-0 !border-r-0 !rounded-none !px-4 !py-3 text-sm shrink-0"
               >
-                send ~~{'>'}
+                {t(lang, 'chat.send')}
               </Button>
             </div>
           </form>

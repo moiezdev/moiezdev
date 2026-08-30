@@ -1,16 +1,14 @@
 import { handleChat } from '../lib/chatHandler';
 import { AI_FAIL_FALLBACK } from '../lib/aiClient';
 import { prepareBotReply } from './chatNav';
-import { BOT_NAME } from './buildPortfolioContext';
+import { t } from '../i18n/content';
 
 /** Offline / missing-key replies — portfolio guide tone + inline nav. */
-function localFallback(question = '') {
+function localFallback(question = '', lang = 'en') {
   const q = question.toLowerCase().trim();
 
-  if (/^(hi|hey|hello|yo|sup)\b/.test(q)) {
-    return prepareBotReply(
-      `Hey — I'm ${BOT_NAME}. I'll walk you through Moiz's work as a Full Stack Engineer. Explore [[nav:/works|All works]], [[nav:/experience|Experience]], or [[nav:/about|About Moiz]].`,
-    );
+  if (/^(hi|hey|hello|yo|sup|مرحبا|السلام)\b/.test(q)) {
+    return prepareBotReply(t(lang, 'chat.welcome'));
   }
 
   if (/project|work|built|portfolio|show/.test(q)) {
@@ -46,22 +44,23 @@ function localFallback(question = '') {
  * Public chatbot entry — new AI pipeline + nav sanitization.
  * @returns {Promise<{ text: string, spans: object[] }>}
  */
-export async function askBot(question, { signal, history = [] } = {}) {
+export async function askBot(question, { signal, history = [], lang = 'en' } = {}) {
   const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+  const fail = t(lang, 'chat.fail') || AI_FAIL_FALLBACK;
 
   if (!apiKey) {
     await new Promise((r) => setTimeout(r, 300));
-    return localFallback(question);
+    return localFallback(question, lang);
   }
 
   try {
-    const raw = await handleChat(question, { signal, history });
+    const raw = await handleChat(question, { signal, history, lang });
     const prepared = prepareBotReply(raw);
-    if (!prepared.text) return prepareBotReply(AI_FAIL_FALLBACK);
+    if (!prepared.text) return prepareBotReply(fail);
     return prepared;
   } catch (err) {
     if (err?.name === 'AbortError') throw err;
     console.warn('askBot failed:', err);
-    return prepareBotReply(AI_FAIL_FALLBACK);
+    return prepareBotReply(fail);
   }
 }
