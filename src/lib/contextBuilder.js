@@ -45,7 +45,7 @@ export function extractHighlights(limit = 4) {
   const scored = all
     .map((text) => ({
       text,
-      score: /\d+\s*%|~\d+|50\+|10K/i.test(text) ? 2 : 0,
+      score: /\d+\s*%|~\d+|8\+|10K/i.test(text) ? 2 : 0,
     }))
     .sort((a, b) => b.score - a.score);
 
@@ -62,7 +62,7 @@ export function extractHighlights(limit = 4) {
  */
 export function selectRelevantProjects(query = '') {
   const q = String(query).toLowerCase();
-  const wantsProjects = /project|work|portfolio|built|show|highlight|pos|flight|booking|saas|hire|why/.test(
+  const wantsProjects = /project|work|portfolio|built|show|highlight|pos|flight|booking|saas|hire|why|ai|loyalty/.test(
     q,
   );
 
@@ -103,7 +103,7 @@ export function buildContext(query = '') {
 
   const coreSkills =
     skills.find((c) => c.category === 'Core Skills')?.items?.slice(0, 6) || [];
-  const stackSkills = ['Frontend', 'Backend', 'Databases']
+  const stackSkills = ['Frontend', 'Backend', 'Databases', 'AI & Automation']
     .flatMap((cat) => skills.find((c) => c.category === cat)?.items?.slice(0, 4) || []);
 
   const context = {

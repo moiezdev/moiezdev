@@ -1,12 +1,13 @@
 {
   "id": "eims",
-  "title": "EIMS (Backend)",
-  "subtitle": "Learning Management System FullStack (Under Development)",
+  "title": "EIMS",
+  "subtitle": "AI-Powered Learning Management System (In Progress)",
   "description": [
-    "EIMS – Educational Institutes Management System",
+    "EIMS – AI-Powered Learning Management System",
     [
-      "This is my own project to make learning easier online, with features like dashboards, progress tracking, and track records of learners.",
-      "Working on microsoft entity framework to make the backend more robust and scalable."
+      "Currently developing an AI-powered learning management system with a .NET backend.",
+      "Helps students select the right courses based on their interests and goals, using AI-driven recommendations to personalize the learning path.",
+      "Backend built with ASP.NET, Entity Framework, and PostgreSQL for a robust, scalable foundation."
     ]
   ],
   "technologies": [

@@ -11,6 +11,12 @@ function localFallback(question = '', lang = 'en') {
     return prepareBotReply(t(lang, 'chat.welcome'));
   }
 
+  if (/ai|chatbot|botfolio|openrouter|deepseek|agent/.test(q)) {
+    return prepareBotReply(
+      `This chat is BotFolio — Moiz's OpenRouter (DeepSeek) portfolio guide. He also integrated the same stack into [[nav:/works/twlm-pos|TWLM - POS]] for smart menu search and restaurant-data analysis.`,
+    );
+  }
+
   if (/project|work|built|portfolio|show/.test(q)) {
     return prepareBotReply(
       `Standouts include [[nav:/works/twlm-pos|TWLM - POS]] (~70% fewer support requests, ~64% faster APIs) and [[nav:/works/aa-tourism|AATourism]]. Want more on [[nav:/works|All works]]?`,
@@ -25,7 +31,7 @@ function localFallback(question = '', lang = 'en') {
 
   if (/stack|tech|skill|approach|build|design|strength|hire|why|good at/.test(q)) {
     return prepareBotReply(
-      `Moiz focuses on scalable SaaS and retail systems — React, Vue, Next.js, Node.js, NestJS — with end-to-end ownership. See [[nav:/about|About Moiz]] or real examples on [[nav:/works|All works]].`,
+      `Moiz focuses on scalable SaaS and retail systems — React, Vue, Next.js, Node.js, NestJS — plus payments, wallets, booking engines, and OpenRouter AI. See [[nav:/about|About Moiz]] or real examples on [[nav:/works|All works]].`,
     );
   }
 

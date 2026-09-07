@@ -1,9 +1,9 @@
 {
   "id": "aa-tourism",
   "title": "AATourism",
-  "subtitle": "Flight Booking Platform",
+  "subtitle": "Flight Booking & Tour Planning Platform",
   "description": [
-    "AA Tourism – Flight Booking Platform",
+    "AA Travel & Tourism – Flight Booking Platform",
     [
       "A flight booking and tour-planning platform integrated with IATA codes, Sabre, and Amadeus for real-time flight data.",
       "Developed high-quality UI focused on UX, animations, and seamless booking journeys.",

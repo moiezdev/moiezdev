@@ -54,7 +54,9 @@
       "ASP.NET",
       "DotNET",
       "Laravel",
-      "PHP"
+      "PHP",
+      "Entity Framework",
+      "LINQ"
     ]
   },
   {
@@ -85,6 +87,7 @@
       "Code Splitting",
       "Lazy Loading",
       "Caching",
+      "Database Indexing",
       "RBAC",
       "OAuth2",
       "OIDC",
@@ -118,7 +121,18 @@
       "Vercel",
       "Netlify",
       "CI/CD",
+      "Docker",
       "GitHub Copilot"
+    ]
+  },
+  {
+    "category": "AI & Automation",
+    "items": [
+      "OpenRouter",
+      "DeepSeek",
+      "Agentic AI",
+      "Cursor",
+      "Claude"
     ]
   },
   {

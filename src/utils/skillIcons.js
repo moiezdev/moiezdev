@@ -53,10 +53,11 @@ import {
   MdOutlineAllInclusive,
   MdOutlineCreditCard,
   MdOutlineHub,
+  MdSmartToy,
 } from 'react-icons/md';
 import { RiBearSmileLine } from 'react-icons/ri';
 import { BiData } from 'react-icons/bi';
-import { SiPhp, SiLaravel, SiJira, SiTrello, SiPrisma, SiGithubcopilot } from 'react-icons/si';
+import { SiPhp, SiLaravel, SiJira, SiTrello, SiPrisma, SiGithubcopilot, SiDocker, SiAnthropic } from 'react-icons/si';
 
 export const skillIcons = {
   'Product Ownership': { Icon: MdOutlineInventory2, color: '#ffff00' },
@@ -91,6 +92,14 @@ export const skillIcons = {
   'Code Splitting': { Icon: MdSpeed, color: '#ffff00' },
   'Lazy Loading': { Icon: MdSpeed, color: '#06B6D4' },
   Caching: { Icon: MdSpeed, color: '#22C55E' },
+  'Database Indexing': { Icon: BiData, color: '#4169E1' },
+  LINQ: { Icon: TbBrandCSharp, color: '#239120' },
+  Docker: { Icon: SiDocker, color: '#2496ED' },
+  OpenRouter: { Icon: MdSmartToy, color: '#ffff00' },
+  DeepSeek: { Icon: MdSmartToy, color: '#4D6BFE' },
+  'Agentic AI': { Icon: MdSmartToy, color: '#ffff00' },
+  Cursor: { Icon: MdSmartToy, color: '#FFFFFF' },
+  Claude: { Icon: SiAnthropic, color: '#D4A27F' },
   'Authentication & Authorization': { Icon: MdSecurity, color: '#F59E0B' },
   Jira: { Icon: SiJira, color: '#0052CC' },
   Trello: { Icon: SiTrello, color: '#0052CC' },
@@ -204,6 +213,14 @@ const skillIconAliases = {
   copilot: 'GitHub Copilot',
   'event-driven architecture': 'Event-driven architecture',
   'event driven architecture': 'Event-driven architecture',
+  docker: 'Docker',
+  linq: 'LINQ',
+  'database indexing': 'Database Indexing',
+  openrouter: 'OpenRouter',
+  deepseek: 'DeepSeek',
+  'agentic ai': 'Agentic AI',
+  cursor: 'Cursor',
+  claude: 'Claude',
   javascript: 'JavaScript',
   typescript: 'TypeScript',
   flutter: 'Flutter',

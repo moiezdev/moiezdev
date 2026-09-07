@@ -1,15 +1,15 @@
 {
   "id": "city-arrivals",
   "title": "City Arrivals",
-  "subtitle": "Luxry Car Rental",
+  "subtitle": "Luxury Car Booking Platform",
   "description": [
-    "City Arrivals – Airport Transfer & Limousine Service Website",
+    "City Arrivals – Luxury Car Booking (cityarrivals.ca)",
     [
-      "Served as a Frontend Developer, specializing in creating a seamless and user-friendly booking experience.",
-      "Developed responsive layouts to ensure optimal performance across various devices, enhancing user engagement.",
-      "Integrated real-time booking functionalities, allowing users to easily schedule and manage their rides.",
-      "Collaborated with the design team to maintain brand consistency and ensure a visually appealing interface.",
-      "Employed best practices in web development to ensure fast load times and smooth navigation."
+      "A luxury car booking platform based in Canada, built for B2B travel operations alongside AA Travel & Tourism.",
+      "Focused on a seamless booking experience for premium vehicle rentals.",
+      "Developed responsive layouts for reliable performance across devices.",
+      "Integrated booking flows so users can schedule and manage rides easily.",
+      "Kept brand consistency and fast, smooth navigation."
     ]
   ],
   "technologies": [

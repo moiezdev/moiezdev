@@ -15,7 +15,7 @@
       "contact": "Contact me!!",
       "resume": "Download resume",
       "now": "Currently building",
-      "nowFocus": "POS, loyalty & wallet systems",
+      "nowFocus": "POS, loyalty, wallets & AI search",
       "quote": "Great products feel simple — the complexity stays under the hood.",
       "quoteBy": "--- Mr Unknown"
     },
@@ -26,9 +26,9 @@
       "title": "Hello, I'm Moiz!",
       "viewExperience": "View experience ~~>",
       "paragraphs": [
-        "Product-focused Full Stack Engineer with {{experienceYears}} years of experience building scalable systems across retail and SaaS — from POS platforms to loyalty systems and customer engagement tools. I work across the stack using React, Vue, Next.js, Node.js, and NestJS, delivering reliable, high-quality solutions with a strong focus on real-world usability.",
-        "I take ownership of features end-to-end — from understanding business needs and structuring solutions to implementation and deployment — with a focus on maintainable code, system efficiency, and software that creates measurable impact. Core strengths include POS retail systems, payment integrations (MyFatoorah, Moyasar), CRM, wallet integrations (Apple Wallet & Google Wallet), microservices and monorepo patterns, and leading UI/UX engineering.",
-        "I've revamped and stabilized unstable applications, supported management teams, and improved products by solving real problems. Recent work includes POS platforms, loyalty systems, and customer engagement tools — contributing to both technical architecture and product direction."
+        "Product-focused Full Stack Engineer with {{experienceYears}} years of experience building scalable systems across retail and SaaS — from POS platforms to loyalty systems and customer engagement tools, ecommerce, payment integrations, booking systems, search-engine integrations, and dashboards. I work across the stack using React, Vue, Next.js, Node.js, and NestJS, delivering reliable, high-quality solutions with a strong focus on real-world usability.",
+        "I take ownership of features end-to-end — from understanding business needs and structuring solutions to implementation and deployment — with a focus on writing maintainable code, improving system efficiency, and delivering software that creates measurable impact. Core strengths include POS retail systems, payment integrations (MyFatoorah, Moyasar), CRM, wallet integrations (Apple Wallet & Google Wallet), designing system architectures and helping teams execute on them, microservices and monorepo patterns, and leading UI/UX engineering.",
+        "I've revamped and stabilized unstable applications, supported management teams, and improved products by solving real problems. Recent work includes POS platforms, loyalty systems, customer engagement tools, and OpenRouter AI (DeepSeek) for smart search and analysis — contributing to both technical architecture and product direction."
       ]
     },
     "experience": {
@@ -118,7 +118,7 @@
       "contact": "تواصل معي!!",
       "resume": "تحميل السيرة",
       "now": "أعمل حالياً على",
-      "nowFocus": "نقاط البيع والولاء والمحافظ",
+      "nowFocus": "نقاط البيع والولاء والمحافظ والبحث الذكي",
       "quote": "المنتجات العظيمة تبدو بسيطة — والتعقيد يبقى تحت السطح.",
       "quoteBy": "--- مجهول"
     },
@@ -129,9 +129,9 @@
       "title": "مرحباً، أنا معيز!",
       "viewExperience": "عرض الخبرة ~~>",
       "paragraphs": [
-        "مهندس برمجيات متكامل يركّز على المنتج، بخبرة {{experienceYears}} سنوات في بناء أنظمة قابلة للتوسع في قطاعَي التجزئة والبرمجيات كخدمة — من منصات نقاط البيع إلى أنظمة الولاء وأدوات تفاعل العملاء. أعمل عبر المكدس باستخدام React وVue وNext.js وNode.js وNestJS، وأقدّم حلولاً موثوقة عالية الجودة تركز على الاستخدام الحقيقي.",
-        "أتولى الميزات من البداية للنهاية: فهم احتياج العمل، وهيكلة الحل، والتنفيذ، والنشر، مع التركيز على كود قابل للصيانة وكفاءة النظام وأثر قابل للقياس. من أبرز نقاط القوة: أنظمة نقاط البيع، وبوابات الدفع (MyFatoorah وMoyasar)، وCRM، ومحافظ Apple وGoogle، والأنماط الميكروية والـ monorepo، وقيادة هندسة الواجهات.",
-        "أعيد بناء التطبيقات غير المستقرة وأثبّتها، وأدعم فرق الإدارة، وأحسّن المنتجات بحل مشكلات حقيقية. يشمل عملي الأخير منصات نقاط البيع وأنظمة الولاء وأدوات التفاعل — في العمارة التقنية واتجاه المنتج معاً."
+        "مهندس برمجيات متكامل يركّز على المنتج، بخبرة {{experienceYears}} سنوات في بناء أنظمة قابلة للتوسع في قطاعَي التجزئة والبرمجيات كخدمة — من منصات نقاط البيع إلى أنظمة الولاء وأدوات تفاعل العملاء، والتجارة الإلكترونية، وبوابات الدفع، وأنظمة الحجز، وتكامل محركات البحث، ولوحات التقارير. أعمل عبر المكدس باستخدام React وVue وNext.js وNode.js وNestJS، وأقدّم حلولاً موثوقة عالية الجودة تركز على الاستخدام الحقيقي.",
+        "أتولى الميزات من البداية للنهاية: فهم احتياج العمل، وهيكلة الحل، والتنفيذ، والنشر، مع التركيز على كتابة كود قابل للصيانة وكفاءة النظام وأثر قابل للقياس. من أبرز نقاط القوة: أنظمة نقاط البيع، وبوابات الدفع (MyFatoorah وMoyasar)، وCRM، ومحافظ Apple وGoogle، وتصميم المعماريات ومساعدة الفرق على تنفيذها، والأنماط الميكروية والـ monorepo، وقيادة هندسة الواجهات.",
+        "أعيد بناء التطبيقات غير المستقرة وأثبّتها، وأدعم فرق الإدارة، وأحسّن المنتجات بحل مشكلات حقيقية. يشمل عملي الأخير منصات نقاط البيع وأنظمة الولاء وأدوات التفاعل ودمج OpenRouter AI (DeepSeek) للبحث والتحليل — في العمارة التقنية واتجاه المنتج معاً."
       ]
     },
     "experience": {

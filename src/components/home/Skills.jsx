@@ -15,6 +15,7 @@ const TECHNICAL_CATEGORIES = new Set([
   'Tools & Platforms',
   'Design & Prototyping',
   'Integrations',
+  'AI & Automation',
 ]);
 
 /** Chat-bubble tip listing projects that used this skill. */
