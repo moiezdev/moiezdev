@@ -39,7 +39,7 @@ export async function callAI(messages, { signal } = {}) {
         body: JSON.stringify({
           model,
           messages,
-          max_tokens: 120,
+          max_tokens: 320,
           temperature: 0.4,
         }),
       });

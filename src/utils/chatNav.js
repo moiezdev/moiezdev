@@ -119,11 +119,39 @@ export function addEntitySpans(text = '', existing = []) {
   return spans.sort((a, b) => a.start - b.start);
 }
 
+/** Default label for an in-site path, e.g. "/works" → "All works". */
+function labelForPath(path) {
+  const site = Object.values(SITE_NAV).find((n) => n.to === path);
+  if (site) return site.label;
+  const id = path.match(/^\/works\/([^/]+)$/)?.[1];
+  return PROJECT_NAV.find((p) => p.id === id)?.title || null;
+}
+
 /**
- * Full pipeline: sanitize → materialize markers → auto-link entities.
+ * Replies cut off by the token limit can end inside a marker ("Explore [[nav:/works|").
+ * Close it when the path is usable, otherwise drop the fragment so no raw markup shows.
+ */
+export function repairTruncatedNav(text = '') {
+  const src = String(text);
+  const start = src.lastIndexOf('[[');
+  if (start === -1 || src.indexOf(']]', start) !== -1) return src;
+
+  const fragment = src.slice(start);
+  const m = fragment.match(/^\[\[nav:(\/[^|\]\s]*)(?:\|([^\]]*))?\]?$/i);
+  const before = src.slice(0, start);
+  if (!m) return before.trimEnd();
+
+  // a label cut off mid-word is unreliable, so use the known name for the path
+  const label = labelForPath(m[1]);
+  if (!label) return before.trimEnd();
+  return `${before}[[nav:${m[1]}|${label}]]`;
+}
+
+/**
+ * Full pipeline: sanitize → repair truncated markers → materialize markers → auto-link entities.
  */
 export function prepareBotReply(raw = '') {
-  const sanitized = sanitizeBotText(raw);
+  const sanitized = repairTruncatedNav(sanitizeBotText(raw));
   const { text, spans: navSpans } = materializeInlineNav(sanitized);
   const spans = addEntitySpans(text, navSpans);
   return { text, spans };
