@@ -3,6 +3,7 @@ import PageHeader from '../components/ui/PageHeader';
 import Skills from '../components/home/Skills';
 import CodeWindow from '../components/ui/CodeWindow';
 import Reveal from '../components/ui/Reveal';
+import Moments from '../components/home/Moments';
 import { AboutStory } from '../components/home/About';
 import { useContent } from '../i18n/content';
 
@@ -35,6 +36,7 @@ const About = () => {
           </Reveal>
         </div>
       </section>
+      <Moments />
       <Skills />
     </Transition>
   );

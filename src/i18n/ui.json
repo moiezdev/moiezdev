@@ -187,6 +187,11 @@
         "data": "Data & payments"
       },
       "caption": "A simplified view of the retail platforms I architect: POS, loyalty and wallets on a typed NestJS API, backed by PostgreSQL."
+    },
+    "moments": {
+      "eyebrow": "Beyond the code",
+      "headline": "Out in the industry.",
+      "view": "View"
     }
   },
   "ar": {
@@ -377,6 +382,11 @@
         "data": "البيانات والمدفوعات"
       },
       "caption": "عرض مبسّط لمنصات التجزئة التي أصممها: نقاط البيع والولاء والمحافظ على واجهة NestJS مُنمّطة، مدعومة بـ PostgreSQL."
+    },
+    "moments": {
+      "eyebrow": "ما وراء الكود",
+      "headline": "في قلب الصناعة.",
+      "view": "عرض"
     }
   }
 }

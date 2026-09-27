@@ -86,7 +86,7 @@ const Hero = () => {
           <img
             src="/heroSection/hero-img.webp"
             alt="Moieez ur Rehman"
-            className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[92%] w-auto max-w-none object-contain rtl:-scale-x-100 drop-shadow-[0_30px_40px_rgba(0,0,0,0.25)]"
+            className="portrait-fade absolute bottom-0 left-1/2 -translate-x-1/2 h-[94%] w-auto max-w-none object-contain rtl:-scale-x-100"
             fetchPriority="high"
           />
 

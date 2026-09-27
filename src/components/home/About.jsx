@@ -24,7 +24,7 @@ export const AboutStory = ({ full = false }) => {
             src="/aboutSection/about-img.webp"
             alt="Moieez ur Rehman"
             loading="lazy"
-            className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[94%] w-auto max-w-none object-contain rtl:-scale-x-100"
+            className="absolute inset-0 w-full h-full object-cover object-[50%_0%] pt-[6%] rtl:-scale-x-100"
           />
         </div>
       </Reveal>
