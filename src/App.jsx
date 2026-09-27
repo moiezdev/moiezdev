@@ -1,4 +1,4 @@
-import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import { Suspense, lazy } from 'react';
@@ -10,6 +10,7 @@ import ChatBot from './components/chatbot/ChatBot';
 import Cursor from './components/ui/Cursor';
 import CommandPalette from './components/CommandPalette';
 import ScrollToTop from './components/functions/ScrollToTop';
+import RouteMeta from './components/functions/RouteMeta';
 
 const Home = lazy(() => import('./pages/Index'));
 const Projects = lazy(() => import('./pages/Projects'));
@@ -62,6 +63,7 @@ function AppShell() {
 function App() {
   return (
     <Router>
+      <RouteMeta />
       <AppShell />
       <Analytics />
       <SpeedInsights />
