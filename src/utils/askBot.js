@@ -24,12 +24,41 @@ const OFFLINE = {
   },
 };
 
+const SMALL_TALK = {
+  en: {
+    greet: "Hi! Good to have you here. Ask me anything about Moiz — for example his [[nav:/works/twlm-pos|TWLM - POS]] platform, his tech stack, or whether he's open to new roles.",
+    thanks: 'Anytime. If you want to talk to Moiz directly, the [[nav:/contact|Contact page]] is the fastest way.',
+    bye: 'Thanks for stopping by. You can reach Moiz any time via the [[nav:/contact|Contact page]].',
+  },
+  ar: {
+    greet: 'أهلاً بك! اسألني أي شيء عن معيز — مثل منصة [[nav:/works/twlm-pos|TWLM - POS]]، أو التقنيات التي يستخدمها، أو إن كان متاحاً لأدوار جديدة.',
+    thanks: 'على الرحب. إن أردت التحدث مع معيز مباشرة، فـ[[nav:/contact|صفحة التواصل]] أسرع طريقة.',
+    bye: 'شكراً لزيارتك. يمكنك التواصل مع معيز في أي وقت عبر [[nav:/contact|صفحة التواصل]].',
+  },
+};
+
+/**
+ * Pure greetings / thanks / goodbyes get an instant local reply — no API call,
+ * and no sales pitch in answer to "hi".
+ */
+export function smallTalk(question = '', lang = 'en') {
+  const q = question
+    .toLowerCase()
+    .replace(/[!.,?؟،\s]+/g, ' ')
+    .trim();
+  if (!q || q.split(' ').length > 4) return null;
+  const r = SMALL_TALK[lang === 'ar' ? 'ar' : 'en'];
+  if (/^(hi+|hey+|hello+|hiya|yo|sup|howdy|good (morning|afternoon|evening)|salam|assalam[ou] ?alaikum|مرحبا|مرحباً|السلام عليكم|سلام|اهلا|أهلا|هلا)( there| bot| botfolio)?$/.test(q)) return r.greet;
+  if (/^(thanks?|thank you( so much)?|thx|ty|cheers|great thanks|ok thanks|شكرا|شكراً|مشكور)$/.test(q)) return r.thanks;
+  if (/^(bye|goodbye|see you|see ya|later|مع السلامة|وداعا|وداعاً)$/.test(q)) return r.bye;
+  return null;
+}
+
 /** Offline / missing-key replies — portfolio guide tone + inline nav. */
 function localFallback(question = '', lang = 'en') {
   const q = question.toLowerCase().trim();
   const r = OFFLINE[lang === 'ar' ? 'ar' : 'en'];
 
-  if (/^(hi|hey|hello|yo|sup|مرحبا|السلام|اهلا|أهلا)/.test(q)) return prepareBotReply(t(lang, 'chat.welcome'));
   if (/\bai\b|chatbot|botfolio|openrouter|deepseek|agent|ذكاء/.test(q)) return prepareBotReply(r.ai);
   if (/hire|available|availability|iqama|visa|open to|cv|resume|توظيف|متاح|إقامة|سيرة/.test(q)) return prepareBotReply(r.hire);
   if (/project|work|built|portfolio|show|مشروع|مشاريع|أعمال/.test(q)) return prepareBotReply(r.projects);
@@ -44,6 +73,11 @@ function localFallback(question = '', lang = 'en') {
  * @returns {Promise<{ text: string, spans: object[] }>}
  */
 export async function askBot(question, { signal, history = [], lang = 'en', path = '/' } = {}) {
+  const quick = smallTalk(question, lang);
+  if (quick) {
+    await new Promise((r) => setTimeout(r, 350)); // brief "thinking" beat so it doesn't feel canned
+    return prepareBotReply(quick);
+  }
   try {
     const raw = await handleChat(question, { signal, history, lang, path });
     const prepared = prepareBotReply(raw);
