@@ -504,7 +504,7 @@ const ChatBot = () => {
                   listening ? t(lang, 'chat.placeholderListen') : t(lang, 'chat.placeholder')
                 }
                 disabled={busy}
-                className="flex-1 min-w-0 bg-transparent px-2 py-1 text-base text-label placeholder:text-label-3 focus:outline-none disabled:opacity-50"
+                className="flex-1 min-w-0 bg-transparent px-2 py-1 text-base text-label placeholder:text-label-3 focus:outline-none focus-visible:outline-none disabled:opacity-50"
               />
               <button
                 type="submit"

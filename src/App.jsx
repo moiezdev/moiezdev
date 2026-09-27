@@ -7,6 +7,8 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Loading from './components/Loading';
 import ChatBot from './components/chatbot/ChatBot';
+import Cursor from './components/ui/Cursor';
+import CommandPalette from './components/CommandPalette';
 import ScrollToTop from './components/functions/ScrollToTop';
 
 const Home = lazy(() => import('./pages/Index'));
@@ -51,6 +53,8 @@ function AppShell() {
       </main>
       <Footer />
       <ChatBot />
+      <CommandPalette />
+      <Cursor />
     </>
   );
 }

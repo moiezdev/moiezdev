@@ -3,6 +3,7 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import Logo from './ui/Logo';
 import { usePreferences } from '../context/Preferences';
 import { useContent } from '../i18n/content';
+import { isMac, openCommandPalette } from '../utils/commandPalette';
 
 const NAV = [
   { id: 'home', key: 'nav.home', link: '/' },
@@ -99,6 +100,32 @@ const Navbar = () => {
         </ul>
 
         <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={openCommandPalette}
+            className="hidden lg:inline-flex items-center gap-2 h-8 ps-3 pe-1.5 me-1 rounded-full bg-fill text-[13px] text-label-2 hover:text-label transition-colors"
+            aria-label={t('cmd.placeholder')}
+          >
+            <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+              <circle cx="9" cy="9" r="6" />
+              <path d="m13.5 13.5 4 4" />
+            </svg>
+            {t('cmd.search')}
+            <kbd className="text-[11px] font-medium rounded-full bg-surface px-2 py-0.5 ring-1 ring-separator">
+              {isMac() ? '⌘K' : 'Ctrl K'}
+            </kbd>
+          </button>
+          <button
+            type="button"
+            onClick={openCommandPalette}
+            className={`${iconBtn} lg:hidden`}
+            aria-label={t('cmd.placeholder')}
+          >
+            <svg className="w-4 h-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden>
+              <circle cx="9" cy="9" r="6" />
+              <path d="m13.5 13.5 4 4" />
+            </svg>
+          </button>
           <PrefsToggles />
           <button
             type="button"

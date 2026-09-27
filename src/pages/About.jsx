@@ -1,6 +1,8 @@
 import Transition from '../components/functions/Transition';
 import PageHeader from '../components/ui/PageHeader';
 import Skills from '../components/home/Skills';
+import CodeWindow from '../components/ui/CodeWindow';
+import Reveal from '../components/ui/Reveal';
 import { AboutStory } from '../components/home/About';
 import { useContent } from '../i18n/content';
 
@@ -13,6 +15,24 @@ const About = () => {
       <section className="w-full px-5">
         <div className="app-container">
           <AboutStory full />
+        </div>
+      </section>
+      <section className="w-full px-5 pt-28 md:pt-40">
+        <div className="app-container grid gap-10 lg:grid-cols-12 items-center">
+          <div className="lg:col-span-5">
+            <Reveal as="p" className="eyebrow mb-3">
+              {t('about.codeEyebrow')}
+            </Reveal>
+            <Reveal as="h2" delay={60} className="headline-1 text-label">
+              {t('about.codeTitle')}
+            </Reveal>
+            <Reveal as="p" delay={120} className="lead mt-5">
+              {t('about.codeBody')}
+            </Reveal>
+          </div>
+          <Reveal delay={120} className="lg:col-span-7">
+            <CodeWindow />
+          </Reveal>
         </div>
       </section>
       <Skills />

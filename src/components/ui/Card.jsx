@@ -49,7 +49,10 @@ const Card = ({ project, featured = false, maxTech = 4, className = '' }) => {
             featured ? 'text-[28px] md:text-[34px]' : 'text-[21px]'
           }`}
         >
-          <Link to={`/works/${project.id}`} className="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none">
+          <Link
+            to={`/works/${project.id}`}
+            data-cursor-label={t('projects.view')}
+            className="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none">
             {project.title}
           </Link>
         </h3>
