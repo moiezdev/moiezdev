@@ -201,7 +201,7 @@ const RobotAvatar = ({
   useEffect(() => {
     if (!chestRef.current) return;
     gsap.to(chestRef.current, {
-      fill: isOpen ? '#2997ff' : '#c7c7cc',
+      fill: isOpen ? '#a7b4c4' : '#c7c7cc',
       duration: 0.25,
     });
   }, [isOpen]);
@@ -245,8 +245,8 @@ const RobotAvatar = ({
             <stop offset="1" stopColor="#0b0b0f" />
           </linearGradient>
           <linearGradient id={`${uid}-glow`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#8fdcff" />
-            <stop offset="1" stopColor="#2997ff" />
+            <stop offset="0" stopColor="#f4f6f9" />
+            <stop offset="1" stopColor="#a7b4c4" />
           </linearGradient>
           <filter id={`${uid}-blur`} x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="1.6" />
@@ -276,8 +276,8 @@ const RobotAvatar = ({
 
           <g ref={eyesRef}>
             {/* glow */}
-            <rect x="28" y="23" width="6" height="10" rx="3" fill="#2997ff" filter={`url(#${uid}-blur)`} opacity="0.8" />
-            <rect x="46" y="23" width="6" height="10" rx="3" fill="#2997ff" filter={`url(#${uid}-blur)`} opacity="0.8" />
+            <rect x="28" y="23" width="6" height="10" rx="3" fill="#a7b4c4" filter={`url(#${uid}-blur)`} opacity="0.8" />
+            <rect x="46" y="23" width="6" height="10" rx="3" fill="#a7b4c4" filter={`url(#${uid}-blur)`} opacity="0.8" />
             <rect ref={leftEyeRef} x="28" y="23" width="6" height="10" rx="3" fill={`url(#${uid}-glow)`} />
             <rect ref={rightEyeRef} x="46" y="23" width="6" height="10" rx="3" fill={`url(#${uid}-glow)`} />
           </g>
@@ -291,7 +291,7 @@ const RobotAvatar = ({
           <>
             <rect x="24" y="51" width="32" height="23" rx="11" fill={`url(#${uid}-shell)`} />
             <rect x="24.5" y="51.5" width="31" height="22" rx="10.5" stroke="rgba(0,0,0,0.08)" />
-            <circle ref={chestRef} cx="40" cy="62.5" r="3.5" fill={isOpen ? '#2997ff' : '#c7c7cc'} />
+            <circle ref={chestRef} cx="40" cy="62.5" r="3.5" fill={isOpen ? '#a7b4c4' : '#c7c7cc'} />
           </>
         )}
       </svg>

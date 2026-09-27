@@ -64,7 +64,7 @@ const Hero = () => {
         className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[1100px] h-[700px] opacity-60 dark:opacity-40 blur-3xl"
         style={{
           background:
-            'radial-gradient(40% 50% at 30% 40%, color-mix(in srgb, var(--color-accent) 35%, transparent), transparent 70%), radial-gradient(35% 45% at 70% 45%, rgba(162,89,255,0.28), transparent 70%)',
+            'radial-gradient(40% 50% at 30% 40%, var(--glow-a), transparent 70%), radial-gradient(35% 45% at 70% 45%, var(--glow-b), transparent 70%)',
         }}
       />
 
@@ -122,7 +122,7 @@ const Hero = () => {
             className="absolute inset-0"
             style={{
               background:
-                'radial-gradient(60% 70% at 50% 100%, color-mix(in srgb, var(--color-accent) 30%, transparent), transparent 70%), radial-gradient(40% 50% at 15% 20%, rgba(162,89,255,0.18), transparent 70%), radial-gradient(40% 50% at 85% 25%, rgba(255,100,130,0.16), transparent 70%)',
+                'radial-gradient(60% 70% at 50% 100%, var(--glow-a), transparent 70%), radial-gradient(40% 50% at 15% 20%, var(--glow-b), transparent 70%), radial-gradient(40% 50% at 85% 25%, var(--glow-b), transparent 70%)',
             }}
           />
           <img
