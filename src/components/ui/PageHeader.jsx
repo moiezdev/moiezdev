@@ -8,7 +8,7 @@ const PageHeader = ({ eyebrow, title, subtitle, children }) => (
       className="pointer-events-none absolute -top-48 left-1/2 -translate-x-1/2 w-[900px] h-[520px] opacity-50 dark:opacity-35 blur-3xl"
       style={{
         background:
-          'radial-gradient(45% 55% at 40% 45%, color-mix(in srgb, var(--color-accent) 30%, transparent), transparent 70%), radial-gradient(35% 45% at 65% 50%, rgba(162,89,255,0.22), transparent 70%)',
+          'radial-gradient(45% 55% at 40% 45%, var(--glow-a), transparent 70%), radial-gradient(35% 45% at 65% 50%, var(--glow-b), transparent 70%)',
       }}
     />
     <div className="relative app-container flex flex-col items-center">

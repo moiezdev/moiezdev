@@ -470,7 +470,7 @@ const ChatBot = () => {
                   <div
                     className={`max-w-[85%] px-3.5 py-2 text-[15px] leading-[1.4] rounded-[20px] ${
                       isUser
-                        ? 'bg-accent text-[#fff] rounded-ee-md'
+                        ? 'bg-accent text-on-accent rounded-ee-md'
                         : 'bg-fill text-label rounded-es-md'
                     }`}
                   >
@@ -514,7 +514,7 @@ const ChatBot = () => {
                       type="button"
                       key={s}
                       onClick={() => send(s)}
-                      className="rounded-full ring-1 ring-inset ring-accent/50 text-accent text-[13px] font-medium px-3.5 py-1.5 hover:bg-accent hover:text-[#fff] transition-colors cursor-pointer"
+                      className="rounded-full ring-1 ring-inset ring-accent/50 text-accent text-[13px] font-medium px-3.5 py-1.5 hover:bg-accent hover:text-on-accent transition-colors cursor-pointer"
                     >
                       {s}
                     </button>
@@ -531,7 +531,7 @@ const ChatBot = () => {
                   type="button"
                   onClick={toggleListen}
                   disabled={busy}
-                  className={`${ICON_BTN} ${listening ? 'text-[#ff3b30] bg-[rgba(255,59,48,0.12)]' : ''}`}
+                  className={`${ICON_BTN} ${listening ? 'text-label bg-fill' : ''}`}
                   aria-pressed={listening}
                   aria-label={listening ? 'Done speaking — send' : 'Speak a question'}
                   title={listening ? 'Tap when finished' : 'Speak'}
@@ -557,7 +557,7 @@ const ChatBot = () => {
               <button
                 type="submit"
                 disabled={busy || !input.trim()}
-                className="inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-accent text-[#fff] disabled:opacity-30 transition-opacity cursor-pointer"
+                className="inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-accent text-on-accent disabled:opacity-30 transition-opacity cursor-pointer"
                 aria-label={t(lang, 'chat.send')}
               >
                 <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" aria-hidden>

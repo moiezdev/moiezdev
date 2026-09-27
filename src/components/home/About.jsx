@@ -17,7 +17,7 @@ export const AboutStory = ({ full = false }) => {
             className="absolute inset-0"
             style={{
               background:
-                'radial-gradient(70% 60% at 50% 100%, rgba(162,89,255,0.25), transparent 70%), radial-gradient(50% 50% at 20% 15%, color-mix(in srgb, var(--color-accent) 22%, transparent), transparent 70%)',
+                'radial-gradient(70% 60% at 50% 100%, var(--glow-b), transparent 70%), radial-gradient(50% 50% at 20% 15%, var(--glow-a), transparent 70%)',
             }}
           />
           <img

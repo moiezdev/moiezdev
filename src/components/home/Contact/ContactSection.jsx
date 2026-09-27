@@ -7,14 +7,6 @@ import { Spinner } from '../../Loading';
 import { contacts } from '../../../data';
 import { useContent } from '../../../i18n/content';
 
-const ICON_TINT = {
-  LinkedIn: '#0a66c2',
-  Email: '#0071e3',
-  Phone: '#34c759',
-  WhatsApp: '#25d366',
-  GitHub: '#6e6e73',
-};
-
 const formattedDate = (now) => {
   const hours = now.getHours();
   const minutes = now.getMinutes().toString().padStart(2, '0');
@@ -85,11 +77,8 @@ const ContactSection = () => {
                   rel="noopener noreferrer"
                   className="group flex items-center gap-3.5 ps-4 hover:bg-fill transition-colors"
                 >
-                  <span
-                    className="inline-flex size-8 shrink-0 items-center justify-center rounded-[9px]"
-                    style={{ background: ICON_TINT[contact.platform] || 'var(--color-accent)' }}
-                  >
-                    <img src={contact.icon} alt="" className="w-[18px] h-[18px] brightness-0 invert" />
+                  <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-[9px] bg-fill">
+                    <img src={contact.icon} alt="" className="w-[17px] h-[17px] brightness-0 opacity-75 dark:invert" />
                   </span>
                   <span
                     className={`flex flex-1 min-w-0 items-center justify-between gap-3 py-3.5 pe-4 ${
@@ -122,7 +111,7 @@ const ContactSection = () => {
           <Field name="message" label={t('contact.message')} multiline />
 
           {status === 'error' && (
-            <p role="alert" className="rounded-xl bg-[rgba(255,59,48,0.1)] text-[#ff3b30] text-[14px] px-4 py-3">
+            <p role="alert" className="rounded-xl bg-[color-mix(in_srgb,var(--color-danger)_10%,transparent)] text-danger text-[14px] px-4 py-3">
               {errorMessage || t('contact.fail')}
             </p>
           )}

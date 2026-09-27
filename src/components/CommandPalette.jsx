@@ -189,10 +189,10 @@ const CommandPalette = () => {
                   onMouseMove={() => setActive(index)}
                   onClick={() => run(item)}
                   className={`w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-start transition-colors ${
-                    index === active ? 'bg-accent text-[#fff]' : 'text-label'
+                    index === active ? 'bg-accent text-on-accent' : 'text-label'
                   }`}
                 >
-                  <span className={`inline-flex size-7 shrink-0 items-center justify-center rounded-lg ${index === active ? 'bg-[rgba(255,255,255,0.2)]' : 'bg-fill text-label-2'}`}>
+                  <span className={`inline-flex size-7 shrink-0 items-center justify-center rounded-lg ${index === active ? 'bg-[color-mix(in_srgb,var(--color-on-accent)_16%,transparent)]' : 'bg-fill text-label-2'}`}>
                     <Icon d={ICONS[item.type]} />
                   </span>
                   <span className="min-w-0 flex-1">
@@ -200,10 +200,10 @@ const CommandPalette = () => {
                       {item.id === 'a-email' && copied ? t('cmd.copied') : item.title}
                     </span>
                     {item.hint && (
-                      <span className={`block text-[12px] truncate ${index === active ? 'text-[rgba(255,255,255,0.75)]' : 'text-label-2'}`}>{item.hint}</span>
+                      <span className={`block text-[12px] truncate ${index === active ? 'text-on-accent/75' : 'text-label-2'}`}>{item.hint}</span>
                     )}
                   </span>
-                  {index === active && <span className="text-[12px] text-[rgba(255,255,255,0.8)]">↵</span>}
+                  {index === active && <span className="text-[12px] text-on-accent/80">↵</span>}
                 </button>
               </li>
             );

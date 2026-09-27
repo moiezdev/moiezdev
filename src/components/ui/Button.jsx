@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 
 const VARIANTS = {
   primary:
-    'bg-accent text-[#fff] hover:bg-accent-hover shadow-[0_1px_2px_rgba(0,0,0,0.08)] active:scale-[0.97]',
+    'bg-accent text-on-accent hover:bg-accent-hover shadow-[0_1px_2px_rgba(0,0,0,0.08)] active:scale-[0.97]',
   secondary: 'bg-fill text-label hover:bg-[color-mix(in_srgb,var(--color-fill)_160%,transparent)] active:scale-[0.97]',
   outline:
-    'text-accent ring-1 ring-inset ring-accent hover:bg-accent hover:text-[#fff] active:scale-[0.97]',
+    'text-accent ring-1 ring-inset ring-accent hover:bg-accent hover:text-on-accent active:scale-[0.97]',
   plain: 'text-accent hover:underline underline-offset-4',
 };
 

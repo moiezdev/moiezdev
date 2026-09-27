@@ -257,13 +257,11 @@ export const getSkillIcon = (name) => {
   return direct ? skillIcons[direct] : null;
 };
 
-/** Brand colors that would vanish on light or dark surfaces fall back to the text color. */
+/**
+ * Icons render monochrome (they follow the surrounding text colour) to keep
+ * the interface calm; brand colours stay in the data for other uses.
+ */
+// eslint-disable-next-line no-unused-vars
 export function readableIconColor(color) {
-  const m = /^#?([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(String(color || '').trim());
-  if (!m) return color || 'currentColor';
-  let hex = m[1];
-  if (hex.length === 3) hex = hex.split('').map((c) => c + c).join('');
-  const [r, g, b] = [0, 2, 4].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
-  const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-  return lum > 0.85 || lum < 0.12 ? 'currentColor' : color;
+  return 'currentColor';
 }
