@@ -6,6 +6,7 @@ export const SITE_NAV = {
   experience: { label: 'Experience', to: '/experience' },
   contact: { label: 'Contact page', to: '/contact' },
   works: { label: 'All works', to: '/works' },
+  cv: { label: 'CV', to: '/cv' },
   home: { label: 'Home', to: '/' },
 };
 
@@ -177,6 +178,12 @@ export function sanitizeBotText(text = '') {
     if (!name) return u.replace(/^https?:\/\//i, '');
     return name;
   });
+
+  // markdown the model sometimes leaks: **bold**, __bold__, headings, * bullets, `code`
+  t = t.replace(/\*\*([^*]+)\*\*/g, '$1').replace(/__([^_]+)__/g, '$1');
+  t = t.replace(/^#{1,6}\s+/gm, '');
+  t = t.replace(/^\s*[*-]\s+/gm, '• ');
+  t = t.replace(/`([^`]+)`/g, '$1');
 
   t = t.replace(/\s*\(\s*mailto:[^)]+\)/gi, '');
   t = t.replace(/\s*\(\s*tel:[^)]+\)/gi, '');

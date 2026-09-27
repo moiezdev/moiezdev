@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { HiMicrophone, HiStop, HiVolumeOff, HiVolumeUp, HiX } from 'react-icons/hi';
 import RobotAvatar from './RobotAvatar';
@@ -7,6 +7,7 @@ import TypewriterText from './TypewriterText';
 import { askBot } from '../../utils/askBot';
 import { BOT_HANDLE, BOT_NAME } from '../../utils/buildPortfolioContext';
 import { prepareBotReply } from '../../utils/chatNav';
+import { suggestFollowUps } from '../../utils/chatSuggestions';
 import {
   canListen,
   canSpeak,
@@ -27,12 +28,26 @@ const welcomeMessage = (lang) => ({
   typed: true,
 });
 
+const CHAT_STORE_KEY = (lang) => `botfolio-chat-${lang}`;
+
+/** Conversation survives refreshes for the browser session (per language). */
+const loadChat = (lang) => {
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(CHAT_STORE_KEY(lang)) || 'null');
+    if (Array.isArray(saved) && saved.length) return saved.map((m) => ({ ...m, typed: true }));
+  } catch {
+    /* ignore */
+  }
+  return [welcomeMessage(lang)];
+};
+
 const ChatBot = () => {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const { lang } = usePreferences();
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState('');
-  const [messages, setMessages] = useState(() => [welcomeMessage(lang)]);
+  const [messages, setMessages] = useState(() => loadChat(lang));
   const [loading, setLoading] = useState(false);
   const [typingId, setTypingId] = useState(null);
   const [speaking, setSpeaking] = useState(false);
@@ -71,9 +86,26 @@ const ChatBot = () => {
         : 'idle';
 
   useEffect(() => {
-    setMessages([welcomeMessage(lang)]);
+    setMessages(loadChat(lang));
     setTypingId(null);
   }, [lang]);
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(CHAT_STORE_KEY(lang), JSON.stringify(messages.slice(-30)));
+    } catch {
+      /* ignore */
+    }
+  }, [messages, lang]);
+
+  const resetChat = () => {
+    abortRef.current?.abort();
+    stopSpeaking();
+    setSpeaking(false);
+    setTypingId(null);
+    setLoading(false);
+    setMessages([welcomeMessage(lang)]);
+  };
 
   useEffect(() => {
     try {
@@ -261,6 +293,7 @@ const ChatBot = () => {
         signal: controller.signal,
         history: nextMessages.slice(0, -1),
         lang,
+        path: pathname,
       });
       const id = `b-${msgIdRef.current++}`;
       // Start audio first — don't wait on typewriter / React paint
@@ -354,6 +387,7 @@ const ChatBot = () => {
   };
 
   const busy = loading || typingId != null;
+  const suggestions = suggestFollowUps({ path: pathname, messages, lang });
   const ICON_BTN =
     'inline-flex size-8 shrink-0 items-center justify-center rounded-full text-label-2 hover:text-label hover:bg-fill transition-colors cursor-pointer disabled:opacity-40';
 
@@ -402,6 +436,20 @@ const ChatBot = () => {
                 ) : (
                   <HiVolumeOff className="w-4 h-4" aria-hidden />
                 )}
+              </button>
+            )}
+            {messages.length > 1 && (
+              <button
+                type="button"
+                onClick={resetChat}
+                disabled={loading}
+                className={ICON_BTN}
+                aria-label={t(lang, 'chat.newChat')}
+                title={t(lang, 'chat.newChat')}
+              >
+                <svg className="w-4 h-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <path d="M14.5 3.5l2 2L9 13l-3 1 1-3 7.5-7.5zM16 11v4.5a1.5 1.5 0 0 1-1.5 1.5h-10A1.5 1.5 0 0 1 3 15.5v-10A1.5 1.5 0 0 1 4.5 4H9" />
+                </svg>
               </button>
             )}
             <button type="button" onClick={closeChat} className={ICON_BTN} aria-label="Close chat">
@@ -457,11 +505,11 @@ const ChatBot = () => {
               </div>
             )}
 
-            {messages.length <= 1 && !busy && (
+            {!busy && suggestions.length > 0 && (
               <div className="pt-3">
                 <p className="text-[12px] text-label-3 mb-2 px-1">{t(lang, 'chat.tryAsking')}</p>
                 <div className="flex flex-wrap gap-2">
-                  {(t(lang, 'chat.suggestions') || []).map((s) => (
+                  {suggestions.map((s) => (
                     <button
                       type="button"
                       key={s}

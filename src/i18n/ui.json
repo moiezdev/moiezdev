@@ -135,7 +135,42 @@
         "Tech stack"
       ],
       "fallback": "Sorry about that — something didn't go through. Try again, or open [[nav:/contact|Contact page]] to reach Moiz directly.",
-      "fail": "I stay focused on Moiz's work — explore [[nav:/works|All works]] or reach him via [[nav:/contact|Contact page]]."
+      "fail": "I stay focused on Moiz's work — explore [[nav:/works|All works]] or reach him via [[nav:/contact|Contact page]].",
+      "rateLimited": "You're asking faster than I can keep up — give it a minute, or reach Moiz directly on the [[nav:/contact|Contact page]].",
+      "newChat": "New chat",
+      "sugg": {
+        "moreAbout": "More about {{name}}",
+        "stackOf": "Tech stack of {{name}}",
+        "thisStack": "What's the tech stack here?",
+        "thisImpact": "What impact did this have?",
+        "similar": "Similar projects?",
+        "home": [
+          "Show his best projects",
+          "What's his experience?",
+          "What's his tech stack?"
+        ],
+        "works": [
+          "Which project had the most impact?",
+          "Any AI projects?",
+          "Travel & booking work?"
+        ],
+        "experience": [
+          "What does he do at TWLM?",
+          "Biggest measurable wins?",
+          "Education and languages?"
+        ],
+        "about": [
+          "What are his core strengths?",
+          "What did he see at LEAP?",
+          "How does he approach a feature?"
+        ],
+        "contact": [
+          "Is he open to new roles?",
+          "Fastest way to reach him?",
+          "Where's his CV?"
+        ],
+        "hire": "Why should we hire Moiz?"
+      }
     },
     "common": {
       "loading": "Loading..."
@@ -330,7 +365,42 @@
         "المكدس التقني"
       ],
       "fallback": "عذراً — لم يكتمل الطلب. حاول مرة أخرى، أو افتح [[nav:/contact|صفحة التواصل]] للوصول إلى معيز مباشرة.",
-      "fail": "أركّز على عمل معيز — استكشف [[nav:/works|كل الأعمال]] أو تواصل عبر [[nav:/contact|صفحة التواصل]]."
+      "fail": "أركّز على عمل معيز — استكشف [[nav:/works|كل الأعمال]] أو تواصل عبر [[nav:/contact|صفحة التواصل]].",
+      "rateLimited": "أسئلتك أسرع مما أستطيع مواكبته — انتظر دقيقة، أو تواصل مع معيز مباشرة عبر [[nav:/contact|صفحة التواصل]].",
+      "newChat": "محادثة جديدة",
+      "sugg": {
+        "moreAbout": "المزيد عن {{name}}",
+        "stackOf": "التقنيات المستخدمة في {{name}}",
+        "thisStack": "ما التقنيات المستخدمة هنا؟",
+        "thisImpact": "ما أثر هذا المشروع؟",
+        "similar": "مشاريع مشابهة؟",
+        "home": [
+          "أبرز مشاريعه",
+          "ما خبرته؟",
+          "ما التقنيات التي يستخدمها؟"
+        ],
+        "works": [
+          "أي مشروع كان له أكبر أثر؟",
+          "هل لديه مشاريع ذكاء اصطناعي؟",
+          "أعمال السفر والحجز؟"
+        ],
+        "experience": [
+          "ماذا يعمل في TWLM؟",
+          "أبرز إنجازاته القابلة للقياس؟",
+          "التعليم واللغات؟"
+        ],
+        "about": [
+          "ما نقاط قوته الأساسية؟",
+          "ماذا رأى في ليب؟",
+          "كيف يتعامل مع بناء ميزة جديدة؟"
+        ],
+        "contact": [
+          "هل هو متاح لأدوار جديدة؟",
+          "أسرع طريقة للتواصل معه؟",
+          "أين سيرته الذاتية؟"
+        ],
+        "hire": "لماذا يجب أن نوظف معيز؟"
+      }
     },
     "common": {
       "loading": "جارٍ التحميل..."
