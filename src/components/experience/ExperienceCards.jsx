@@ -23,11 +23,13 @@ const ExperienceCard = ({ job, highlightLimit }) => {
   const { t, localize } = useContent();
   const highlights =
     highlightLimit > 0 ? (job.highlights || []).slice(0, highlightLimit) : job.highlights || [];
-  const related = (job.relatedProjects || []).map((id) => localize(getProjectById(id))).filter(Boolean);
+  const related = (job.relatedProjects || [])
+    .map((id) => localize(getProjectById(id)))
+    .filter(Boolean);
 
   return (
-    <article className="surface p-6 md:p-8">
-      <div className="flex items-start gap-4">
+    <article className="surface p-6 md:p-8 lg:grid lg:grid-cols-12 lg:gap-10">
+      <div className="flex items-start gap-4 lg:col-span-4 lg:flex-col">
         <CompanyLogo job={job} />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
@@ -43,55 +45,62 @@ const ExperienceCard = ({ job, highlightLimit }) => {
           </div>
           <p className="mt-1 text-[15px] text-label-2">
             {job.companyUrl ? (
-              <a href={job.companyUrl} target="_blank" rel="noopener noreferrer" className="text-label hover:text-accent font-medium">
+              <a
+                href={job.companyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-label hover:text-accent font-medium"
+              >
                 {job.company}
               </a>
             ) : (
               <span className="text-label font-medium">{job.company}</span>
             )}
-            <span className="mx-2 text-label-3">·</span>
-            {job.period}
+            <span className="mx-2 text-label-3 lg:hidden">·</span>
+            <span className="lg:block lg:mt-1">{job.period}</span>
             {job.location ? (
               <>
-                <span className="mx-2 text-label-3">·</span>
-                {job.location}
+                <span className="mx-2 text-label-3 lg:hidden">·</span>
+                <span className="lg:block">{job.location}</span>
               </>
             ) : null}
           </p>
         </div>
       </div>
 
-      {job.summary && <p className="mt-5 text-[17px] text-label">{job.summary}</p>}
+      <div className="lg:col-span-8">
+        {job.summary && <p className="mt-5 lg:mt-0 text-[17px] text-label">{job.summary}</p>}
 
-      {highlights.length > 0 && (
-        <ul className="mt-4 flex flex-col gap-2.5">
-          {highlights.map((line) => (
-            <li key={line} className="flex gap-3 text-[15px] leading-relaxed text-label-2">
-              <span className="mt-[9px] size-1.5 shrink-0 rounded-full bg-label-3" aria-hidden />
-              <span>{line}</span>
-            </li>
-          ))}
-        </ul>
-      )}
+        {highlights.length > 0 && (
+          <ul className="mt-4 flex flex-col gap-2.5">
+            {highlights.map((line) => (
+              <li key={line} className="flex gap-3 text-[15px] leading-relaxed text-label-2">
+                <span className="mt-[9px] size-1.5 shrink-0 rounded-full bg-label-3" aria-hidden />
+                <span>{line}</span>
+              </li>
+            ))}
+          </ul>
+        )}
 
-      {job.stack?.length > 0 && (
-        <div className="mt-5 flex flex-wrap gap-1.5">
-          {job.stack.map((tech) => (
-            <TechChip key={tech} name={tech} />
-          ))}
-        </div>
-      )}
+        {job.stack?.length > 0 && (
+          <div className="mt-5 flex flex-wrap gap-1.5">
+            {job.stack.map((tech) => (
+              <TechChip key={tech} name={tech} />
+            ))}
+          </div>
+        )}
 
-      {related.length > 0 && (
-        <div className="mt-5 pt-5 border-t border-separator flex flex-wrap gap-x-6 gap-y-2">
-          {related.map((project) => (
-            <Link key={project.id} to={`/works/${project.id}`} className="link-arrow text-[15px]">
-              {project.title}
-              <Chevron />
-            </Link>
-          ))}
-        </div>
-      )}
+        {related.length > 0 && (
+          <div className="mt-5 pt-5 border-t border-separator flex flex-wrap gap-x-6 gap-y-2">
+            {related.map((project) => (
+              <Link key={project.id} to={`/works/${project.id}`} className="link-arrow text-[15px]">
+                {project.title}
+                <Chevron />
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
     </article>
   );
 };
@@ -103,7 +112,12 @@ const ExperienceCards = ({ jobs, highlightLimit = 0 }) => (
       aria-hidden
     />
     {jobs.map((job, i) => (
-      <Reveal as="li" key={job.id || `${job.company}-${job.period}`} delay={i * 60} className="relative md:ps-16">
+      <Reveal
+        as="li"
+        key={job.id || `${job.company}-${job.period}`}
+        delay={i * 60}
+        className="relative md:ps-16"
+      >
         <span
           className={`hidden md:block absolute start-[17px] top-9 size-[13px] rounded-full ring-4 ring-bg ${
             job.current ? 'bg-accent' : 'bg-label-3'

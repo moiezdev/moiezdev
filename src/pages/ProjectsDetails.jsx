@@ -72,7 +72,7 @@ export default function ProjectDetail() {
               ))}
             </div>
           </Reveal>
-          <Reveal delay={80} className="md:col-span-8 flex flex-col gap-5">
+          <Reveal delay={80} className="md:col-span-8 max-w-3xl flex flex-col gap-5">
             {project.description.map((line, i) =>
               Array.isArray(line) ? (
                 <ul key={i} className="flex flex-col gap-3">

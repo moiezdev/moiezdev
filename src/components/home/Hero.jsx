@@ -73,8 +73,8 @@ const Hero = () => {
       </div>
 
       {/* portrait stage */}
-      <Reveal delay={200} className="relative app-container mt-16 md:mt-20">
-        <div className="relative mx-auto overflow-hidden rounded-[36px] md:rounded-[44px] h-[380px] sm:h-[480px] md:h-[560px] bg-surface-2">
+      <Reveal delay={200} className="relative app-container-wide mt-16 md:mt-20">
+        <div className="relative mx-auto overflow-hidden rounded-[36px] md:rounded-[44px] h-[380px] sm:h-[500px] md:h-[620px] bg-surface-2">
           <div
             aria-hidden
             className="absolute inset-0"
