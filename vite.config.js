@@ -43,30 +43,34 @@ function routeMeta() {
   }
 }
 
-/** Serves the Vercel function in /api/chat.js during `vite` dev and `vite preview`. */
+/** Serves the Vercel functions in /api during `vite` dev and `vite preview`. */
 function apiRoutes(env) {
+  const routes = ['chat', 'og']
   const mount = (server, load) => {
-    Object.assign(process.env, env);
-    server.middlewares.use('/api/chat', async (req, res) => {
-      try {
-        const { default: handler } = await load();
-        await handler(req, res);
-      } catch (err) {
-        console.error(err);
-        res.statusCode = 500;
-        res.end(JSON.stringify({ error: 'dev_handler_failed' }));
-      }
-    });
-  };
+    Object.assign(process.env, env)
+    for (const name of routes) {
+      server.middlewares.use(`/api/${name}`, async (req, res) => {
+        try {
+          const { default: handler } = await load(name)
+          req.url = req.originalUrl || req.url
+          await handler(req, res)
+        } catch (err) {
+          console.error(err)
+          res.statusCode = 500
+          res.end(JSON.stringify({ error: 'dev_handler_failed' }))
+        }
+      })
+    }
+  }
   return {
     name: 'local-api-routes',
     configureServer(server) {
-      mount(server, () => server.ssrLoadModule('/api/chat.js'));
+      mount(server, (name) => server.ssrLoadModule(`/api/${name}.js`))
     },
     configurePreviewServer(server) {
-      mount(server, () => import('./api/chat.js'));
+      mount(server, (name) => import(`./api/${name}.js`))
     },
-  };
+  }
 }
 
 // https://vite.dev/config/

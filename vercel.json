@@ -1,5 +1,17 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
-  "rewrites": [{ "source": "/((?!api/).*)", "destination": "/index.html" }]
+  "functions": {
+    "api/og.js": {
+      "includeFiles": "{src/data/**,api/_og/**,public/logo.svg}",
+      "memory": 1024,
+      "maxDuration": 20
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
+    }
+  ]
 }

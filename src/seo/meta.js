@@ -20,29 +20,29 @@ const PAGES = {
     title: `Work · ${SITE_NAME}`,
     description:
       'Products, platforms and sites designed and built end to end — POS and loyalty systems, travel booking, SaaS and more.',
-    image: '/og/works.jpg',
+    image: '/api/og?path=/works',
   },
   '/experience': {
     title: `Experience · ${SITE_NAME}`,
     description:
       'Senior Full Stack roles leading POS, loyalty, wallet and AI products across retail and SaaS in Saudi Arabia and Europe.',
-    image: '/og/experience.jpg',
+    image: '/api/og?path=/experience',
   },
   '/about': {
     title: `About · ${SITE_NAME}`,
     description:
       'Product-focused full stack engineer who owns features end to end — from business needs and architecture to deployment.',
-    image: '/og/about.jpg',
+    image: '/api/og?path=/about',
   },
   '/contact': {
     title: `Contact · ${SITE_NAME}`,
     description: 'Open to senior full stack roles and projects. Reach Moiz at moiezdev@gmail.com.',
-    image: '/og/contact.jpg',
+    image: '/api/og?path=/contact',
   },
   '/cv': {
     title: `CV · ${SITE_NAME}`,
     description: 'Résumé of Moieez ur Rehman, Senior Full Stack Software Engineer.',
-    image: '/og/cv.jpg',
+    image: '/api/og?path=/cv',
   },
 };
 
@@ -70,7 +70,7 @@ export function metaFor(pathname = '/', projects = []) {
     ? {
         title: `${project.title} — ${project.subtitle} · ${SITE_NAME}`,
         description: projectBlurb(project),
-        image: `/og/works/${project.id}.jpg`,
+        image: `/api/og?path=/works/${project.id}`,
       }
     : PAGES[path] || HOME;
 
@@ -99,7 +99,7 @@ export function renderSeoTags(meta) {
     `<meta property="og:title" content="${esc(meta.title)}" />`,
     `<meta property="og:description" content="${esc(meta.description)}" />`,
     `<meta property="og:image" content="${image}" />`,
-    `<meta property="og:image:type" content="image/jpeg" />`,
+    `<meta property="og:image:type" content="${meta.image.startsWith('/api/og') ? 'image/png' : 'image/jpeg'}" />`,
     `<meta property="og:image:width" content="1200" />`,
     `<meta property="og:image:height" content="630" />`,
     `<meta property="og:image:alt" content="${esc(meta.title)}" />`,
