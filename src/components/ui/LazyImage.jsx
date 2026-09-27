@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from 'react';
-import { gsap } from 'gsap';
 
 const LazyImage = ({
   src,
@@ -10,59 +9,42 @@ const LazyImage = ({
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [loaded, setLoaded] = useState(false);
-  const imgRef = useRef();
-  const blurRef = useRef();
   const containerRef = useRef();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setIsVisible(true);
-            observer.disconnect();
-          }
-        });
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
       },
-      { threshold: 0.1 }
+      { rootMargin: '200px' },
     );
-
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
-
+    if (containerRef.current) observer.observe(containerRef.current);
     return () => observer.disconnect();
   }, []);
 
-  // GSAP fade-in once image loads
-  useEffect(() => {
-    if (loaded && imgRef.current && blurRef.current) {
-      gsap.to(imgRef.current, { opacity: 1, duration: 0.6, ease: 'power2.out' });
-      gsap.to(blurRef.current, { opacity: 0, duration: 0.6, ease: 'power2.out' });
-    }
-  }, [loaded]);
+  const fade = 'transition-opacity duration-700 ease-[var(--ease-apple)]';
 
   return (
     <div ref={containerRef} className={`relative overflow-hidden ${wrapperClass}`}>
-      {/* Blur image - always present */}
       <img
-        ref={blurRef}
         src={blurSrc}
-        alt={`blur-${alt}`}
-        className={`${className} absolute top-0 left-0 object-cover w-full h-full`}
-        style={{ opacity: 1 }}
+        alt=""
+        aria-hidden
+        className={`${className} ${fade} absolute top-0 left-0 object-cover w-full h-full scale-105 blur-md`}
+        style={{ opacity: loaded ? 0 : 1 }}
       />
-
-      {/* Actual image - load lazily */}
       {isVisible && (
         <img
-          ref={imgRef}
           src={src}
           alt={alt}
-          className={`${className} absolute top-0 left-0 object-cover w-full h-full`}
-          style={{ opacity: 0 }}
+          className={`${className} ${fade} absolute top-0 left-0 object-cover w-full h-full`}
+          style={{ opacity: loaded ? 1 : 0 }}
           onLoad={() => setLoaded(true)}
           loading="lazy"
+          decoding="async"
         />
       )}
     </div>

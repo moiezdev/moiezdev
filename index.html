@@ -7,7 +7,12 @@
         try {
           var raw = localStorage.getItem('moiz-prefs');
           var prefs = raw ? JSON.parse(raw) : {};
-          var theme = prefs.theme === 'light' ? 'light' : 'dark';
+          var theme =
+            prefs.theme === 'light' || prefs.theme === 'dark'
+              ? prefs.theme
+              : window.matchMedia('(prefers-color-scheme: light)').matches
+                ? 'light'
+                : 'dark';
           var lang =
             prefs.lang === 'ar' || prefs.lang === 'en'
               ? prefs.lang
@@ -52,10 +57,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#000000" />
     <link rel="prefetch" href="/assets/Card-BlLmEKuW.js" as="script" />
     <title>MoiezDev</title>
   </head>

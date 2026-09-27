@@ -1,84 +1,119 @@
 {
   "en": {
     "nav": {
-      "home": "home",
-      "works": "works",
-      "experience": "experience",
-      "about": "about-me",
-      "contact": "contact"
+      "home": "Home",
+      "works": "Work",
+      "experience": "Experience",
+      "about": "About",
+      "contact": "Contact"
     },
     "hero": {
-      "titleBefore": "Moiz Dev is a",
-      "titleRole": "<Senior Full Stack/>",
-      "titleAfter": "Software Engineer",
-      "lead": "Product-focused engineer — React, Vue, Next.js, Node.js, NestJS. Owning features end-to-end across product, UI/UX, APIs, and databases. Let's build together!",
-      "contact": "Contact me!!",
-      "resume": "Download resume",
+      "titleBefore": "Complex systems.",
+      "titleRole": "Beautifully simple.",
+      "titleAfter": "",
+      "lead": "I design and build products end-to-end — from polished interfaces in React, Vue and Next.js to reliable backends in Node.js and NestJS.",
+      "contact": "Get in touch",
+      "resume": "Download résumé",
       "now": "Currently building",
       "nowFocus": "POS, loyalty, wallets & AI search",
       "quote": "Great products feel simple — the complexity stays under the hood.",
-      "quoteBy": "--- Mr Unknown"
+      "quoteBy": "--- Mr Unknown",
+      "available": "Available for new opportunities",
+      "intro": "Moiz — Senior Full Stack Software Engineer",
+      "seeWork": "See the work",
+      "yearsShort": "years shipping production software",
+      "statYears": "Years of experience",
+      "statProjects": "Projects delivered",
+      "statCompanies": "Companies",
+      "statement": "I own features end to end — from understanding the business to the last deploy."
     },
     "about": {
       "section": "about me",
       "page": "about-me",
       "blurb": "Get to know the person behind the work.",
       "title": "Hello, I'm Moiz!",
-      "viewExperience": "View experience ~~>",
+      "viewExperience": "View experience",
       "paragraphs": [
         "Product-focused Full Stack Engineer with {{experienceYears}} years of experience building scalable systems across retail and SaaS — from POS platforms to loyalty systems and customer engagement tools, ecommerce, payment integrations, booking systems, search-engine integrations, and dashboards. I work across the stack using React, Vue, Next.js, Node.js, and NestJS, delivering reliable, high-quality solutions with a strong focus on real-world usability.",
         "I take ownership of features end-to-end — from understanding business needs and structuring solutions to implementation and deployment — with a focus on writing maintainable code, improving system efficiency, and delivering software that creates measurable impact. Core strengths include POS retail systems, payment integrations (MyFatoorah, Moyasar), CRM, wallet integrations (Apple Wallet & Google Wallet), designing system architectures and helping teams execute on them, microservices and monorepo patterns, and leading UI/UX engineering.",
         "I've revamped and stabilized unstable applications, supported management teams, and improved products by solving real problems. Recent work includes POS platforms, loyalty systems, customer engagement tools, and OpenRouter AI (DeepSeek) for smart search and analysis — contributing to both technical architecture and product direction."
-      ]
+      ],
+      "eyebrow": "About",
+      "pageTitle": "The person behind the work.",
+      "more": "More about me",
+      "codeEyebrow": "In code",
+      "codeTitle": "The short version.",
+      "codeBody": "If you'd rather read a type definition than a biography — here's the whole story, compiled."
     },
     "experience": {
       "section": "experience",
-      "viewAll": "View all",
+      "viewAll": "View all experience",
       "viewAllBtn": "View all ~~>",
-      "list": "List of roles",
-      "education": "education",
-      "languages": "languages",
+      "list": "Roles where I’ve led products, systems and teams across retail and SaaS.",
+      "education": "Education",
+      "languages": "Languages",
       "present": "Present",
-      "resume": "Download resume"
+      "resume": "Download résumé",
+      "eyebrow": "Experience",
+      "headline": "Where I’ve made an impact.",
+      "pageTitle": "Experience."
     },
     "projects": {
       "section": "projects",
-      "viewAll": "View all",
-      "list": "List of projects",
-      "back": "back to works",
-      "live": "Live <~>",
-      "github": "Github >=",
-      "backend": "Backend >=",
-      "notFound": "Project not found."
+      "viewAll": "View all projects",
+      "list": "Products, platforms and sites I’ve designed and built.",
+      "back": "All work",
+      "live": "Live",
+      "github": "GitHub",
+      "backend": "Backend",
+      "notFound": "Project not found.",
+      "eyebrow": "Work",
+      "headline": "Selected projects.",
+      "pageTitle": "All work.",
+      "featured": "Featured",
+      "learnMore": "Learn more",
+      "visit": "Visit site",
+      "builtWith": "Built with",
+      "more": "More projects",
+      "view": "View",
+      "all": "All",
+      "count": "{{count}} projects"
     },
     "skills": {
       "section": "skills",
       "technical": "Technical Skills",
       "other": "Other Skills",
-      "core": "Core: product-focused fullstack — FE, BE & product",
+      "core": "Product-focused full stack — frontend, backend and product, working as one.",
       "practicedOne": "This was practiced during {{name}}.",
       "practicedTwo": "This was practiced during {{a}} and {{b}}.",
       "practicedMany": "This was practiced during {{head}}, and {{last}}.",
       "projectCount": "{{count}} project",
-      "projectCountPlural": "{{count}} projects"
+      "projectCountPlural": "{{count}} projects",
+      "eyebrow": "Skills",
+      "headline": "The toolkit."
     },
     "contact": {
       "section": "contacts",
-      "blurb": "Contact me for professional advice, free of charge!",
+      "blurb": "Have a role, a project or a question? I’d love to hear from you.",
       "intro": "Currently available for hire as a product-focused full stack software engineer. I enjoy building reliable digital products — from polished interfaces to solid backend systems. Whether you have a role, a project, or a question, I’d be glad to hear from you.",
-      "direct": "Message Me Directly",
-      "name": "Your Name",
-      "email": "Your Email",
+      "direct": "Reach me directly",
+      "name": "Name",
+      "email": "Email",
       "subject": "Subject",
-      "message": "Your Message Here",
+      "message": "Message",
       "send": "Send Message",
       "sending": "Sending...",
-      "fail": "Something went wrong! Please try again."
+      "fail": "Something went wrong! Please try again.",
+      "eyebrow": "Contact",
+      "headline": "Let’s build something great.",
+      "sent": "Thanks — your message is on its way. I’ll reply soon."
     },
     "footer": {
       "role": "Senior Full Stack Software Engineer",
-      "media": "Media",
-      "rights": "All rights reserved."
+      "media": "Connect",
+      "rights": "All rights reserved.",
+      "explore": "Explore",
+      "crafted": "Designed & engineered by Moiz · React · Vite · Tailwind CSS"
     },
     "notFound": {
       "title": "Page Not Found",
@@ -92,14 +127,106 @@
       "speaking": "speaking…",
       "placeholder": "Ask about Moiz…",
       "placeholderListen": "Keep talking — tap done when finished…",
-      "tryAsking": "try-asking",
-      "send": "send ~~>",
-      "suggestions": ["Show projects", "Experience", "Tech stack"],
+      "tryAsking": "Try asking",
+      "send": "Send",
+      "suggestions": [
+        "Show projects",
+        "Experience",
+        "Tech stack"
+      ],
       "fallback": "Sorry about that — something didn't go through. Try again, or open [[nav:/contact|Contact page]] to reach Moiz directly.",
-      "fail": "I stay focused on Moiz's work — explore [[nav:/works|All works]] or reach him via [[nav:/contact|Contact page]]."
+      "fail": "I stay focused on Moiz's work — explore [[nav:/works|All works]] or reach him via [[nav:/contact|Contact page]].",
+      "rateLimited": "You're asking faster than I can keep up — give it a minute, or reach Moiz directly on the [[nav:/contact|Contact page]].",
+      "newChat": "New chat",
+      "sugg": {
+        "moreAbout": "More about {{name}}",
+        "stackOf": "Tech stack of {{name}}",
+        "thisStack": "What's the tech stack here?",
+        "thisImpact": "What impact did this have?",
+        "similar": "Similar projects?",
+        "home": [
+          "Show his best projects",
+          "What's his experience?",
+          "What's his tech stack?"
+        ],
+        "works": [
+          "Which project had the most impact?",
+          "Any AI projects?",
+          "Travel & booking work?"
+        ],
+        "experience": [
+          "What does he do at TWLM?",
+          "Biggest measurable wins?",
+          "Education and languages?"
+        ],
+        "about": [
+          "What are his core strengths?",
+          "What did he see at LEAP?",
+          "How does he approach a feature?"
+        ],
+        "contact": [
+          "Is he open to new roles?",
+          "Fastest way to reach him?",
+          "Where's his CV?"
+        ],
+        "hire": "Why should we hire Moiz?"
+      }
     },
     "common": {
       "loading": "Loading..."
+    },
+    "cmd": {
+      "search": "Search",
+      "placeholder": "Search pages, projects, actions…",
+      "pages": "Pages",
+      "projects": "Projects",
+      "actions": "Actions",
+      "links": "Links",
+      "light": "Switch to light appearance",
+      "dark": "Switch to dark appearance",
+      "lang": "التبديل إلى العربية",
+      "copyEmail": "Copy email address",
+      "copied": "Copied to clipboard ✓",
+      "empty": "No results. Try “React” or “POS”.",
+      "footer": "Built like a product — try it anywhere with ⌘K",
+      "navigate": "navigate",
+      "open": "open"
+    },
+    "process": {
+      "eyebrow": "How I build",
+      "headline": "From idea to production.",
+      "subtitle": "A repeatable way of turning business problems into reliable, scalable software.",
+      "live": "live",
+      "steps": [
+        {
+          "title": "Understand",
+          "body": "Start with the business goal, the users and the constraints — before writing a line of code."
+        },
+        {
+          "title": "Architect",
+          "body": "Design data models, APIs and service boundaries that stay clean as the product grows."
+        },
+        {
+          "title": "Build",
+          "body": "Ship typed, tested, maintainable code across frontend, backend and integrations."
+        },
+        {
+          "title": "Ship & measure",
+          "body": "Deploy, monitor and iterate on real usage — like cutting support requests by ~70%."
+        }
+      ],
+      "layers": {
+        "clients": "Clients",
+        "api": "API layer",
+        "services": "Services",
+        "data": "Data & payments"
+      },
+      "caption": "A simplified view of the retail platforms I architect: POS, loyalty and wallets on a typed NestJS API, backed by PostgreSQL."
+    },
+    "moments": {
+      "eyebrow": "Beyond the code",
+      "headline": "Out in the industry.",
+      "view": "View"
     }
   },
   "ar": {
@@ -111,77 +238,112 @@
       "contact": "تواصل"
     },
     "hero": {
-      "titleBefore": "معيز هو",
-      "titleRole": "<مهندس متكامل أول/>",
-      "titleAfter": "مهندس برمجيات",
-      "lead": "مهندس يركّز على المنتج — React وVue وNext.js وNode.js وNestJS. يتولى الميزات من البداية للنهاية: المنتج، والواجهة، وواجهات البرمجة، وقواعد البيانات. فلنبنِ معاً!",
-      "contact": "تواصل معي!!",
-      "resume": "تحميل السيرة",
+      "titleBefore": "أنظمة معقدة.",
+      "titleRole": "ببساطة أنيقة.",
+      "titleAfter": "",
+      "lead": "أصمم وأبني المنتجات من البداية للنهاية — من واجهات مصقولة بـ React وVue وNext.js إلى أنظمة خلفية موثوقة بـ Node.js وNestJS.",
+      "contact": "تواصل معي",
+      "resume": "تحميل السيرة الذاتية",
       "now": "أعمل حالياً على",
       "nowFocus": "نقاط البيع والولاء والمحافظ والبحث الذكي",
       "quote": "المنتجات العظيمة تبدو بسيطة — والتعقيد يبقى تحت السطح.",
-      "quoteBy": "--- مجهول"
+      "quoteBy": "--- مجهول",
+      "available": "متاح لفرص جديدة",
+      "intro": "معيز — مهندس برمجيات متكامل أول",
+      "seeWork": "شاهد الأعمال",
+      "yearsShort": "سنوات في بناء برمجيات إنتاجية",
+      "statYears": "سنوات الخبرة",
+      "statProjects": "مشاريع منجزة",
+      "statCompanies": "شركات",
+      "statement": "أتولى الميزات من البداية للنهاية — من فهم احتياج العمل حتى آخر عملية نشر."
     },
     "about": {
       "section": "نبذتي",
       "page": "نبذتي",
       "blurb": "تعرّف على الشخص خلف العمل.",
       "title": "مرحباً، أنا معيز!",
-      "viewExperience": "عرض الخبرة ~~>",
+      "viewExperience": "عرض الخبرة",
       "paragraphs": [
         "مهندس برمجيات متكامل يركّز على المنتج، بخبرة {{experienceYears}} سنوات في بناء أنظمة قابلة للتوسع في قطاعَي التجزئة والبرمجيات كخدمة — من منصات نقاط البيع إلى أنظمة الولاء وأدوات تفاعل العملاء، والتجارة الإلكترونية، وبوابات الدفع، وأنظمة الحجز، وتكامل محركات البحث، ولوحات التقارير. أعمل عبر المكدس باستخدام React وVue وNext.js وNode.js وNestJS، وأقدّم حلولاً موثوقة عالية الجودة تركز على الاستخدام الحقيقي.",
         "أتولى الميزات من البداية للنهاية: فهم احتياج العمل، وهيكلة الحل، والتنفيذ، والنشر، مع التركيز على كتابة كود قابل للصيانة وكفاءة النظام وأثر قابل للقياس. من أبرز نقاط القوة: أنظمة نقاط البيع، وبوابات الدفع (MyFatoorah وMoyasar)، وCRM، ومحافظ Apple وGoogle، وتصميم المعماريات ومساعدة الفرق على تنفيذها، والأنماط الميكروية والـ monorepo، وقيادة هندسة الواجهات.",
         "أعيد بناء التطبيقات غير المستقرة وأثبّتها، وأدعم فرق الإدارة، وأحسّن المنتجات بحل مشكلات حقيقية. يشمل عملي الأخير منصات نقاط البيع وأنظمة الولاء وأدوات التفاعل ودمج OpenRouter AI (DeepSeek) للبحث والتحليل — في العمارة التقنية واتجاه المنتج معاً."
-      ]
+      ],
+      "eyebrow": "نبذة",
+      "pageTitle": "الشخص خلف العمل.",
+      "more": "المزيد عني",
+      "codeEyebrow": "بالكود",
+      "codeTitle": "النسخة المختصرة.",
+      "codeBody": "إن كنت تفضّل قراءة تعريف نوع على سيرة ذاتية — إليك القصة كاملة، مُجمّعة."
     },
     "experience": {
       "section": "الخبرة",
-      "viewAll": "عرض الكل",
+      "viewAll": "عرض كل الخبرات",
       "viewAllBtn": "عرض الكل ~~>",
-      "list": "قائمة الأدوار",
+      "list": "أدوار قدت فيها منتجات وأنظمة وفرقاً في قطاعي التجزئة والبرمجيات كخدمة.",
       "education": "التعليم",
       "languages": "اللغات",
       "present": "حالياً",
-      "resume": "تحميل السيرة"
+      "resume": "تحميل السيرة الذاتية",
+      "eyebrow": "الخبرة",
+      "headline": "حيث صنعت أثراً.",
+      "pageTitle": "الخبرة."
     },
     "projects": {
       "section": "المشاريع",
-      "viewAll": "عرض الكل",
-      "list": "قائمة المشاريع",
-      "back": "العودة للأعمال",
-      "live": "مباشر <~>",
-      "github": "Github >=",
-      "backend": "الخلفية >=",
-      "notFound": "المشروع غير موجود."
+      "viewAll": "عرض كل المشاريع",
+      "list": "منتجات ومنصات ومواقع صممتها وبنيتها.",
+      "back": "كل الأعمال",
+      "live": "مباشر",
+      "github": "GitHub",
+      "backend": "الخلفية",
+      "notFound": "المشروع غير موجود.",
+      "eyebrow": "الأعمال",
+      "headline": "مشاريع مختارة.",
+      "pageTitle": "كل الأعمال.",
+      "featured": "مميز",
+      "learnMore": "اعرف المزيد",
+      "visit": "زيارة الموقع",
+      "builtWith": "التقنيات",
+      "more": "مشاريع أخرى",
+      "view": "عرض",
+      "all": "الكل",
+      "count": "{{count}} مشاريع"
     },
     "skills": {
       "section": "المهارات",
       "technical": "المهارات التقنية",
       "other": "مهارات أخرى",
-      "core": "الأساس: تطوير متكامل يركّز على المنتج — واجهة وخلفية ومنتج",
+      "core": "تطوير متكامل يركّز على المنتج — واجهة وخلفية ومنتج، كوحدة واحدة.",
       "practicedOne": "استُخدمت هذه المهارة في {{name}}.",
       "practicedTwo": "استُخدمت هذه المهارة في {{a}} و{{b}}.",
       "practicedMany": "استُخدمت هذه المهارة في {{head}}، و{{last}}.",
       "projectCount": "مشروع واحد",
-      "projectCountPlural": "{{count}} مشاريع"
+      "projectCountPlural": "{{count}} مشاريع",
+      "eyebrow": "المهارات",
+      "headline": "الأدوات."
     },
     "contact": {
       "section": "التواصل",
-      "blurb": "تواصل معي لاستشارة مهنية مجاناً!",
+      "blurb": "لديك دور أو مشروع أو سؤال؟ يسعدني سماعك.",
       "intro": "متاح حالياً للعمل كمهندس برمجيات متكامل يركّز على المنتج. أستمتع ببناء منتجات رقمية موثوقة — من واجهات مصقولة إلى أنظمة خلفية صلبة. إن كان لديك دور أو مشروع أو سؤال، يسعدني سماعك.",
       "direct": "راسلني مباشرة",
-      "name": "اسمك",
-      "email": "بريدك",
+      "name": "الاسم",
+      "email": "البريد",
       "subject": "الموضوع",
-      "message": "رسالتك هنا",
+      "message": "الرسالة",
       "send": "إرسال",
       "sending": "جارٍ الإرسال...",
-      "fail": "حدث خطأ! حاول مرة أخرى."
+      "fail": "حدث خطأ! حاول مرة أخرى.",
+      "eyebrow": "التواصل",
+      "headline": "لنبنِ شيئاً رائعاً.",
+      "sent": "شكراً — رسالتك في الطريق. سأرد قريباً."
     },
     "footer": {
       "role": "مهندس برمجيات متكامل أول",
-      "media": "التواصل",
-      "rights": "جميع الحقوق محفوظة."
+      "media": "تواصل",
+      "rights": "جميع الحقوق محفوظة.",
+      "explore": "استكشف",
+      "crafted": "صمّمه وهندسه معيز · React · Vite · Tailwind CSS"
     },
     "notFound": {
       "title": "الصفحة غير موجودة",
@@ -196,13 +358,105 @@
       "placeholder": "اسأل عن معيز…",
       "placeholderListen": "استمر بالحديث — اضغط تم عند الانتهاء…",
       "tryAsking": "جرّب السؤال",
-      "send": "إرسال ~~>",
-      "suggestions": ["عرض المشاريع", "الخبرة", "المكدس التقني"],
+      "send": "إرسال",
+      "suggestions": [
+        "عرض المشاريع",
+        "الخبرة",
+        "المكدس التقني"
+      ],
       "fallback": "عذراً — لم يكتمل الطلب. حاول مرة أخرى، أو افتح [[nav:/contact|صفحة التواصل]] للوصول إلى معيز مباشرة.",
-      "fail": "أركّز على عمل معيز — استكشف [[nav:/works|كل الأعمال]] أو تواصل عبر [[nav:/contact|صفحة التواصل]]."
+      "fail": "أركّز على عمل معيز — استكشف [[nav:/works|كل الأعمال]] أو تواصل عبر [[nav:/contact|صفحة التواصل]].",
+      "rateLimited": "أسئلتك أسرع مما أستطيع مواكبته — انتظر دقيقة، أو تواصل مع معيز مباشرة عبر [[nav:/contact|صفحة التواصل]].",
+      "newChat": "محادثة جديدة",
+      "sugg": {
+        "moreAbout": "المزيد عن {{name}}",
+        "stackOf": "التقنيات المستخدمة في {{name}}",
+        "thisStack": "ما التقنيات المستخدمة هنا؟",
+        "thisImpact": "ما أثر هذا المشروع؟",
+        "similar": "مشاريع مشابهة؟",
+        "home": [
+          "أبرز مشاريعه",
+          "ما خبرته؟",
+          "ما التقنيات التي يستخدمها؟"
+        ],
+        "works": [
+          "أي مشروع كان له أكبر أثر؟",
+          "هل لديه مشاريع ذكاء اصطناعي؟",
+          "أعمال السفر والحجز؟"
+        ],
+        "experience": [
+          "ماذا يعمل في TWLM؟",
+          "أبرز إنجازاته القابلة للقياس؟",
+          "التعليم واللغات؟"
+        ],
+        "about": [
+          "ما نقاط قوته الأساسية؟",
+          "ماذا رأى في ليب؟",
+          "كيف يتعامل مع بناء ميزة جديدة؟"
+        ],
+        "contact": [
+          "هل هو متاح لأدوار جديدة؟",
+          "أسرع طريقة للتواصل معه؟",
+          "أين سيرته الذاتية؟"
+        ],
+        "hire": "لماذا يجب أن نوظف معيز؟"
+      }
     },
     "common": {
       "loading": "جارٍ التحميل..."
+    },
+    "cmd": {
+      "search": "بحث",
+      "placeholder": "ابحث في الصفحات والمشاريع والإجراءات…",
+      "pages": "الصفحات",
+      "projects": "المشاريع",
+      "actions": "إجراءات",
+      "links": "روابط",
+      "light": "التبديل للمظهر الفاتح",
+      "dark": "التبديل للمظهر الداكن",
+      "lang": "Switch to English",
+      "copyEmail": "نسخ البريد الإلكتروني",
+      "copied": "تم النسخ ✓",
+      "empty": "لا نتائج. جرّب «React» أو «POS».",
+      "footer": "مبني كمنتج — افتحه من أي مكان بـ ⌘K",
+      "navigate": "تنقل",
+      "open": "فتح"
+    },
+    "process": {
+      "eyebrow": "كيف أبني",
+      "headline": "من الفكرة إلى الإنتاج.",
+      "subtitle": "طريقة متكررة لتحويل مشكلات العمل إلى برمجيات موثوقة وقابلة للتوسع.",
+      "live": "مباشر",
+      "steps": [
+        {
+          "title": "الفهم",
+          "body": "أبدأ بهدف العمل والمستخدمين والقيود — قبل كتابة أي سطر برمجي."
+        },
+        {
+          "title": "التصميم المعماري",
+          "body": "أصمم نماذج البيانات وواجهات البرمجة وحدود الخدمات لتبقى نظيفة مع نمو المنتج."
+        },
+        {
+          "title": "البناء",
+          "body": "أكتب كوداً مُنمّطاً ومُختبراً وقابلاً للصيانة عبر الواجهة والخلفية والتكاملات."
+        },
+        {
+          "title": "الإطلاق والقياس",
+          "body": "أنشر وأراقب وأحسّن بناءً على الاستخدام الحقيقي — مثل خفض طلبات الدعم بنحو ٧٠٪."
+        }
+      ],
+      "layers": {
+        "clients": "العملاء",
+        "api": "طبقة الواجهات",
+        "services": "الخدمات",
+        "data": "البيانات والمدفوعات"
+      },
+      "caption": "عرض مبسّط لمنصات التجزئة التي أصممها: نقاط البيع والولاء والمحافظ على واجهة NestJS مُنمّطة، مدعومة بـ PostgreSQL."
+    },
+    "moments": {
+      "eyebrow": "ما وراء الكود",
+      "headline": "في قلب الصناعة.",
+      "view": "عرض"
     }
   }
 }

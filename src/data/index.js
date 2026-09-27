@@ -6,6 +6,7 @@ export { default as contacts } from './contacts.json';
 export { default as chatbot } from './chatbot.json';
 export { default as experience } from './experience.json';
 export { default as education } from './education.json';
+export { default as events } from './events.json';
 export { projects, getProjectById } from './projects.js';
 
 export const about = {

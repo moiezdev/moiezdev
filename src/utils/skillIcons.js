@@ -256,3 +256,14 @@ export const getSkillIcon = (name) => {
   const direct = Object.keys(skillIcons).find((key) => normalizeTechName(key) === normalized);
   return direct ? skillIcons[direct] : null;
 };
+
+/** Brand colors that would vanish on light or dark surfaces fall back to the text color. */
+export function readableIconColor(color) {
+  const m = /^#?([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(String(color || '').trim());
+  if (!m) return color || 'currentColor';
+  let hex = m[1];
+  if (hex.length === 3) hex = hex.split('').map((c) => c + c).join('');
+  const [r, g, b] = [0, 2, 4].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
+  const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  return lum > 0.85 || lum < 0.12 ? 'currentColor' : color;
+}

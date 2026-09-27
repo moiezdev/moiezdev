@@ -1,79 +1,65 @@
-import { useEffect, useRef } from 'react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useMemo, useState } from 'react';
 import Card from '../components/ui/Card';
-import SectionTitle from '../components/ui/SectionTitle';
+import Reveal from '../components/ui/Reveal';
+import PageHeader from '../components/ui/PageHeader';
 import Transition from '../components/functions/Transition';
-import { Link } from 'react-router-dom';
+import { getSkillIcon, readableIconColor } from '../utils/skillIcons';
 import { useContent } from '../i18n/content';
 
-gsap.registerPlugin(ScrollTrigger);
+const ALL = '__all__';
 
 const Projects = () => {
-  const cardsRef = useRef([]);
   const { t, projects } = useContent();
+  const [filter, setFilter] = useState(ALL);
 
-  useEffect(() => {
-    if (!projects || projects.length === 0) return;
-    cardsRef.current = cardsRef.current.slice(0, projects.length);
-
-    cardsRef.current.forEach((card) => {
-      const handleMouseMove = (e) => {
-        const rect = card.getBoundingClientRect();
-        const offsetX = (e.clientX - (rect.left + rect.width / 2)) * 0.03;
-        const offsetY = (e.clientY - (rect.top + rect.height / 2)) * 0.03;
-        gsap.to(card, {
-          x: offsetX,
-          y: offsetY,
-          duration: 0.5,
-          ease: 'power2.out',
-        });
-      };
-
-      const handleMouseLeave = () => {
-        gsap.to(card, { x: 0, y: 0, duration: 0.5, ease: 'power2.out' });
-      };
-
-      card.addEventListener('mousemove', handleMouseMove);
-      card.addEventListener('mouseleave', handleMouseLeave);
-
-      return () => {
-        card.removeEventListener('mousemove', handleMouseMove);
-        card.removeEventListener('mouseleave', handleMouseLeave);
-      };
-    });
-
-    ScrollTrigger.refresh();
+  // the most-used technologies become filters
+  const filters = useMemo(() => {
+    const counts = new Map();
+    projects.forEach((p) => (p.technologies || []).forEach((tech) => counts.set(tech, (counts.get(tech) || 0) + 1)));
+    return [...counts.entries()]
+      .filter(([, n]) => n > 1)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 8)
+      .map(([tech]) => tech);
   }, [projects]);
+
+  const shown = filter === ALL ? projects : projects.filter((p) => p.technologies?.includes(filter));
+
+  const chip = (value, label, Icon, color) => (
+    <button
+      key={value}
+      type="button"
+      onClick={() => setFilter(value)}
+      aria-pressed={filter === value}
+      className={`inline-flex items-center gap-1.5 h-9 px-4 rounded-full text-[14px] font-medium transition-all duration-300 ${
+        filter === value ? 'bg-label text-bg shadow-sm' : 'bg-fill text-label hover:bg-[color-mix(in_srgb,var(--color-fill)_170%,transparent)]'
+      }`}
+    >
+      {Icon && <Icon className="text-[14px]" style={{ color: filter === value ? 'currentColor' : readableIconColor(color) }} aria-hidden />}
+      {label}
+    </button>
+  );
 
   return (
     <Transition>
-      <section className="w-full px-4 py-12" id="projects">
-        <div className="app-container mx-auto pt-[20px] md:py-[60px]">
-          <SectionTitle hash={'/'} title={t('projects.section')} />
-          <p className="mt-[-20px] md:mb-[50px] max-md:mb-6">{t('projects.list')}</p>
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {projects.map((project, index) => (
-              <Link
-                key={project.id}
-                to={`/works/${project.id}`}
-                ref={(el) => (cardsRef.current[index] = el)}
-                className="will-change-transform cursor-pointer"
-              >
-                <Card
-                  title={project.title}
-                  description={project.subtitle}
-                  techStack={project.technologies}
-                  liveLink={project.projectUrl}
-                  codeLink={project.githubUrl}
-                  codeLinkSecondary={project.githubBackendUrl}
-                  image={project.imageUrl}
-                  altText={`${project.title} image`}
-                  liveLabel={t('projects.live')}
-                  codeLabel={t('projects.github')}
-                  codeLinkSecondaryLabel={t('projects.backend')}
-                />
-              </Link>
+      <PageHeader eyebrow={t('projects.eyebrow')} title={t('projects.pageTitle')} subtitle={t('projects.list')} />
+      <section className="w-full px-5">
+        <div className="app-container">
+          <Reveal className="flex flex-wrap items-center justify-center gap-2 mb-4">
+            {chip(ALL, t('projects.all'))}
+            {filters.map((tech) => {
+              const icon = getSkillIcon(tech);
+              return chip(tech, tech, icon?.Icon, icon?.color);
+            })}
+          </Reveal>
+          <p className="text-center text-[13px] text-label-3 mb-10 font-mono" aria-live="polite">
+            {t('projects.count', { count: shown.length })}
+          </p>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {shown.map((project, i) => (
+              <Reveal key={project.id} delay={(i % 3) * 80}>
+                <Card project={project} maxTech={3} />
+              </Reveal>
             ))}
           </div>
         </div>

@@ -1,0 +1,51 @@
+[
+  {
+    "id": "leap-2026",
+    "name": "LEAP 2026",
+    "place": {
+      "en": "Riyadh, Saudi Arabia",
+      "ar": "الرياض، المملكة العربية السعودية"
+    },
+    "summary": {
+      "en": "At one of the world's largest tech events — exploring AI infrastructure, robotics and cloud platforms with the teams building them.",
+      "ar": "في واحدة من أكبر الفعاليات التقنية في العالم — استكشاف البنى التحتية للذكاء الاصطناعي والروبوتات والمنصات السحابية مع الفرق التي تبنيها."
+    },
+    "photos": [
+      {
+        "src": "/events/leap-2026/gate.webp",
+        "caption": {
+          "en": "LEAP 2026 — Into New Worlds",
+          "ar": "ليب ٢٠٢٦ — نحو عوالم جديدة"
+        }
+      },
+      {
+        "src": "/events/leap-2026/optimus.webp",
+        "caption": {
+          "en": "Meeting Tesla Optimus",
+          "ar": "لقاء روبوت تسلا أوبتيموس"
+        }
+      },
+      {
+        "src": "/events/leap-2026/humain.webp",
+        "caption": {
+          "en": "HUMAIN's AI showcase",
+          "ar": "معرض هيوماين للذكاء الاصطناعي"
+        }
+      },
+      {
+        "src": "/events/leap-2026/main-hall.webp",
+        "caption": {
+          "en": "The main hall — Cisco, Microsoft, Huawei",
+          "ar": "القاعة الرئيسية — سيسكو ومايكروسوفت وهواوي"
+        }
+      },
+      {
+        "src": "/events/leap-2026/leap-5.webp",
+        "caption": {
+          "en": "LEAP's fifth edition",
+          "ar": "النسخة الخامسة من ليب"
+        }
+      }
+    ]
+  }
+]

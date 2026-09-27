@@ -1,135 +1,98 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
-import Button from './Button';
-import Floating from './Floating';
+import { Link } from 'react-router-dom';
 import LazyImage from './LazyImage';
-import { getSkillIcon } from '../../utils/skillIcons';
+import TechChip from './TechChip';
+import { Chevron } from './SectionTitle';
+import { useContent } from '../../i18n/content';
 
-const TECH_STACK_MAX_H = 'calc(2 * 1.75rem + 8px)';
+const ExternalIcon = () => (
+  <svg className="w-3 h-3 rtl:-scale-x-100" viewBox="0 0 12 12" fill="none" aria-hidden>
+    <path d="M4 2.5h5.5V8M9.5 2.5 2.5 9.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
 
-const TechStackTags = ({ techStack }) => {
-  const listRef = useRef(null);
-  const [overflowing, setOverflowing] = useState(false);
-
-  useLayoutEffect(() => {
-    const el = listRef.current;
-    if (!el || !techStack?.length) {
-      setOverflowing(false);
-      return;
-    }
-
-    const check = () => {
-      setOverflowing(el.scrollHeight > el.clientHeight + 1);
-    };
-
-    check();
-    const observer = new ResizeObserver(check);
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [techStack]);
-
-  if (!techStack?.length) return null;
+/**
+ * Project card. The whole card links to the project page (stretched link);
+ * external links sit above it so they stay independently clickable.
+ */
+const Card = ({ project, featured = false, eyebrow, maxTech = 4, className = '' }) => {
+  const { t } = useContent();
+  const tech = project.technologies || [];
+  const links = [
+    project.projectUrl && { href: project.projectUrl, label: t('projects.live') },
+    project.githubUrl && { href: project.githubUrl, label: t('projects.github') },
+    project.githubBackendUrl && { href: project.githubBackendUrl, label: t('projects.backend') },
+  ].filter(Boolean);
 
   return (
-    <p className="border-b border-gray-a text-gray-400 p-[8px] relative">
-      <span
-        ref={listRef}
-        className="flex flex-wrap gap-[8px] overflow-hidden"
-        style={{ maxHeight: TECH_STACK_MAX_H }}
-      >
-        {techStack.map((item, idx) => {
-          const skillIcon = getSkillIcon(item);
-          const Icon = skillIcon?.Icon;
-          return (
-            <span
-              className="inline-flex items-center gap-1.5 cursor-pointer cursor-scale-0 px-2.5 py-0.5 bg-gray-a/20 hover:scale-110 hover:bg-primary/20 transition-all"
-              key={idx}
-              title={item}
-            >
-              {Icon && (
-                <Icon
-                  className="text-[14px] shrink-0"
-                  style={{ color: skillIcon.color }}
-                  aria-hidden
-                />
-              )}
-              {item}
-            </span>
-          );
-        })}
-      </span>
-      {overflowing && (
-        <span
-          className="absolute bottom-[8px] right-[8px] pl-8 pr-2.5 pb-0.5 pt-8 text-xs font-medium text-gray-a cursor-default"
-          style={{
-            background:
-              'radial-gradient(circle at bottom right, var(--color-gray-b) 0%, var(--color-gray-b) 20%, transparent 100%)',
-          }}
-          title={techStack.join(', ')}
-          aria-label={`More technologies: ${techStack.join(', ')}`}
-        >
-          ...
-        </span>
-      )}
-    </p>
-  );
-};
-
-const Card = ({
-  className,
-  title,
-  description,
-  techStack,
-  liveLink,
-  codeLink,
-  codeLinkSecondary,
-  codeLinkSecondaryLabel = 'Backend >=',
-  liveLabel = 'Live <~>',
-  codeLabel = 'Github >=',
-  image,
-  altText,
-}) => {
-  return (
-    <Floating duration={5}>
+    <article
+      className={`group relative flex h-full overflow-hidden surface surface-hover ${
+        featured ? 'flex-col lg:flex-row' : 'flex-col'
+      } ${className}`}
+    >
       <div
-        className={`border bg-gray-b border-gray-a hover:shadow-lg transition-shadow duration-300 ${className}`}
+        className={`relative overflow-hidden bg-surface-2 ${
+          featured ? 'aspect-[16/10] lg:aspect-auto lg:w-[58%] lg:min-h-[420px]' : 'aspect-[16/10]'
+        }`}
       >
-        {image ? (
-          <div className="relative border-b border-gray-a">
-            <LazyImage
-              src={image}
-              alt={altText || title}
-              wrapperClass="w-full aspect-[16/10] object-cover cursor-pointer cursor-scale-4 cursor-white h-[210px]"
-            />
+        <LazyImage
+          src={project.imageUrl}
+          alt={`${project.title} preview`}
+          wrapperClass="absolute inset-0 w-full h-full"
+          className="w-full h-full object-cover transition-transform duration-700 ease-[var(--ease-apple)] group-hover:scale-[1.04]"
+        />
+      </div>
+
+      <div className={`flex flex-1 flex-col gap-3 ${featured ? 'p-7 md:p-10 lg:justify-center' : 'p-6 md:p-7'}`}>
+        {featured && <p className="eyebrow">{eyebrow ?? t('projects.featured')}</p>}
+        <h3
+          className={`text-label font-semibold tracking-[-0.02em] leading-tight ${
+            featured ? 'text-[28px] md:text-[34px]' : 'text-[21px]'
+          }`}
+        >
+          <Link
+            to={`/works/${project.id}`}
+            data-cursor-label={t('projects.view')}
+            className="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none">
+            {project.title}
+          </Link>
+        </h3>
+        <p className={`text-label-2 ${featured ? 'text-[17px]' : 'text-[15px] line-clamp-2'}`}>
+          {project.subtitle}
+        </p>
+
+        {tech.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mt-1">
+            {tech.slice(0, featured ? 6 : maxTech).map((item) => (
+              <TechChip key={item} name={item} />
+            ))}
+            {tech.length > (featured ? 6 : maxTech) && (
+              <span className="chip text-label-2" title={tech.join(', ')}>
+                +{tech.length - (featured ? 6 : maxTech)}
+              </span>
+            )}
           </div>
-        ) : null}
-        <div>
-          <TechStackTags techStack={techStack} />
-          <div className="flex flex-col gap-[16px] p-[16px]">
-            <h2 className="text-large font-semibold text-white cursor-pointer">{title}</h2>
-            <p className=" cursor-pointer">{description}</p>
-            <div className="flex flex-wrap gap-[16px]">
-              {liveLink && (
-                <Button
-                  className={`cursor-scale-0 cursor-pointer`}
-                  onClick={() => window.open(liveLink, '_blank')}
-                  primary={true}
-                >
-                  {liveLabel}
-                </Button>
-              )}
-              {codeLink && (
-                <Button onClick={() => window.open(codeLink, '_blank')}>{codeLabel}</Button>
-              )}
-              {codeLinkSecondary && (
-                <Button onClick={() => window.open(codeLinkSecondary, '_blank')}>
-                  {codeLinkSecondaryLabel}
-                </Button>
-              )}
-            </div>
-          </div>
+        )}
+
+        <div className="mt-auto pt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
+          <span className="link-arrow text-[15px]">
+            {t('projects.learnMore')}
+            <Chevron />
+          </span>
+          {links.map((l) => (
+            <a
+              key={l.href}
+              href={l.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative z-10 inline-flex items-center gap-1 text-[15px] font-medium text-label-2 hover:text-label transition-colors"
+            >
+              {l.label}
+              <ExternalIcon />
+            </a>
+          ))}
         </div>
       </div>
-    </Floating>
+    </article>
   );
 };
 
