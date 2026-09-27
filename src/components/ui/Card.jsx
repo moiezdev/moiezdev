@@ -14,7 +14,7 @@ const ExternalIcon = () => (
  * Project card. The whole card links to the project page (stretched link);
  * external links sit above it so they stay independently clickable.
  */
-const Card = ({ project, featured = false, maxTech = 4, className = '' }) => {
+const Card = ({ project, featured = false, eyebrow, maxTech = 4, className = '' }) => {
   const { t } = useContent();
   const tech = project.technologies || [];
   const links = [
@@ -43,7 +43,7 @@ const Card = ({ project, featured = false, maxTech = 4, className = '' }) => {
       </div>
 
       <div className={`flex flex-1 flex-col gap-3 ${featured ? 'p-7 md:p-10 lg:justify-center' : 'p-6 md:p-7'}`}>
-        {featured && <p className="eyebrow">{t('projects.featured')}</p>}
+        {featured && <p className="eyebrow">{eyebrow ?? t('projects.featured')}</p>}
         <h3
           className={`text-label font-semibold tracking-[-0.02em] leading-tight ${
             featured ? 'text-[28px] md:text-[34px]' : 'text-[21px]'

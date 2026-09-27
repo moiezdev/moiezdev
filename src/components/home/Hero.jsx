@@ -1,4 +1,6 @@
+import { useRef } from 'react';
 import Button from '../ui/Button';
+import { clamp01, useScrollFrame } from '../../hooks/useScrollFrame';
 import Reveal from '../ui/Reveal';
 import { Chevron } from '../ui/SectionTitle';
 import { useContent } from '../../i18n/content';
@@ -13,9 +15,46 @@ const Stat = ({ value, label }) => (
   </div>
 );
 
+/** Statement whose words light up one by one as it scrolls through the viewport. */
+const ScrollStatement = ({ text }) => {
+  const ref = useRef(null);
+  const words = String(text).split(' ');
+
+  useScrollFrame(ref, (el, vh) => {
+    const r = el.getBoundingClientRect();
+    // 0 when the block enters the lower part of the screen, 1 near the middle
+    const p = clamp01((vh * 0.85 - r.top) / (vh * 0.55));
+    const spans = el.children;
+    const lit = p * spans.length;
+    for (let i = 0; i < spans.length; i += 1) {
+      spans[i].style.opacity = String(0.18 + 0.82 * clamp01(lit - i));
+    }
+  });
+
+  return (
+    <blockquote ref={ref} className="headline-1 text-label">
+      {words.map((w, i) => (
+        <span key={i} className="transition-opacity duration-150">
+          {w}
+          {i < words.length - 1 ? ' ' : ''}
+        </span>
+      ))}
+    </blockquote>
+  );
+};
+
 const Hero = () => {
   const { t, projects, jobs } = useContent();
   const years = getExperienceYears();
+  const stageRef = useRef(null);
+
+  // the portrait stage grows to full size as it scrolls into view
+  useScrollFrame(stageRef, (el, vh) => {
+    const r = el.parentElement.getBoundingClientRect();
+    const p = clamp01((vh - r.top) / (vh * 0.75));
+    el.style.transform = `scale(${0.86 + 0.14 * p})`;
+    el.style.borderRadius = `${64 - 20 * p}px`;
+  });
 
   return (
     <section className="relative px-5 pt-[120px] md:pt-[150px] overflow-hidden">
@@ -74,7 +113,10 @@ const Hero = () => {
 
       {/* portrait stage */}
       <Reveal delay={200} className="relative app-container-wide mt-16 md:mt-20">
-        <div className="relative mx-auto overflow-hidden rounded-[36px] md:rounded-[44px] h-[380px] sm:h-[500px] md:h-[620px] bg-surface-2">
+        <div
+          ref={stageRef}
+          className="relative mx-auto overflow-hidden rounded-[36px] md:rounded-[44px] h-[380px] sm:h-[500px] md:h-[620px] bg-surface-2 origin-top will-change-transform"
+        >
           <div
             aria-hidden
             className="absolute inset-0"
@@ -114,8 +156,8 @@ const Hero = () => {
       </Reveal>
 
       {/* quote */}
-      <Reveal as="figure" className="app-container text-center mt-28 md:mt-36 max-w-3xl">
-        <blockquote className="headline-2 text-label">{t('hero.statement')}</blockquote>
+      <Reveal as="figure" className="app-container text-center mt-28 md:mt-40 max-w-4xl">
+        <ScrollStatement text={t('hero.statement')} />
         <figcaption className="mt-5 text-[15px] text-label-2">{t('hero.quote')}</figcaption>
       </Reveal>
     </section>
