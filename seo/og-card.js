@@ -1,18 +1,16 @@
 /**
- * Dynamic link-preview images (1200×630), rendered on demand:
- *   /api/og?path=/works/tdm
- *
- * Cards are drawn from site data with Satori (layout → SVG) and Resvg
- * (SVG → PNG). Screenshots and logos are fetched from the site itself, so
- * new or renamed projects get correct previews with no image files to keep
- * in sync. Responses are cached at the edge.
+ * Link-preview cards (1200×630) drawn from site data with Satori (layout →
+ * SVG) and Resvg (SVG → PNG). The build renders one per route into dist/og/,
+ * so crawlers get fast static files and nothing is stored in git.
  */
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, readFileSync } from 'node:fs';
+import { dirname, extname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import satori from 'satori';
 import { Resvg } from '@resvg/resvg-js';
+import jpeg from 'jpeg-js';
 
-const ROOT = process.cwd();
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(ROOT, p));
 const json = (p) => JSON.parse(read(p).toString('utf8'));
 
@@ -20,7 +18,7 @@ const FONTS = [400, 600, 700].map((weight) => ({
   name: 'Inter',
   weight,
   style: 'normal',
-  data: read(`api/_og/inter-latin-${weight}-normal.woff`),
+  data: read(`seo/fonts/inter-latin-${weight}-normal.woff`),
 }));
 
 const INK = '#1d1d1f';
@@ -37,19 +35,15 @@ const h = (type, style = {}, ...children) => ({
 });
 const img = (src, style) => ({ type: 'img', props: { src, style } });
 
-/** Satori renders PNG/JPEG/SVG but not WebP — prefer a raster sibling of the WebP. */
-async function imageData(origin, path) {
+const MIME = { '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.svg': 'image/svg+xml' };
+
+/** Satori renders PNG/JPEG/SVG but not WebP — use a raster sibling of a WebP file. */
+async function imageData(path) {
   const candidates = /\.webp$/i.test(path) ? [path.replace(/\.webp$/i, '.jpg'), path.replace(/\.webp$/i, '.png')] : [path];
   for (const p of candidates) {
-    try {
-      const r = await fetch(new URL(encodeURI(p), origin));
-      const type = r.headers.get('content-type') || '';
-      if (r.ok && /image\/(png|jpe?g|svg)/.test(type)) {
-        return `data:${type.split(';')[0]};base64,${Buffer.from(await r.arrayBuffer()).toString('base64')}`;
-      }
-    } catch {
-      /* try next */
-    }
+    const file = join(ROOT, 'public', decodeURI(p));
+    const type = MIME[extname(file).toLowerCase()];
+    if (type && existsSync(file)) return `data:${type};base64,${readFileSync(file).toString('base64')}`;
   }
   return null;
 }
@@ -103,7 +97,7 @@ const frame = (src, style) =>
       borderRadius: 22,
       overflow: 'hidden',
       background: '#e8e8ed',
-      boxShadow: '0 30px 70px rgba(30,35,50,0.18), 0 0 0 1px rgba(0,0,0,0.06)',
+      boxShadow: '0 18px 36px rgba(30,35,50,0.16), 0 0 0 1px rgba(0,0,0,0.06)',
       ...style,
     },
     src ? img(src, { width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }) : null,
@@ -121,7 +115,7 @@ const panel = (children, style = {}) =>
       background: '#ffffff',
       borderRadius: 26,
       padding: '10px 0',
-      boxShadow: '0 30px 70px rgba(30,35,50,0.14), 0 0 0 1px rgba(0,0,0,0.05)',
+      boxShadow: '0 18px 36px rgba(30,35,50,0.12), 0 0 0 1px rgba(0,0,0,0.05)',
       ...style,
     },
     ...children,
@@ -153,7 +147,7 @@ const card = (right, left) =>
 
 const years = () => Math.floor((Date.now() - new Date(2019, 4, 1)) / (365.25 * 24 * 3600 * 1000));
 
-async function buildCard(path, origin) {
+async function buildCard(path) {
   const ids = json('src/data/projects/index.json');
   const projects = ids.map((id) => json(`src/data/projects/${id}.json`));
   const id = path.match(/^\/works\/([^/]+)$/)?.[1];
@@ -163,11 +157,11 @@ async function buildCard(path, origin) {
     // `"screenshot": false` in a project's JSON means its image is a logo, not a screenshot
     const hasShot = project.screenshot !== false;
     const [main, back] = await Promise.all([
-      hasShot ? imageData(origin, project.imageUrl) : null,
+      hasShot ? imageData(project.imageUrl) : null,
       (async () => {
         const dir = project.imageUrl.split('/').slice(0, -1).join('/');
         const other = hasShot && (project.media || []).find((m) => !project.imageUrl.endsWith(m));
-        return other ? imageData(origin, `${dir}/${other}`) : null;
+        return other ? imageData(`${dir}/${other}`) : null;
       })(),
     ]);
     const visual = main
@@ -197,7 +191,7 @@ async function buildCard(path, origin) {
   }
 
   if (path === '/works') {
-    const shots = await Promise.all(projects.slice(0, 4).map((p) => imageData(origin, p.imageUrl)));
+    const shots = await Promise.all(projects.slice(0, 4).map((p) => imageData(p.imageUrl)));
     return card(
       shots.map((s, i) => frame(s, { width: 290, height: 181, right: i % 2 ? 72 : 382, top: i < 2 ? 110 : 315 })),
       textColumn({
@@ -212,7 +206,7 @@ async function buildCard(path, origin) {
   const jobs = json('src/data/experience.json');
 
   if (path === '/experience' || path === '/cv') {
-    const logos = await Promise.all(jobs.slice(0, 5).map((j) => (j.logo ? imageData(origin, j.logo) : null)));
+    const logos = await Promise.all(jobs.slice(0, 5).map((j) => (j.logo ? imageData(j.logo) : null)));
     const list = panel(
       jobs.slice(0, 5).map((j, i) =>
         row(
@@ -280,24 +274,12 @@ async function buildCard(path, origin) {
   );
 }
 
-export default async function handler(req, res) {
-  try {
-    const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
-    const path = (url.searchParams.get('path') || '/about').replace(/\/+$/, '') || '/';
-    const proto = req.headers['x-forwarded-proto'] || (String(req.headers.host).startsWith('localhost') ? 'http' : 'https');
-    const origin = `${proto}://${req.headers['x-forwarded-host'] || req.headers.host}`;
-
-    const svg = await satori(await buildCard(path, origin), { width: 1200, height: 630, fonts: FONTS });
-    const png = new Resvg(svg, { fitTo: { mode: 'width', value: 1200 } }).render().asPng();
-
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'image/png');
-    res.setHeader('Cache-Control', 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400');
-    res.end(png);
-  } catch (err) {
-    console.error('og render failed:', err);
-    res.statusCode = 302;
-    res.setHeader('Location', '/og-image.jpg');
-    res.end();
-  }
+/**
+ * Render the preview card for a route (e.g. '/works/tdm') to a JPEG buffer.
+ * JPEG keeps cards around 100 KB — WhatsApp skips preview images much above ~300 KB.
+ */
+export async function renderCard(path) {
+  const svg = await satori(await buildCard(path), { width: 1200, height: 630, fonts: FONTS });
+  const image = new Resvg(svg, { fitTo: { mode: 'width', value: 1200 } }).render();
+  return jpeg.encode({ data: image.pixels, width: image.width, height: image.height }, 84).data;
 }

@@ -28,7 +28,7 @@ export default defineConfig([
   },
   {
     // serverless functions and build config run in Node
-    files: ['api/**/*.js', 'vite.config.js'],
+    files: ['api/**/*.js', 'seo/**/*.js', 'vite.config.js'],
     languageOptions: { globals: globals.node },
   },
 ])

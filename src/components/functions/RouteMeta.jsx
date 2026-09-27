@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { projects } from '../../data';
-import { metaFor } from '../../seo/meta';
+import { SITE_URL, metaFor } from '../../seo/meta';
 
 const setMeta = (selector, attr, value) => {
   const el = document.head.querySelector(selector);
@@ -14,7 +14,7 @@ export default function RouteMeta() {
 
   useEffect(() => {
     const meta = metaFor(pathname, projects);
-    const image = `https://moiez.dev${meta.image}`;
+    const image = `${SITE_URL}${meta.image}`;
     document.title = meta.title;
     setMeta('meta[name="description"]', 'content', meta.description);
     setMeta('link[rel="canonical"]', 'href', meta.url);

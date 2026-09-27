@@ -4,7 +4,7 @@
  * Plain ESM with no imports, so both the app (live tab titles) and the build
  * (static HTML per route, read by LinkedIn/WhatsApp/X/Google) use it.
  */
-export const SITE_URL = 'https://moiez.dev';
+export const SITE_URL = 'https://www.moiez.dev';
 export const SITE_NAME = 'Moieez ur Rehman';
 
 const HOME = {
@@ -20,29 +20,29 @@ const PAGES = {
     title: `Work · ${SITE_NAME}`,
     description:
       'Products, platforms and sites designed and built end to end — POS and loyalty systems, travel booking, SaaS and more.',
-    image: '/api/og?path=/works',
+    image: '/og/works.jpg',
   },
   '/experience': {
     title: `Experience · ${SITE_NAME}`,
     description:
       'Senior Full Stack roles leading POS, loyalty, wallet and AI products across retail and SaaS in Saudi Arabia and Europe.',
-    image: '/api/og?path=/experience',
+    image: '/og/experience.jpg',
   },
   '/about': {
     title: `About · ${SITE_NAME}`,
     description:
       'Product-focused full stack engineer who owns features end to end — from business needs and architecture to deployment.',
-    image: '/api/og?path=/about',
+    image: '/og/about.jpg',
   },
   '/contact': {
     title: `Contact · ${SITE_NAME}`,
     description: 'Open to senior full stack roles and projects. Reach Moiz at moiezdev@gmail.com.',
-    image: '/api/og?path=/contact',
+    image: '/og/contact.jpg',
   },
   '/cv': {
     title: `CV · ${SITE_NAME}`,
     description: 'Résumé of Moieez ur Rehman, Senior Full Stack Software Engineer.',
-    image: '/api/og?path=/cv',
+    image: '/og/cv.jpg',
   },
 };
 
@@ -70,7 +70,7 @@ export function metaFor(pathname = '/', projects = []) {
     ? {
         title: `${project.title} — ${project.subtitle} · ${SITE_NAME}`,
         description: projectBlurb(project),
-        image: `/api/og?path=/works/${project.id}`,
+        image: `/og/works/${project.id}.jpg`,
       }
     : PAGES[path] || HOME;
 
@@ -99,7 +99,7 @@ export function renderSeoTags(meta) {
     `<meta property="og:title" content="${esc(meta.title)}" />`,
     `<meta property="og:description" content="${esc(meta.description)}" />`,
     `<meta property="og:image" content="${image}" />`,
-    `<meta property="og:image:type" content="${meta.image.startsWith('/api/og') ? 'image/png' : 'image/jpeg'}" />`,
+    `<meta property="og:image:type" content="image/jpeg" />`,
     `<meta property="og:image:width" content="1200" />`,
     `<meta property="og:image:height" content="630" />`,
     `<meta property="og:image:alt" content="${esc(meta.title)}" />`,

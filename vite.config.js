@@ -5,6 +5,7 @@ import flowbiteReact from "flowbite-react/plugin/vite";
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { metaFor, renderSeoTags, staticRoutes } from './src/seo/meta.js'
+import { renderCard } from './seo/og-card.js'
 
 const SEO_BLOCK = /<!-- seo:start[\s\S]*?<!-- seo:end -->/
 
@@ -28,12 +29,27 @@ function routeMeta() {
     configResolved(config) {
       outDir = config.build.outDir
     },
+    configureServer(server) {
+      server.middlewares.use('/og', async (req, res, next) => {
+        const route = req.url.replace(/\.jpg(\?.*)?$/, '')
+        if (!/\.jpg(\?|$)/.test(req.url)) return next()
+        res.setHeader('Content-Type', 'image/jpeg')
+        res.end(await renderCard(route))
+      })
+    },
     transformIndexHtml(html, ctx) {
       return inject(html, ctx.originalUrl?.split('?')[0] || '/')
     },
-    writeBundle() {
+    async writeBundle() {
       const template = readFileSync(join(outDir, 'index.html'), 'utf8')
       for (const route of staticRoutes(loadProjects())) {
+        // share card, drawn from site data (not stored in git)
+        const { image } = metaFor(route, loadProjects())
+        if (image.startsWith('/og/')) {
+          const png = join(outDir, image)
+          mkdirSync(dirname(png), { recursive: true })
+          writeFileSync(png, await renderCard(route))
+        }
         // flat files: Vercel's cleanUrls serves /works/tdm from works/tdm.html
         const file = route === '/' ? join(outDir, 'index.html') : join(outDir, `${route}.html`)
         mkdirSync(dirname(file), { recursive: true })
