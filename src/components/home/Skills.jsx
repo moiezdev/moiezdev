@@ -1,9 +1,6 @@
 import SectionTitle from '../ui/SectionTitle';
-import FloatingDotBox from '../ui/animatedSvgs/FloatingDotBox';
-import Logo from '../ui/Logo';
-import Floating from '../ui/Floating';
-import Magnetic from '../ui/Magnetic';
-import { getSkillIcon } from '../../utils/skillIcons';
+import Reveal from '../ui/Reveal';
+import { getSkillIcon, readableIconColor } from '../../utils/skillIcons';
 import { getProjectsForSkill } from '../../utils/skillProjects';
 import { skillPracticeMessage, skillProjectCountLabel, useContent } from '../../i18n/content';
 
@@ -18,58 +15,32 @@ const TECHNICAL_CATEGORIES = new Set([
   'AI & Automation',
 ]);
 
-/** Chat-bubble tip listing projects that used this skill. */
-const SkillExperienceTip = ({ name }) => {
+/** Popover listing the projects that used this skill. */
+const SkillTip = ({ name }) => {
   const { lang } = useContent();
   const message = skillPracticeMessage(lang, name);
   const related = getProjectsForSkill(name);
   if (!message) return null;
 
   return (
-    <div
-      className="pointer-events-none absolute left-1/2 bottom-full z-30 mb-2 w-max max-w-[240px] -translate-x-1/2 opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 group-focus-within:opacity-100 group-focus-within:scale-100 transition-all duration-200 origin-bottom"
+    <span
       role="tooltip"
+      className="pointer-events-none absolute left-1/2 bottom-full z-30 mb-2.5 w-max max-w-[260px] -translate-x-1/2 translate-y-1 opacity-0 scale-95 group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100 group-focus-visible:opacity-100 group-focus-visible:scale-100 transition-all duration-300 ease-[var(--ease-apple)] origin-bottom"
     >
-      <div className="border border-gray-a bg-gray-b px-3 py-2.5 text-left shadow-[0_0_0_1px_rgba(40,44,51,1)]">
-        <p className="text-primary text-[10px] mb-1.5 tracking-wide">
-          <span className="bg-primary w-1.5 h-1.5 inline-block mr-1.5 mb-px align-middle" />
-          {name}
-        </p>
-        <p className="text-gray-a text-xs leading-relaxed">{message}</p>
+      <span className="block glass ring-1 ring-separator rounded-2xl px-3.5 py-3 text-start shadow-xl">
+        <span className="block text-[13px] font-semibold text-label mb-1">{name}</span>
+        <span className="block text-[12px] leading-relaxed text-label-2 whitespace-normal">{message}</span>
         {related.length > 0 && (
-          <p className="text-[10px] text-gray-a/70 mt-1.5 border-t border-gray-a pt-1.5">
+          <span className="block text-[11px] text-accent font-medium mt-2">
             {skillProjectCountLabel(lang, related.length)}
-          </p>
+          </span>
         )}
-      </div>
-    </div>
-  );
-};
-
-const SkillIconBadge = ({ name }) => {
-  const { lang } = useContent();
-  const skillIcon = getSkillIcon(name);
-  const Icon = skillIcon?.Icon;
-  const hasProjects = getProjectsForSkill(name).length > 0;
-  if (!Icon) return null;
-
-  return (
-    <span
-      className="group relative inline-flex items-center justify-center size-9 bg-gray-a/20 hover:scale-110 transition-all cursor-pointer cursor-scale-0 hover:bg-primary/20 focus-within:bg-primary/20"
-      tabIndex={hasProjects ? 0 : undefined}
-      aria-label={
-        hasProjects
-          ? `${name}. ${skillPracticeMessage(lang, name)}`
-          : name
-      }
-    >
-      <Icon className="text-[18px] shrink-0" style={{ color: skillIcon.color }} aria-hidden />
-      <SkillExperienceTip name={name} />
+      </span>
     </span>
   );
 };
 
-const SkillTextBadge = ({ name }) => {
+const SkillChip = ({ name }) => {
   const { lang } = useContent();
   const skillIcon = getSkillIcon(name);
   const Icon = skillIcon?.Icon;
@@ -77,133 +48,59 @@ const SkillTextBadge = ({ name }) => {
 
   return (
     <span
-      className="group relative inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-gray-a/20 hover:scale-110 transition-all cursor-pointer cursor-scale-0 hover:bg-primary/20 focus-within:bg-primary/20"
+      className={`group relative chip py-1.5 transition-colors ${hasProjects ? 'cursor-help hover:bg-[color-mix(in_srgb,var(--color-accent)_14%,transparent)]' : ''}`}
       tabIndex={hasProjects ? 0 : undefined}
-      aria-label={
-        hasProjects
-          ? `${name}. ${skillPracticeMessage(lang, name)}`
-          : name
-      }
+      aria-label={hasProjects ? `${name}. ${skillPracticeMessage(lang, name)}` : undefined}
     >
-      {Icon && (
-        <Icon className="text-[14px] shrink-0" style={{ color: skillIcon.color }} aria-hidden />
-      )}
+      {Icon && <Icon className="text-[15px] shrink-0" style={{ color: readableIconColor(skillIcon.color) }} aria-hidden />}
       {name}
-      <SkillExperienceTip name={name} />
+      {hasProjects && <SkillTip name={name} />}
     </span>
   );
 };
 
-const SkillCategoryCard = ({ skill, iconOnly = false }) => (
-  <Floating duration={5}>
-    <Magnetic strength={0.1} duration={0.5}>
-      <div className="border border-gray-a hover:shadow-lg transition-shadow duration-300 w-full">
-        <div className="flex flex-col">
-          <h3 className="font-semibold text-white border-b border-gray-a p-[8px] cursor-pointer cursor-white cursor-scale-1">
-            {skill.category}
-          </h3>
-          <div className="flex flex-wrap gap-[8px] p-[8px] overflow-visible">
-            {skill.items.map((item) =>
-              iconOnly ? (
-                <SkillIconBadge key={item} name={item} />
-              ) : (
-                <SkillTextBadge key={item} name={item} />
-              ),
-            )}
-          </div>
-        </div>
-      </div>
-    </Magnetic>
-  </Floating>
-);
-
-const SkillSubsection = ({ title, categories, iconOnly = false }) => {
-  if (!categories.length) return null;
-
-  return (
-    <div className="flex flex-col gap-4">
-      <h2 className="text-white text-large font-semibold border-b border-gray-a pb-2 cursor-pointer cursor-white cursor-scale-1">
-        {title}
-      </h2>
-      <div className="grid gap-[16px] sm:grid-cols-2 overflow-visible">
-        {categories.map((skill) => (
-          <SkillCategoryCard key={skill.category} skill={skill} iconOnly={iconOnly} />
-        ))}
-      </div>
+const SkillCard = ({ skill, delay }) => (
+  <Reveal delay={delay} className="surface p-6 md:p-7 h-full">
+    <h3 className="text-[17px] font-semibold tracking-[-0.015em] text-label mb-4">{skill.category}</h3>
+    <div className="flex flex-wrap gap-2">
+      {skill.items.map((item) => (
+        <SkillChip key={item} name={item} />
+      ))}
     </div>
-  );
-};
+  </Reveal>
+);
 
 const Skills = () => {
   const { t, skills } = useContent();
-  const technicalSkills = skills.filter((skill) => TECHNICAL_CATEGORIES.has(skill.categoryKey));
-  const otherSkills = skills.filter((skill) => !TECHNICAL_CATEGORIES.has(skill.categoryKey));
+  const technical = skills.filter((s) => TECHNICAL_CATEGORIES.has(s.categoryKey));
+  const other = skills.filter((s) => !TECHNICAL_CATEGORIES.has(s.categoryKey));
 
   return (
-    <section className="w-full px-4 py-12 overflow-visible" id="skills">
-      <div className="app-container mx-auto overflow-visible">
-        <SectionTitle title={t('skills.section')} />
-        <div className="grid gap-8 lg:grid-cols-7 overflow-visible">
-          <div className="col-span-3 p-5 hidden lg:block relative">
-            <div className="border inline-block border-gray-a p-1 mx-auto mb-4 cursor-pointer cursor-white cursor-scale-1.7">
-              <span className="bg-primary h-[16px] aspect-square inline-block mb-[-2px] me-1"></span>
-              {t('skills.core')}
-            </div>
+    <section className="w-full px-5 pt-28 md:pt-40" id="skills">
+      <div className="app-container">
+        <SectionTitle eyebrow={t('skills.eyebrow')} title={t('skills.headline')} subtitle={t('skills.core')} />
 
-            <div className="absolute bottom-1 left-0 translate-x -translate-y-1/2 z-0 cursor-pointer cursor-white cursor-scale-0">
-              <Magnetic strength={0.2}>
-                <Logo
-                  size={170}
-                  animate={true}
-                  animationStyle="draw-floating"
-                  repeat={1}
-                  duration={2}
-                  floatDuration={5}
-                />
-              </Magnetic>
-            </div>
-
-            <div className="absolute bottom-1/5 right-1/3 translate-x -translate-y-1/2">
-              <Magnetic strength={0.1} duration={0.5}>
-                <FloatingDotBox animate={true} dotSize={2} rows={4} cols={5} duration={9} />
-              </Magnetic>
-            </div>
-
-            <div className="absolute top-1/3 left-2 translate-x -translate-y-1/2">
-              <Magnetic strength={0.1} duration={0.5}>
-                <FloatingDotBox
-                  animate={true}
-                  dotSize={2}
-                  rows={7}
-                  cols={7}
-                  duration={12}
-                  floatDistance={8}
-                />
-              </Magnetic>
-            </div>
-
-            <div className="absolute top-1/3 right-1/7 translate-x -translate-y-1/2">
-              <Magnetic strength={0.1} duration={0.5}>
-                <Floating duration={8}>
-                  <div className="w-[100px] h-[100px] border border-gray-a hover:bg-gray-a/10 transition-colors"></div>
-                </Floating>
-              </Magnetic>
-            </div>
-
-            <div className="absolute bottom-1/14 right-4 translate-x -translate-y-1/2">
-              <Magnetic strength={0.1} duration={0.5}>
-                <Floating duration={8}>
-                  <div className="w-[65px] h-[65px] border border-gray-a hover:bg-gray-a/10 transition-colors"></div>
-                </Floating>
-              </Magnetic>
-            </div>
-          </div>
-
-          <div className="lg:col-span-4 flex flex-col gap-10 overflow-visible">
-            <SkillSubsection title={t('skills.technical')} categories={technicalSkills} iconOnly />
-            <SkillSubsection title={t('skills.other')} categories={otherSkills} />
-          </div>
+        <Reveal as="h3" className="text-[13px] font-semibold uppercase tracking-wider text-label-3 mb-4">
+          {t('skills.technical')}
+        </Reveal>
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {technical.map((skill, i) => (
+            <SkillCard key={skill.category} skill={skill} delay={(i % 3) * 70} />
+          ))}
         </div>
+
+        {other.length > 0 && (
+          <>
+            <Reveal as="h3" className="text-[13px] font-semibold uppercase tracking-wider text-label-3 mt-12 mb-4">
+              {t('skills.other')}
+            </Reveal>
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {other.map((skill, i) => (
+                <SkillCard key={skill.category} skill={skill} delay={(i % 3) * 70} />
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </section>
   );

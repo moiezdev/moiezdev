@@ -1,47 +1,65 @@
+import { Link } from 'react-router-dom';
 import { contacts } from '../data';
 import { useContent } from '../i18n/content';
 
+const NAV = [
+  { key: 'nav.home', link: '/' },
+  { key: 'nav.works', link: '/works' },
+  { key: 'nav.experience', link: '/experience' },
+  { key: 'nav.about', link: '/about' },
+  { key: 'nav.contact', link: '/contact' },
+];
+
 const Footer = () => {
   const { t } = useContent();
+  const media = contacts.filter((c) => c.categories.includes('media') || c.categories.includes('contact'));
 
   return (
-    <footer className="relative w-full border-t border-t-gray-300/20  px-4 py-6 mt-12 z-0">
-      <div className="app-container mx-auto text-sm text-gray-500">
-        <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+    <footer className="bg-surface-2 text-[12px] leading-[1.5] text-label-2 mt-24 px-5">
+      <div className="app-container py-12">
+        <div className="grid gap-10 sm:grid-cols-3 pb-8 border-b border-separator">
           <div>
-            <p>
-              <span className="text-white me-5">Moiz</span>
-              <a className="cursor-pointer hover:text-primary" href="mailto:moiezdev@gmail.com">
-                moiezdev@gmail.com
-              </a>
-            </p>
-            <p className="text-white">{t('footer.role')}</p>
+            <p className="text-label text-[15px] font-semibold mb-1">Moieez ur Rehman</p>
+            <p>{t('footer.role')}</p>
+            <a className="mt-3 inline-block text-accent hover:underline" href="mailto:moiezdev@gmail.com">
+              moiezdev@gmail.com
+            </a>
           </div>
           <div>
-            <h1 className="text-large text-white">{t('footer.media')}</h1>
-            <div className="flex flex-wrap justify-center md:justify-end gap-4 mt-2">
-              {contacts.map((contact, index) => {
-                if (contact.icon && contact.categories.includes('media')) {
-                  return (
-                    <a
-                      className="cursor-pointer"
-                      href={contact.url}
-                      target="_blank"
-                      key={index}
-                      rel="noopener noreferrer"
-                    >
-                      <img src={contact.icon} alt={contact.platform} />
-                    </a>
-                  );
-                } else {
-                  return;
-                }
-              })}
-            </div>
+            <p className="text-label font-semibold mb-3">{t('footer.explore')}</p>
+            <ul className="flex flex-col gap-2">
+              {NAV.map((item) => (
+                <li key={item.link}>
+                  <Link className="hover:text-label hover:underline" to={item.link}>
+                    {t(item.key)}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <p className="text-label font-semibold mb-3">{t('footer.media')}</p>
+            <ul className="flex flex-col gap-2">
+              {media.map((contact) => (
+                <li key={contact.platform}>
+                  <a
+                    className="hover:text-label hover:underline"
+                    href={contact.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {contact.platform}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
-        <div className=" text-center ">
-          &copy; {new Date().getFullYear()} Moizdev. {t('footer.rights')}
+        <div className="pt-5 flex flex-col sm:flex-row gap-2 justify-between">
+          <p>
+            &copy; {new Date().getFullYear()} MoizDev. {t('footer.rights')}
+          </p>
+          <p>{t('footer.crafted')}</p>
         </div>
       </div>
     </footer>

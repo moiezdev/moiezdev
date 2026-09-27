@@ -2,6 +2,14 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 
 const STORAGE_KEY = 'moiz-prefs';
 
+function systemTheme() {
+  try {
+    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  } catch {
+    return 'dark';
+  }
+}
+
 function readPrefs() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -9,7 +17,7 @@ function readPrefs() {
       const parsed = JSON.parse(raw);
       return {
         lang: parsed.lang === 'ar' ? 'ar' : 'en',
-        theme: parsed.theme === 'light' ? 'light' : 'dark',
+        theme: parsed.theme === 'light' || parsed.theme === 'dark' ? parsed.theme : systemTheme(),
       };
     }
   } catch {
@@ -19,7 +27,7 @@ function readPrefs() {
   const nav = typeof navigator !== 'undefined' ? navigator.language : '';
   return {
     lang: nav.toLowerCase().startsWith('ar') ? 'ar' : 'en',
-    theme: 'dark',
+    theme: systemTheme(),
   };
 }
 
@@ -28,6 +36,9 @@ function applyDom({ lang, theme }) {
   root.lang = lang;
   root.dir = lang === 'ar' ? 'rtl' : 'ltr';
   root.setAttribute('data-theme', theme);
+  document
+    .querySelector('meta[name="theme-color"]')
+    ?.setAttribute('content', theme === 'dark' ? '#000000' : '#fbfbfd');
 }
 
 const PreferencesContext = createContext(null);

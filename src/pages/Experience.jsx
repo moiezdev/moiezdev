@@ -1,9 +1,8 @@
-import SectionTitle from '../components/ui/SectionTitle';
 import ExperienceCards from '../components/experience/ExperienceCards';
 import Transition from '../components/functions/Transition';
+import PageHeader from '../components/ui/PageHeader';
+import Reveal from '../components/ui/Reveal';
 import Button from '../components/ui/Button';
-import Floating from '../components/ui/Floating';
-import Magnetic from '../components/ui/Magnetic';
 import { useContent } from '../i18n/content';
 
 const Experience = () => {
@@ -11,55 +10,39 @@ const Experience = () => {
 
   return (
     <Transition>
-      <section className="w-full px-4 py-12" id="experience">
-        <div className="app-container mx-auto pt-[20px] md:py-[60px]">
-          <SectionTitle hash="/" title={t('experience.section')} />
-          <p className="mt-[-20px] md:mb-[50px] max-md:mb-6">{t('experience.list')}</p>
+      <PageHeader eyebrow={t('experience.eyebrow')} title={t('experience.pageTitle')} subtitle={t('experience.list')}>
+        <Button href="/Moieez%20ur%20Rehman.pdf" download="Moieez ur Rehman.pdf" primary>
+          {t('experience.resume')}
+        </Button>
+      </PageHeader>
 
+      <section className="w-full px-5">
+        <div className="app-container">
           <ExperienceCards jobs={jobs} />
 
-          <div className="grid gap-8 md:grid-cols-2 mt-8">
-            <Floating duration={5}>
-              <Magnetic strength={0.1} duration={0.5}>
-                <div className="border border-gray-a hover:shadow-lg transition-shadow duration-300">
-                  <h3 className="font-semibold text-white border-b border-gray-a p-[8px] cursor-pointer cursor-white cursor-scale-1">
-                    {t('experience.education')}
-                  </h3>
-                  <div className="flex flex-col gap-[8px] p-[16px]">
-                    <p className="text-white">{education.degree}</p>
-                    <p>
-                      {education.school} <span className="text-primary">|</span> {education.period}
-                    </p>
-                  </div>
-                </div>
-              </Magnetic>
-            </Floating>
+          <div className="grid gap-6 md:grid-cols-2 mt-16">
+            <Reveal className="surface p-7 md:p-8">
+              <p className="eyebrow mb-3">{t('experience.education')}</p>
+              <h3 className="text-[21px] font-semibold tracking-[-0.02em] text-label leading-snug">
+                {education.degree}
+              </h3>
+              <p className="mt-2 text-[15px] text-label-2">
+                {education.school}
+                <span className="mx-2 text-label-3">·</span>
+                {education.period}
+              </p>
+            </Reveal>
 
-            <Floating duration={5}>
-              <Magnetic strength={0.1} duration={0.5}>
-                <div className="border border-gray-a hover:shadow-lg transition-shadow duration-300">
-                  <h3 className="font-semibold text-white border-b border-gray-a p-[8px] cursor-pointer cursor-white cursor-scale-1">
-                    {t('experience.languages')}
-                  </h3>
-                  <div className="flex flex-wrap gap-[8px] p-[8px]">
-                    {(education.languages || []).map((item) => (
-                      <span
-                        key={item}
-                        className="inline-flex items-center px-2.5 py-0.5 bg-gray-a/20 hover:scale-110 hover:bg-primary/20 transition-all cursor-pointer cursor-scale-0"
-                      >
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </Magnetic>
-            </Floating>
-          </div>
-
-          <div className="mt-8">
-            <a href="/Moieez%20ur%20Rehman.pdf" download="Moieez ur Rehman.pdf">
-              <Button>{t('experience.resume')}</Button>
-            </a>
+            <Reveal delay={80} className="surface p-7 md:p-8">
+              <p className="eyebrow mb-3">{t('experience.languages')}</p>
+              <div className="flex flex-wrap gap-2">
+                {(education.languages || []).map((item) => (
+                  <span key={item} className="chip text-[15px] py-1.5 px-4">
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </Reveal>
           </div>
         </div>
       </section>

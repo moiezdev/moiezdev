@@ -4,7 +4,6 @@ import { gsap } from 'gsap';
 import { HiMicrophone, HiStop, HiVolumeOff, HiVolumeUp, HiX } from 'react-icons/hi';
 import RobotAvatar from './RobotAvatar';
 import TypewriterText from './TypewriterText';
-import Button from '../ui/Button';
 import { askBot } from '../../utils/askBot';
 import { BOT_HANDLE, BOT_NAME } from '../../utils/buildPortfolioContext';
 import { prepareBotReply } from '../../utils/chatNav';
@@ -355,61 +354,62 @@ const ChatBot = () => {
   };
 
   const busy = loading || typingId != null;
+  const ICON_BTN =
+    'inline-flex size-8 shrink-0 items-center justify-center rounded-full text-label-2 hover:text-label hover:bg-fill transition-colors cursor-pointer disabled:opacity-40';
 
   return (
     <div
       ref={rootRef}
-      className={`fixed bottom-1 max-h-full sm:bottom-5 end-5 z-50 flex flex-col items-end gap-0`}
+      className="fixed bottom-3 sm:bottom-6 end-3 sm:end-6 z-50 flex flex-col items-end max-h-[calc(100dvh-1.5rem)]"
     >
       {open && (
         <div
           ref={panelRef}
-          className="w-[min(100vw-2.5rem,380px)] max-h-full h-[min(80vh,1000px)] flex flex-col border border-gray-a bg-gray-b origin-bottom-right"
+          className="w-[min(100vw-1.5rem,390px)] max-h-full h-[min(78vh,680px)] flex flex-col overflow-hidden rounded-[28px] glass ring-1 ring-separator shadow-[0_24px_64px_rgba(0,0,0,0.28)] origin-bottom-right"
           role="dialog"
           aria-label={`${BOT_NAME} portfolio chat`}
         >
-          <div className="flex items-center gap-0.5 border-b border-gray-a px-3 py-3 bg-gray-b">
-            <div className="shrink-0">
-              <RobotAvatar size={55} faceOnly isOpen mood={avatarMood} />
+          <div className="flex items-center gap-2 border-b border-separator px-4 py-3">
+            <div className="shrink-0 -my-1">
+              <RobotAvatar size={48} faceOnly isOpen mood={avatarMood} />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-white text-sm font-semibold leading-tight">
-                <span className="text-primary">#</span>
-                {BOT_HANDLE}
+              <p className="text-label text-[15px] font-semibold leading-tight">{BOT_HANDLE}</p>
+              <p className="text-[12px] text-label-2 mt-0.5 h-4">
+                {listening
+                  ? t(lang, 'chat.listening')
+                  : avatarMood === 'thinking'
+                    ? t(lang, 'chat.thinking')
+                    : avatarMood === 'speaking'
+                      ? t(lang, 'chat.speaking')
+                      : ''}
               </p>
-              {listening && <p className="text-[10px] text-primary mt-0.5">{t(lang, 'chat.listening')}</p>}
-              {!listening && avatarMood === 'thinking' && (
-                <p className="text-[10px] text-gray-a mt-0.5">{t(lang, 'chat.thinking')}</p>
-              )}
-              {!listening && avatarMood === 'speaking' && (
-                <p className="text-[10px] text-primary mt-0.5">{t(lang, 'chat.speaking')}</p>
-              )}
             </div>
             {speechReady.speak && (
-              <Button
-                primary={voiceOn}
+              <button
+                type="button"
                 onClick={() => {
                   unlockSpeech();
                   setVoiceOn((v) => !v);
                 }}
-                className="!px-2 !py-1 text-xs mr-1"
+                className={`${ICON_BTN} ${voiceOn ? 'text-accent' : ''}`}
                 aria-pressed={voiceOn}
                 aria-label={voiceOn ? 'Mute voice' : 'Unmute voice'}
                 title={voiceOn ? 'Voice on' : 'Voice muted'}
               >
                 {voiceOn ? (
-                  <HiVolumeUp className="w-3.5 h-3.5" aria-hidden />
+                  <HiVolumeUp className="w-4 h-4" aria-hidden />
                 ) : (
-                  <HiVolumeOff className="w-3.5 h-3.5" aria-hidden />
+                  <HiVolumeOff className="w-4 h-4" aria-hidden />
                 )}
-              </Button>
+              </button>
             )}
-            <Button onClick={closeChat} className="!px-2 !py-1 text-xs" aria-label="Close chat">
-              <HiX className="w-3.5 h-3.5" aria-hidden />
-            </Button>
+            <button type="button" onClick={closeChat} className={ICON_BTN} aria-label="Close chat">
+              <HiX className="w-4 h-4" aria-hidden />
+            </button>
           </div>
 
-          <div ref={listRef} className="flex-1 overflow-y-auto px-3 py-4 space-y-3">
+          <div ref={listRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-2.5">
             {messages.map((msg) => {
               const isTyping = msg.role === 'bot' && typingId === msg.id && !msg.typed;
               const isUser = msg.role === 'user';
@@ -420,27 +420,12 @@ const ChatBot = () => {
                   className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`relative max-w-[90%] px-3 py-2.5 text-sm leading-relaxed border bg-gray-b ${
-                      isUser ? 'border-primary text-white' : 'border-gray-a text-gray-a'
+                    className={`max-w-[85%] px-3.5 py-2 text-[15px] leading-[1.4] rounded-[20px] ${
+                      isUser
+                        ? 'bg-accent text-[#fff] rounded-ee-md'
+                        : 'bg-fill text-label rounded-es-md'
                     }`}
                   >
-                    {/* Speech hook — bottom-end (user) / bottom-start (bot) */}
-                    <span
-                      aria-hidden
-                      className={`pointer-events-none absolute bottom-0 h-2.5 w-2.5 bg-gray-b ${
-                        isUser
-                          ? 'right-0 bottom-3 translate-x-[calc(50%+0.7px)] rotate-315 border-r border-b border-primary'
-                          : 'left-0 bottom-3 -translate-x-[calc(50%+0.7px)] rotate-45 border-l border-b border-gray-a'
-                      }`}
-                    />
-
-                    {msg.role === 'bot' && (
-                      <p className="text-primary text-[10px] mb-1.5 tracking-wide">
-                        <span className="bg-primary w-1.5 h-1.5 inline-block mr-1.5 mb-px align-middle" />
-                        {BOT_HANDLE}
-                      </p>
-                    )}
-
                     {msg.role === 'bot' ? (
                       <TypewriterText
                         text={msg.text}
@@ -460,56 +445,45 @@ const ChatBot = () => {
 
             {loading && (
               <div className="flex justify-start">
-                <div className="relative max-w-[90%] px-3 py-2.5 text-sm leading-relaxed border border-gray-a bg-gray-b text-gray-a">
-                  <span
-                    aria-hidden
-                    className="pointer-events-none absolute left-0 h-2.5 w-2.5 bottom-3 -translate-x-[calc(50%+0.7px)] rotate-45 border-l border-b border-gray-a bg-gray-b"
-                  />
-                  <p className="text-primary text-[10px] mb-1.5 tracking-wide">
-                    <span className="bg-primary w-1.5 h-1.5 inline-block mr-1.5 mb-px align-middle" />
-                    {BOT_HANDLE}
-                  </p>
-                  <p className="inline-flex items-center gap-2 text-sm">
-                    <span className="bg-primary w-2 h-2 animate-pulse shrink-0" />
-                    <span className="text-xs">{t(lang, 'chat.thinking')}</span>
-                  </p>
+                <div className="px-4 py-3 rounded-[20px] rounded-es-md bg-fill inline-flex items-center gap-1" aria-label={t(lang, 'chat.thinking')}>
+                  {[0, 1, 2].map((i) => (
+                    <span
+                      key={i}
+                      className="size-2 rounded-full bg-label-3 animate-bounce"
+                      style={{ animationDelay: `${i * 0.15}s` }}
+                    />
+                  ))}
                 </div>
               </div>
             )}
 
             {messages.length <= 1 && !busy && (
-              <div className="pt-1">
-                <p className="text-[10px] text-gray-a mb-2">
-                  <span className="text-primary">#</span>
-                  {t(lang, 'chat.tryAsking')}
-                </p>
-                <div className="flex flex-col gap-[-1px]">
-                  {(t(lang, 'chat.suggestions') || []).map((s, idx) => (
-                    <Button
+              <div className="pt-3">
+                <p className="text-[12px] text-label-3 mb-2 px-1">{t(lang, 'chat.tryAsking')}</p>
+                <div className="flex flex-wrap gap-2">
+                  {(t(lang, 'chat.suggestions') || []).map((s) => (
+                    <button
+                      type="button"
                       key={s}
                       onClick={() => send(s)}
-                      className={`!w-full !justify-start text-left text-xs !px-2.5 !py-2 rounded-none ${
-                        idx > 0 ? 'mt-[-1px]' : ''
-                      }`}
+                      className="rounded-full ring-1 ring-inset ring-accent/50 text-accent text-[13px] font-medium px-3.5 py-1.5 hover:bg-accent hover:text-[#fff] transition-colors cursor-pointer"
                     >
                       {s}
-                    </Button>
+                    </button>
                   ))}
                 </div>
               </div>
             )}
           </div>
 
-          <form onSubmit={onSubmit} className="border-t border-gray-a">
-            <div className="flex items-stretch">
+          <form onSubmit={onSubmit} className="p-3 border-t border-separator">
+            <div className="flex items-center gap-1.5 rounded-full bg-surface ring-1 ring-separator ps-1.5 pe-1.5 py-1.5 focus-within:ring-accent transition-shadow">
               {speechReady.listen && (
-                <Button
+                <button
+                  type="button"
                   onClick={toggleListen}
                   disabled={busy}
-                  primary={listening}
-                  className={`!border-0 !rounded-none !px-3 !py-3 text-xs shrink-0 h-full ${
-                    listening ? 'bg-primary/10' : ''
-                  }`}
+                  className={`${ICON_BTN} ${listening ? 'text-[#ff3b30] bg-[rgba(255,59,48,0.12)]' : ''}`}
                   aria-pressed={listening}
                   aria-label={listening ? 'Done speaking — send' : 'Speak a question'}
                   title={listening ? 'Tap when finished' : 'Speak'}
@@ -519,7 +493,7 @@ const ChatBot = () => {
                   ) : (
                     <HiMicrophone className="w-4 h-4" aria-hidden />
                   )}
-                </Button>
+                </button>
               )}
               <input
                 ref={inputRef}
@@ -530,34 +504,35 @@ const ChatBot = () => {
                   listening ? t(lang, 'chat.placeholderListen') : t(lang, 'chat.placeholder')
                 }
                 disabled={busy}
-                className="flex-1 min-w-0 bg-transparent px-1 py-1 text-base text-white placeholder:text-gray-a/50 focus:outline-none disabled:opacity-50 cursor-scale-0"
+                className="flex-1 min-w-0 bg-transparent px-2 py-1 text-base text-label placeholder:text-label-3 focus:outline-none disabled:opacity-50"
               />
-              <Button
+              <button
                 type="submit"
-                primary
                 disabled={busy || !input.trim()}
-                className="!border-y-0 !border-r-0 !rounded-none !px-4 !py-3 text-sm shrink-0"
+                className="inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-accent text-[#fff] disabled:opacity-30 transition-opacity cursor-pointer"
+                aria-label={t(lang, 'chat.send')}
               >
-                {t(lang, 'chat.send')}
-              </Button>
+                <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" aria-hidden>
+                  <path d="M8 13V3M3.5 7.5 8 3l4.5 4.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
             </div>
           </form>
         </div>
       )}
 
       {!open && (
-        <Button
+        <button
+          type="button"
           ref={fabRef}
           onClick={openChat}
-          className="!relative group !border-gray-a bg-gray-b !p-2 hover:!border-primary"
+          className="relative size-16 rounded-full glass ring-1 ring-separator shadow-[0_12px_32px_rgba(0,0,0,0.2)] inline-flex items-center justify-center hover:scale-105 active:scale-95 transition-transform duration-300 cursor-pointer"
           aria-label={`Open ${BOT_NAME}`}
           aria-expanded={false}
         >
-          <div className="absolute top-1.5 left-1.5 z-10">
-            <span className="bg-primary w-2 h-2 block" aria-hidden />
-          </div>
-          <RobotAvatar size={52} isOpen={false} mood="idle" />
-        </Button>
+          <span className="absolute top-1 end-1 size-3 rounded-full bg-green ring-2 ring-bg" aria-hidden />
+          <RobotAvatar size={46} isOpen={false} mood="idle" />
+        </button>
       )}
     </div>
   );

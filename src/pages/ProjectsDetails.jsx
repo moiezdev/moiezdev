@@ -1,108 +1,111 @@
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Transition from '../components/functions/Transition';
 import ImageSlider from '../components/ui/ImageSlider';
 import Button from '../components/ui/Button';
-import SectionTitle from '../components/ui/SectionTitle';
-import { getSkillIcon } from '../utils/skillIcons';
+import Reveal from '../components/ui/Reveal';
+import Card from '../components/ui/Card';
+import TechChip from '../components/ui/TechChip';
+import PageHeader from '../components/ui/PageHeader';
+import { Chevron } from '../components/ui/SectionTitle';
 import { getProjectById } from '../data';
 import { useContent } from '../i18n/content';
+import NotFound from './NotFound';
 
 export default function ProjectDetail() {
   const { id } = useParams();
-  const { t, localize } = useContent();
+  const { t, localize, projects } = useContent();
   const project = localize(getProjectById(id));
-  if (!project) return <p className="p-6">{t('projects.notFound')}</p>;
+  if (!project) return <NotFound />;
+
+  const base = project.imageUrl.split('/').slice(0, -1).join('/');
+  const images = (project.media?.length ? project.media : [project.imageUrl.split('/').pop()]).map(
+    (img) => `${base}/${img}`,
+  );
+  const index = projects.findIndex((p) => p.id === project.id);
+  const next = projects.filter((p) => p.id !== project.id).slice(index, index + 2);
+  const more = next.length === 2 ? next : projects.filter((p) => p.id !== project.id).slice(0, 2);
+
   return (
     <Transition>
-      <section className="w-full px-4 py-12" id="projects">
-        <div className="app-container mx-auto pt-[30px] md:py-[60px]">
-          <SectionTitle
-            hash={'/'}
-            title={project.title}
-            buttonText={t('projects.back')}
-            link="/works"
-          />
-          <p className="mt-[-20px] md:mb-[50px]">{project.subtitle}</p>
+      <PageHeader
+        eyebrow={
+          <Link to="/works" className="inline-flex items-center gap-1 hover:underline underline-offset-4">
+            <Chevron dir="back" />
+            {t('projects.back')}
+          </Link>
+        }
+        title={project.title}
+        subtitle={project.subtitle}
+      >
+        <div className="flex flex-wrap justify-center gap-3">
+          {project.projectUrl && (
+            <Button href={project.projectUrl} primary>
+              {t('projects.visit')}
+            </Button>
+          )}
+          {project.githubUrl && (
+            <Button href={project.githubUrl} variant="outline">
+              {t('projects.github')}
+            </Button>
+          )}
+          {project.githubBackendUrl && (
+            <Button href={project.githubBackendUrl} variant="outline">
+              {t('projects.backend')}
+            </Button>
+          )}
+        </div>
+      </PageHeader>
 
-          <div className="grid gap-8 md:grid-cols-2">
-            <div className="w-full cursor-pointer cursor-white cursor-scale-3">
-              <ImageSlider
-                className="cursor-pointer cursor-white cursor-scale-3"
-                images={project.media.map(
-                  (img) => project.imageUrl.split('/').slice(0, -1).join('/') + '/' + img
-                )}
-              />
+      <section className="px-5 -mt-4">
+        <Reveal className="app-container">
+          <ImageSlider images={images} />
+        </Reveal>
+
+        <div className="app-container mt-14 md:mt-20 grid gap-10 md:grid-cols-12">
+          <Reveal className="md:col-span-4">
+            <p className="text-[13px] font-semibold uppercase tracking-wider text-label-3 mb-4">
+              {t('projects.builtWith')}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {project.technologies.map((tech) => (
+                <TechChip key={tech} name={tech} />
+              ))}
             </div>
+          </Reveal>
+          <Reveal delay={80} className="md:col-span-8 flex flex-col gap-5">
+            {project.description.map((line, i) =>
+              Array.isArray(line) ? (
+                <ul key={i} className="flex flex-col gap-3">
+                  {line.map((item, j) => (
+                    <li key={j} className="flex gap-3 text-[17px] leading-relaxed text-label-2">
+                      <span className="mt-[11px] size-1.5 shrink-0 rounded-full bg-accent" aria-hidden />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p key={i} className="headline-2 !text-[24px] md:!text-[28px] text-label">
+                  {line}
+                </p>
+              ),
+            )}
+          </Reveal>
+        </div>
 
-            <div className="w-full flex flex-col gap-4">
-              <div className="leading-relaxed space-y-2">
-                {project.description.map((line, i) =>
-                  Array.isArray(line) ? (
-                    <ul
-                      key={i}
-                      className="list-disc list-inside cursor-pointer cursor-white cursor-scale-2"
-                    >
-                      {line.map((item, j) => (
-                        <li key={j}>{item}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-large cursor-pointer cursor-white cursor-scale-2" key={i}>
-                      {line}
-                    </p>
-                  )
-                )}
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                {project.technologies.map((tech, i) => {
-                  const skillIcon = getSkillIcon(tech);
-                  const Icon = skillIcon?.Icon;
-                  return (
-                    <span
-                      className="inline-flex items-center gap-1.5 cursor-pointer cursor-scale-0 px-2.5 py-0.5 bg-gray-a/20 hover:scale-110 hover:bg-primary/20 transition-all"
-                      key={i}
-                      title={tech}
-                    >
-                      {Icon && (
-                        <Icon
-                          className="text-[14px] shrink-0"
-                          style={{ color: skillIcon.color }}
-                          aria-hidden
-                        />
-                      )}
-                      {tech}
-                    </span>
-                  );
-                })}
-              </div>
-
-              <div className="flex gap-4 mt-2">
-                {project.projectUrl && (
-                  <Button onClick={() => window.open(project.projectUrl, '_blank')} primary={true}>
-                    {t('projects.live')}
-                  </Button>
-                )}
-                {project.githubUrl && (
-                  <Button
-                    className={`cursor-scale-0 cursor-pointer`}
-                    onClick={() => window.open(project.githubUrl, '_blank')}
-                  >
-                    {t('projects.github')}
-                  </Button>
-                )}
-                {project.githubBackendUrl && (
-                  <Button
-                    className={`cursor-scale-0 cursor-pointer`}
-                    onClick={() => window.open(project.githubBackendUrl, '_blank')}
-                  >
-                    {t('projects.backend')}
-                  </Button>
-                )}
-              </div>
+        {more.length > 0 && (
+          <div className="app-container mt-24 md:mt-32">
+            <Reveal as="h2" className="headline-2 text-label mb-8">
+              {t('projects.more')}
+            </Reveal>
+            <div className="grid gap-6 md:grid-cols-2">
+              {more.map((p, i) => (
+                <Reveal key={p.id} delay={i * 80}>
+                  <Card project={p} />
+                </Reveal>
+              ))}
             </div>
           </div>
-        </div>
+        )}
       </section>
     </Transition>
   );

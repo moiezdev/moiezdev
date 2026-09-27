@@ -1,82 +1,67 @@
-import { forwardRef, useEffect, useRef } from 'react';
-import { gsap } from 'gsap';
-import Magnetic from './Magnetic';
+import { forwardRef } from 'react';
+import { Link } from 'react-router-dom';
 
+const VARIANTS = {
+  primary:
+    'bg-accent text-[#fff] hover:bg-accent-hover shadow-[0_1px_2px_rgba(0,0,0,0.08)] active:scale-[0.97]',
+  secondary: 'bg-fill text-label hover:bg-[color-mix(in_srgb,var(--color-fill)_160%,transparent)] active:scale-[0.97]',
+  outline:
+    'text-accent ring-1 ring-inset ring-accent hover:bg-accent hover:text-[#fff] active:scale-[0.97]',
+  plain: 'text-accent hover:underline underline-offset-4',
+};
+
+const SIZES = {
+  sm: 'h-8 px-3.5 text-[13px]',
+  md: 'h-11 px-5 text-[15px]',
+  lg: 'h-12 px-7 text-[17px]',
+};
+
+/**
+ * Pill button following Apple's HIG. Renders a router Link when `to` is given,
+ * an anchor when `href` is given, and a native button otherwise.
+ */
 const Button = forwardRef(function Button(
   {
     children,
-    onClick,
     className = '',
     primary = false,
+    variant,
+    size = 'md',
     type = 'button',
-    disabled = false,
+    to,
+    href,
     ...rest
   },
-  ref
+  ref,
 ) {
-  const localRef = useRef(null);
-  const overlayRef = useRef(null);
+  const tone = VARIANTS[variant || (primary ? 'primary' : 'secondary')];
+  const classes = `inline-flex items-center justify-center gap-1.5 rounded-full font-medium tracking-[-0.01em] whitespace-nowrap select-none transition-all duration-300 ease-[var(--ease-apple)] disabled:opacity-40 disabled:pointer-events-none cursor-pointer ${SIZES[size]} ${tone} ${className}`;
 
-  const setRefs = (node) => {
-    localRef.current = node;
-    if (typeof ref === 'function') ref(node);
-    else if (ref) ref.current = node;
-  };
-
-  useEffect(() => {
-    const btn = localRef.current;
-    const overlay = overlayRef.current;
-    if (!btn || !overlay || disabled) return undefined;
-
-    const handleMouseEnter = () => {
-      gsap.to(overlay, {
-        x: '0%',
-        duration: 0.4,
-        ease: 'power2.out',
-      });
-    };
-
-    const handleMouseLeave = () => {
-      gsap.to(overlay, {
-        x: '-100%',
-        duration: 0.4,
-        ease: 'power2.inOut',
-      });
-    };
-
-    btn.addEventListener('mouseenter', handleMouseEnter);
-    btn.addEventListener('mouseleave', handleMouseLeave);
-
-    return () => {
-      btn.removeEventListener('mouseenter', handleMouseEnter);
-      btn.removeEventListener('mouseleave', handleMouseLeave);
-    };
-  }, [disabled]);
-
-  return (
-    <Magnetic strength={0.2}>
-      <button
-        ref={setRefs}
-        type={type}
-        onClick={onClick}
-        disabled={disabled}
-        className={`cursor-pointer cursor-scale-0 relative overflow-hidden px-4 py-2 border disabled:opacity-40 disabled:cursor-not-allowed ${
-          primary ? 'border-primary text-white' : 'border-gray-a text-gray-a'
-        } transition ${className} flex items-center justify-center`}
+  if (to) {
+    return (
+      <Link ref={ref} to={to} className={classes} {...rest}>
+        {children}
+      </Link>
+    );
+  }
+  if (href) {
+    const external = /^https?:/.test(href);
+    return (
+      <a
+        ref={ref}
+        href={href}
+        className={classes}
+        {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
         {...rest}
       >
-        <span
-          ref={overlayRef}
-          className={`absolute top-0 left-0 w-full h-full ${
-            primary ? 'bg-primary/10' : 'bg-gray-a/20'
-          } -translate-x-full pointer-events-none`}
-          style={{ zIndex: 0 }}
-        />
-        <span className="relative z-10 inline-flex items-center justify-center gap-1">
-          {children}
-        </span>
-      </button>
-    </Magnetic>
+        {children}
+      </a>
+    );
+  }
+  return (
+    <button ref={ref} type={type} className={classes} {...rest}>
+      {children}
+    </button>
   );
 });
 

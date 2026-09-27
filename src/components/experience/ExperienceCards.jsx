@@ -1,242 +1,119 @@
-import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import Button from '../ui/Button';
-import { getSkillIcon } from '../../utils/skillIcons';
+import Reveal from '../ui/Reveal';
+import TechChip from '../ui/TechChip';
+import { Chevron } from '../ui/SectionTitle';
 import { getProjectById } from '../../data';
 import { useContent } from '../../i18n/content';
 
-gsap.registerPlugin(ScrollTrigger);
-
-const TechTag = ({ name }) => {
-  const skillIcon = getSkillIcon(name);
-  const Icon = skillIcon?.Icon;
-
-  return (
-    <span
-      className="inline-flex items-center gap-1.5 cursor-pointer cursor-scale-0 px-2.5 py-0.5 bg-gray-a/20 hover:scale-110 hover:bg-primary/20 transition-all"
-      title={name}
-    >
-      {Icon && (
-        <Icon className="text-[14px] shrink-0" style={{ color: skillIcon.color }} aria-hidden />
-      )}
-      {name}
-    </span>
-  );
-};
-
-const CompanyLogo = ({ job }) => {
-  if (!job.logo) return null;
-
-  return (
-    <span
-      className={`inline-flex size-8 items-center justify-center overflow-hidden border border-gray-a shrink-0 ${
-        job.logoOnLight ? 'bg-[#ffffff]' : 'bg-gray-b'
-      }`}
-    >
-      <img
-        src={job.logo}
-        alt={`${job.company} logo`}
-        className="max-h-7 max-w-7 object-contain"
-      />
-    </span>
-  );
-};
+const CompanyLogo = ({ job }) => (
+  <span
+    className={`inline-flex size-12 items-center justify-center overflow-hidden rounded-[14px] ring-1 ring-separator shrink-0 ${
+      job.logoOnLight ? 'bg-[#ffffff]' : 'bg-surface-2'
+    }`}
+  >
+    {job.logo ? (
+      <img src={job.logo} alt="" className="max-h-9 max-w-9 object-contain" />
+    ) : (
+      <span className="text-[18px] font-semibold text-label-2">{job.company?.[0]}</span>
+    )}
+  </span>
+);
 
 const ExperienceCard = ({ job, highlightLimit }) => {
   const { t, localize } = useContent();
   const highlights =
     highlightLimit > 0 ? (job.highlights || []).slice(0, highlightLimit) : job.highlights || [];
-  const related = (job.relatedProjects || [])
-    .map((id) => localize(getProjectById(id)))
-    .filter(Boolean);
-  const companyName = (
-    <span className="font-semibold text-white cursor-pointer cursor-white cursor-scale-1">
-      {job.companyUrl ? (
-        <a href={job.companyUrl} target="_blank" rel="noopener noreferrer">
-          {job.company}
-        </a>
-      ) : (
-        job.company
-      )}
-    </span>
-  );
+  const related = (job.relatedProjects || []).map((id) => localize(getProjectById(id))).filter(Boolean);
 
   return (
-    <article className="border bg-gray-b border-gray-a hover:shadow-lg transition-shadow duration-300 flex flex-col">
-      <p className="border-b border-gray-a p-[8px] flex items-center justify-between gap-2">
-        <span className="truncate">{companyName}</span>
-        {job.current && (
-          <span className="inline-flex items-center gap-1 shrink-0">
-            <span className="bg-primary h-[10px] aspect-square inline-block mb-[-1px]" />
-            {t('experience.present')}
-          </span>
-        )}
-      </p>
+    <article className="surface p-6 md:p-8">
+      <div className="flex items-start gap-4">
+        <CompanyLogo job={job} />
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <h3 className="text-[21px] font-semibold tracking-[-0.02em] text-label leading-tight">
+              {job.title}
+            </h3>
+            {job.current && (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[color-mix(in_srgb,var(--color-green)_14%,transparent)] px-2.5 py-0.5 text-[12px] font-semibold text-green">
+                <span className="size-1.5 rounded-full bg-green" aria-hidden />
+                {t('experience.present')}
+              </span>
+            )}
+          </div>
+          <p className="mt-1 text-[15px] text-label-2">
+            {job.companyUrl ? (
+              <a href={job.companyUrl} target="_blank" rel="noopener noreferrer" className="text-label hover:text-accent font-medium">
+                {job.company}
+              </a>
+            ) : (
+              <span className="text-label font-medium">{job.company}</span>
+            )}
+            <span className="mx-2 text-label-3">·</span>
+            {job.period}
+            {job.location ? (
+              <>
+                <span className="mx-2 text-label-3">·</span>
+                {job.location}
+              </>
+            ) : null}
+          </p>
+        </div>
+      </div>
 
-      {job.stack?.length > 0 && (
-        <p className="border-b border-gray-a p-[8px]">
-          <span className="flex flex-wrap gap-[8px]">
-            {job.stack.map((tech) => (
-              <TechTag key={tech} name={tech} />
-            ))}
-          </span>
-        </p>
-      )}
+      {job.summary && <p className="mt-5 text-[17px] text-label">{job.summary}</p>}
 
-      <div className="flex flex-col gap-[16px] p-[16px] flex-1">
-        <h2 className="text-large font-semibold text-white cursor-pointer cursor-white cursor-scale-1.2">
-          {job.title}
-        </h2>
-        <p className="cursor-pointer cursor-white">
-          {job.period}
-          {job.location ? ` — ${job.location}` : ''}
-        </p>
-        {job.summary && <p className="cursor-pointer cursor-white">{job.summary}</p>}
-        <ul className="flex flex-col gap-2">
+      {highlights.length > 0 && (
+        <ul className="mt-4 flex flex-col gap-2.5">
           {highlights.map((line) => (
-            <li key={line} className="flex gap-2 text-sm leading-relaxed">
-              <span className="text-primary shrink-0">#</span>
+            <li key={line} className="flex gap-3 text-[15px] leading-relaxed text-label-2">
+              <span className="mt-[9px] size-1.5 shrink-0 rounded-full bg-label-3" aria-hidden />
               <span>{line}</span>
             </li>
           ))}
         </ul>
-        {related.length > 0 && (
-          <div className="flex flex-wrap gap-[16px] mt-auto pt-2">
-            {related.map((project) => (
-              <Link key={project.id} to={`/works/${project.id}`}>
-                <Button primary>
-                  {project.title} {'<~>'}
-                </Button>
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
+      )}
+
+      {job.stack?.length > 0 && (
+        <div className="mt-5 flex flex-wrap gap-1.5">
+          {job.stack.map((tech) => (
+            <TechChip key={tech} name={tech} />
+          ))}
+        </div>
+      )}
+
+      {related.length > 0 && (
+        <div className="mt-5 pt-5 border-t border-separator flex flex-wrap gap-x-6 gap-y-2">
+          {related.map((project) => (
+            <Link key={project.id} to={`/works/${project.id}`} className="link-arrow text-[15px]">
+              {project.title}
+              <Chevron />
+            </Link>
+          ))}
+        </div>
+      )}
     </article>
   );
 };
 
-const ExperienceCards = ({ jobs, highlightLimit = 0 }) => {
-  const rootRef = useRef(null);
-  const cardsRef = useRef([]);
-
-  useEffect(() => {
-    if (!jobs?.length) return undefined;
-    cardsRef.current = cardsRef.current.slice(0, jobs.length);
-
-    const cleanups = cardsRef.current.map((card) => {
-      if (!card) return undefined;
-
-      const handleMouseMove = (e) => {
-        const rect = card.getBoundingClientRect();
-        const offsetX = (e.clientX - (rect.left + rect.width / 2)) * 0.03;
-        const offsetY = (e.clientY - (rect.top + rect.height / 2)) * 0.03;
-        gsap.to(card, {
-          x: offsetX,
-          y: offsetY,
-          duration: 0.5,
-          ease: 'power2.out',
-        });
-      };
-
-      const handleMouseLeave = () => {
-        gsap.to(card, { x: 0, y: 0, duration: 0.5, ease: 'power2.out' });
-      };
-
-      card.addEventListener('mousemove', handleMouseMove);
-      card.addEventListener('mouseleave', handleMouseLeave);
-
-      return () => {
-        card.removeEventListener('mousemove', handleMouseMove);
-        card.removeEventListener('mouseleave', handleMouseLeave);
-      };
-    });
-
-    const root = rootRef.current;
-    const line = root?.querySelector('[data-exp-line]');
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    const ctx = gsap.context(() => {
-      if (line && !reduceMotion) {
-        gsap.fromTo(
-          line,
-          { scaleY: 0 },
-          {
-            scaleY: 1,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: root,
-              start: 'top 75%',
-              end: 'bottom 40%',
-              scrub: 0.5,
-            },
-          },
-        );
-      }
-    }, root);
-
-    return () => {
-      cleanups.forEach((fn) => fn?.());
-      ctx.revert();
-    };
-  }, [jobs]);
-
-  return (
-    <div ref={rootRef} className="relative">
-      <span
-        data-exp-line
-        className="absolute start-4 md:start-1/2 top-2 bottom-2 w-px origin-top bg-gray-a md:-translate-x-1/2 rtl:md:translate-x-1/2"
-        aria-hidden
-      />
-
-      <div className="flex flex-col gap-8">
-        {jobs.map((job, index) => {
-          const isLeft = index % 2 === 0;
-
-          return (
-            <div
-              key={job.id || `${job.company}-${job.period}`}
-              className={`relative ps-12 md:ps-0 md:w-1/2 ${
-                isLeft ? 'md:pe-8 md:me-auto' : 'md:ps-8 md:ms-auto'
-              }`}
-            >
-              <span className="md:hidden absolute start-0 top-3 z-10">
-                <CompanyLogo job={job} />
-              </span>
-              <span
-                className="md:hidden absolute start-8 top-[29px] h-px w-4 bg-gray-a"
-                aria-hidden
-              />
-              <span
-                className={`hidden md:block absolute top-3 z-10 ${
-                  isLeft ? 'end-[-16px]' : 'start-[-16px]'
-                }`}
-              >
-                <CompanyLogo job={job} />
-              </span>
-              <span
-                className={`hidden md:block absolute top-[29px] h-px w-8 bg-gray-a ${
-                  isLeft ? 'end-0' : 'start-0'
-                }`}
-                aria-hidden
-              />
-
-              <div
-                ref={(el) => {
-                  cardsRef.current[index] = el;
-                }}
-                className="will-change-transform"
-              >
-                <ExperienceCard job={job} highlightLimit={highlightLimit} />
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-};
+const ExperienceCards = ({ jobs, highlightLimit = 0 }) => (
+  <ol className="relative flex flex-col gap-6">
+    <span
+      className="hidden md:block absolute start-[23px] top-6 bottom-6 w-px bg-separator"
+      aria-hidden
+    />
+    {jobs.map((job, i) => (
+      <Reveal as="li" key={job.id || `${job.company}-${job.period}`} delay={i * 60} className="relative md:ps-16">
+        <span
+          className={`hidden md:block absolute start-[17px] top-9 size-[13px] rounded-full ring-4 ring-bg ${
+            job.current ? 'bg-accent' : 'bg-label-3'
+          }`}
+          aria-hidden
+        />
+        <ExperienceCard job={job} highlightLimit={highlightLimit} />
+      </Reveal>
+    ))}
+  </ol>
+);
 
 export default ExperienceCards;

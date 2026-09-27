@@ -9,15 +9,12 @@ import Transition from '../components/functions/Transition.jsx';
 export default function Index() {
   return (
     <Transition>
-      <div className="">
-        {/* <div className="bg-[length:100%] bg-[url('/background.png')] md:bg-[url('/background.png')]"> */}
-        <Hero />
-        <Projects />
-        <Experience />
-        <Skills />
-        <About />
-        <Contact />
-      </div>
+      <Hero />
+      <Projects />
+      <Experience />
+      <Skills />
+      <About />
+      <Contact />
     </Transition>
   );
 }
