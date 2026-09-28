@@ -9,8 +9,8 @@ export const AboutStory = ({ full = false }) => {
   const shown = full ? paragraphs : paragraphs.slice(0, 2);
 
   return (
-    <div className="grid gap-10 md:gap-16 md:grid-cols-12 items-center">
-      <Reveal className="md:col-span-5">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-10 md:gap-12 lg:gap-16 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] items-center">
+      <Reveal>
         <div className="relative overflow-hidden rounded-[36px] aspect-[4/5] bg-surface-2">
           <div
             aria-hidden
@@ -28,7 +28,7 @@ export const AboutStory = ({ full = false }) => {
           />
         </div>
       </Reveal>
-      <div className="md:col-span-7">
+      <div className="min-w-0">
         <Reveal as="h3" className="headline-2 text-label">
           {t('about.title')}
         </Reveal>

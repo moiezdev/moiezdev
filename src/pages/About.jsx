@@ -19,8 +19,8 @@ const About = () => {
         </div>
       </section>
       <section className="w-full px-5 pt-28 md:pt-40">
-        <div className="app-container grid gap-10 lg:grid-cols-12 items-center">
-          <div className="lg:col-span-5">
+        <div className="app-container grid grid-cols-[minmax(0,1fr)] gap-10 lg:gap-16 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] items-center">
+          <div>
             <Reveal as="p" className="eyebrow mb-3">
               {t('about.codeEyebrow')}
             </Reveal>
@@ -31,7 +31,7 @@ const About = () => {
               {t('about.codeBody')}
             </Reveal>
           </div>
-          <Reveal delay={120} className="lg:col-span-7">
+          <Reveal delay={120} className="min-w-0">
             <CodeWindow />
           </Reveal>
         </div>

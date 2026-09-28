@@ -17,6 +17,20 @@
       "Refactored a large portion of the codebase—improved code structure and maintainability, eliminated side effects caused by rapid development, and enhanced overall application stability."
     ]
   ],
+  "metrics": [
+    {
+      "value": "~70%",
+      "label": "fewer support requests"
+    },
+    {
+      "value": "~64%",
+      "label": "lower API latency"
+    },
+    {
+      "value": "30+",
+      "label": "CMS features shipped"
+    }
+  ],
   "technologies": [
     "React",
     "Flutter",

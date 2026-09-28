@@ -1,9 +1,11 @@
+import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import Reveal from '../ui/Reveal';
 import TechChip from '../ui/TechChip';
 import { Chevron } from '../ui/SectionTitle';
 import { getProjectById } from '../../data';
 import { useContent } from '../../i18n/content';
+import { clamp01, useScrollFrame } from '../../hooks/useScrollFrame';
 
 const CompanyLogo = ({ job }) => (
   <span
@@ -28,8 +30,8 @@ const ExperienceCard = ({ job, highlightLimit }) => {
     .filter(Boolean);
 
   return (
-    <article className="surface p-6 md:p-8 lg:grid lg:grid-cols-12 lg:gap-10">
-      <div className="flex items-start gap-4 lg:col-span-4 lg:flex-col">
+    <article className="surface p-6 md:p-8 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-10">
+      <div className="flex items-start gap-4 lg:flex-col">
         <CompanyLogo job={job} />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
@@ -68,7 +70,7 @@ const ExperienceCard = ({ job, highlightLimit }) => {
         </div>
       </div>
 
-      <div className="lg:col-span-8">
+      <div className="min-w-0">
         {job.summary && <p className="mt-5 lg:mt-0 text-[17px] text-label">{job.summary}</p>}
 
         {highlights.length > 0 && (
@@ -105,29 +107,44 @@ const ExperienceCard = ({ job, highlightLimit }) => {
   );
 };
 
-const ExperienceCards = ({ jobs, highlightLimit = 0 }) => (
-  <ol className="relative flex flex-col gap-6">
-    <span
-      className="hidden md:block absolute start-[23px] top-6 bottom-6 w-px bg-separator"
-      aria-hidden
-    />
-    {jobs.map((job, i) => (
-      <Reveal
-        as="li"
-        key={job.id || `${job.company}-${job.period}`}
-        delay={i * 60}
-        className="relative md:ps-16"
-      >
+const ExperienceCards = ({ jobs, highlightLimit = 0 }) => {
+  const listRef = useRef(null);
+  const fillRef = useRef(null);
+
+  // the timeline line fills in as the list scrolls past the middle of the screen
+  useScrollFrame(listRef, (el, vh) => {
+    const r = el.getBoundingClientRect();
+    const p = clamp01((vh * 0.55 - r.top) / r.height);
+    if (fillRef.current) fillRef.current.style.transform = `scaleY(${p})`;
+  });
+
+  return (
+    <ol ref={listRef} className="relative flex flex-col gap-6">
+      <span className="hidden md:block absolute start-[23px] top-6 bottom-6 w-px bg-separator" aria-hidden>
         <span
-          className={`hidden md:block absolute start-[17px] top-9 size-[13px] rounded-full ring-4 ring-bg ${
-            job.current ? 'bg-accent' : 'bg-label-3'
-          }`}
-          aria-hidden
+          ref={fillRef}
+          className="absolute inset-0 origin-top bg-label/60 motion-reduce:!transform-none"
+          style={{ transform: 'scaleY(0)' }}
         />
-        <ExperienceCard job={job} highlightLimit={highlightLimit} />
-      </Reveal>
-    ))}
-  </ol>
-);
+      </span>
+      {jobs.map((job, i) => (
+        <Reveal
+          as="li"
+          key={job.id || `${job.company}-${job.period}`}
+          delay={i * 60}
+          className="relative md:ps-16"
+        >
+          <span
+            className={`hidden md:block absolute start-[17px] top-9 size-[13px] rounded-full ring-4 ring-bg ${
+              job.current ? 'bg-accent' : 'bg-label-3'
+            }`}
+            aria-hidden
+          />
+          <ExperienceCard job={job} highlightLimit={highlightLimit} />
+        </Reveal>
+      ))}
+    </ol>
+  );
+};
 
 export default ExperienceCards;

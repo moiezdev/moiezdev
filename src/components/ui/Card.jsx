@@ -34,12 +34,20 @@ const Card = ({ project, featured = false, eyebrow, maxTech = 4, className = '' 
           featured ? 'aspect-[16/10] lg:aspect-auto lg:w-[58%] lg:min-h-[420px]' : 'aspect-[16/10]'
         }`}
       >
-        <LazyImage
-          src={project.imageUrl}
-          alt={`${project.title} preview`}
-          wrapperClass="absolute inset-0 w-full h-full"
-          className="w-full h-full object-cover transition-transform duration-700 ease-[var(--ease-apple)] group-hover:scale-[1.04]"
-        />
+        {project.screenshot === false ? (
+          // no real screenshot (e.g. only a logo): a calm typographic placeholder
+          <div className="blueprint absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center transition-transform duration-700 ease-[var(--ease-apple)] group-hover:scale-[1.04]">
+            <span className="text-[44px] md:text-[52px] font-bold tracking-[-0.04em] text-label leading-none">{project.title}</span>
+            <span className="font-mono text-[12px] text-label-3">{tech.slice(0, 4).join(' · ')}</span>
+          </div>
+        ) : (
+          <LazyImage
+            src={project.imageUrl}
+            alt={`${project.title} preview`}
+            wrapperClass="absolute inset-0 w-full h-full"
+            className="w-full h-full object-cover transition-transform duration-700 ease-[var(--ease-apple)] group-hover:scale-[1.04]"
+          />
+        )}
       </div>
 
       <div className={`flex flex-1 flex-col gap-3 ${featured ? 'p-7 md:p-10 lg:justify-center' : 'p-6 md:p-7'}`}>

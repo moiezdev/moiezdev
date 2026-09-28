@@ -56,7 +56,26 @@
       "resume": "Download résumé",
       "eyebrow": "Experience",
       "headline": "Where I’ve made an impact.",
-      "pageTitle": "Experience."
+      "pageTitle": "Experience.",
+      "impact": [
+        {
+          "value": "~70%",
+          "label": "fewer support requests after a UX overhaul"
+        },
+        {
+          "value": "~64%",
+          "label": "lower API latency on the POS platform"
+        },
+        {
+          "value": "10K+",
+          "label": "monthly users on travel platforms I led"
+        },
+        {
+          "value": "~25%",
+          "label": "less downtime from digitized operations"
+        }
+      ],
+      "impactTitle": "Impact at a glance"
     },
     "projects": {
       "section": "projects",
@@ -77,7 +96,15 @@
       "more": "More projects",
       "view": "View",
       "all": "All",
-      "count": "{{count}} projects"
+      "count": "{{count}} projects",
+      "status": "Status",
+      "statusLive": "Live",
+      "statusPrivate": "Private / internal",
+      "stack": "Stack",
+      "techCount": "{{count}} technologies",
+      "index": "Project",
+      "previous": "Previous",
+      "next": "Next"
     },
     "skills": {
       "section": "skills",
@@ -106,7 +133,12 @@
       "fail": "Something went wrong! Please try again.",
       "eyebrow": "Contact",
       "headline": "Let’s build something great.",
-      "sent": "Thanks — your message is on its way. I’ll reply soon."
+      "sent": "Thanks — your message is on its way. I’ll reply soon.",
+      "status": "Status",
+      "available": "Available",
+      "localTime": "Riyadh time",
+      "replies": "Replies",
+      "replyTime": "Within 24h"
     },
     "footer": {
       "role": "Senior Full Stack Engineer & Software Architect",
@@ -118,7 +150,26 @@
     "notFound": {
       "title": "Page Not Found",
       "body": "Sorry, the page you’re looking for doesn’t exist or has been moved.",
-      "home": "Go Back Home"
+      "home": "Go Back Home",
+      "or": "Or jump to",
+      "links": [
+        {
+          "to": "/works",
+          "label": "Work"
+        },
+        {
+          "to": "/experience",
+          "label": "Experience"
+        },
+        {
+          "to": "/about",
+          "label": "About"
+        },
+        {
+          "to": "/contact",
+          "label": "Contact"
+        }
+      ]
     },
     "chat": {
       "welcome": "Hey — I'm BotFolio. I'll walk you through Moiz's work as a Full Stack Engineer and Software Architect. You can explore [[nav:/works|All works]], [[nav:/experience|Experience]], or [[nav:/about|About Moiz]].",
@@ -287,7 +338,26 @@
       "resume": "تحميل السيرة الذاتية",
       "eyebrow": "الخبرة",
       "headline": "حيث صنعت أثراً.",
-      "pageTitle": "الخبرة."
+      "pageTitle": "الخبرة.",
+      "impact": [
+        {
+          "value": "~70٪",
+          "label": "طلبات دعم أقل بعد تحسين تجربة الاستخدام"
+        },
+        {
+          "value": "~64٪",
+          "label": "زمن استجابة أقل لواجهات نظام نقاط البيع"
+        },
+        {
+          "value": "+10K",
+          "label": "مستخدم شهرياً على منصات السفر التي قدتها"
+        },
+        {
+          "value": "~25٪",
+          "label": "توقف أقل بعد رقمنة العمليات"
+        }
+      ],
+      "impactTitle": "الأثر باختصار"
     },
     "projects": {
       "section": "المشاريع",
@@ -308,7 +378,15 @@
       "more": "مشاريع أخرى",
       "view": "عرض",
       "all": "الكل",
-      "count": "{{count}} مشاريع"
+      "count": "{{count}} مشاريع",
+      "status": "الحالة",
+      "statusLive": "مباشر",
+      "statusPrivate": "خاص / داخلي",
+      "stack": "التقنيات",
+      "techCount": "{{count}} تقنية",
+      "index": "المشروع",
+      "previous": "السابق",
+      "next": "التالي"
     },
     "skills": {
       "section": "المهارات",
@@ -337,7 +415,12 @@
       "fail": "حدث خطأ! حاول مرة أخرى.",
       "eyebrow": "التواصل",
       "headline": "لنبنِ شيئاً رائعاً.",
-      "sent": "شكراً — رسالتك في الطريق. سأرد قريباً."
+      "sent": "شكراً — رسالتك في الطريق. سأرد قريباً.",
+      "status": "الحالة",
+      "available": "متاح",
+      "localTime": "توقيت الرياض",
+      "replies": "الرد",
+      "replyTime": "خلال يوم"
     },
     "footer": {
       "role": "مهندس برمجيات متكامل أول ومعماري برمجيات",
@@ -349,7 +432,26 @@
     "notFound": {
       "title": "الصفحة غير موجودة",
       "body": "عذراً، الصفحة التي تبحث عنها غير موجودة أو نُقلت.",
-      "home": "العودة للرئيسية"
+      "home": "العودة للرئيسية",
+      "or": "أو انتقل إلى",
+      "links": [
+        {
+          "to": "/works",
+          "label": "الأعمال"
+        },
+        {
+          "to": "/experience",
+          "label": "الخبرة"
+        },
+        {
+          "to": "/about",
+          "label": "نبذة"
+        },
+        {
+          "to": "/contact",
+          "label": "التواصل"
+        }
+      ]
     },
     "chat": {
       "welcome": "مرحباً — أنا BotFolio. أعرّفك بعمل معيز كمهندس برمجيات متكامل ومعماري برمجيات. يمكنك استكشاف [[nav:/works|كل الأعمال]] أو [[nav:/experience|الخبرة]] أو [[nav:/about|نبذة عن معيز]].",

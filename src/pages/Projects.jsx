@@ -55,8 +55,13 @@ const Projects = () => {
           <p className="text-center text-[13px] text-label-3 mb-10 font-mono" aria-live="polite">
             {t('projects.count', { count: shown.length })}
           </p>
+          {filter === ALL && projects[0] && (
+            <Reveal className="mb-6">
+              <Card project={projects[0]} featured />
+            </Reveal>
+          )}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {shown.map((project, i) => (
+            {(filter === ALL ? shown.slice(1) : shown).map((project, i) => (
               <Reveal key={project.id} delay={(i % 3) * 80}>
                 <Card project={project} maxTech={3} />
               </Reveal>

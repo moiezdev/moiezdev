@@ -18,6 +18,18 @@ const Experience = () => {
 
       <section className="w-full px-5">
         <div className="app-container">
+          <h2 className="sr-only">{t('experience.impactTitle')}</h2>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-14 md:mb-20">
+            {t('experience.impact').map((item, i) => (
+              <Reveal key={item.label} delay={i * 70} className="surface p-5 md:p-7">
+                <p className="text-[34px] md:text-[46px] font-bold tracking-[-0.04em] leading-none text-gradient">
+                  <span dir="ltr" className="inline-block px-[0.06em]">{item.value}</span>
+                </p>
+                <p className="mt-3 text-[13px] md:text-[15px] leading-snug text-label-2">{item.label}</p>
+              </Reveal>
+            ))}
+          </div>
+
           <ExperienceCards jobs={jobs} />
 
           <div className="grid gap-6 md:grid-cols-2 mt-16">

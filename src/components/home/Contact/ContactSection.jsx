@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import emailjs from '@emailjs/browser';
 import Button from '../../ui/Button';
 import Reveal from '../../ui/Reveal';
@@ -29,8 +29,22 @@ const Field = ({ name, label, type = 'text', multiline = false }) => {
   );
 };
 
+/** Live local time in Riyadh, ticking once a minute. */
+const RiyadhTime = ({ lang }) => {
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 15000);
+    return () => clearInterval(id);
+  }, []);
+  return new Intl.DateTimeFormat(lang === 'ar' ? 'ar-SA-u-nu-latn' : 'en-US', {
+    timeZone: 'Asia/Riyadh',
+    hour: 'numeric',
+    minute: '2-digit',
+  }).format(now);
+};
+
 const ContactSection = () => {
-  const { t } = useContent();
+  const { t, lang } = useContent();
   const formRef = useRef();
   const [status, setStatus] = useState('idle'); // idle | sending | sent | error
   const [errorMessage, setErrorMessage] = useState('');
@@ -60,9 +74,32 @@ const ContactSection = () => {
   const direct = contacts.filter((c) => c.categories.includes('contact') || c.platform === 'GitHub');
 
   return (
-    <div className="grid gap-6 lg:grid-cols-12">
-      <Reveal className="lg:col-span-5 flex flex-col gap-6">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+      <Reveal className="flex flex-col gap-6">
         <p className="text-[17px] leading-[1.6] text-label-2">{t('contact.intro')}</p>
+
+        <dl className="grid grid-cols-3 surface !rounded-[20px] divide-x divide-separator">
+          <div className="p-4">
+            <dt className="text-[12px] text-label-3">{t('contact.status')}</dt>
+            <dd className="mt-1 flex items-center gap-1.5 text-[14px] font-medium text-label">
+              <span className="relative flex size-2 shrink-0" aria-hidden>
+                <span className="absolute inset-0 rounded-full bg-green opacity-60 animate-ping motion-reduce:hidden" />
+                <span className="relative size-2 rounded-full bg-green" />
+              </span>
+              {t('contact.available')}
+            </dd>
+          </div>
+          <div className="p-4">
+            <dt className="text-[12px] text-label-3">{t('contact.localTime')}</dt>
+            <dd className="mt-1 text-[14px] font-medium text-label tabular-nums">
+              <RiyadhTime lang={lang} />
+            </dd>
+          </div>
+          <div className="p-4">
+            <dt className="text-[12px] text-label-3">{t('contact.replies')}</dt>
+            <dd className="mt-1 text-[14px] font-medium text-label">{t('contact.replyTime')}</dd>
+          </div>
+        </dl>
 
         <div>
           <p className="text-[13px] font-semibold uppercase tracking-wider text-label-3 mb-2 px-1">
@@ -100,7 +137,7 @@ const ContactSection = () => {
         </div>
       </Reveal>
 
-      <Reveal delay={100} className="lg:col-span-7">
+      <Reveal delay={100}>
         <form ref={formRef} onSubmit={sendEmail} className="surface p-6 md:p-8 flex flex-col gap-4 relative">
           <input type="hidden" name="time" defaultValue={formattedDate(new Date())} />
           <div className="grid gap-4 sm:grid-cols-2">
