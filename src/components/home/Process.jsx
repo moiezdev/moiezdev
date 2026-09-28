@@ -1,7 +1,7 @@
 import SectionTitle from '../ui/SectionTitle';
 import Reveal from '../ui/Reveal';
 import WindowChrome from '../ui/WindowChrome';
-import { getSkillIcon, readableIconColor } from '../../utils/skillIcons';
+import ArchitectureGraph from './ArchitectureGraph';
 import { useContent } from '../../i18n/content';
 
 const STEP_ICONS = [
@@ -11,73 +11,9 @@ const STEP_ICONS = [
   'M10 3v9m0-9L6.5 6.5M10 3l3.5 3.5M4 12v3a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-3',
 ];
 
-/** One node in the architecture diagram. */
-const Node = ({ label, tech }) => {
-  const skill = tech ? getSkillIcon(tech) : null;
-  const Icon = skill?.Icon;
-  return (
-    <div className="flex items-center gap-2.5 rounded-xl bg-surface ring-1 ring-separator px-3 py-2.5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-      {Icon && <Icon className="text-[16px] shrink-0" style={{ color: readableIconColor(skill.color) }} aria-hidden />}
-      <span className="text-[13px] font-medium text-label leading-tight">{label}</span>
-    </div>
-  );
-};
-
-const Layer = ({ title, nodes, delay }) => (
-  <Reveal delay={delay} className="flex flex-col gap-2 min-w-0">
-    <p className="text-[11px] font-semibold uppercase tracking-wider text-label-3 mb-1">{title}</p>
-    {nodes.map((n) => (
-      <Node key={n.label} {...n} />
-    ))}
-  </Reveal>
-);
-
-/** Animated connector: a hairline with a pulse travelling along it. */
-const Wire = ({ delay = 0 }) => (
-  <div className="relative flex items-center justify-center lg:w-12 h-8 lg:h-auto" aria-hidden>
-    <span className="absolute lg:inset-x-0 lg:h-px lg:top-1/2 inset-y-0 w-px lg:w-auto bg-separator" />
-    <span className="wire-pulse" style={{ animationDelay: `${delay}s` }} />
-  </div>
-);
-
 const Process = () => {
   const { t } = useContent();
   const steps = t('process.steps');
-  const layers = [
-    {
-      title: t('process.layers.clients'),
-      nodes: [
-        { label: 'Web apps', tech: 'React' },
-        { label: 'Storefronts', tech: 'NextJs' },
-        { label: 'Mobile', tech: 'Flutter' },
-      ],
-    },
-    {
-      title: t('process.layers.api'),
-      nodes: [
-        { label: 'API gateway', tech: 'NestJs' },
-        { label: 'Auth · RBAC', tech: 'OAuth2' },
-        { label: 'REST & webhooks', tech: 'REST APIs' },
-      ],
-    },
-    {
-      title: t('process.layers.services'),
-      nodes: [
-        { label: 'POS & orders', tech: 'Node' },
-        { label: 'Loyalty & wallets', tech: 'Apple Wallet' },
-        { label: 'AI search', tech: 'OpenRouter' },
-      ],
-    },
-    {
-      title: t('process.layers.data'),
-      nodes: [
-        { label: 'PostgreSQL', tech: 'PostGreSQL' },
-        { label: 'Prisma ORM', tech: 'Prisma' },
-        { label: 'Payments', tech: 'MyFatoorah' },
-      ],
-    },
-  ];
-
   return (
     <section className="w-full px-5 pt-28 md:pt-40" id="process">
       <div className="app-container">
@@ -104,17 +40,18 @@ const Process = () => {
         <Reveal className="mt-16 md:mt-20">
           <WindowChrome title="system-architecture.ts" meta={t('process.live')}>
             <div className="blueprint p-6 md:p-10">
-              <div className="flex flex-col lg:flex-row lg:items-stretch">
-                {layers.map((layer, i) => (
-                  <div key={layer.title} className="contents">
-                    <div className="lg:flex-1">
-                      <Layer {...layer} delay={i * 90} />
-                    </div>
-                    {i < layers.length - 1 && <Wire delay={i * 0.6} />}
-                  </div>
-                ))}
+              <ArchitectureGraph
+                titles={{
+                  clients: t('process.layers.clients'),
+                  api: t('process.layers.api'),
+                  services: t('process.layers.services'),
+                  data: t('process.layers.data'),
+                }}
+              />
+              <div className="mt-10 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-[13px] text-label-2 max-w-2xl">{t('process.caption')}</p>
+                <p className="hidden lg:block text-[12px] text-label-3">{t('process.hint')}</p>
               </div>
-              <p className="mt-8 text-[13px] text-label-2 max-w-2xl">{t('process.caption')}</p>
             </div>
           </WindowChrome>
         </Reveal>

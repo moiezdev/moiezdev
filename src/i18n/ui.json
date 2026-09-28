@@ -219,9 +219,10 @@
         "clients": "Clients",
         "api": "API layer",
         "services": "Services",
-        "data": "Data & payments"
+        "data": "Data & integrations"
       },
-      "caption": "A simplified view of the retail platforms I architect: POS, loyalty and wallets on a typed NestJS API, backed by PostgreSQL."
+      "caption": "A simplified view of the retail platforms I architect: POS, loyalty and wallets on a typed NestJS API, with Redis-backed workers and PostgreSQL underneath.",
+      "hint": "Hover a node to trace its connections"
     },
     "moments": {
       "eyebrow": "Beyond the code",
@@ -449,9 +450,10 @@
         "clients": "العملاء",
         "api": "طبقة الواجهات",
         "services": "الخدمات",
-        "data": "البيانات والمدفوعات"
+        "data": "البيانات والتكاملات"
       },
-      "caption": "عرض مبسّط لمنصات التجزئة التي أصممها: نقاط البيع والولاء والمحافظ على واجهة NestJS مُنمّطة، مدعومة بـ PostgreSQL."
+      "caption": "عرض مبسّط لمنصات التجزئة التي أصمم معماريتها: نقاط البيع والولاء والمحافظ على واجهة NestJS مُنمّطة، مع عمّال خلفية على Redis وقاعدة PostgreSQL.",
+      "hint": "مرّر فوق أي عنصر لتتبّع اتصالاته"
     },
     "moments": {
       "eyebrow": "ما وراء الكود",
