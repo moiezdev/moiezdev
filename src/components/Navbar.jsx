@@ -85,7 +85,7 @@ const Navbar = () => {
     >
       <nav className="app-container px-5 h-[52px] flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2 text-label font-semibold tracking-[-0.02em]" aria-label="MoizDev home">
-          <Logo size={26} staticLogo={true} />
+          <Logo size={28} />
           <span className="text-[17px]">MoizDev</span>
         </Link>
 

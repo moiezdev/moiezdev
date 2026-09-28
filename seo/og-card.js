@@ -25,7 +25,7 @@ const INK = '#1d1d1f';
 const GRAPHITE = '#3d4451';
 const MUTED = '#6e6e73';
 
-const LOGO_SVG = read('public/logo.svg').toString('utf8').replace(/#FFFF00/gi, GRAPHITE);
+const LOGO_SVG = read('public/logo.svg').toString('utf8').replace(/#3d4451/gi, GRAPHITE);
 const LOGO_URI = `data:image/svg+xml;base64,${Buffer.from(LOGO_SVG).toString('base64')}`;
 
 /** Tiny element helper: h('div', style, ...children) */
@@ -75,7 +75,7 @@ const textColumn = ({ eyebrow, title, sub, chips = [], url }) =>
     h(
       'div',
       { alignItems: 'center', fontSize: 21, fontWeight: 700, color: INK },
-      img(LOGO_URI, { width: 34, height: 18, marginRight: 11 }),
+      img(LOGO_URI, { width: 33, height: 20, marginRight: 11 }),
       'MoizDev',
     ),
     h('div', { flexGrow: 1 }),
