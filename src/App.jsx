@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useEffect } from 'react';
 
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -10,6 +10,7 @@ import ChatBot from './components/chatbot/ChatBot';
 import Cursor from './components/ui/Cursor';
 import CommandPalette from './components/CommandPalette';
 import ScrollToTop from './components/functions/ScrollToTop';
+import { startSmoothScroll } from './utils/smoothScroll';
 import RouteMeta from './components/functions/RouteMeta';
 
 const Home = lazy(() => import('./pages/Index'));
@@ -24,6 +25,9 @@ const Cv = lazy(() => import('./pages/Cv'));
 function AppShell() {
   const { pathname } = useLocation();
   const isCv = pathname === '/cv';
+
+  // the printable CV keeps plain native scrolling
+  useEffect(() => (isCv ? undefined : startSmoothScroll()), [isCv]);
 
   if (isCv) {
     return (

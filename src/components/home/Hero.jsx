@@ -5,6 +5,7 @@ import Reveal from '../ui/Reveal';
 import { Chevron } from '../ui/SectionTitle';
 import { useContent } from '../../i18n/content';
 import { getExperienceYears } from '../../utils/experience';
+import { scrollToTarget } from '../../utils/smoothScroll';
 
 const Stat = ({ value, label }) => (
   <div className="flex flex-col items-center text-center px-4">
@@ -102,7 +103,7 @@ const Hero = () => {
         <Reveal delay={300} className="mt-5">
           <button
             type="button"
-            onClick={() => document.getElementById('work')?.scrollIntoView({ behavior: 'smooth' })}
+            onClick={() => scrollToTarget(document.getElementById('work'), { offset: -64 })}
             className="link-arrow text-[15px] cursor-pointer"
           >
             {t('hero.seeWork')}
