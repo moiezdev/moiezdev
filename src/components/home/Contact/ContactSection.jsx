@@ -20,7 +20,9 @@ const Field = ({ name, label, type = 'text', multiline = false }) => {
   return (
     <div className="field">
       {multiline ? (
-        <textarea id={id} name={name} required placeholder=" " />
+        <div className="field-area">
+          <textarea id={id} name={name} required placeholder=" " />
+        </div>
       ) : (
         <input id={id} name={name} type={type} required placeholder=" " autoComplete={name === 'subject' ? 'off' : name} />
       )}

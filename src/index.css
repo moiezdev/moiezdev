@@ -252,9 +252,31 @@ html[data-theme='dark'] .text-gradient {
     border-color 0.2s,
     box-shadow 0.2s;
 }
-.field textarea {
-  min-height: 160px;
+/* the textarea sits below the floating label inside a framed box, so text
+   that scrolls up is clipped under the label instead of running behind it */
+.field-area {
+  border-radius: 14px;
+  border: 1px solid var(--color-separator);
+  background: var(--color-surface);
+  padding-top: 1.5rem;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+.field-area:focus-within {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-accent) 18%, transparent);
+}
+.field .field-area textarea,
+.field .field-area textarea:focus {
+  display: block;
+  min-height: 136px;
   resize: vertical;
+  border: 0;
+  border-radius: 0 0 14px 14px;
+  background: transparent;
+  box-shadow: none;
+  padding: 0 1rem 0.75rem;
 }
 .field input:focus,
 .field textarea:focus {
@@ -278,12 +300,12 @@ html[dir='rtl'] .field label {
 }
 .field input:focus + label,
 .field input:not(:placeholder-shown) + label,
-.field textarea:focus + label,
-.field textarea:not(:placeholder-shown) + label {
+.field:has(textarea:focus) label,
+.field:has(textarea:not(:placeholder-shown)) label {
   transform: translateY(-0.6rem) scale(0.75);
 }
 .field input:focus + label,
-.field textarea:focus + label {
+.field:has(textarea:focus) label {
   color: var(--color-accent);
 }
 
