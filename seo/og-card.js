@@ -227,11 +227,11 @@ async function buildCard(path) {
     return card(
       list,
       path === '/cv'
-        ? textColumn({ eyebrow: 'Résumé', title: 'Moieez\nur Rehman', sub: `Senior Full Stack Software Engineer · ${years()}+ years`, url: 'moiez.dev/cv' })
+        ? textColumn({ eyebrow: 'Résumé', title: 'Moieez\nur Rehman', sub: `Senior Full Stack Engineer & Software Architect · ${years()}+ years`, url: 'moiez.dev/cv' })
         : textColumn({
             eyebrow: 'Experience',
             title: `${years()}+ years\nof shipping.`,
-            sub: 'Senior Full Stack roles across retail and SaaS — POS, loyalty, wallets and AI.',
+            sub: 'Engineering and architecture roles across retail and SaaS — POS, loyalty, wallets and AI.',
             url: 'moiez.dev/experience',
           }),
     );
@@ -268,7 +268,7 @@ async function buildCard(path) {
     textColumn({
       eyebrow: 'About',
       title: 'The person\nbehind the work.',
-      sub: 'Product-focused full stack engineer in Riyadh.',
+      sub: 'Full stack engineer and software architect in Riyadh.',
       url: 'moiez.dev/about',
     }),
   );

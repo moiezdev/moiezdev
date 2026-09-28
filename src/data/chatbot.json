@@ -2,15 +2,22 @@
   "botName": "BotFolio",
   "profile": {
     "name": "Moiez ur Rehman",
-    "alsoKnownAs": ["Moiz", "Moiz Dev", "MoiezDev"],
-    "headline": "Senior Full Stack Engineer | Product-Focused | React, Vue, Next.js, Node.js, NestJS",
+    "alsoKnownAs": [
+      "Moiz",
+      "Moiz Dev",
+      "MoiezDev"
+    ],
+    "headline": "Senior Full Stack Engineer & Software Architect | Product-Focused | React, Vue, Next.js, Node.js, NestJS",
     "location": "Riyadh, Saudi Arabia",
     "careerStart": "2019-05-01",
-    "identity": "Product-focused Full Stack Software Engineer who owns features end-to-end across frontend, backend, and product direction. Builds POS, loyalty, ecommerce, payments, booking systems, dashboards, and AI-assisted product features (OpenRouter / DeepSeek).",
+    "identity": "Product-focused Full Stack Engineer and Software Architect who owns features end-to-end across frontend, backend, architecture and product direction. Designs system architectures (event-driven workflows, data access layers, auth/RBAC, background jobs) and helps teams execute on them. Builds POS, loyalty, ecommerce, payments, booking systems, dashboards, and AI-assisted product features (OpenRouter / DeepSeek).",
     "iqama": "Valid Transferable Iqama",
     "portfolioUrl": "https://www.moiez.dev"
   },
-  "lowPriorityProjectIds": ["eims", "lms"],
+  "lowPriorityProjectIds": [
+    "eims",
+    "lms"
+  ],
   "projectNavKeywords": {
     "twlm-pos": [
       "twlm",
@@ -28,18 +35,72 @@
       "cms",
       "e-menu"
     ],
-    "aa-tourism": ["aatourism", "aa tourism", "aa travel", "amadeus", "sabre"],
-    "gala-travels": ["gala", "hotel", "cruise", "vacation"],
-    "mian-travels": ["mian"],
-    "scmborba": ["scmborba", "borba", "misericordia", "scm"],
-    "docean-fisheries": ["docean", "d'ocean", "fisheries", "seafood"],
-    "ain-saas": ["ain", "saiss", "saas"],
-    "city-arrivals": ["city arrivals", "luxury", "car rental", "limousine"],
-    "mtlnation": ["mtlnation", "mtl"],
-    "tdm": ["tdm", "engenharia"],
-    "joshua-portfolio": ["joshua"],
-    "my-portfolio": ["portfolio website", "this site", "moiez.dev", "chatbot", "botfolio"],
-    "eims": ["eims", "lms", "learning", "course recommendation"],
-    "lms": ["lms", "learning management"]
+    "aa-tourism": [
+      "aatourism",
+      "aa tourism",
+      "aa travel",
+      "amadeus",
+      "sabre"
+    ],
+    "gala-travels": [
+      "gala",
+      "hotel",
+      "cruise",
+      "vacation"
+    ],
+    "mian-travels": [
+      "mian"
+    ],
+    "scmborba": [
+      "scmborba",
+      "borba",
+      "misericordia",
+      "scm"
+    ],
+    "docean-fisheries": [
+      "docean",
+      "d'ocean",
+      "fisheries",
+      "seafood"
+    ],
+    "ain-saas": [
+      "ain",
+      "saiss",
+      "saas"
+    ],
+    "city-arrivals": [
+      "city arrivals",
+      "luxury",
+      "car rental",
+      "limousine"
+    ],
+    "mtlnation": [
+      "mtlnation",
+      "mtl"
+    ],
+    "tdm": [
+      "tdm",
+      "engenharia"
+    ],
+    "joshua-portfolio": [
+      "joshua"
+    ],
+    "my-portfolio": [
+      "portfolio website",
+      "this site",
+      "moiez.dev",
+      "chatbot",
+      "botfolio"
+    ],
+    "eims": [
+      "eims",
+      "lms",
+      "learning",
+      "course recommendation"
+    ],
+    "lms": [
+      "lms",
+      "learning management"
+    ]
   }
 }

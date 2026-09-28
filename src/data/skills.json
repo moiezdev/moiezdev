@@ -13,13 +13,15 @@
   {
     "category": "Architectures",
     "items": [
+      "System Design",
       "MVC",
       "HMVC",
       "MVP",
       "MVVM",
       "Component Based",
       "Microservices",
-      "Event-driven architecture"
+      "Event-driven architecture",
+      "Monorepo"
     ]
   },
   {
@@ -66,7 +68,9 @@
       "MySQL",
       "SQL Server",
       "MongoDB",
-      "Prisma"
+      "Prisma",
+      "Redis",
+      "BullMQ"
     ]
   },
   {

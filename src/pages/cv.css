@@ -8,7 +8,7 @@
   --cv-text: #1f2328;
   --cv-muted: #5c6370;
   --cv-line: #d5d8de;
-  --cv-accent: #8a7a00;
+  --cv-accent: #3d4451;
   --cv-chip: #f3f4f6;
   min-height: 100vh;
   background: var(--cv-bg);
@@ -21,7 +21,7 @@
   --cv-text: #e6e8eb;
   --cv-muted: #abb2bf;
   --cv-line: #3e4451;
-  --cv-accent: #ffff00;
+  --cv-accent: #d5dae2;
   --cv-chip: #323844;
 }
 

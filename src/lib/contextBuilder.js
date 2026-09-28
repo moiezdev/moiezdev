@@ -100,7 +100,7 @@ export function buildContext(question = '', { path = '/', previousQuestion = '' 
       location: profile.location,
       experienceYears: years,
       summary: profile.identity,
-      availability: 'Open to senior full stack roles and projects',
+      availability: 'Open to senior full stack engineering and software architect roles and projects',
       workAuthorization: profile.iqama,
     },
     experience: experience.map((job) => ({

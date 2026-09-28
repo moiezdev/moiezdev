@@ -11,7 +11,7 @@
       "titleBefore": "Complex systems.",
       "titleRole": "Beautifully simple.",
       "titleAfter": "",
-      "lead": "I design and build products end-to-end — from polished interfaces in React, Vue and Next.js to reliable backends in Node.js and NestJS.",
+      "lead": "I architect and build products end to end — from system design and APIs in Node.js and NestJS to polished interfaces in React, Vue and Next.js.",
       "contact": "Get in touch",
       "resume": "Download résumé",
       "now": "Currently building",
@@ -19,7 +19,7 @@
       "quote": "Great products feel simple — the complexity stays under the hood.",
       "quoteBy": "--- Mr Unknown",
       "available": "Available for new opportunities",
-      "intro": "Moiz — Senior Full Stack Software Engineer",
+      "intro": "Moiz — Senior Full Stack Engineer & Software Architect",
       "seeWork": "See the work",
       "yearsShort": "years shipping production software",
       "statYears": "Years of experience",
@@ -34,7 +34,7 @@
       "title": "Hello, I'm Moiz!",
       "viewExperience": "View experience",
       "paragraphs": [
-        "Product-focused Full Stack Engineer with {{experienceYears}} years of experience building scalable systems across retail and SaaS — from POS platforms to loyalty systems and customer engagement tools, ecommerce, payment integrations, booking systems, search-engine integrations, and dashboards. I work across the stack using React, Vue, Next.js, Node.js, and NestJS, delivering reliable, high-quality solutions with a strong focus on real-world usability.",
+        "Product-focused Full Stack Engineer and Software Architect with {{experienceYears}} years of experience building scalable systems across retail and SaaS — from POS platforms to loyalty systems and customer engagement tools, ecommerce, payment integrations, booking systems, search-engine integrations, and dashboards. I work across the stack using React, Vue, Next.js, Node.js, and NestJS, delivering reliable, high-quality solutions with a strong focus on real-world usability.",
         "I take ownership of features end-to-end — from understanding business needs and structuring solutions to implementation and deployment — with a focus on writing maintainable code, improving system efficiency, and delivering software that creates measurable impact. Core strengths include POS retail systems, payment integrations (MyFatoorah, Moyasar), CRM, wallet integrations (Apple Wallet & Google Wallet), designing system architectures and helping teams execute on them, microservices and monorepo patterns, and leading UI/UX engineering.",
         "I've revamped and stabilized unstable applications, supported management teams, and improved products by solving real problems. Recent work includes POS platforms, loyalty systems, customer engagement tools, and OpenRouter AI (DeepSeek) for smart search and analysis — contributing to both technical architecture and product direction."
       ],
@@ -95,7 +95,7 @@
     "contact": {
       "section": "contacts",
       "blurb": "Have a role, a project or a question? I’d love to hear from you.",
-      "intro": "Currently available for hire as a product-focused full stack software engineer. I enjoy building reliable digital products — from polished interfaces to solid backend systems. Whether you have a role, a project, or a question, I’d be glad to hear from you.",
+      "intro": "Currently available for hire as a product-focused full stack engineer and software architect. I enjoy building reliable digital products — from polished interfaces to solid backend systems. Whether you have a role, a project, or a question, I’d be glad to hear from you.",
       "direct": "Reach me directly",
       "name": "Name",
       "email": "Email",
@@ -109,7 +109,7 @@
       "sent": "Thanks — your message is on its way. I’ll reply soon."
     },
     "footer": {
-      "role": "Senior Full Stack Software Engineer",
+      "role": "Senior Full Stack Engineer & Software Architect",
       "media": "Connect",
       "rights": "All rights reserved.",
       "explore": "Explore",
@@ -121,7 +121,7 @@
       "home": "Go Back Home"
     },
     "chat": {
-      "welcome": "Hey — I'm BotFolio. I'll walk you through Moiz's work as a Full Stack Engineer. You can explore [[nav:/works|All works]], [[nav:/experience|Experience]], or [[nav:/about|About Moiz]].",
+      "welcome": "Hey — I'm BotFolio. I'll walk you through Moiz's work as a Full Stack Engineer and Software Architect. You can explore [[nav:/works|All works]], [[nav:/experience|Experience]], or [[nav:/about|About Moiz]].",
       "thinking": "thinking…",
       "listening": "listening…",
       "speaking": "speaking…",
@@ -241,7 +241,7 @@
       "titleBefore": "أنظمة معقدة.",
       "titleRole": "ببساطة أنيقة.",
       "titleAfter": "",
-      "lead": "أصمم وأبني المنتجات من البداية للنهاية — من واجهات مصقولة بـ React وVue وNext.js إلى أنظمة خلفية موثوقة بـ Node.js وNestJS.",
+      "lead": "أصمّم معمارية المنتجات وأبنيها من البداية للنهاية — من تصميم الأنظمة وواجهات البرمجة بـ Node.js وNestJS إلى واجهات مصقولة بـ React وVue وNext.js.",
       "contact": "تواصل معي",
       "resume": "تحميل السيرة الذاتية",
       "now": "أعمل حالياً على",
@@ -249,7 +249,7 @@
       "quote": "المنتجات العظيمة تبدو بسيطة — والتعقيد يبقى تحت السطح.",
       "quoteBy": "--- مجهول",
       "available": "متاح لفرص جديدة",
-      "intro": "معيز — مهندس برمجيات متكامل أول",
+      "intro": "معيز — مهندس برمجيات متكامل أول ومعماري برمجيات",
       "seeWork": "شاهد الأعمال",
       "yearsShort": "سنوات في بناء برمجيات إنتاجية",
       "statYears": "سنوات الخبرة",
@@ -264,7 +264,7 @@
       "title": "مرحباً، أنا معيز!",
       "viewExperience": "عرض الخبرة",
       "paragraphs": [
-        "مهندس برمجيات متكامل يركّز على المنتج، بخبرة {{experienceYears}} سنوات في بناء أنظمة قابلة للتوسع في قطاعَي التجزئة والبرمجيات كخدمة — من منصات نقاط البيع إلى أنظمة الولاء وأدوات تفاعل العملاء، والتجارة الإلكترونية، وبوابات الدفع، وأنظمة الحجز، وتكامل محركات البحث، ولوحات التقارير. أعمل عبر المكدس باستخدام React وVue وNext.js وNode.js وNestJS، وأقدّم حلولاً موثوقة عالية الجودة تركز على الاستخدام الحقيقي.",
+        "مهندس برمجيات متكامل ومعماري برمجيات يركّز على المنتج، بخبرة {{experienceYears}} سنوات في بناء أنظمة قابلة للتوسع في قطاعَي التجزئة والبرمجيات كخدمة — من منصات نقاط البيع إلى أنظمة الولاء وأدوات تفاعل العملاء، والتجارة الإلكترونية، وبوابات الدفع، وأنظمة الحجز، وتكامل محركات البحث، ولوحات التقارير. أعمل عبر المكدس باستخدام React وVue وNext.js وNode.js وNestJS، وأقدّم حلولاً موثوقة عالية الجودة تركز على الاستخدام الحقيقي.",
         "أتولى الميزات من البداية للنهاية: فهم احتياج العمل، وهيكلة الحل، والتنفيذ، والنشر، مع التركيز على كتابة كود قابل للصيانة وكفاءة النظام وأثر قابل للقياس. من أبرز نقاط القوة: أنظمة نقاط البيع، وبوابات الدفع (MyFatoorah وMoyasar)، وCRM، ومحافظ Apple وGoogle، وتصميم المعماريات ومساعدة الفرق على تنفيذها، والأنماط الميكروية والـ monorepo، وقيادة هندسة الواجهات.",
         "أعيد بناء التطبيقات غير المستقرة وأثبّتها، وأدعم فرق الإدارة، وأحسّن المنتجات بحل مشكلات حقيقية. يشمل عملي الأخير منصات نقاط البيع وأنظمة الولاء وأدوات التفاعل ودمج OpenRouter AI (DeepSeek) للبحث والتحليل — في العمارة التقنية واتجاه المنتج معاً."
       ],
@@ -325,7 +325,7 @@
     "contact": {
       "section": "التواصل",
       "blurb": "لديك دور أو مشروع أو سؤال؟ يسعدني سماعك.",
-      "intro": "متاح حالياً للعمل كمهندس برمجيات متكامل يركّز على المنتج. أستمتع ببناء منتجات رقمية موثوقة — من واجهات مصقولة إلى أنظمة خلفية صلبة. إن كان لديك دور أو مشروع أو سؤال، يسعدني سماعك.",
+      "intro": "متاح حالياً للعمل كمهندس برمجيات متكامل ومعماري برمجيات يركّز على المنتج. أستمتع ببناء منتجات رقمية موثوقة — من واجهات مصقولة إلى أنظمة خلفية صلبة. إن كان لديك دور أو مشروع أو سؤال، يسعدني سماعك.",
       "direct": "راسلني مباشرة",
       "name": "الاسم",
       "email": "البريد",
@@ -339,7 +339,7 @@
       "sent": "شكراً — رسالتك في الطريق. سأرد قريباً."
     },
     "footer": {
-      "role": "مهندس برمجيات متكامل أول",
+      "role": "مهندس برمجيات متكامل أول ومعماري برمجيات",
       "media": "تواصل",
       "rights": "جميع الحقوق محفوظة.",
       "explore": "استكشف",
@@ -351,7 +351,7 @@
       "home": "العودة للرئيسية"
     },
     "chat": {
-      "welcome": "مرحباً — أنا BotFolio. أعرّفك بعمل معيز كمهندس برمجيات متكامل. يمكنك استكشاف [[nav:/works|كل الأعمال]] أو [[nav:/experience|الخبرة]] أو [[nav:/about|نبذة عن معيز]].",
+      "welcome": "مرحباً — أنا BotFolio. أعرّفك بعمل معيز كمهندس برمجيات متكامل ومعماري برمجيات. يمكنك استكشاف [[nav:/works|كل الأعمال]] أو [[nav:/experience|الخبرة]] أو [[nav:/about|نبذة عن معيز]].",
       "thinking": "يفكر…",
       "listening": "يستمع…",
       "speaking": "يتحدث…",

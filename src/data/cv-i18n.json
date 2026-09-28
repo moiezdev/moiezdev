@@ -1,10 +1,10 @@
 {
   "en": {
     "name": "Moieez ur Rehman",
-    "headline": "Senior Full Stack Engineer | React, Vue, Next.js, Node.js, NestJS",
+    "headline": "Senior Full Stack Engineer & Software Architect | React, Vue, Next.js, Node.js, NestJS",
     "location": "Riyadh, Saudi Arabia",
     "iqama": "Valid Transferable Iqama",
-    "summary": "Product-focused Full Stack Engineer with {{experienceYears}} years of experience building scalable systems across retail and SaaS, from POS platforms to loyalty systems and customer engagement tools, ecommerce, payment integrations, booking systems, search-engine integrations, and dashboards. I take ownership of features end-to-end — from understanding business needs and structuring solutions to implementation and deployment — with a focus on writing maintainable code, improving system efficiency, and delivering software that creates measurable impact.",
+    "summary": "Product-focused Full Stack Engineer and Software Architect with {{experienceYears}} years of experience building scalable systems across retail and SaaS, from POS platforms to loyalty systems and customer engagement tools, e-commerce, payment integrations, booking systems, search-engine integrations and dashboards. I take ownership of features end-to-end — from understanding business needs and structuring solutions to implementation and deployment — with a focus on maintainable code, system efficiency and measurable impact. My core strengths span POS retail systems, payment integrations (MyFatoorah, Moyasar) and CRM systems, designing system architectures and helping teams execute on them, wallet integrations (Apple Wallet & Google Wallet), microservices and monorepo patterns, and leading UI/UX engineering — with a track record of revamping and stabilizing unstable applications, supporting management teams, and improving products by solving real problems.",
     "labels": {
       "summary": "Professional Summary",
       "experience": "Professional Experience",
@@ -36,10 +36,10 @@
   },
   "ar": {
     "name": "معيز الرحمن",
-    "headline": "مهندس برمجيات متكامل أول | React، Vue، Next.js، Node.js، NestJS",
+    "headline": "مهندس برمجيات متكامل أول ومعماري برمجيات | React، Vue، Next.js، Node.js، NestJS",
     "location": "الرياض، المملكة العربية السعودية",
     "iqama": "إقامة سارية وقابلة للنقل",
-    "summary": "مهندس برمجيات متكامل يركز على المنتج، بخبرة {{experienceYears}} سنوات في بناء أنظمة قابلة للتوسع في قطاعَي التجزئة والبرمجيات كخدمة — من منصات نقاط البيع إلى أنظمة الولاء وأدوات تفاعل العملاء، والتجارة الإلكترونية، وبوابات الدفع، وأنظمة الحجز، وتكامل محركات البحث، ولوحات التقارير. أتولى الميزات من البداية للنهاية: فهم احتياج العمل، وهيكلة الحل، والتنفيذ، والنشر، مع التركيز على كتابة كود قابل للصيانة وكفاءة النظام وأثر قابل للقياس.",
+    "summary": "مهندس برمجيات متكامل ومعماري برمجيات يركّز على المنتج، بخبرة {{experienceYears}} سنوات في بناء أنظمة قابلة للتوسع في قطاعَي التجزئة والبرمجيات كخدمة — من منصات نقاط البيع إلى أنظمة الولاء وأدوات تفاعل العملاء، والتجارة الإلكترونية، وبوابات الدفع، وأنظمة الحجز، وتكامل محركات البحث، ولوحات التقارير. أتولى الميزات من البداية للنهاية — من فهم احتياج العمل وهيكلة الحل إلى التنفيذ والنشر — مع التركيز على كود قابل للصيانة وكفاءة النظام وأثر قابل للقياس. تشمل نقاط قوتي أنظمة نقاط البيع، وبوابات الدفع (MyFatoorah وMoyasar) وأنظمة CRM، وتصميم معماريات الأنظمة ومساعدة الفرق على تنفيذها، ومحافظ Apple وGoogle، وأنماط الخدمات المصغّرة والـ monorepo، وقيادة هندسة الواجهات — مع سجل في إعادة بناء التطبيقات غير المستقرة وتثبيتها، ودعم فرق الإدارة، وتحسين المنتجات بحل مشكلات حقيقية.",
     "labels": {
       "summary": "الملخص المهني",
       "experience": "الخبرة المهنية",
@@ -58,7 +58,11 @@
       "degree": "بكالوريوس علوم الحاسب (BSCS Hons)",
       "school": "كلية إدارة الأعمال والاقتصاد — لاهور",
       "period": "2017–2021",
-      "languages": ["الإنجليزية (طلاقة)", "الأردية (أم)", "الهندية (أم)"]
+      "languages": [
+        "الإنجليزية (طلاقة)",
+        "الأردية (أم)",
+        "الهندية (أم)"
+      ]
     },
     "skillCategories": {
       "Core Skills": "المهارات الأساسية",
@@ -79,7 +83,7 @@
         "title": "مهندس برمجيات أول",
         "location": "المملكة العربية السعودية",
         "period": "فبراير 2025 – الآن",
-        "summary": "منصة نقاط بيع وCMS وولاء ومحافظ وبحث ذكي لتجارة التجزئة في الخليج.",
+        "summary": "نقاط البيع والولاء والمحافظ والبحث الذكي لقطاع التجزئة الخليجي — مع امتلاك الاتجاه التقني من المعمارية حتى التسليم.",
         "highlights": [
           "قيادة تطوير منصة نقاط بيع مع أنظمة الولاء والعروض والمحافظ، مع امتلاك الاتجاه التقني من العمارة حتى التسليم.",
           "تصميم وقيادة منشئ صفحات بالكتل لتمكين الشركات من إنشاء القوائم ومتاجر التجارة الإلكترونية وإدارتها بنفسها.",
@@ -93,6 +97,7 @@
           "تأسيس بنية الوصول للبيانات بـ Prisma وPostgreSQL للهجرات وأداء الاستعلامات.",
           "امتلاك تصميم RBAC ومصادقة OAuth2/JWT مع SSO للتحكم متعدد الأدوار.",
           "قيادة تدفقات قائمة على الأحداث والويب هوك لتحديثات المحفظة والإشعارات الفورية.",
+          "بناء عمّال خلفية بـ BullMQ مدعومين بـ Redis لمعالجة مهام الإشعارات وتحديثات المحفظة بشكل غير متزامن، ما رفع موثوقية الأحداث الفورية وإنتاجيتها.",
           "توجيه دمج أنظمة CRM لمزامنة بيانات العملاء والأعمال عبر المنصة.",
           "قيادة دمج OpenRouter AI (DeepSeek) للبحث الذكي في القوائم وتحليل بيانات المطاعم."
         ]
@@ -145,7 +150,7 @@
         ]
       },
       "content-arcade": {
-        "title": "مطوّر PHP مبتدئ",
+        "title": "مطوّر ويب",
         "location": "فيصل آباد، باكستان",
         "period": "مايو 2019 – مارس 2020",
         "summary": "أول دور مهني — تخطيطات متجاوبة وواجهات PHP/Laravel.",

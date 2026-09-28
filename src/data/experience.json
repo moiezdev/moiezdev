@@ -8,39 +8,44 @@
     "current": true,
     "companyUrl": "https://twlm.solutions/",
     "logo": "/company-logos/twlm.svg",
-    "summary": "POS, CMS, loyalty, wallets, and AI search for retail businesses across the Gulf.",
+    "summary": "POS, loyalty, wallets and AI search for Gulf retail — owning the technical direction from architecture through delivery.",
     "stack": [
       "React",
       "NestJs",
       "Prisma",
       "PostGreSQL",
+      "BullMQ",
+      "Redis",
       "Flutter",
       "Apple Wallet",
       "Google Wallet",
       "OpenRouter"
     ],
-    "relatedProjects": ["twlm-pos"],
+    "relatedProjects": [
+      "twlm-pos"
+    ],
     "highlights": [
-      "Led development of a POS platform with integrated loyalty, promotions, and wallet systems — owning technical direction from architecture through delivery.",
-      "Architected and led a block-based page builder so businesses can create and manage menus and e-commerce storefronts independently.",
-      "Drove UX improvements across core flows, cutting customer support requests by ~70% through data-informed design.",
-      "Directed loyalty systems — points, loyalty cards, and gift cards — with Apple Wallet & Google Wallet integration and real-time notifications.",
-      "Owned platform-wide product experience improvements, simplifying core workflows to reduce user friction.",
-      "Spearheaded a geo-targeted promotional messaging system with branch-level campaign tracking.",
-      "Played a key technical role in a Flutter mobile app for storefront management and online ordering.",
-      "Led backend performance work, cutting API response times by ~64%.",
-      "Directed a codebase-wide refactor to improve long-term maintainability, readability, and stability.",
-      "Established data access architecture with Prisma ORM and PostgreSQL for schema migrations and query performance.",
-      "Owned RBAC and OAuth2/JWT authentication with SSO for secure multi-role access.",
-      "Led webhook-driven, event-based workflows for real-time notifications and wallet updates.",
-      "Directed CRM integration to synchronize customer and business data across the platform.",
-      "Spearheaded OpenRouter AI (DeepSeek) integration for smart menu search and AI analysis of restaurant data."
+      "Led the development of a POS platform with integrated loyalty, promotions, and wallet systems, owning the technical direction from architecture through delivery.",
+      "Architected and led development of a block-based page builder, empowering businesses to independently create and manage menus and e-commerce storefronts.",
+      "Drove UX improvements across core user flows, cutting customer support requests by ~70% through data-informed design decisions.",
+      "Directed the design and rollout of loyalty systems — points, loyalty cards, and gift cards — with Apple Wallet & Google Wallet integration and real-time notifications.",
+      "Owned product experience improvements platform-wide, simplifying core workflows to reduce user friction.",
+      "Spearheaded a geo-targeted promotional messaging system with branch-level campaign tracking, from concept through deployment.",
+      "Played a key technical role in delivering a Flutter-based mobile app supporting storefront management and online ordering.",
+      "Led backend performance optimization efforts, achieving a ~64% reduction in API response times and materially improving system performance.",
+      "Directed a codebase-wide refactoring initiative to improve long-term maintainability, readability, and stability.",
+      "Established data access architecture using Prisma ORM with PostgreSQL, streamlining schema migrations and query performance platform-wide.",
+      "Owned the design and implementation of RBAC and OAuth2/JWT-based authentication with SSO, securing multi-role access across the platform.",
+      "Led development of webhook-driven, event-based workflows powering real-time notification and wallet-update events.",
+      "Built Redis-backed BullMQ background workers to process notification and wallet-update jobs asynchronously, improving reliability and throughput of real-time events.",
+      "Directed CRM integration efforts to synchronize customer and business data across the platform.",
+      "Spearheaded the integration of OpenRouter AI (DeepSeek), introducing smart menu search and AI-based analysis of restaurant data."
     ]
   },
   {
     "id": "accoina",
     "title": "Sr. Software Engineer",
-    "company": "Accoina Agua",
+    "company": "ACCIONA",
     "location": "Saudi Arabia",
     "period": "Jan 2024 – Feb 2025",
     "current": false,
@@ -48,7 +53,13 @@
     "logo": "/company-logos/acciona.jpg",
     "logoOnLight": true,
     "summary": "Internal tools and dashboards that digitized operations and cut downtime.",
-    "stack": ["React", "SQL", "RBAC", "OAuth2", "JWT"],
+    "stack": [
+      "React",
+      "SQL",
+      "RBAC",
+      "OAuth2",
+      "JWT"
+    ],
     "relatedProjects": [],
     "highlights": [
       "Improved internal operations by digitizing workflows and reducing system downtime by ~25%.",
@@ -70,8 +81,17 @@
     "logo": "/company-logos/scm-borba.jpg",
     "logoOnLight": true,
     "summary": "8+ SaaS, e-commerce, and education builds delivered remotely.",
-    "stack": ["React", "Vue", "NuxtJs", "Node", "Express", "TailwindCSS"],
-    "relatedProjects": ["scmborba"],
+    "stack": [
+      "React",
+      "Vue",
+      "NuxtJs",
+      "Node",
+      "Express",
+      "TailwindCSS"
+    ],
+    "relatedProjects": [
+      "scmborba"
+    ],
     "highlights": [
       "Delivered 8+ projects across SaaS, e-commerce, and education platforms.",
       "Built scalable, high-performance UIs using React, Vue, Nuxt, and Tailwind.",
@@ -95,8 +115,19 @@
     "companyUrl": "https://creativeintertech.com/",
     "logo": "/company-logos/cit.svg",
     "summary": "Led frontend for B2B travel platforms serving 10K+ monthly users.",
-    "stack": ["React", "Vue", "Redux Toolkit", "Vuex", "RBAC", "Laravel"],
-    "relatedProjects": ["aa-tourism", "city-arrivals", "gala-travels"],
+    "stack": [
+      "React",
+      "Vue",
+      "Redux Toolkit",
+      "Vuex",
+      "RBAC",
+      "Laravel"
+    ],
+    "relatedProjects": [
+      "aa-tourism",
+      "city-arrivals",
+      "gala-travels"
+    ],
     "highlights": [
       "Led frontend for B2B travel platforms (AA Tourism, City Arrivals) serving 10K+ monthly users.",
       "Built reusable component libraries in React/Vue, cutting dev time by ~30%.",
@@ -109,7 +140,7 @@
   },
   {
     "id": "content-arcade",
-    "title": "Junior PHP Developer",
+    "title": "Web Developer",
     "company": "Content Arcade",
     "location": "Faisalabad, Pakistan",
     "period": "May 2019 – Mar 2020",
@@ -118,7 +149,14 @@
     "logo": "/company-logos/content-arcade.png",
     "logoWide": true,
     "summary": "First professional role — responsive layouts and PHP/Laravel APIs.",
-    "stack": ["HTML5", "CSS3", "Bootstrap", "PHP", "Laravel", "MySQL"],
+    "stack": [
+      "HTML5",
+      "CSS3",
+      "Bootstrap",
+      "PHP",
+      "Laravel",
+      "MySQL"
+    ],
     "relatedProjects": [],
     "highlights": [
       "Built responsive layouts using HTML, CSS, and Bootstrap.",

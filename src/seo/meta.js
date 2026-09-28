@@ -8,9 +8,9 @@ export const SITE_URL = 'https://www.moiez.dev';
 export const SITE_NAME = 'Moieez ur Rehman';
 
 const HOME = {
-  title: 'Moieez ur Rehman — Senior Full Stack Software Engineer',
+  title: 'Moieez ur Rehman — Senior Full Stack Engineer & Software Architect',
   description:
-    'Senior Full Stack Engineer in Riyadh building POS, loyalty, payments, booking and AI products end to end with React, Vue, Next.js, Node.js and NestJS.',
+    'Senior Full Stack Engineer and Software Architect in Riyadh — designing and building POS, loyalty, payments, booking and AI products end to end with React, Vue, Next.js, Node.js and NestJS.',
   image: '/og-image.jpg',
 };
 
@@ -25,7 +25,7 @@ const PAGES = {
   '/experience': {
     title: `Experience · ${SITE_NAME}`,
     description:
-      'Senior Full Stack roles leading POS, loyalty, wallet and AI products across retail and SaaS in Saudi Arabia and Europe.',
+      'Senior engineering and architecture roles leading POS, loyalty, wallet and AI products across retail and SaaS in Saudi Arabia and Europe.',
     image: '/og/experience.jpg',
   },
   '/about': {
@@ -41,7 +41,7 @@ const PAGES = {
   },
   '/cv': {
     title: `CV · ${SITE_NAME}`,
-    description: 'Résumé of Moieez ur Rehman, Senior Full Stack Software Engineer.',
+    description: 'Résumé of Moieez ur Rehman, Senior Full Stack Engineer & Software Architect.',
     image: '/og/cv.jpg',
   },
 };

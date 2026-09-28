@@ -88,7 +88,7 @@ const Cv = () => {
                 <h3>{job.title}</h3>
                 <span className="cv-job-period">
                   {job.period}
-                  {job.current ? ` · ${cv.labels.present}` : ''}
+                  {job.current && !/present|حالياً|الآن/i.test(job.period) ? ` · ${cv.labels.present}` : ''}
                 </span>
               </div>
               <p className="cv-job-company">
