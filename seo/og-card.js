@@ -149,9 +149,10 @@ const years = () => Math.floor((Date.now() - new Date(2019, 4, 1)) / (365.25 * 2
 
 async function buildCard(path) {
   const ids = json('src/data/projects/index.json');
-  const projects = ids.map((id) => json(`src/data/projects/${id}.json`));
+  const all = ids.map((id) => json(`src/data/projects/${id}.json`));
+  const projects = all.filter((p) => p.listed !== false);
   const id = path.match(/^\/works\/([^/]+)$/)?.[1];
-  const project = projects.find((p) => p.id === id);
+  const project = all.find((p) => p.id === id);
 
   if (project) {
     // `"screenshot": false` in a project's JSON means its image is a logo, not a screenshot

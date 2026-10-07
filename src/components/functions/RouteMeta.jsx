@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { projects } from '../../data';
+import { allProjects as projects } from '../../data';
 import { SITE_URL, metaFor } from '../../seo/meta';
 
 const setMeta = (selector, attr, value) => {

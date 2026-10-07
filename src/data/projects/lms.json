@@ -27,5 +27,7 @@
   "repoPublic": true,
   "media": [
     "main.webp"
-  ]
+  ],
+  "listed": false,
+  "_todo": "TODO(moiez): replace main.webp/main.jpg (the image reads \"Dashobard\"), then delete \"listed\": false"
 }

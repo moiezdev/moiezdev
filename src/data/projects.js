@@ -35,7 +35,7 @@ const projectsById = {
 
 const knownSkills = new Set(skills.flatMap((category) => category.items));
 
-export const projects = projectOrder.map((id) => {
+export const allProjects = projectOrder.map((id) => {
   const project = projectsById[id];
   if (!project) {
     throw new Error(`Missing project JSON for id: ${id}`);
@@ -57,4 +57,7 @@ export const projects = projectOrder.map((id) => {
   return project;
 });
 
-export const getProjectById = (id) => projects.find((project) => project.id === id);
+/** Projects shown in lists. Unlisted ones (e.g. waiting on new images) keep their own page. */
+export const projects = allProjects.filter((project) => project.listed !== false);
+
+export const getProjectById = (id) => allProjects.find((project) => project.id === id);

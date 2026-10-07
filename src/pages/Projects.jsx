@@ -23,7 +23,9 @@ const Projects = () => {
       .map(([tech]) => tech);
   }, [projects]);
 
-  const shown = filter === ALL ? projects : projects.filter((p) => p.technologies?.includes(filter));
+  const finished = projects.filter((p) => p.status !== 'in-progress');
+  const inProgress = projects.filter((p) => p.status === 'in-progress');
+  const shown = filter === ALL ? finished : finished.filter((p) => p.technologies?.includes(filter));
 
   const chip = (value, label, Icon, color) => (
     <button
@@ -55,9 +57,9 @@ const Projects = () => {
           <p className="text-center text-[13px] text-label-3 mb-10 font-mono" aria-live="polite">
             {t('projects.count', { count: shown.length })}
           </p>
-          {filter === ALL && projects[0] && (
+          {filter === ALL && finished[0] && (
             <Reveal className="mb-6">
-              <Card project={projects[0]} featured />
+              <Card project={finished[0]} featured />
             </Reveal>
           )}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -67,6 +69,24 @@ const Projects = () => {
               </Reveal>
             ))}
           </div>
+
+          {filter === ALL && inProgress.length > 0 && (
+            <div className="mt-20 md:mt-24">
+              <Reveal as="h2" className="headline-2 text-label mb-2">
+                {t('projects.inProgress')}
+              </Reveal>
+              <Reveal as="p" className="text-[15px] text-label-2 mb-8">
+                {t('projects.inProgressBlurb')}
+              </Reveal>
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {inProgress.map((project, i) => (
+                  <Reveal key={project.id} delay={(i % 3) * 80}>
+                    <Card project={project} maxTech={3} />
+                  </Reveal>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
     </Transition>

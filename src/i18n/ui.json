@@ -107,7 +107,9 @@
       "index": "Project",
       "previous": "Previous",
       "next": "Next",
-      "statusOpen": "Open source"
+      "statusOpen": "Open source",
+      "inProgress": "In progress",
+      "inProgressBlurb": "Projects I’m building right now."
     },
     "skills": {
       "section": "skills",
@@ -392,7 +394,9 @@
       "index": "المشروع",
       "previous": "السابق",
       "next": "التالي",
-      "statusOpen": "مفتوح المصدر"
+      "statusOpen": "مفتوح المصدر",
+      "inProgress": "قيد التطوير",
+      "inProgressBlurb": "مشاريع أعمل على بنائها حالياً."
     },
     "skills": {
       "section": "المهارات",
