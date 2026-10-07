@@ -25,7 +25,9 @@
       "statYears": "Years of experience",
       "statProjects": "Projects delivered",
       "statCompanies": "Companies",
-      "statement": "I own features end to end — from understanding the business to the last deploy."
+      "statement": "I own features end to end — from understanding the business to the last deploy.",
+      "statLatencyValue": "~64%",
+      "statLatency": "Lower API latency"
     },
     "about": {
       "section": "about me",
@@ -308,7 +310,9 @@
       "statYears": "سنوات الخبرة",
       "statProjects": "مشاريع منجزة",
       "statCompanies": "شركات",
-      "statement": "أتولى الميزات من البداية للنهاية — من فهم احتياج العمل حتى آخر عملية نشر."
+      "statement": "أتولى الميزات من البداية للنهاية — من فهم احتياج العمل حتى آخر عملية نشر.",
+      "statLatencyValue": "~64٪",
+      "statLatency": "زمن استجابة أقل للواجهات"
     },
     "about": {
       "section": "نبذتي",

@@ -9,7 +9,7 @@ import { scrollToTarget } from '../../utils/smoothScroll';
 
 const Stat = ({ value, label }) => (
   <div className="flex flex-col items-center text-center px-4">
-    <span className="text-[40px] md:text-[56px] font-bold tracking-[-0.04em] leading-none text-label">
+    <span className="text-[40px] md:text-[56px] font-bold tracking-[-0.04em] leading-none text-label" dir="ltr">
       {value}
     </span>
     <span className="mt-2 text-[13px] md:text-[15px] text-label-2">{label}</span>
@@ -151,7 +151,7 @@ const Hero = () => {
 
       {/* stats */}
       <Reveal className="app-container mt-14 md:mt-20 grid grid-cols-3 [&>*+*]:border-s [&>*+*]:border-separator">
-        <Stat value={`${years}+`} label={t('hero.statYears')} />
+        <Stat value={t('hero.statLatencyValue')} label={t('hero.statLatency')} />
         <Stat value={`${projects.length}+`} label={t('hero.statProjects')} />
         <Stat value={jobs.length} label={t('hero.statCompanies')} />
       </Reveal>
