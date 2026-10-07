@@ -1,6 +1,7 @@
 import Img from '../ui/Img';
 import Button from '../ui/Button';
 import Reveal from '../ui/Reveal';
+import ExternalIcon from '../ui/ExternalIcon';
 import { useContent } from '../../i18n/content';
 import site from '../../data/site.json';
 
@@ -79,13 +80,18 @@ const Hero = () => {
             {t('hero.resume')}
           </Button>
         </Reveal>
-        {site.calendlyUrl && (
-          <Reveal delay={300} className="mt-5">
+        <Reveal delay={300} className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+          <a href={site.cv.url} target="_blank" rel="noopener noreferrer" className="link-arrow text-[15px]">
+            {t('hero.viewResume')}
+            <ExternalIcon />
+          </a>
+          {site.calendlyUrl && (
             <a href={site.calendlyUrl} target="_blank" rel="noopener noreferrer" className="link-arrow text-[15px]">
               {t('hero.bookCall')}
+              <ExternalIcon />
             </a>
-          </Reveal>
-        )}
+          )}
+        </Reveal>
       </div>
 
       {/* stats */}

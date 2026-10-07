@@ -6,7 +6,7 @@ import Img from '../components/ui/Img';
 import Button from '../components/ui/Button';
 import Reveal from '../components/ui/Reveal';
 import TechChip from '../components/ui/TechChip';
-import { ExternalIcon } from '../components/ui/FeaturedCard';
+import ExternalIcon from '../components/ui/ExternalIcon';
 import { Chevron } from '../components/ui/SectionTitle';
 import ArchitectureFigure from '../components/home/ArchitectureFigure';
 import WalletSequence from '../components/project/WalletSequence';

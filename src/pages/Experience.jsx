@@ -3,6 +3,7 @@ import Transition from '../components/functions/Transition';
 import PageHeader from '../components/ui/PageHeader';
 import Reveal from '../components/ui/Reveal';
 import Button from '../components/ui/Button';
+import ExternalIcon from '../components/ui/ExternalIcon';
 import { useContent } from '../i18n/content';
 import site from '../data/site.json';
 
@@ -12,9 +13,15 @@ const Experience = () => {
   return (
     <Transition>
       <PageHeader eyebrow={t('experience.eyebrow')} title={t('experience.pageTitle')} subtitle={t('experience.list')}>
-        <Button href={site.cv.url} download={site.cv.fileName} primary>
-          {t('experience.resume')}
-        </Button>
+        <div className="flex flex-wrap justify-center gap-3">
+          <Button href={site.cv.url} download={site.cv.fileName} primary>
+            {t('experience.resume')}
+          </Button>
+          <Button href={site.cv.url} target="_blank" rel="noopener noreferrer" variant="outline">
+            {t('experience.viewResume')}
+            <ExternalIcon />
+          </Button>
+        </div>
       </PageHeader>
 
       <section className="w-full px-5">

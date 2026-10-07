@@ -1,15 +1,10 @@
 import { Link } from 'react-router-dom';
 import Img from './Img';
 import TechChip from './TechChip';
+import ExternalIcon from './ExternalIcon';
 import { Chevron } from './SectionTitle';
 import { useContent } from '../../i18n/content';
 import { topTech } from '../../utils/techRank';
-
-const ExternalIcon = () => (
-  <svg className="w-3 h-3 rtl:-scale-x-100" viewBox="0 0 12 12" fill="none" aria-hidden>
-    <path d="M4 2.5h5.5V8M9.5 2.5 2.5 9.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
 
 /**
  * Project card. The whole card links to the project page (stretched link);

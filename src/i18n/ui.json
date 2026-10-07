@@ -33,7 +33,8 @@
       "title": "I build POS, payments & AI features for Gulf retail.",
       "subtitle": "Node.js/NestJS, React/Next.js, PostgreSQL and LLM integrations — from architecture to production.",
       "viewWork": "View my work",
-      "bookCall": "Book a 15-min call"
+      "bookCall": "Book a 15-min call",
+      "viewResume": "View résumé"
     },
     "about": {
       "section": "about me",
@@ -84,7 +85,8 @@
         }
       ],
       "impactTitle": "Impact at a glance",
-      "relatedWork": "See the work"
+      "relatedWork": "See the work",
+      "viewResume": "View résumé"
     },
     "projects": {
       "section": "projects",
@@ -414,7 +416,8 @@
       "title": "أبني أنظمة نقاط البيع والمدفوعات وميزات الذكاء الاصطناعي لقطاع التجزئة في الخليج.",
       "subtitle": "Node.js/NestJS وReact/Next.js وPostgreSQL وتكامل النماذج اللغوية — من التصميم المعماري حتى الإنتاج.",
       "viewWork": "شاهد أعمالي",
-      "bookCall": "احجز مكالمة لمدة 15 دقيقة"
+      "bookCall": "احجز مكالمة لمدة 15 دقيقة",
+      "viewResume": "عرض السيرة الذاتية"
     },
     "about": {
       "section": "نبذتي",
@@ -465,7 +468,8 @@
         }
       ],
       "impactTitle": "الأثر باختصار",
-      "relatedWork": "شاهد العمل"
+      "relatedWork": "شاهد العمل",
+      "viewResume": "عرض السيرة الذاتية"
     },
     "projects": {
       "section": "المشاريع",
