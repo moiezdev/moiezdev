@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useLayoutEffect, useMemo, useState } from 'react';
 
 const STORAGE_KEY = 'moiz-prefs';
 
@@ -46,7 +46,8 @@ const PreferencesContext = createContext(null);
 export function PreferencesProvider({ children }) {
   const [prefs, setPrefs] = useState(readPrefs);
 
-  useEffect(() => {
+  // layout effect: lang/dir/theme change in the same frame as the re-render
+  useLayoutEffect(() => {
     applyDom(prefs);
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));

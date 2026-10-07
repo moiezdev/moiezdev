@@ -13,14 +13,15 @@ const NAV = [
   { id: 'contact', key: 'nav.contact', link: '/contact' },
 ];
 
+// 32px visually, but the ::after layer grows the tap area to 44px (WCAG 2.5.5)
 const iconBtn =
-  'inline-flex items-center justify-center size-8 rounded-full text-label-2 hover:text-label hover:bg-fill transition-colors cursor-pointer';
+  "relative inline-flex items-center justify-center size-8 rounded-full text-label-2 hover:text-label hover:bg-fill transition-colors cursor-pointer after:absolute after:-inset-1.5 after:content-['']";
 
 const PrefsToggles = () => {
   const { lang, theme, toggleLang, toggleTheme } = usePreferences();
 
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-3">
       <button
         type="button"
         onClick={toggleLang}
@@ -99,7 +100,7 @@ const Navbar = () => {
           ))}
         </ul>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={openCommandPalette}
