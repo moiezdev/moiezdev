@@ -27,5 +27,6 @@
   "media": [
     "main.webp",
     "img1.webp"
-  ]
+  ],
+  "group": "client"
 }

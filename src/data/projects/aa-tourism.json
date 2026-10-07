@@ -32,5 +32,6 @@
     "img2.webp",
     "img3.webp",
     "img4.webp"
-  ]
+  ],
+  "group": "client"
 }

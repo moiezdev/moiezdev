@@ -23,5 +23,6 @@
   "media": [
     "main.webp"
   ],
-  "repoPublic": false
+  "repoPublic": false,
+  "group": "client"
 }

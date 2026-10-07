@@ -4,11 +4,32 @@ import FeaturedCard from '../components/ui/FeaturedCard';
 import Reveal from '../components/ui/Reveal';
 import PageHeader from '../components/ui/PageHeader';
 import Transition from '../components/functions/Transition';
+import { Chevron } from '../components/ui/SectionTitle';
 import { getSkillIcon, readableIconColor } from '../utils/skillIcons';
 import { useContent } from '../i18n/content';
 import { isCoreTech, sortTech } from '../utils/techRank';
 
 const ALL = '__all__';
+
+const Group = ({ title, blurb, children }) => (
+  <section className="mt-14 md:mt-16 first:mt-0">
+    <Reveal className="mb-6 md:mb-8">
+      <h2 className="headline-2 text-label">{title}</h2>
+      {blurb && <p className="mt-2 text-[15px] text-label-2">{blurb}</p>}
+    </Reveal>
+    {children}
+  </section>
+);
+
+const CardGrid = ({ list }) => (
+  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    {list.map((project, i) => (
+      <Reveal key={project.id} delay={(i % 3) * 80}>
+        <Card project={project} />
+      </Reveal>
+    ))}
+  </div>
+);
 
 const Projects = () => {
   const { t, projects } = useContent();
@@ -24,6 +45,9 @@ const Projects = () => {
 
   const finished = projects.filter((p) => p.status !== 'in-progress');
   const inProgress = projects.filter((p) => p.status === 'in-progress');
+  const featured = finished.filter((p) => p.featured);
+  const client = finished.filter((p) => !p.featured && p.group !== 'earlier');
+  const earlier = finished.filter((p) => !p.featured && p.group === 'earlier');
   const shown = filter === ALL ? finished : finished.filter((p) => p.technologies?.includes(filter));
 
   const chip = (value, label, Icon, color) => (
@@ -56,35 +80,53 @@ const Projects = () => {
           <p className="text-center text-[13px] text-label-3 mb-10 font-mono" aria-live="polite">
             {t('projects.count', { count: shown.length })}
           </p>
-          {filter === ALL && finished[0] && (
-            <Reveal className="mb-6">
-              <FeaturedCard project={finished[0]} />
-            </Reveal>
-          )}
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {(filter === ALL ? shown.slice(1) : shown).map((project, i) => (
-              <Reveal key={project.id} delay={(i % 3) * 80}>
-                <Card project={project} maxTech={3} />
-              </Reveal>
-            ))}
-          </div>
+          {filter === ALL ? (
+            <>
+              {featured.length > 0 && (
+                <Group title={t('projects.groupFeatured')}>
+                  <div className="flex flex-col gap-6">
+                    {featured.map((project) => (
+                      <Reveal key={project.id}>
+                        <FeaturedCard project={project} />
+                      </Reveal>
+                    ))}
+                  </div>
+                </Group>
+              )}
 
-          {filter === ALL && inProgress.length > 0 && (
-            <div className="mt-20 md:mt-24">
-              <Reveal as="h2" className="headline-2 text-label mb-2">
-                {t('projects.inProgress')}
-              </Reveal>
-              <Reveal as="p" className="text-[15px] text-label-2 mb-8">
-                {t('projects.inProgressBlurb')}
-              </Reveal>
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {inProgress.map((project, i) => (
-                  <Reveal key={project.id} delay={(i % 3) * 80}>
-                    <Card project={project} maxTech={3} />
-                  </Reveal>
-                ))}
-              </div>
-            </div>
+              {client.length > 0 && (
+                <Group title={t('projects.groupClient')} blurb={t('projects.groupClientBlurb')}>
+                  <CardGrid list={client} />
+                </Group>
+              )}
+
+              {inProgress.length > 0 && (
+                <Group title={t('projects.inProgress')} blurb={t('projects.inProgressBlurb')}>
+                  <CardGrid list={inProgress} />
+                </Group>
+              )}
+
+              {earlier.length > 0 && (
+                <Reveal as="details" className="group/earlier mt-16 md:mt-20 border-t border-separator">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-6 [&::-webkit-details-marker]:hidden">
+                    <span>
+                      <span className="block text-[21px] md:text-[24px] font-semibold tracking-[-0.02em] text-label">
+                        {t('projects.groupEarlier')} <span className="text-label-3 font-normal">({earlier.length})</span>
+                      </span>
+                      <span className="block mt-1 text-[15px] text-label-2">{t('projects.groupEarlierBlurb')}</span>
+                    </span>
+                    <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-fill text-label transition-transform duration-300 group-open/earlier:rotate-180" aria-hidden>
+                      <Chevron dir="down" />
+                    </span>
+                  </summary>
+                  <div className="pb-4">
+                    <CardGrid list={earlier} />
+                  </div>
+                </Reveal>
+              )}
+            </>
+          ) : (
+            <CardGrid list={shown} />
           )}
         </div>
       </section>

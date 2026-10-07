@@ -119,7 +119,12 @@
       "inProgressBlurb": "Projects I’m building right now.",
       "featuredCaseStudy": "Featured case study",
       "caseStudy": "Read case study",
-      "liveProduct": "Live product"
+      "liveProduct": "Live product",
+      "groupFeatured": "Featured",
+      "groupClient": "Client work",
+      "groupClientBlurb": "Platforms and products built for companies and their customers.",
+      "groupEarlier": "Earlier work",
+      "groupEarlierBlurb": "Brochure sites and a personal project from earlier in my career."
     },
     "skills": {
       "section": "skills",
@@ -442,7 +447,12 @@
       "inProgressBlurb": "مشاريع أعمل على بنائها حالياً.",
       "featuredCaseStudy": "دراسة حالة مميزة",
       "caseStudy": "اقرأ دراسة الحالة",
-      "liveProduct": "المنتج المباشر"
+      "liveProduct": "المنتج المباشر",
+      "groupFeatured": "مميز",
+      "groupClient": "أعمال للعملاء",
+      "groupClientBlurb": "منصات ومنتجات بُنيت لشركات ولعملائها.",
+      "groupEarlier": "أعمال سابقة",
+      "groupEarlierBlurb": "مواقع تعريفية ومشروع شخصي من بدايات مسيرتي."
     },
     "skills": {
       "section": "المهارات",

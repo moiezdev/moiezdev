@@ -29,5 +29,6 @@
     "img3.webp",
     "img4.webp"
   ],
-  "repoPublic": false
+  "repoPublic": false,
+  "group": "client"
 }
