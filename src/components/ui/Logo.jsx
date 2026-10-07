@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-import { gsap } from 'gsap';
 
 /**
  * MoizDev mark — a Λ and a stroke that read as an "M", drawn with one even,
@@ -11,18 +10,18 @@ const Logo = ({ color = 'var(--color-primary)', size = 32, animate = false, dura
 
   useEffect(() => {
     if (!animate || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
-    const paths = pathsRef.current.filter(Boolean);
-    const ctx = gsap.context(() => {
-      paths.forEach((path, i) => {
-        const length = path.getTotalLength();
-        gsap.fromTo(
-          path,
-          { strokeDasharray: length, strokeDashoffset: length },
-          { strokeDashoffset: 0, duration, delay: i * 0.15, ease: 'power2.out' },
-        );
+    // Web Animations API: no animation library in the main bundle for this
+    const animations = pathsRef.current.filter(Boolean).map((path, i) => {
+      const length = path.getTotalLength();
+      path.style.strokeDasharray = length;
+      return path.animate([{ strokeDashoffset: length }, { strokeDashoffset: 0 }], {
+        duration: duration * 1000,
+        delay: i * 150,
+        easing: 'cubic-bezier(0.33, 1, 0.68, 1)',
+        fill: 'backwards',
       });
     });
-    return () => ctx.revert();
+    return () => animations.forEach((a) => a.cancel());
   }, [animate, duration]);
 
   return (
