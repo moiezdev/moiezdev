@@ -5,6 +5,7 @@ import Reveal from '../../ui/Reveal';
 import { Chevron } from '../../ui/SectionTitle';
 import { Spinner } from '../../Loading';
 import { contacts } from '../../../data';
+import site from '../../../data/site.json';
 import { useContent } from '../../../i18n/content';
 
 const FIELDS = ['name', 'email', 'subject', 'message'];
@@ -84,6 +85,13 @@ const RiyadhTime = ({ lang }) => {
 const CheckIcon = () => (
   <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" aria-hidden>
     <path d="m5 12.5 4.5 4.5L19 7.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const CalendarIcon = () => (
+  <svg className="w-[17px] h-[17px]" viewBox="0 0 20 20" fill="none" aria-hidden>
+    <rect x="3" y="4.5" width="14" height="12.5" rx="3" stroke="currentColor" strokeWidth="1.5" />
+    <path d="M3 8.5h14M7 3v3M13 3v3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
   </svg>
 );
 
@@ -172,6 +180,14 @@ const ContactSection = () => {
     <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
       <Reveal className="flex flex-col gap-6">
         <p className="text-[17px] leading-[1.6] text-label-2">{t('contact.intro')}</p>
+
+        {/* TODO(moiez): hidden until site.calendlyUrl is set in src/data/site.json */}
+        {site.calendlyUrl && (
+          <Button href={site.calendlyUrl} className="self-start">
+            <CalendarIcon />
+            {t('contact.bookCall')}
+          </Button>
+        )}
 
         <dl className="grid grid-cols-3 surface !rounded-[20px] divide-x divide-separator">
           <div className="p-4">

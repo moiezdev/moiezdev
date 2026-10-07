@@ -153,7 +153,8 @@
         "emailInvalid": "Please enter a valid email address, like name@company.com.",
         "subject": "Please add a subject.",
         "message": "Please write a short message."
-      }
+      },
+      "bookCall": "Book a 15-min call"
     },
     "footer": {
       "role": "Senior Full Stack Engineer & Software Architect",
@@ -459,7 +460,8 @@
         "emailInvalid": "يرجى إدخال بريد إلكتروني صحيح، مثل name@company.com.",
         "subject": "يرجى إضافة موضوع.",
         "message": "يرجى كتابة رسالة قصيرة."
-      }
+      },
+      "bookCall": "احجز مكالمة لمدة 15 دقيقة"
     },
     "footer": {
       "role": "مهندس برمجيات متكامل أول ومعماري برمجيات",
