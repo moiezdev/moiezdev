@@ -16,7 +16,7 @@ const years = getExperienceYears();
 const HOME = {
   title: `${SITE_NAME} · Senior Full Stack Engineer in Riyadh`,
   description: `Senior Full Stack Engineer & Software Architect in Riyadh. ${years} years building POS, payments, loyalty and AI products with NestJS, React/Next.js and PostgreSQL.`,
-  image: '/og-image.jpg',
+  image: '/og/home.jpg',
 };
 
 const PAGES = {
@@ -163,7 +163,7 @@ export function metaFor(pathname = '/', projects = []) {
 export const NOT_FOUND = {
   title: `Page not found · ${SITE_NAME}`,
   description: 'This page doesn’t exist or has moved. Browse the work, experience or contact pages instead.',
-  image: '/og-image.jpg',
+  image: '/og/home.jpg',
   path: '/404',
   url: SITE_URL,
   noindex: true,

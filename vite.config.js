@@ -22,42 +22,50 @@ const loadProjects = () => {
  */
 function routeMeta() {
   let outDir = 'dist'
-  const inject = (html, path) =>
-    html.replace(SEO_BLOCK, renderSeoTags(metaFor(path, loadProjects())))
+  let building = false
   return {
     name: 'route-meta',
     configResolved(config) {
       outDir = config.build.outDir
+      building = config.command === 'build'
     },
     configureServer(server) {
-      server.middlewares.use('/og', async (req, res, next) => {
-        const route = req.url.replace(/\.jpg(\?.*)?$/, '')
-        if (!/\.jpg(\?|$)/.test(req.url)) return next()
+      // /og/home.jpg is the home page's card; /og-image.jpg is its old URL
+      server.middlewares.use(async (req, res, next) => {
+        const url = req.url.split('?')[0]
+        const route = url === '/og-image.jpg' || url === '/og/home.jpg' ? '/' : url.match(/^\/og(\/.+)\.jpg$/)?.[1]
+        if (!route) return next()
         res.setHeader('Content-Type', 'image/jpeg')
         res.end(await renderCard(route))
       })
     },
     transformIndexHtml(html, ctx) {
-      return inject(html, ctx.originalUrl?.split('?')[0] || '/')
+      // the build keeps the markers so writeBundle can fill the block per route
+      if (building) return html
+      return html.replace(SEO_BLOCK, renderSeoTags(metaFor(ctx.originalUrl?.split('?')[0] || '/', loadProjects())))
     },
     async writeBundle() {
       const template = readFileSync(join(outDir, 'index.html'), 'utf8')
-      for (const route of staticRoutes(loadProjects())) {
+      const projects = loadProjects()
+      for (const route of staticRoutes(projects)) {
+        const meta = metaFor(route, projects)
         // share card, drawn from site data (not stored in git)
-        const { image } = metaFor(route, loadProjects())
-        if (image.startsWith('/og/')) {
-          const png = join(outDir, image)
-          mkdirSync(dirname(png), { recursive: true })
-          writeFileSync(png, await renderCard(route))
+        if (meta.image.startsWith('/og/')) {
+          const jpg = join(outDir, meta.image)
+          mkdirSync(dirname(jpg), { recursive: true })
+          const card = await renderCard(route)
+          writeFileSync(jpg, card)
+          // the home card's old URL, still cached by sites that shared the link
+          if (route === '/') writeFileSync(join(outDir, 'og-image.jpg'), card)
         }
         // flat files: Vercel's cleanUrls serves /works/tdm from works/tdm.html
         const file = route === '/' ? join(outDir, 'index.html') : join(outDir, `${route}.html`)
         mkdirSync(dirname(file), { recursive: true })
-        writeFileSync(file, template.replace(/<title>[\s\S]*?<meta name="twitter:image:alt"[^>]*>/, renderSeoTags(metaFor(route, loadProjects()))))
+        writeFileSync(file, template.replace(SEO_BLOCK, renderSeoTags(meta)))
       }
       // Vercel serves 404.html, with a real 404 status, for any URL without a file;
       // the app then renders the branded NotFound page
-      writeFileSync(join(outDir, '404.html'), template.replace(/<title>[\s\S]*?<meta name="twitter:image:alt"[^>]*>/, renderSeoTags(NOT_FOUND)))
+      writeFileSync(join(outDir, '404.html'), template.replace(SEO_BLOCK, renderSeoTags(NOT_FOUND)))
     },
   }
 }
