@@ -1,22 +1,32 @@
-import { useEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
+import { prefersReducedMotion } from '../../hooks/useScrollFrame';
 
-/** Fades and lifts its children into view the first time they enter the viewport. */
-const Reveal = ({ as = 'div', delay = 0, className = '', children, ...rest }) => {
+/**
+ * Fades and lifts its children in when they scroll into view.
+ *
+ * Content is visible by default (prerendered HTML, no JS, reduced motion, and
+ * anything already on screen when the page loads). Only elements still below
+ * the fold get hidden, and they reveal once ~12% of the viewport is past them.
+ */
+const Reveal = ({ as = 'div', delay = 0, className = '', style, children, ...rest }) => {
   const Tag = as;
   const ref = useRef(null);
-  const [visible, setVisible] = useState(false);
+  const [state, setState] = useState('static'); // static | hidden | shown
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const el = ref.current;
-    if (!el) return undefined;
+    if (!el || prefersReducedMotion() || typeof IntersectionObserver === 'undefined') return undefined;
+    if (el.getBoundingClientRect().top < window.innerHeight * 0.88) return undefined;
+
+    setState('hidden');
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setVisible(true);
+          setState('shown');
           observer.disconnect();
         }
       },
-      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' },
+      { rootMargin: '0px 0px -12% 0px' },
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -25,8 +35,8 @@ const Reveal = ({ as = 'div', delay = 0, className = '', children, ...rest }) =>
   return (
     <Tag
       ref={ref}
-      className={`reveal ${visible ? 'is-visible' : ''} ${className}`}
-      style={{ '--reveal-delay': `${delay}ms` }}
+      className={`reveal ${state === 'hidden' ? 'reveal-hidden' : state === 'shown' ? 'reveal-shown' : ''} ${className}`}
+      style={{ '--reveal-delay': `${Math.min(delay, 240) / 2}ms`, ...style }}
       {...rest}
     >
       {children}

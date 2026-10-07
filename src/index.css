@@ -324,17 +324,15 @@ textarea:-webkit-autofill {
 }
 
 /* ---------- Motion ---------- */
-.reveal {
+.reveal-hidden {
   opacity: 0;
-  transform: translateY(32px);
-  transition:
-    opacity 0.9s var(--ease-apple),
-    transform 0.9s var(--ease-apple);
-  transition-delay: var(--reveal-delay, 0ms);
+  transform: translateY(12px);
 }
-.reveal.is-visible {
-  opacity: 1;
-  transform: none;
+.reveal-shown {
+  transition:
+    opacity 0.3s var(--ease-apple),
+    transform 0.3s var(--ease-apple);
+  transition-delay: var(--reveal-delay, 0ms);
 }
 
 @keyframes page-in {
@@ -378,9 +376,11 @@ textarea:-webkit-autofill {
   html {
     scroll-behavior: auto;
   }
-  .reveal {
+  .reveal-hidden {
     opacity: 1;
     transform: none;
+  }
+  .reveal-shown {
     transition: none;
   }
   .page-in,

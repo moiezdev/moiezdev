@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
+import { prefersReducedMotion } from '../../hooks/useScrollFrame';
 import WindowChrome from './WindowChrome';
 import { getExperienceYears } from '../../utils/experience';
 
@@ -32,15 +33,13 @@ const buildLines = (years) => [
 const CodeWindow = () => {
   const lines = buildLines(getExperienceYears());
   const ref = useRef(null);
-  const [shown, setShown] = useState(0);
+  // complete by default (prerendered HTML, no JS, reduced motion, already on screen)
+  const [shown, setShown] = useState(lines.length);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const el = ref.current;
-    if (!el) return undefined;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setShown(lines.length);
-      return undefined;
-    }
+    if (!el || prefersReducedMotion() || el.getBoundingClientRect().top < window.innerHeight * 0.88) return undefined;
+    setShown(0);
     let timer;
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -51,9 +50,9 @@ const CodeWindow = () => {
           n += 1;
           setShown(n);
           if (n >= lines.length) clearInterval(timer);
-        }, 110);
+        }, 45);
       },
-      { threshold: 0.3 },
+      { rootMargin: '0px 0px -12% 0px' },
     );
     observer.observe(el);
     return () => {
