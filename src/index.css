@@ -124,9 +124,36 @@ html[lang='ar'] body,
 }
 
 @layer base {
+  /* solid accent ring: ≥ 7:1 against every surface, light or dark (incl. the dark band) */
   :focus-visible {
-    outline: 3px solid color-mix(in srgb, var(--color-accent) 60%, transparent);
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
+  }
+}
+
+/* first focusable element on every page; shows only when focused */
+.skip-link {
+  position: fixed;
+  top: 0.5rem;
+  inset-inline-start: 0.5rem;
+  z-index: 100;
+  padding: 0.625rem 1rem;
+  border-radius: 999px;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font-size: 15px;
+  font-weight: 600;
+  transform: translateY(-150%);
+  transition: transform 0.2s var(--ease-apple);
+}
+.skip-link:focus-visible,
+.skip-link:focus {
+  transform: none;
+  outline-color: var(--color-label);
+}
+@media print {
+  .skip-link {
+    display: none;
   }
 }
 

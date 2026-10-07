@@ -34,7 +34,7 @@ export default function WalletSequence() {
 
   return (
     <figure className="surface !rounded-[20px] p-4 md:p-6">
-      <div className="overflow-x-auto" dir="ltr">
+      <div className="overflow-x-auto rounded-[12px]" dir="ltr" tabIndex={0} role="region" aria-label={t('a11y.scrollDiagram')}>
         <svg
           viewBox={`0 0 ${W} ${H}`}
           className="block w-full min-w-[640px] h-auto"

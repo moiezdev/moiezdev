@@ -388,7 +388,27 @@
       "themeToDark": "Switch to dark theme",
       "openMenu": "Open menu",
       "closeMenu": "Close menu",
-      "home": "MoizDev home"
+      "home": "MoizDev home",
+      "skip": "Skip to content",
+      "mainNav": "Main",
+      "prevImage": "Previous image",
+      "nextImage": "Next image",
+      "goToImage": "Go to image {{n}}",
+      "screenshot": "{{title}} — screenshot {{n}} of {{count}}",
+      "gallery": "{{title}} screenshots",
+      "prevPhoto": "Previous photo",
+      "nextPhoto": "Next photo",
+      "close": "Close",
+      "scrollCode": "Code sample (scrolls sideways)",
+      "scrollDiagram": "Diagram (scrolls sideways)",
+      "openChat": "Open {{name}}",
+      "closeChat": "Close chat",
+      "mute": "Mute voice",
+      "unmute": "Unmute voice",
+      "speak": "Speak a question",
+      "doneSpeaking": "Done speaking — send",
+      "chatInput": "Ask {{name}} a question",
+      "pageLinks": "Other pages"
     }
   },
   "ar": {
@@ -780,7 +800,27 @@
       "themeToDark": "التبديل إلى المظهر الداكن",
       "openMenu": "فتح القائمة",
       "closeMenu": "إغلاق القائمة",
-      "home": "الصفحة الرئيسية لـ MoizDev"
+      "home": "الصفحة الرئيسية لـ MoizDev",
+      "skip": "انتقل إلى المحتوى",
+      "mainNav": "القائمة الرئيسية",
+      "prevImage": "الصورة السابقة",
+      "nextImage": "الصورة التالية",
+      "goToImage": "انتقل إلى الصورة {{n}}",
+      "screenshot": "{{title}} — لقطة شاشة {{n}} من {{count}}",
+      "gallery": "لقطات شاشة {{title}}",
+      "prevPhoto": "الصورة السابقة",
+      "nextPhoto": "الصورة التالية",
+      "close": "إغلاق",
+      "scrollCode": "مثال برمجي (يُمرَّر أفقيًا)",
+      "scrollDiagram": "مخطط (يُمرَّر أفقيًا)",
+      "openChat": "افتح {{name}}",
+      "closeChat": "إغلاق المحادثة",
+      "mute": "كتم الصوت",
+      "unmute": "تشغيل الصوت",
+      "speak": "اطرح سؤالًا بصوتك",
+      "doneSpeaking": "انتهيت من الكلام — إرسال",
+      "chatInput": "اسأل {{name}} سؤالًا",
+      "pageLinks": "صفحات أخرى"
     }
   }
 }

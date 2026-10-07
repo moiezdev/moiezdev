@@ -30,7 +30,7 @@ export const AboutStory = ({ full = false }) => {
         </div>
       </Reveal>
       <div className="min-w-0">
-        <Reveal as="h3" className="headline-2 text-label">
+        <Reveal as="h2" className="headline-2 text-label">
           {t('about.title')}
         </Reveal>
         {shown.map((p, idx) => (

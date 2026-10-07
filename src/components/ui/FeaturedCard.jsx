@@ -30,7 +30,7 @@ const FeaturedCard = ({ project, className = '' }) => {
       >
         <Img
           src={project.imageUrl}
-          alt=""
+          alt={`${project.title} — ${project.subtitle}`}
           sizes="(min-width: 1024px) 720px, 100vw"
           className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 ease-[var(--ease-apple)] group-hover:scale-[1.03]"
         />

@@ -13,6 +13,7 @@ import { startSmoothScroll } from './utils/smoothScroll';
 import RouteMeta from './components/functions/RouteMeta';
 import { markMounted } from './utils/pageTransition';
 import { BOTFOLIO_OPEN_EVENT } from './utils/botfolio';
+import { useContent } from './i18n/content';
 
 // BotFolio isn't needed for first paint: load it once the browser is idle
 const ChatBot = lazy(() => import('./components/chatbot/ChatBot'));
@@ -48,6 +49,7 @@ function AppShell() {
   const { pathname } = useLocation();
   const isCv = pathname === '/cv';
   const idle = useIdle();
+  const { t } = useContent();
 
   // the printable CV keeps plain native scrolling
   useEffect(() => (isCv ? undefined : startSmoothScroll()), [isCv]);
@@ -64,8 +66,11 @@ function AppShell() {
 
   return (
     <>
+      <a href="#main" className="skip-link">
+        {t('a11y.skip')}
+      </a>
       <Navbar />
-      <main className="relative overflow-x-clip">
+      <main id="main" tabIndex={-1} className="relative overflow-x-clip outline-none">
         <Suspense fallback={<Loading />}>
           <ScrollToTop />
           <Routes>

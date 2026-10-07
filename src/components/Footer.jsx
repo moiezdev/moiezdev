@@ -46,8 +46,8 @@ const Footer = () => {
                   <a
                     className="hover:text-label hover:underline"
                     href={contact.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    // mail and phone links hand off to an app; only web links get a new tab
+                    {...(/^https?:/.test(contact.url) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                   >
                     {contact.platform}
                   </a>

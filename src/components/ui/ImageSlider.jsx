@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Img from './Img';
+import { useContent } from '../../i18n/content';
 
 const Arrow = ({ dir, onClick, label }) => (
   <button
@@ -16,6 +17,7 @@ const Arrow = ({ dir, onClick, label }) => (
 
 /** Crossfading gallery with swipe, keyboard arrows, and pill page indicators. */
 export default function ImageSlider({ images = [], title = '' }) {
+  const { t } = useContent();
   const [idx, setIdx] = useState(0);
   const touchX = useRef(null);
   const count = images.length;
@@ -45,7 +47,9 @@ export default function ImageSlider({ images = [], title = '' }) {
         if (Math.abs(dx) > 40) go(idx + ((dx < 0) !== rtl ? 1 : -1));
         touchX.current = null;
       }}
+      role="region"
       aria-roledescription="carousel"
+      aria-label={t('a11y.gallery', { title })}
     >
       {images.map((src, i) => (
         <div
@@ -56,7 +60,7 @@ export default function ImageSlider({ images = [], title = '' }) {
         >
           <Img
             src={src}
-            alt={`${title ? `${title} — ` : ''}screenshot ${i + 1}`}
+            alt={t('a11y.screenshot', { title, n: i + 1, count })}
             sizes="(min-width: 1280px) 1200px, 100vw"
             priority={i === 0}
             className="w-full h-full object-cover"
@@ -66,20 +70,26 @@ export default function ImageSlider({ images = [], title = '' }) {
 
       {count > 1 && (
         <>
-          <Arrow dir="prev" label="Previous image" onClick={() => go(idx - 1)} />
-          <Arrow dir="next" label="Next image" onClick={() => go(idx + 1)} />
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 glass ring-1 ring-separator rounded-full px-2.5 py-2">
+          <Arrow dir="prev" label={t('a11y.prevImage')} onClick={() => go(idx - 1)} />
+          <Arrow dir="next" label={t('a11y.nextImage')} onClick={() => go(idx + 1)} />
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center glass ring-1 ring-separator rounded-full px-1">
             {images.map((_, i) => (
               <button
                 key={i}
                 type="button"
                 onClick={() => go(i)}
-                aria-label={`Go to image ${i + 1}`}
+                aria-label={t('a11y.goToImage', { n: i + 1 })}
                 aria-current={i === idx}
-                className={`h-1.5 rounded-full transition-all duration-500 cursor-pointer ${
-                  i === idx ? 'w-5 bg-label' : 'w-1.5 bg-label-3 hover:bg-label-2'
-                }`}
-              />
+                // a 24px target around the small pill
+                className="group/dot inline-flex h-6 min-w-6 items-center justify-center px-[3px] cursor-pointer"
+              >
+                <span
+                  aria-hidden
+                  className={`h-1.5 rounded-full transition-all duration-500 ${
+                    i === idx ? 'w-5 bg-label' : 'w-1.5 bg-label-3 group-hover/dot:bg-label-2'
+                  }`}
+                />
+              </button>
             ))}
           </div>
         </>

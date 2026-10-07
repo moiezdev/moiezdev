@@ -461,7 +461,7 @@ const ChatBot = () => {
                 }}
                 className={`${ICON_BTN} ${voiceOn ? 'text-accent' : ''}`}
                 aria-pressed={voiceOn}
-                aria-label={voiceOn ? 'Mute voice' : 'Unmute voice'}
+                aria-label={voiceOn ? t(lang, 'a11y.mute') : t(lang, 'a11y.unmute')}
                 title={voiceOn ? 'Voice on' : 'Voice muted'}
               >
                 {voiceOn ? (
@@ -485,7 +485,7 @@ const ChatBot = () => {
                 </svg>
               </button>
             )}
-            <button type="button" onClick={closeChat} className={ICON_BTN} aria-label="Close chat">
+            <button type="button" onClick={closeChat} className={ICON_BTN} aria-label={t(lang, 'a11y.closeChat')}>
               <HiX className="w-4 h-4" aria-hidden />
             </button>
           </div>
@@ -566,7 +566,7 @@ const ChatBot = () => {
                   disabled={busy}
                   className={`${ICON_BTN} ${listening ? 'text-label bg-fill' : ''}`}
                   aria-pressed={listening}
-                  aria-label={listening ? 'Done speaking — send' : 'Speak a question'}
+                  aria-label={listening ? t(lang, 'a11y.doneSpeaking') : t(lang, 'a11y.speak')}
                   title={listening ? 'Tap when finished' : 'Speak'}
                 >
                   {listening ? (
@@ -585,6 +585,7 @@ const ChatBot = () => {
                   listening ? t(lang, 'chat.placeholderListen') : t(lang, 'chat.placeholder')
                 }
                 disabled={busy}
+                aria-label={t(lang, 'a11y.chatInput', { name: BOT_NAME })}
                 className="flex-1 min-w-0 bg-transparent px-2 py-1 text-base text-label placeholder:text-label-3 focus:outline-none focus-visible:outline-none disabled:opacity-50"
               />
               <button
@@ -613,7 +614,7 @@ const ChatBot = () => {
             ref={fabRef}
             onClick={openChat}
             className="relative size-12 sm:size-16 rounded-full glass ring-1 ring-separator shadow-[0_12px_32px_rgba(0,0,0,0.2)] inline-flex items-center justify-center hover:scale-105 active:scale-95 transition-transform duration-300 cursor-pointer"
-            aria-label={`Open ${BOT_NAME}`}
+            aria-label={t(lang, 'a11y.openChat', { name: BOT_NAME })}
             aria-expanded={false}
           >
             <span className="absolute top-0.5 end-0.5 sm:top-1 sm:end-1 size-2.5 sm:size-3 rounded-full bg-green ring-2 ring-bg" aria-hidden />

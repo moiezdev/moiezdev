@@ -17,7 +17,7 @@ export default function NotFound() {
         {t('notFound.home')}
       </Button>
       <p className="mt-10 text-[13px] text-label-3">{t('notFound.or')}</p>
-      <nav className="mt-3 flex flex-wrap justify-center gap-2">
+      <nav aria-label={t('a11y.pageLinks')} className="mt-3 flex flex-wrap justify-center gap-2">
         {t('notFound.links').map((link) => (
           <Link key={link.to} to={link.to} className="chip text-[14px] py-1.5 px-4 hover:text-label transition-colors">
             {link.label}

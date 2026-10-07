@@ -8,6 +8,7 @@ import { useContent } from '../../i18n/content';
 
 /** Full-screen photo viewer with keyboard and swipe navigation. */
 const Lightbox = ({ photos, index, onClose, onGo, lang }) => {
+  const { t } = useContent();
   const [touchX, setTouchX] = useState(null);
 
   useEffect(() => {
@@ -33,7 +34,7 @@ const Lightbox = ({ photos, index, onClose, onGo, lang }) => {
         e.stopPropagation();
         onGo(index + (dir === 'next' ? 1 : -1));
       }}
-      aria-label={dir === 'next' ? 'Next photo' : 'Previous photo'}
+      aria-label={dir === 'next' ? t('a11y.nextPhoto') : t('a11y.prevPhoto')}
       className={`absolute top-1/2 -translate-y-1/2 ${dir === 'next' ? 'end-4 md:end-8' : 'start-4 md:start-8'} size-11 rounded-full bg-[rgba(255,255,255,0.12)] hover:bg-[rgba(255,255,255,0.22)] text-[#fff] inline-flex items-center justify-center backdrop-blur-md transition-colors`}
     >
       <svg className={`w-4 h-4 ${dir === 'prev' ? 'ltr:rotate-180' : 'rtl:rotate-180'}`} viewBox="0 0 16 16" fill="none" aria-hidden>
@@ -76,7 +77,7 @@ const Lightbox = ({ photos, index, onClose, onGo, lang }) => {
       <button
         type="button"
         onClick={onClose}
-        aria-label="Close"
+        aria-label={t('a11y.close')}
         className="absolute top-4 end-4 md:top-6 md:end-6 size-10 rounded-full bg-[rgba(255,255,255,0.12)] hover:bg-[rgba(255,255,255,0.22)] text-[#fff] inline-flex items-center justify-center backdrop-blur-md"
       >
         <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden>
@@ -108,7 +109,7 @@ const Moments = ({ compact = false }) => {
     >
       <Img
         src={photo.src}
-        alt={photo.caption[lang]}
+        alt=""
         sizes={big ? '(min-width: 768px) 640px, 100vw' : '(min-width: 768px) 320px, 50vw'}
         className="absolute inset-0 w-full h-full object-cover object-[50%_25%] transition-transform duration-700 ease-[var(--ease-apple)] group-hover:scale-[1.05]"
       />

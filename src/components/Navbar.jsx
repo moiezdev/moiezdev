@@ -96,7 +96,7 @@ const Navbar = () => {
         scrolled || open ? 'glass border-separator' : 'bg-transparent border-transparent'
       }`}
     >
-      <nav className="app-container px-5 h-[52px] flex items-center justify-between">
+      <nav aria-label={t('a11y.mainNav')} className="app-container px-5 h-[52px] flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2 text-label font-semibold tracking-[-0.02em]" aria-label={t('a11y.home')}>
           <Logo size={28} />
           <span className="text-[17px]">MoizDev</span>
