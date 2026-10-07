@@ -66,7 +66,7 @@ const CodeWindow = () => {
   return (
     <div ref={ref}>
       <WindowChrome title="engineer.ts">
-        <pre tabIndex={0} aria-label={t('a11y.scrollCode')} className="code-window overflow-x-auto p-5 md:p-7 text-[13px] md:text-[14px] leading-[1.75] font-mono" dir="ltr">
+        <pre tabIndex={0} role="region" aria-label={t('a11y.scrollCode')} className="code-window overflow-x-auto p-5 md:p-7 text-[13px] md:text-[14px] leading-[1.75] font-mono" dir="ltr">
           <code>
             {lines.map((line, i) => (
               <div key={i} className="flex" style={{ visibility: i < shown ? 'visible' : 'hidden' }}>
