@@ -571,3 +571,35 @@ html[data-theme='dark'] .code-window {
   -webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent 98%);
   mask-image: linear-gradient(to bottom, #000 62%, transparent 98%);
 }
+
+/* ---------- Section bands (home rhythm) ---------- */
+/* a subtly tinted band */
+.band-tint {
+  background-color: var(--color-surface-2);
+}
+/* a band that stays dark in both themes; pair it with data-theme="dark" so
+   `dark:` variants apply inside. Values mirror the dark theme tokens. */
+.band-dark {
+  --color-bg: #0d0d0f;
+  --color-surface: #1c1c1e;
+  --color-surface-2: #161617;
+  --color-fill: rgba(120, 120, 128, 0.24);
+  --color-separator: rgba(255, 255, 255, 0.12);
+  --color-label: #f5f5f7;
+  --color-label-2: #a1a1a6;
+  --color-label-3: #6e6e73;
+  --color-accent: #d5dae2;
+  --color-accent-hover: #eef1f5;
+  --color-on-accent: #111114;
+  --color-green: #7fa88f;
+  --glow-a: rgba(120, 132, 155, 0.2);
+  --glow-b: rgba(150, 136, 122, 0.13);
+  --shadow-card: 0 0 0 1px rgba(255, 255, 255, 0.06);
+  --shadow-card-hover: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 24px 56px rgba(0, 0, 0, 0.6);
+  color-scheme: dark;
+  color: var(--color-label);
+  background-color: var(--color-bg);
+}
+.band-dark .text-gradient {
+  background-image: linear-gradient(100deg, #f5f5f7 0%, #b4bac4 55%, #858c99 100%);
+}

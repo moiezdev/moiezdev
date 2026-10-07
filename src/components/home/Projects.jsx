@@ -11,7 +11,7 @@ const Projects = () => {
   const more = projects.filter((p) => !p.featured && p.status !== 'in-progress' && p.group !== 'earlier').slice(0, 3);
 
   return (
-    <section className="w-full px-5 pt-20 md:pt-28 scroll-mt-16" id="work">
+    <section className="band-tint w-full px-5 py-20 md:py-28 scroll-mt-16" id="work">
       <div className="app-container">
         <SectionTitle
           eyebrow={t('projects.eyebrow')}

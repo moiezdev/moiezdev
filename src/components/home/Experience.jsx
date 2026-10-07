@@ -8,7 +8,7 @@ const Experience = () => {
   const { t, jobs } = useContent();
 
   return (
-    <section className="w-full px-5 pt-28 md:pt-40" id="experience">
+    <section className="w-full px-5 py-20 md:py-28" id="experience">
       <div className="app-container">
         <SectionTitle
           eyebrow={t('experience.eyebrow')}
