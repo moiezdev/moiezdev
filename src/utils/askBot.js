@@ -5,13 +5,13 @@ import { t } from '../i18n/content';
 
 const OFFLINE = {
   en: {
-    ai: "This chat is BotFolio — Moiz's OpenRouter (DeepSeek) portfolio guide. He also integrated the same stack into [[nav:/works/twlm-pos|TWLM - POS]] for smart menu search and restaurant-data analysis.",
+    ai: "This chat is BotFolio — Moieez's OpenRouter (DeepSeek) portfolio guide. He also integrated the same stack into [[nav:/works/twlm-pos|TWLM - POS]] for smart menu search and restaurant-data analysis.",
     projects: 'Standouts include [[nav:/works/twlm-pos|TWLM - POS]] (~70% fewer support requests, ~64% faster APIs) and [[nav:/works/aa-tourism|AATourism]]. Want more on [[nav:/works|All works]]?',
-    experience: 'Moiz has shipped product across TWLM, Accoina Agua, SCM Borba, and Creative Inter Tech. See the full timeline on [[nav:/experience|Experience]].',
-    stack: 'Moiz focuses on scalable SaaS and retail systems — React, Vue, Next.js, Node.js, NestJS — plus payments, wallets, booking engines, and OpenRouter AI. See [[nav:/about|About Moiz]] or real examples on [[nav:/works|All works]].',
-    hire: "Moiz is open to senior full stack roles. He's based in Riyadh with a transferable Iqama and can start immediately. See his [[nav:/cv|CV]] or reach him via the [[nav:/contact|Contact page]].",
-    contact: 'Reach Moiz at moiezdev@gmail.com or +966 573240913 — or use [[nav:/contact|Contact page]].',
-    other: "I stay focused on Moiz's work. Want a quick overview on [[nav:/about|About Moiz]], his [[nav:/experience|Experience]], or real project examples on [[nav:/works|All works]]?",
+    experience: 'Moieez has shipped product across TWLM, Accoina Agua, SCM Borba, and Creative Inter Tech. See the full timeline on [[nav:/experience|Experience]].',
+    stack: 'Moieez focuses on scalable SaaS and retail systems — React, Vue, Next.js, Node.js, NestJS — plus payments, wallets, booking engines, and OpenRouter AI. See [[nav:/about|About Moieez]] or real examples on [[nav:/works|All works]].',
+    hire: "Moieez is open to senior full stack roles. He's based in Riyadh with a transferable Iqama and can start immediately. See his [[nav:/cv|CV]] or reach him via the [[nav:/contact|Contact page]].",
+    contact: 'Reach Moieez at moiezdev@gmail.com or +966 573240913 — or use [[nav:/contact|Contact page]].',
+    other: "I stay focused on Moieez's work. Want a quick overview on [[nav:/about|About Moieez]], his [[nav:/experience|Experience]], or real project examples on [[nav:/works|All works]]?",
   },
   ar: {
     ai: 'هذه المحادثة هي BotFolio — دليل معيز المبني على OpenRouter (DeepSeek). ودمج معيز التقنية نفسها في [[nav:/works/twlm-pos|TWLM - POS]] للبحث الذكي في القوائم وتحليل البيانات.',
@@ -26,9 +26,9 @@ const OFFLINE = {
 
 const SMALL_TALK = {
   en: {
-    greet: "Hi! Good to have you here. Ask me anything about Moiz — for example his [[nav:/works/twlm-pos|TWLM - POS]] platform, his tech stack, or whether he's open to new roles.",
-    thanks: 'Anytime. If you want to talk to Moiz directly, the [[nav:/contact|Contact page]] is the fastest way.',
-    bye: 'Thanks for stopping by. You can reach Moiz any time via the [[nav:/contact|Contact page]].',
+    greet: "Hi! Good to have you here. Ask me anything about Moieez — for example his [[nav:/works/twlm-pos|TWLM - POS]] platform, his tech stack, or whether he's open to new roles.",
+    thanks: 'Anytime. If you want to talk to Moieez directly, the [[nav:/contact|Contact page]] is the fastest way.',
+    bye: 'Thanks for stopping by. You can reach Moieez any time via the [[nav:/contact|Contact page]].',
   },
   ar: {
     greet: 'أهلاً بك! اسألني أي شيء عن معيز — مثل منصة [[nav:/works/twlm-pos|TWLM - POS]]، أو التقنيات التي يستخدمها، أو إن كان متاحاً لأدوار جديدة.',

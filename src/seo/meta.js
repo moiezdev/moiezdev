@@ -36,7 +36,7 @@ const PAGES = {
   },
   '/contact': {
     title: `Contact · ${SITE_NAME}`,
-    description: 'Open to senior full stack roles and projects. Reach Moiz at moiezdev@gmail.com.',
+    description: 'Open to senior full stack roles and projects. Reach Moieez ur Rehman at moiezdev@gmail.com.',
     image: '/og/contact.jpg',
   },
   '/cv': {
