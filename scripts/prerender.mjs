@@ -11,13 +11,8 @@ import { pathToFileURL } from 'node:url';
 const DIST = 'dist';
 const { render } = await import(pathToFileURL(join('dist-ssr', 'entry-server.js')).href);
 const manifest = JSON.parse(readFileSync(join(DIST, '.vite', 'manifest.json'), 'utf8'));
-const images = JSON.parse(readFileSync('src/data/images.json', 'utf8'));
-
-// the home page's LCP image is the only one worth preloading
-const hero = images['/heroSection/hero-img.webp'];
-const heroPreload = hero
-  ? `<link rel="preload" as="image" type="image/avif" fetchpriority="high" imagesizes="(min-width: 768px) 620px, 400px" imagesrcset="${hero.widths.map((w) => `${hero.base}-${w}.avif ${w}w`).join(', ')}" />`
-  : '';
+// No image preload: the home page's largest paint is the hero headline (text);
+// the only hero image is a small avatar, loaded eagerly by <Img priority>.
 
 // the lazy page module behind each route, so its code and CSS can be preloaded
 const pageFor = (route) =>
@@ -63,9 +58,8 @@ for (const file of htmlFiles(DIST)) {
   const markup = await render(route);
   const { css } = assetsFor(pageFor(route));
   const preload = [
-    ...(route === '/' && heroPreload ? [heroPreload] : []),
-    // page CSS only: preloading page JS would compete with the hero for bandwidth,
-    // and the prerendered page doesn't need it to paint
+    // page CSS only: preloading page JS would compete with the first paint for
+    // bandwidth, and the prerendered page doesn't need it to paint
     ...[...css].map((f) => `<link rel="stylesheet" href="/${f}" />`),
   ].join('\n    ');
 

@@ -27,7 +27,13 @@
       "statCompanies": "Companies",
       "statement": "I own features end to end — from understanding the business to the last deploy.",
       "statLatencyValue": "~64%",
-      "statLatency": "Lower API latency"
+      "statLatency": "Lower API latency",
+      "name": "Moieez ur Rehman",
+      "eyebrow": "Senior Full Stack Engineer · Riyadh",
+      "title": "I build POS, payments & AI features for Gulf retail.",
+      "subtitle": "Node.js/NestJS, React/Next.js, PostgreSQL and LLM integrations — from architecture to production.",
+      "viewWork": "View my work",
+      "bookCall": "Book a 15-min call"
     },
     "about": {
       "section": "about me",
@@ -341,7 +347,13 @@
       "statCompanies": "شركات",
       "statement": "أتولى الميزات من البداية للنهاية — من فهم احتياج العمل حتى آخر عملية نشر.",
       "statLatencyValue": "~64٪",
-      "statLatency": "زمن استجابة أقل للواجهات"
+      "statLatency": "زمن استجابة أقل للواجهات",
+      "name": "معيز الرحمن",
+      "eyebrow": "مهندس برمجيات متكامل أول · الرياض",
+      "title": "أبني أنظمة نقاط البيع والمدفوعات وميزات الذكاء الاصطناعي لقطاع التجزئة في الخليج.",
+      "subtitle": "Node.js/NestJS وReact/Next.js وPostgreSQL وتكامل النماذج اللغوية — من التصميم المعماري حتى الإنتاج.",
+      "viewWork": "شاهد أعمالي",
+      "bookCall": "احجز مكالمة لمدة 15 دقيقة"
     },
     "about": {
       "section": "نبذتي",
