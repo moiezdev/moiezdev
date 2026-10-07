@@ -14,6 +14,7 @@ import { getProjectById } from '../data';
 import { useContent } from '../i18n/content';
 import NotFound from './NotFound';
 import { sortTech, topTech } from '../utils/techRank';
+import { scrollToTarget } from '../utils/smoothScroll';
 
 /** Diagrams a project can list in its `diagrams` field. */
 const DIAGRAMS = {
@@ -37,6 +38,22 @@ const Points = ({ items }) =>
       ))}
     </ul>
   );
+
+/**
+ * Smooth-scrolls to a section; checks again once the scroll settles, since
+ * lazy content (the architecture diagram) can grow on the way.
+ * The offset comes from the sections' scroll-margin (scroll-mt-24).
+ */
+function goToSection(e, id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  e.preventDefault();
+  history.replaceState(null, '', `#${id}`);
+  scrollToTarget(el);
+  setTimeout(() => {
+    if (Math.abs(el.getBoundingClientRect().top - 96) > 8) scrollToTarget(el);
+  }, 1300);
+}
 
 /** Highlights the table-of-contents entry for the section in view. */
 function useActiveSection(ids) {
@@ -204,6 +221,7 @@ export default function ProjectDetail() {
                     <li key={s.id}>
                       <a
                         href={`#${s.id}`}
+                        onClick={(e) => goToSection(e, s.id)}
                         aria-current={active === s.id ? 'location' : undefined}
                         className={`-ms-px block border-s-2 ps-4 py-1.5 text-[14px] leading-snug transition-colors ${
                           active === s.id ? 'border-label text-label font-medium' : 'border-transparent text-label-2 hover:text-label'
