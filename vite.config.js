@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 import flowbiteReact from "flowbite-react/plugin/vite";
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
-import { metaFor, renderSeoTags, staticRoutes } from './src/seo/meta.js'
+import { NOT_FOUND, metaFor, renderSeoTags, staticRoutes } from './src/seo/meta.js'
 import { renderCard } from './seo/og-card.js'
 
 const SEO_BLOCK = /<!-- seo:start[\s\S]*?<!-- seo:end -->/
@@ -55,6 +55,9 @@ function routeMeta() {
         mkdirSync(dirname(file), { recursive: true })
         writeFileSync(file, template.replace(/<title>[\s\S]*?<meta name="twitter:image:alt"[^>]*>/, renderSeoTags(metaFor(route, loadProjects()))))
       }
+      // Vercel serves 404.html, with a real 404 status, for any URL without a file;
+      // the app then renders the branded NotFound page
+      writeFileSync(join(outDir, '404.html'), template.replace(/<title>[\s\S]*?<meta name="twitter:image:alt"[^>]*>/, renderSeoTags(NOT_FOUND)))
     },
   }
 }

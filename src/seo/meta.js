@@ -72,10 +72,21 @@ export function metaFor(pathname = '/', projects = []) {
         description: projectBlurb(project),
         image: `/og/works/${project.id}.jpg`,
       }
-    : PAGES[path] || HOME;
+    : PAGES[path];
 
+  if (!meta) return NOT_FOUND;
   return { ...meta, path, url: `${SITE_URL}${path === '/' ? '' : path}` };
 }
+
+/** Served by the host (with a 404 status) for any URL that isn't a real page. */
+export const NOT_FOUND = {
+  title: `Page not found · ${SITE_NAME}`,
+  description: 'This page doesn’t exist or has moved. Browse the work, experience or contact pages instead.',
+  image: '/og-image.jpg',
+  path: '/404',
+  url: SITE_URL,
+  noindex: true,
+};
 
 /** Every route that gets its own static HTML at build time. */
 export const staticRoutes = (projects) => [
@@ -92,7 +103,7 @@ export function renderSeoTags(meta) {
   return [
     `<title>${esc(meta.title)}</title>`,
     `<meta name="description" content="${esc(meta.description)}" />`,
-    `<link rel="canonical" href="${meta.url}" />`,
+    meta.noindex ? `<meta name="robots" content="noindex" />` : `<link rel="canonical" href="${meta.url}" />`,
     `<meta property="og:type" content="${meta.path.startsWith('/works/') ? 'article' : 'website'}" />`,
     `<meta property="og:site_name" content="${SITE_NAME}" />`,
     `<meta property="og:url" content="${meta.url}" />`,
