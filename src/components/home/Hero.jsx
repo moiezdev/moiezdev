@@ -7,6 +7,7 @@ import { Chevron } from '../ui/SectionTitle';
 import { useContent } from '../../i18n/content';
 import { getExperienceYears } from '../../utils/experience';
 import { scrollToTarget } from '../../utils/smoothScroll';
+import site from '../../data/site.json';
 
 const Stat = ({ value, label }) => (
   <div className="flex flex-col items-center text-center px-4">
@@ -97,7 +98,7 @@ const Hero = () => {
           <Button to="/contact" primary size="lg">
             {t('hero.contact')}
           </Button>
-          <Button href="/Moieez%20ur%20Rehman.pdf" download="Moieez ur Rehman.pdf" size="lg" variant="outline">
+          <Button href={site.cv.url} download={site.cv.fileName} size="lg" variant="outline">
             {t('hero.resume')}
           </Button>
         </Reveal>

@@ -4,6 +4,7 @@ import PageHeader from '../components/ui/PageHeader';
 import Reveal from '../components/ui/Reveal';
 import Button from '../components/ui/Button';
 import { useContent } from '../i18n/content';
+import site from '../data/site.json';
 
 const Experience = () => {
   const { t, jobs, education } = useContent();
@@ -11,7 +12,7 @@ const Experience = () => {
   return (
     <Transition>
       <PageHeader eyebrow={t('experience.eyebrow')} title={t('experience.pageTitle')} subtitle={t('experience.list')}>
-        <Button href="/Moieez%20ur%20Rehman.pdf" download="Moieez ur Rehman.pdf" primary>
+        <Button href={site.cv.url} download={site.cv.fileName} primary>
           {t('experience.resume')}
         </Button>
       </PageHeader>

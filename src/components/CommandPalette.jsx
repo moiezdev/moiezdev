@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { contacts } from '../data';
 import { usePreferences } from '../context/Preferences';
 import { useContent } from '../i18n/content';
+import site from '../data/site.json';
 
 const Icon = ({ d }) => (
   <svg className="w-4 h-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -86,8 +87,8 @@ const CommandPalette = () => {
         title: t('hero.resume'),
         run: () => {
           const a = document.createElement('a');
-          a.href = '/Moieez%20ur%20Rehman.pdf';
-          a.download = 'Moieez ur Rehman.pdf';
+          a.href = site.cv.url;
+          a.download = site.cv.fileName;
           a.click();
         },
       },

@@ -1,4 +1,8 @@
 {
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "redirects": [
+    { "source": "/Moieez ur Rehman.pdf", "destination": "/moieez-ur-rehman-cv.pdf", "permanent": true },
+    { "source": "/Moieez%20ur%20Rehman.pdf", "destination": "/moieez-ur-rehman-cv.pdf", "permanent": true }
+  ]
 }
