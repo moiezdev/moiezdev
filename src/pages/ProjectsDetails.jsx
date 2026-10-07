@@ -10,6 +10,7 @@ import { Chevron } from '../components/ui/SectionTitle';
 import { getProjectById } from '../data';
 import { useContent } from '../i18n/content';
 import NotFound from './NotFound';
+import { sortTech } from '../utils/techRank';
 
 export default function ProjectDetail() {
   const { id } = useParams();
@@ -103,7 +104,7 @@ export default function ProjectDetail() {
                 {t('projects.builtWith')}
               </p>
               <div className="flex flex-wrap gap-2">
-                {project.technologies.map((tech) => (
+                {sortTech(project.technologies).map((tech) => (
                   <TechChip key={tech} name={tech} />
                 ))}
               </div>

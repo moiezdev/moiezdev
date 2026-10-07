@@ -3,6 +3,7 @@ import Img from './Img';
 import TechChip from './TechChip';
 import { Chevron } from './SectionTitle';
 import { useContent } from '../../i18n/content';
+import { topTech } from '../../utils/techRank';
 
 const ExternalIcon = () => (
   <svg className="w-3 h-3 rtl:-scale-x-100" viewBox="0 0 12 12" fill="none" aria-hidden>
@@ -14,9 +15,10 @@ const ExternalIcon = () => (
  * Project card. The whole card links to the project page (stretched link);
  * external links sit above it so they stay independently clickable.
  */
-const Card = ({ project, featured = false, eyebrow, maxTech = 4, className = '' }) => {
+const Card = ({ project, featured = false, eyebrow, maxTech = 3, className = '' }) => {
   const { t } = useContent();
-  const tech = project.technologies || [];
+  // at most a few tags, the most relevant first
+  const tech = topTech(project.technologies, maxTech);
   const links = [
     project.projectUrl && { href: project.projectUrl, label: t('projects.live') },
     project.githubUrl && { href: project.githubUrl, label: t('projects.github') },
@@ -38,7 +40,7 @@ const Card = ({ project, featured = false, eyebrow, maxTech = 4, className = '' 
           // no real screenshot (e.g. only a logo): a calm typographic placeholder
           <div className="blueprint absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center transition-transform duration-700 ease-[var(--ease-apple)] group-hover:scale-[1.04]">
             <span className="text-[44px] md:text-[52px] font-bold tracking-[-0.04em] text-label leading-none">{project.title}</span>
-            <span className="font-mono text-[12px] text-label-3">{tech.slice(0, 4).join(' · ')}</span>
+            <span className="font-mono text-[12px] text-label-3">{tech.join(' · ')}</span>
           </div>
         ) : (
           <Img
@@ -70,14 +72,9 @@ const Card = ({ project, featured = false, eyebrow, maxTech = 4, className = '' 
 
         {tech.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mt-1">
-            {tech.slice(0, featured ? 6 : maxTech).map((item) => (
+            {tech.map((item) => (
               <TechChip key={item} name={item} />
             ))}
-            {tech.length > (featured ? 6 : maxTech) && (
-              <span className="chip text-label-2" title={tech.join(', ')}>
-                +{tech.length - (featured ? 6 : maxTech)}
-              </span>
-            )}
           </div>
         )}
 

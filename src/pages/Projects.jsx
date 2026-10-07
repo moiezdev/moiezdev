@@ -5,6 +5,7 @@ import PageHeader from '../components/ui/PageHeader';
 import Transition from '../components/functions/Transition';
 import { getSkillIcon, readableIconColor } from '../utils/skillIcons';
 import { useContent } from '../i18n/content';
+import { isCoreTech, sortTech } from '../utils/techRank';
 
 const ALL = '__all__';
 
@@ -12,15 +13,12 @@ const Projects = () => {
   const { t, projects } = useContent();
   const [filter, setFilter] = useState(ALL);
 
-  // the most-used technologies become filters
+  // filters: core technologies plus any shared by several projects, most relevant first
   const filters = useMemo(() => {
     const counts = new Map();
     projects.forEach((p) => (p.technologies || []).forEach((tech) => counts.set(tech, (counts.get(tech) || 0) + 1)));
-    return [...counts.entries()]
-      .filter(([, n]) => n > 1)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 8)
-      .map(([tech]) => tech);
+    const candidates = [...counts.keys()].filter((tech) => counts.get(tech) > 1 || isCoreTech(tech));
+    return sortTech(candidates).slice(0, 8);
   }, [projects]);
 
   const finished = projects.filter((p) => p.status !== 'in-progress');
