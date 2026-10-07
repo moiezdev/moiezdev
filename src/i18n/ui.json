@@ -116,7 +116,10 @@
       "next": "Next",
       "statusOpen": "Open source",
       "inProgress": "In progress",
-      "inProgressBlurb": "Projects I’m building right now."
+      "inProgressBlurb": "Projects I’m building right now.",
+      "featuredCaseStudy": "Featured case study",
+      "caseStudy": "Read case study",
+      "liveProduct": "Live product"
     },
     "skills": {
       "section": "skills",
@@ -436,7 +439,10 @@
       "next": "التالي",
       "statusOpen": "مفتوح المصدر",
       "inProgress": "قيد التطوير",
-      "inProgressBlurb": "مشاريع أعمل على بنائها حالياً."
+      "inProgressBlurb": "مشاريع أعمل على بنائها حالياً.",
+      "featuredCaseStudy": "دراسة حالة مميزة",
+      "caseStudy": "اقرأ دراسة الحالة",
+      "liveProduct": "المنتج المباشر"
     },
     "skills": {
       "section": "المهارات",

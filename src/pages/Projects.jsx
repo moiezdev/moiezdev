@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import Card from '../components/ui/Card';
+import FeaturedCard from '../components/ui/FeaturedCard';
 import Reveal from '../components/ui/Reveal';
 import PageHeader from '../components/ui/PageHeader';
 import Transition from '../components/functions/Transition';
@@ -57,7 +58,7 @@ const Projects = () => {
           </p>
           {filter === ALL && finished[0] && (
             <Reveal className="mb-6">
-              <Card project={finished[0]} featured />
+              <FeaturedCard project={finished[0]} />
             </Reveal>
           )}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

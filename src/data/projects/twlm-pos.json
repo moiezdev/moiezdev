@@ -55,5 +55,8 @@
     "main.webp",
     "img1.webp",
     "img2.webp"
-  ]
+  ],
+  "featured": true,
+  "featuredMetric": 1,
+  "productUrl": "https://twlm.solutions/pos"
 }
