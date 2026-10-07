@@ -22,6 +22,9 @@ import { BOTFOLIO_OPEN_EVENT, takeBotfolioRequest } from '../../utils/botfolio';
 
 const VOICE_PREF_KEY = 'botfolio-voice';
 
+// the panel grows out of the launcher's corner: bottom-right, or bottom-left in RTL
+const launcherCorner = () => (document.documentElement.dir === 'rtl' ? '0% 100%' : '100% 100%');
+
 const welcomeMessage = (lang) => ({
   id: 'welcome',
   role: 'bot',
@@ -142,7 +145,7 @@ const ChatBot = () => {
         scale: 1,
         duration: 0.45,
         ease: 'power3.out',
-        transformOrigin: '100% 100%',
+        transformOrigin: launcherCorner(),
       }
     );
   }, [open]);
@@ -198,7 +201,7 @@ const ChatBot = () => {
       scale: 0.94,
       duration: 0.28,
       ease: 'power2.in',
-      transformOrigin: '100% 100%',
+      transformOrigin: launcherCorner(),
       onComplete: () => {
         setOpen(false);
         requestAnimationFrame(() => {
@@ -432,7 +435,7 @@ const ChatBot = () => {
       {open && (
         <div
           ref={panelRef}
-          className="pointer-events-auto w-[min(100vw-1.5rem,390px)] max-h-full h-[min(78vh,680px)] flex flex-col overflow-hidden rounded-[28px] glass ring-1 ring-separator shadow-[0_24px_64px_rgba(0,0,0,0.28)] origin-bottom-right"
+          className="pointer-events-auto w-[min(100vw-1.5rem,390px)] max-h-full h-[min(78vh,680px)] flex flex-col overflow-hidden rounded-[28px] glass ring-1 ring-separator shadow-[0_24px_64px_rgba(0,0,0,0.28)] origin-bottom-right rtl:origin-bottom-left"
           role="dialog"
           aria-label={`${BOT_NAME} portfolio chat`}
         >

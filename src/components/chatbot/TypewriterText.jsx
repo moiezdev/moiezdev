@@ -65,7 +65,7 @@ const TypewriterText = ({
       {linkifyToNodes(shown, { spans, onNavigate })}
       {active && shown.length < text.length && (
         <span
-          className="inline-block w-[0.55ch] ml-px bg-primary align-baseline animate-pulse"
+          className="inline-block w-[0.55ch] ms-px bg-primary align-baseline animate-pulse"
           aria-hidden
         >
           &nbsp;

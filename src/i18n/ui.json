@@ -107,7 +107,10 @@
       "more": "More projects",
       "view": "View",
       "all": "All",
-      "count": "{{count}} projects",
+      "countForms": {
+        "one": "{{count}} project",
+        "other": "{{count}} projects"
+      },
       "status": "Status",
       "statusLive": "Live",
       "statusPrivate": "Private / internal",
@@ -488,7 +491,7 @@
           "label": "زمن استجابة أقل لواجهات نظام نقاط البيع"
         },
         {
-          "value": "+10K",
+          "value": "10K+",
           "label": "مستخدم شهرياً على منصات السفر التي قدتها"
         },
         {
@@ -519,7 +522,14 @@
       "more": "مشاريع أخرى",
       "view": "عرض",
       "all": "الكل",
-      "count": "{{count}} مشاريع",
+      "countForms": {
+        "zero": "لا توجد مشاريع",
+        "one": "مشروع واحد",
+        "two": "مشروعان",
+        "few": "{{count}} مشاريع",
+        "many": "{{count}} مشروعًا",
+        "other": "{{count}} مشروع"
+      },
       "status": "الحالة",
       "statusLive": "مباشر",
       "statusPrivate": "خاص / داخلي",

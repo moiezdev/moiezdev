@@ -32,8 +32,14 @@ const CardGrid = ({ list }) => (
 );
 
 const Projects = () => {
-  const { t, projects } = useContent();
+  const { t, lang, projects } = useContent();
   const [filter, setFilter] = useState(ALL);
+  // "13 projects" / Arabic's six plural forms ("مشروعان", "5 مشاريع", "13 مشروعًا")
+  const countLabel = (n) => {
+    const forms = t('projects.countForms');
+    const form = n === 0 && forms.zero ? 'zero' : new Intl.PluralRules(lang).select(n);
+    return (forms[form] ?? forms.other).replace('{{count}}', String(n));
+  };
 
   // filters: core technologies plus any shared by several projects, most relevant first
   const filters = useMemo(() => {
@@ -78,7 +84,7 @@ const Projects = () => {
             })}
           </Reveal>
           <p className="text-center text-[13px] text-label-3 mb-10 font-mono" aria-live="polite">
-            {t('projects.count', { count: shown.length })}
+            {countLabel(shown.length)}
           </p>
           {filter === ALL ? (
             <>
