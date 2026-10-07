@@ -380,6 +380,15 @@
       "botTitle": "{{name}} · this site",
       "botBody": "{{name}}, the assistant on this site, answers questions about my work through a server-side OpenRouter (DeepSeek) endpoint.",
       "botCta": "Ask {{name}}"
+    },
+    "a11y": {
+      "langLabel": "عربي",
+      "switchLang": "Switch to Arabic",
+      "themeToLight": "Switch to light theme",
+      "themeToDark": "Switch to dark theme",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu",
+      "home": "MoizDev home"
     }
   },
   "ar": {
@@ -763,6 +772,15 @@
       "botTitle": "{{name}} · هذا الموقع",
       "botBody": "{{name}} هو المساعد في هذا الموقع، يجيب عن الأسئلة حول عملي عبر خادم يتصل بـ OpenRouter (DeepSeek).",
       "botCta": "اسأل {{name}}"
+    },
+    "a11y": {
+      "langLabel": "EN",
+      "switchLang": "التبديل إلى الإنجليزية",
+      "themeToLight": "التبديل إلى المظهر الفاتح",
+      "themeToDark": "التبديل إلى المظهر الداكن",
+      "openMenu": "فتح القائمة",
+      "closeMenu": "إغلاق القائمة",
+      "home": "الصفحة الرئيسية لـ MoizDev"
     }
   }
 }

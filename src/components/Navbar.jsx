@@ -17,26 +17,31 @@ const NAV = [
 const iconBtn =
   "relative inline-flex items-center justify-center size-8 rounded-full text-label-2 hover:text-label hover:bg-fill transition-colors cursor-pointer after:absolute after:-inset-1.5 after:content-['']";
 
+// a small label under a header control, shown on hover and keyboard focus;
+// it also gives the control its accessible name
+const tipClass =
+  'pointer-events-none absolute top-full end-0 z-10 mt-2.5 whitespace-nowrap rounded-lg bg-label px-2.5 py-1 text-[12px] font-medium tracking-normal text-bg opacity-0 shadow-[0_4px_16px_rgba(0,0,0,0.16)] -translate-y-0.5 transition-[opacity,translate] duration-200 group-hover:opacity-100 group-hover:translate-y-0 group-focus-visible:opacity-100 group-focus-visible:translate-y-0';
+
 const PrefsToggles = () => {
-  const { lang, theme, toggleLang, toggleTheme } = usePreferences();
+  const { lang, toggleLang, toggleTheme } = usePreferences();
+  const { t } = useContent();
+  const other = lang === 'ar' ? 'en' : 'ar';
 
   return (
     <div className="flex items-center gap-3">
+      {/* names the language it switches to, in that language: "عربي" / "EN" */}
       <button
         type="button"
         onClick={toggleLang}
-        className={`${iconBtn} text-[13px] font-semibold`}
-        aria-label={lang === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'}
+        className="relative inline-flex h-8 min-w-8 items-center justify-center rounded-full px-2.5 text-[13px] font-semibold text-label-2 ring-1 ring-inset ring-separator hover:text-label hover:bg-fill transition-colors cursor-pointer after:absolute after:-inset-1.5 after:content-['']"
       >
-        {lang === 'ar' ? 'EN' : 'ع'}
+        <span lang={other} className={other === 'ar' ? 'leading-none' : 'tracking-[0.02em]'}>
+          {t('a11y.langLabel')}
+        </span>
+        <span className="sr-only">{t('a11y.switchLang')}</span>
       </button>
-      <button
-        type="button"
-        onClick={toggleTheme}
-        className={iconBtn}
-        aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
-      >
-        {/* both icons render; CSS picks one, so prerendered HTML matches any theme */}
+      <button type="button" onClick={toggleTheme} className={`${iconBtn} group`}>
+        {/* both icons and both labels render; CSS picks one, so prerendered HTML matches any theme */}
         <svg className="w-4 h-4 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden>
           <circle cx="12" cy="12" r="4" />
           <path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4" />
@@ -44,6 +49,10 @@ const PrefsToggles = () => {
         <svg className="w-4 h-4 dark:hidden" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
           <path d="M21 14.3A8.5 8.5 0 0 1 9.7 3 7 7 0 1 0 21 14.3Z" />
         </svg>
+        <span className={tipClass}>
+          <span className="hidden dark:inline">{t('a11y.themeToLight')}</span>
+          <span className="dark:hidden">{t('a11y.themeToDark')}</span>
+        </span>
       </button>
     </div>
   );
@@ -86,7 +95,7 @@ const Navbar = () => {
       }`}
     >
       <nav className="app-container px-5 h-[52px] flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2 text-label font-semibold tracking-[-0.02em]" aria-label="MoizDev home">
+        <Link to="/" className="flex items-center gap-2 text-label font-semibold tracking-[-0.02em]" aria-label={t('a11y.home')}>
           <Logo size={28} />
           <span className="text-[17px]">MoizDev</span>
         </Link>
@@ -133,8 +142,9 @@ const Navbar = () => {
             type="button"
             onClick={() => setOpen((v) => !v)}
             className={`${iconBtn} md:hidden`}
-            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-label={open ? t('a11y.closeMenu') : t('a11y.openMenu')}
             aria-expanded={open}
+            aria-controls="mobile-menu"
           >
             <svg className="w-4 h-4" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden>
               <path
@@ -152,6 +162,9 @@ const Navbar = () => {
 
       {/* Mobile sheet */}
       <div
+        id="mobile-menu"
+        // closed: keep its links out of the tab order and the accessibility tree
+        inert={!open}
         className={`md:hidden overflow-hidden transition-[max-height,opacity] duration-500 ease-[var(--ease-apple)] ${
           open ? 'max-h-[100dvh] opacity-100' : 'max-h-0 opacity-0'
         }`}

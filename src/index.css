@@ -113,7 +113,8 @@ body {
 }
 
 html[lang='ar'],
-html[lang='ar'] body {
+html[lang='ar'] body,
+[lang='ar'] {
   font-family: 'IBM Plex Sans Arabic', var(--font-default);
   letter-spacing: 0;
 }
