@@ -117,14 +117,15 @@ const Navbar = () => {
             type="button"
             onClick={openCommandPalette}
             className="hidden lg:inline-flex items-center gap-2 h-8 ps-3 pe-1.5 me-1 rounded-full bg-fill text-[13px] text-label-2 hover:text-label transition-colors"
-            aria-label={t('cmd.placeholder')}
+            // named by its visible text ("Search"); the shortcut hint is decoration
+            aria-haspopup="dialog"
           >
             <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
               <circle cx="9" cy="9" r="6" />
               <path d="m13.5 13.5 4 4" />
             </svg>
             {t('cmd.search')}
-            <kbd className="text-[11px] font-medium rounded-full bg-surface px-2 py-0.5 ring-1 ring-separator">
+            <kbd aria-hidden className="text-[11px] font-medium rounded-full bg-surface px-2 py-0.5 ring-1 ring-separator">
               {mac ? '⌘K' : 'Ctrl K'}
             </kbd>
           </button>
