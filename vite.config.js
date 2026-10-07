@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 import flowbiteReact from "flowbite-react/plugin/vite";
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
-import { NOT_FOUND, metaFor, renderSeoTags, staticRoutes } from './src/seo/meta.js'
+import { NOT_FOUND, metaFor, renderSeoTags, sitemapRoutes, staticRoutes } from './src/seo/meta.js'
 import { renderCard } from './seo/og-card.js'
 
 const SEO_BLOCK = /<!-- seo:start[\s\S]*?<!-- seo:end -->/
@@ -66,6 +66,15 @@ function routeMeta() {
       // Vercel serves 404.html, with a real 404 status, for any URL without a file;
       // the app then renders the branded NotFound page
       writeFileSync(join(outDir, '404.html'), template.replace(SEO_BLOCK, renderSeoTags(NOT_FOUND)))
+      // indexable pages only (no 404, no unlisted projects); robots.txt points here
+      const lastmod = new Date().toISOString().slice(0, 10)
+      const urls = sitemapRoutes(projects).map(
+        (route) => `  <url>\n    <loc>${metaFor(route, projects).url}</loc>\n    <lastmod>${lastmod}</lastmod>\n  </url>`,
+      )
+      writeFileSync(
+        join(outDir, 'sitemap.xml'),
+        `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>\n`,
+      )
     },
   }
 }
