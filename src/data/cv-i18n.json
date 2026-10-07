@@ -1,10 +1,10 @@
 {
   "en": {
     "name": "Moieez ur Rehman",
-    "headline": "Senior Full Stack Engineer & Software Architect | React, Vue, Next.js, Node.js, NestJS",
+    "headline": "Senior Full Stack Engineer & Software Architect | TypeScript · Node.js/NestJS · React/Next.js",
     "location": "Riyadh, Saudi Arabia",
-    "iqama": "Valid Transferable Iqama",
-    "summary": "Product-focused Full Stack Engineer and Software Architect with {{experienceYears}} years of experience building scalable systems across retail and SaaS, from POS platforms to loyalty systems and customer engagement tools, e-commerce, payment integrations, booking systems, search-engine integrations and dashboards. I take ownership of features end-to-end — from understanding business needs and structuring solutions to implementation and deployment — with a focus on maintainable code, system efficiency and measurable impact. My core strengths span POS retail systems, payment integrations (MyFatoorah, Moyasar) and CRM systems, designing system architectures and helping teams execute on them, wallet integrations (Apple Wallet & Google Wallet), microservices and monorepo patterns, and leading UI/UX engineering — with a track record of revamping and stabilizing unstable applications, supporting management teams, and improving products by solving real problems.",
+    "iqama": "Transferable Iqama · Available Immediately",
+    "summary": "Full Stack Engineer and Software Architect with {{experienceYears}} years of experience building production systems in TypeScript, Node.js/NestJS and React/Next.js, specialised in retail and SaaS: POS platforms, loyalty programs, payment integrations and e-commerce. Designed and built a restaurant POS and loyalty platform end-to-end, including Apple/Google Wallet passes, event-driven background processing, and a ~64% reduction in API response times. Experienced with payment gateways (MyFatoorah, Moyasar), authentication (OAuth2, JWT, SSO, RBAC) and CRM integrations. Uses AI coding tools (Claude Code, Cursor, GitHub Copilot) to ship faster, while owning the design, review and testing of everything that reaches production.",
     "labels": {
       "summary": "Professional Summary",
       "experience": "Professional Experience",
@@ -36,10 +36,10 @@
   },
   "ar": {
     "name": "معيز الرحمن",
-    "headline": "مهندس برمجيات متكامل أول ومعماري برمجيات | React، Vue، Next.js، Node.js، NestJS",
+    "headline": "مهندس برمجيات متكامل أول ومعماري برمجيات | TypeScript · Node.js/NestJS · React/Next.js",
     "location": "الرياض، المملكة العربية السعودية",
-    "iqama": "إقامة سارية وقابلة للنقل",
-    "summary": "مهندس برمجيات متكامل ومعماري برمجيات يركّز على المنتج، بخبرة {{experienceYears}} سنوات في بناء أنظمة قابلة للتوسع في قطاعَي التجزئة والبرمجيات كخدمة — من منصات نقاط البيع إلى أنظمة الولاء وأدوات تفاعل العملاء، والتجارة الإلكترونية، وبوابات الدفع، وأنظمة الحجز، وتكامل محركات البحث، ولوحات التقارير. أتولى الميزات من البداية للنهاية — من فهم احتياج العمل وهيكلة الحل إلى التنفيذ والنشر — مع التركيز على كود قابل للصيانة وكفاءة النظام وأثر قابل للقياس. تشمل نقاط قوتي أنظمة نقاط البيع، وبوابات الدفع (MyFatoorah وMoyasar) وأنظمة CRM، وتصميم معماريات الأنظمة ومساعدة الفرق على تنفيذها، ومحافظ Apple وGoogle، وأنماط الخدمات المصغّرة والـ monorepo، وقيادة هندسة الواجهات — مع سجل في إعادة بناء التطبيقات غير المستقرة وتثبيتها، ودعم فرق الإدارة، وتحسين المنتجات بحل مشكلات حقيقية.",
+    "iqama": "إقامة قابلة للنقل · متاح فوراً",
+    "summary": "مهندس برمجيات متكامل ومعماري برمجيات بخبرة {{experienceYears}} سنوات في بناء أنظمة إنتاجية باستخدام TypeScript وNode.js/NestJS وReact/Next.js، متخصص في قطاعي التجزئة والبرمجيات كخدمة: أنظمة نقاط البيع، وبرامج الولاء، وتكامل الدفع، والتجارة الإلكترونية. صممت وبنيت منصة نقاط بيع وولاء للمطاعم من البداية إلى النهاية، تشمل بطاقات Apple/Google Wallet، والمعالجة الخلفية القائمة على الأحداث، وخفض زمن استجابة الواجهات بنحو 64٪. خبرة في بوابات الدفع (MyFatoorah وMoyasar)، والمصادقة (OAuth2 وJWT وSSO وRBAC)، وتكامل أنظمة CRM. أستخدم أدوات البرمجة بالذكاء الاصطناعي (Claude Code وCursor وGitHub Copilot) لتسريع التسليم، مع تحمّل مسؤولية التصميم والمراجعة والاختبار لكل ما يصل إلى الإنتاج.",
     "labels": {
       "summary": "الملخص المهني",
       "experience": "الخبرة المهنية",
@@ -80,26 +80,22 @@
     },
     "jobs": {
       "twlm": {
-        "title": "مهندس برمجيات أول",
+        "title": "مهندس برمجيات أول · متكامل",
         "location": "المملكة العربية السعودية",
         "period": "فبراير 2025 – الآن",
-        "summary": "نقاط البيع والولاء والمحافظ والبحث الذكي لقطاع التجزئة الخليجي — مع امتلاك الاتجاه التقني من المعمارية حتى التسليم.",
+        "summary": "نقاط بيع للمطاعم، وولاء، ومحافظ رقمية، وبحث ذكي لقطاع التجزئة الخليجي — من التصميم المعماري حتى الإنتاج.",
         "highlights": [
-          "قيادة تطوير منصة نقاط بيع مع أنظمة الولاء والعروض والمحافظ، مع امتلاك الاتجاه التقني من العمارة حتى التسليم.",
-          "تصميم وقيادة منشئ صفحات بالكتل لتمكين الشركات من إنشاء القوائم ومتاجر التجارة الإلكترونية وإدارتها بنفسها.",
-          "قيادة تحسين تجربة الاستخدام في المسارات الأساسية، ما خفّض طلبات الدعم بنحو 70٪ عبر قرارات مبنية على البيانات.",
-          "توجيه أنظمة الولاء (نقاط، بطاقات ولاء، بطاقات هدايا) مع Apple Wallet وGoogle Wallet وإشعارات فورية.",
-          "امتلاك تحسين تجربة المنتج على مستوى المنصة وتبسيط المسارات الأساسية لتقليل الاحتكاك.",
-          "قيادة نظام رسائل ترويجية حسب الموقع مع تتبع الحملات على مستوى الفرع.",
-          "دور تقني أساسي في تطبيق Flutter لإدارة الواجهة الأمامية والطلب عبر الإنترنت.",
-          "قيادة تحسين أداء الخلفية وتخفيض زمن استجابة واجهات البرمجة بنحو 64٪.",
-          "توجيه إعادة هيكلة شاملة للكود لرفع قابلية الصيانة والقراءة والاستقرار على المدى الطويل.",
-          "تأسيس بنية الوصول للبيانات بـ Prisma وPostgreSQL للهجرات وأداء الاستعلامات.",
-          "امتلاك تصميم RBAC ومصادقة OAuth2/JWT مع SSO للتحكم متعدد الأدوار.",
-          "قيادة تدفقات قائمة على الأحداث والويب هوك لتحديثات المحفظة والإشعارات الفورية.",
-          "بناء عمّال خلفية بـ BullMQ مدعومين بـ Redis لمعالجة مهام الإشعارات وتحديثات المحفظة بشكل غير متزامن، ما رفع موثوقية الأحداث الفورية وإنتاجيتها.",
-          "توجيه دمج أنظمة CRM لمزامنة بيانات العملاء والأعمال عبر المنصة.",
-          "قيادة دمج OpenRouter AI (DeepSeek) للبحث الذكي في القوائم وتحليل بيانات المطاعم."
+          "صممت وبنيت منصة نقاط بيع للمطاعم مع ميزات الولاء والعروض والمحافظ الرقمية، من التصميم المعماري حتى التسليم للإنتاج.",
+          "بنيت منشئ صفحات قائماً على الكتل يتيح للشركات إنشاء قوائمها ومتاجرها الإلكترونية وإدارتها دون الحاجة لمطوّر.",
+          "أعدت تصميم مسارات الاستخدام الأساسية بناءً على بيانات الدعم، ما خفّض طلبات دعم العملاء بنحو 70٪.",
+          "نفّذت أربع ميزات ولاء (النقاط، وبطاقات الولاء، وبطاقات الهدايا، وقسائم الخصم) مع بطاقات Apple Wallet وGoogle Wallet وتحديثات فورية.",
+          "بنيت نظام رسائل ترويجية مستهدفة جغرافياً مع تتبع الحملات على مستوى الفروع.",
+          "حسّنت أداء الخلفية، ما خفّض زمن استجابة الواجهات البرمجية بنحو 64٪.",
+          "أنشأت طبقة البيانات باستخدام Prisma ORM وPostgreSQL، بما في ذلك ترحيل المخططات وتحسين الاستعلامات.",
+          "نفّذت RBAC ومصادقة OAuth2/JWT مع SSO للوصول متعدد الأدوار عبر المنصة.",
+          "بنيت تدفقات عمل قائمة على الأحداث وويب هوك مع عمّال BullMQ مدعومين بـ Redis لمعالجة مهام الإشعارات وتحديث المحافظ بشكل غير متزامن.",
+          "دمجت أنظمة CRM ومنصات التأجير لإبقاء بيانات العملاء والأعمال متزامنة.",
+          "دمجت OpenRouter AI (DeepSeek) لإضافة بحث ذكي في القوائم وتحليل بيانات المطاعم بالذكاء الاصطناعي."
         ]
       },
       "accoina": {
@@ -135,7 +131,7 @@
         ]
       },
       "creative-inter-tech": {
-        "title": "مطوّر واجهات ← مطوّر واجهات أول",
+        "title": "مهندس واجهات ← مهندس واجهات أول",
         "location": "فيصل آباد، باكستان",
         "period": "مارس 2020 – أكتوبر 2022",
         "summary": "قيادة الواجهات لمنصات سفر B2B لأكثر من 10 آلاف مستخدم شهرياً.",

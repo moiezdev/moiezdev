@@ -1,14 +1,14 @@
 [
   {
     "id": "twlm",
-    "title": "Sr. Software Engineer",
-    "company": "TWLM Solutions",
+    "title": "Senior Software Engineer · Full Stack",
+    "company": "TWLM",
     "location": "Saudi Arabia",
     "period": "Feb 2025 – Present",
     "current": true,
     "companyUrl": "https://twlm.solutions/",
     "logo": "/company-logos/twlm.svg",
-    "summary": "POS, loyalty, wallets and AI search for Gulf retail — owning the technical direction from architecture through delivery.",
+    "summary": "Restaurant POS, loyalty, wallets and AI search for Gulf retail — designed and built from architecture to production.",
     "stack": [
       "React",
       "NestJs",
@@ -25,26 +25,22 @@
       "twlm-pos"
     ],
     "highlights": [
-      "Led the development of a POS platform with integrated loyalty, promotions, and wallet systems, owning the technical direction from architecture through delivery.",
-      "Architected and led development of a block-based page builder, empowering businesses to independently create and manage menus and e-commerce storefronts.",
-      "Drove UX improvements across core user flows, cutting customer support requests by ~70% through data-informed design decisions.",
-      "Directed the design and rollout of loyalty systems — points, loyalty cards, and gift cards — with Apple Wallet & Google Wallet integration and real-time notifications.",
-      "Owned product experience improvements platform-wide, simplifying core workflows to reduce user friction.",
-      "Spearheaded a geo-targeted promotional messaging system with branch-level campaign tracking, from concept through deployment.",
-      "Played a key technical role in delivering a Flutter-based mobile app supporting storefront management and online ordering.",
-      "Led backend performance optimization efforts, achieving a ~64% reduction in API response times and materially improving system performance.",
-      "Directed a codebase-wide refactoring initiative to improve long-term maintainability, readability, and stability.",
-      "Established data access architecture using Prisma ORM with PostgreSQL, streamlining schema migrations and query performance platform-wide.",
-      "Owned the design and implementation of RBAC and OAuth2/JWT-based authentication with SSO, securing multi-role access across the platform.",
-      "Led development of webhook-driven, event-based workflows powering real-time notification and wallet-update events.",
-      "Built Redis-backed BullMQ background workers to process notification and wallet-update jobs asynchronously, improving reliability and throughput of real-time events.",
-      "Directed CRM integration efforts to synchronize customer and business data across the platform.",
-      "Spearheaded the integration of OpenRouter AI (DeepSeek), introducing smart menu search and AI-based analysis of restaurant data."
+      "Designed and built a restaurant POS platform with integrated loyalty, promotions and wallet features, from architecture through production delivery.",
+      "Built a block-based page builder that lets businesses create and manage their own menus and e-commerce storefronts without developer help.",
+      "Reworked core user flows based on support data, reducing customer support requests by ~70%.",
+      "Implemented four loyalty features (points, loyalty passes, gift cards and discount coupons) with Apple Wallet and Google Wallet passes and real-time updates.",
+      "Built a geo-targeted promotional messaging system with branch-level campaign tracking.",
+      "Optimized backend performance, reducing API response times by ~64%.",
+      "Set up the data layer with Prisma ORM and PostgreSQL, including schema migrations and query optimization.",
+      "Implemented RBAC and OAuth2/JWT authentication with SSO for multi-role access across the platform.",
+      "Built webhook-driven, event-based workflows with Redis-backed BullMQ workers to process notification and wallet-update jobs asynchronously.",
+      "Integrated CRM and leasing platforms to keep customer and business data in sync.",
+      "Integrated OpenRouter AI (DeepSeek) to add smart menu search and AI-based analysis of restaurant data."
     ]
   },
   {
     "id": "accoina",
-    "title": "Sr. Software Engineer",
+    "title": "Senior Software Engineer",
     "company": "ACCIONA",
     "location": "Saudi Arabia",
     "period": "Jan 2024 – Feb 2025",
@@ -107,7 +103,7 @@
   },
   {
     "id": "creative-inter-tech",
-    "title": "Frontend Developer → Senior Frontend Developer",
+    "title": "Frontend Engineer → Senior Frontend Engineer",
     "company": "Creative Inter Tech",
     "location": "Faisalabad, Pakistan",
     "period": "Mar 2020 – Oct 2022",

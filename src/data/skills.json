@@ -78,6 +78,7 @@
     "items": [
       "TypeScript",
       "JavaScript",
+      "SQL",
       "HTML5",
       "CSS3",
       "SCSS",
@@ -125,8 +126,7 @@
       "Vercel",
       "Netlify",
       "CI/CD",
-      "Docker",
-      "GitHub Copilot"
+      "Docker"
     ]
   },
   {
@@ -134,9 +134,10 @@
     "items": [
       "OpenRouter",
       "DeepSeek",
-      "Agentic AI",
+      "Claude Code",
       "Cursor",
-      "Claude"
+      "GitHub Copilot",
+      "Agentic AI"
     ]
   },
   {

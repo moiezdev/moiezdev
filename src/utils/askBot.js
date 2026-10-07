@@ -9,7 +9,7 @@ const OFFLINE = {
     projects: 'Standouts include [[nav:/works/twlm-pos|TWLM - POS]] (~70% fewer support requests, ~64% faster APIs) and [[nav:/works/aa-tourism|AATourism]]. Want more on [[nav:/works|All works]]?',
     experience: 'Moiz has shipped product across TWLM, Accoina Agua, SCM Borba, and Creative Inter Tech. See the full timeline on [[nav:/experience|Experience]].',
     stack: 'Moiz focuses on scalable SaaS and retail systems — React, Vue, Next.js, Node.js, NestJS — plus payments, wallets, booking engines, and OpenRouter AI. See [[nav:/about|About Moiz]] or real examples on [[nav:/works|All works]].',
-    hire: "Moiz is open to senior full stack roles. He's based in Riyadh with a valid transferable Iqama. See his [[nav:/cv|CV]] or reach him via the [[nav:/contact|Contact page]].",
+    hire: "Moiz is open to senior full stack roles. He's based in Riyadh with a transferable Iqama and can start immediately. See his [[nav:/cv|CV]] or reach him via the [[nav:/contact|Contact page]].",
     contact: 'Reach Moiz at moiezdev@gmail.com or +966 573240913 — or use [[nav:/contact|Contact page]].',
     other: "I stay focused on Moiz's work. Want a quick overview on [[nav:/about|About Moiz]], his [[nav:/experience|Experience]], or real project examples on [[nav:/works|All works]]?",
   },
