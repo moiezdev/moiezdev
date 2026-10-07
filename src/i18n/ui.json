@@ -104,7 +104,8 @@
       "techCount": "{{count}} technologies",
       "index": "Project",
       "previous": "Previous",
-      "next": "Next"
+      "next": "Next",
+      "statusOpen": "Open source"
     },
     "skills": {
       "section": "skills",
@@ -386,7 +387,8 @@
       "techCount": "{{count}} تقنية",
       "index": "المشروع",
       "previous": "السابق",
-      "next": "التالي"
+      "next": "التالي",
+      "statusOpen": "مفتوح المصدر"
     },
     "skills": {
       "section": "المهارات",

@@ -22,5 +22,6 @@
   "projectUrl": "https://mtlnation.com",
   "media": [
     "main.webp"
-  ]
+  ],
+  "repoPublic": false
 }

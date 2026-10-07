@@ -24,6 +24,7 @@
   ],
   "imageUrl": "/projects-media/lms/main.webp",
   "githubUrl": "https://github.com/moiezdev/LMS",
+  "repoPublic": true,
   "media": [
     "main.webp"
   ]

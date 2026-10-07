@@ -21,6 +21,7 @@
   "imageUrl": "/projects-media/joshua-portfolio/main.webp",
   "projectUrl": "https://joshua-portfolio.com",
   "githubUrl": "https://github.com/moiezdev/joshua-portfolio",
+  "repoPublic": true,
   "media": [
     "main.webp"
   ]

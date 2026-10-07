@@ -23,6 +23,7 @@
   ],
   "imageUrl": "/projects-media/mian-travels/main.webp",
   "githubUrl": "https://github.com/moiezdev/MiansTravels",
+  "repoPublic": false,
   "media": [
     "main.webp",
     "img1.webp"

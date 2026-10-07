@@ -19,8 +19,8 @@
     "Redux Toolkit"
   ],
   "imageUrl": "/projects-media/portfolio/main.webp",
-  "projectUrl": "http://moiezdev.com",
   "githubUrl": "https://github.com/moiezdev/my-portfolio-react",
+  "repoPublic": true,
   "media": [
     "main.webp"
   ]

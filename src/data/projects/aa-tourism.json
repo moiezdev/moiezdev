@@ -25,6 +25,7 @@
   "imageUrl": "/projects-media/aa-tourism/main.webp",
   "projectUrl": "http://aatourism.ca/",
   "githubUrl": "https://github.com/moiezdev/AAtourism",
+  "repoPublic": true,
   "media": [
     "main.webp",
     "img1.webp",

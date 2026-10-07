@@ -25,7 +25,11 @@ export default function ProjectDetail() {
   const next = projects[(index + 1) % projects.length];
   const [headline, ...body] = project.description;
   const facts = [
-    { label: t('projects.status'), value: project.projectUrl ? t('projects.statusLive') : t('projects.statusPrivate'), live: !!project.projectUrl },
+    {
+      label: t('projects.status'),
+      value: project.projectUrl ? t('projects.statusLive') : project.githubUrl ? t('projects.statusOpen') : t('projects.statusPrivate'),
+      live: !!project.projectUrl,
+    },
     { label: t('projects.stack'), value: t('projects.techCount', { count: project.technologies.length }) },
     { label: t('projects.index'), value: `${String(index + 1).padStart(2, '0')} / ${String(projects.length).padStart(2, '0')}` },
   ];

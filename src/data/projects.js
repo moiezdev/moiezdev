@@ -49,6 +49,11 @@ export const projects = projectOrder.map((id) => {
     );
   }
 
+  // repo links only ever reach the UI (and the chatbot) for public repos
+  if (project.repoPublic !== true) {
+    const { githubUrl: _g, githubBackendUrl: _b, ...rest } = project;
+    return rest;
+  }
   return project;
 });
 
