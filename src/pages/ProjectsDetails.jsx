@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router-dom';
 import Transition from '../components/functions/Transition';
 import ImageSlider from '../components/ui/ImageSlider';
+import Img from '../components/ui/Img';
 import Button from '../components/ui/Button';
 import Reveal from '../components/ui/Reveal';
 import TechChip from '../components/ui/TechChip';
@@ -68,7 +69,7 @@ export default function ProjectDetail() {
 
       <section className="px-5 -mt-4">
         <Reveal className="app-container">
-          <ImageSlider images={images} />
+          <ImageSlider images={images} title={project.title} />
         </Reveal>
 
         {project.metrics?.length > 0 && (
@@ -153,7 +154,7 @@ export default function ProjectDetail() {
                     {p.screenshot === false ? (
                       <span className="blueprint absolute inset-0 flex items-center justify-center text-[15px] font-bold text-label">{p.title}</span>
                     ) : (
-                      <img src={p.imageUrl} alt="" loading="lazy" className="size-full object-cover transition-transform duration-700 ease-[var(--ease-apple)] group-hover:scale-[1.08]" />
+                      <Img src={p.imageUrl} sizes="80px" className="size-full object-cover transition-transform duration-700 ease-[var(--ease-apple)] group-hover:scale-[1.08]" />
                     )}
                   </span>
                   <span className="min-w-0 flex-1">

@@ -121,7 +121,7 @@ const ContactSection = () => {
                   className="group flex items-center gap-3.5 ps-4 hover:bg-fill transition-colors"
                 >
                   <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-[9px] bg-fill">
-                    <img src={contact.icon} alt="" className="w-[17px] h-[17px] brightness-0 opacity-75 dark:invert" />
+                    <img src={contact.icon} alt="" loading="lazy" decoding="async" className="w-[17px] h-[17px] brightness-0 opacity-75 dark:invert" />
                   </span>
                   <span
                     className={`flex flex-1 min-w-0 items-center justify-between gap-3 py-3.5 pe-4 ${

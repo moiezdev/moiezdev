@@ -1,3 +1,4 @@
+import Img from '../ui/Img';
 import Button from '../ui/Button';
 import Reveal from '../ui/Reveal';
 import { useContent } from '../../i18n/content';
@@ -20,10 +21,10 @@ export const AboutStory = ({ full = false }) => {
                 'radial-gradient(70% 60% at 50% 100%, var(--glow-b), transparent 70%), radial-gradient(50% 50% at 20% 15%, var(--glow-a), transparent 70%)',
             }}
           />
-          <img
+          <Img
             src="/aboutSection/about-img.webp"
             alt="Moieez ur Rehman"
-            loading="lazy"
+            sizes="(min-width: 768px) 520px, 90vw"
             className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[94%] w-auto max-w-none object-contain rtl:-scale-x-100"
           />
         </div>

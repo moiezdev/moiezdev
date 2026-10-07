@@ -1,3 +1,4 @@
+import Img from '../ui/Img';
 import { useRef } from 'react';
 import Button from '../ui/Button';
 import { clamp01, useScrollFrame } from '../../hooks/useScrollFrame';
@@ -126,11 +127,12 @@ const Hero = () => {
                 'radial-gradient(60% 70% at 50% 100%, var(--glow-a), transparent 70%), radial-gradient(40% 50% at 15% 20%, var(--glow-b), transparent 70%), radial-gradient(40% 50% at 85% 25%, var(--glow-b), transparent 70%)',
             }}
           />
-          <img
+          <Img
             src="/heroSection/hero-img.webp"
             alt="Moieez ur Rehman"
+            sizes="(min-width: 768px) 620px, 400px"
+            priority
             className="portrait-fade absolute bottom-0 left-1/2 -translate-x-1/2 h-[94%] w-auto max-w-none object-contain rtl:-scale-x-100"
-            fetchPriority="high"
           />
 
           {/* floating glass cards */}

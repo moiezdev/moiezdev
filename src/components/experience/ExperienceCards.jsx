@@ -14,7 +14,7 @@ const CompanyLogo = ({ job }) => (
     }`}
   >
     {job.logo ? (
-      <img src={job.logo} alt="" className="max-h-9 max-w-9 object-contain" />
+      <img src={job.logo} alt="" loading="lazy" decoding="async" className="max-h-9 max-w-9 object-contain" />
     ) : (
       <span className="text-[18px] font-semibold text-label-2">{job.company?.[0]}</span>
     )}

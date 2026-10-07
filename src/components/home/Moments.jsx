@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import SectionTitle from '../ui/SectionTitle';
 import Reveal from '../ui/Reveal';
-import LazyImage from '../ui/LazyImage';
+import Img from '../ui/Img';
 import { events } from '../../data';
 import { useContent } from '../../i18n/content';
 
@@ -58,10 +58,12 @@ const Lightbox = ({ photos, index, onClose, onGo, lang }) => {
         setTouchX(null);
       }}
     >
-      <img
+      <Img
         key={photo.src}
         src={photo.src}
         alt={photo.caption[lang]}
+        sizes="92vw"
+        priority
         className="max-h-[80vh] max-w-[92vw] rounded-2xl object-contain shadow-2xl page-in"
         onClick={(e) => e.stopPropagation()}
       />
@@ -104,11 +106,11 @@ const Moments = () => {
       data-cursor-label={t('moments.view')}
       className={`group relative block w-full h-full overflow-hidden rounded-[24px] md:rounded-[28px] bg-surface-2 text-start ${className}`}
     >
-      <LazyImage
+      <Img
         src={photo.src}
         alt={photo.caption[lang]}
-        wrapperClass="absolute inset-0 w-full h-full"
-        className="w-full h-full object-cover object-[50%_25%] transition-transform duration-700 ease-[var(--ease-apple)] group-hover:scale-[1.05]"
+        sizes={big ? '(min-width: 768px) 640px, 100vw' : '(min-width: 768px) 320px, 50vw'}
+        className="absolute inset-0 w-full h-full object-cover object-[50%_25%] transition-transform duration-700 ease-[var(--ease-apple)] group-hover:scale-[1.05]"
       />
       <span className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[rgba(0,0,0,0.6)] to-transparent" aria-hidden />
       <span className={`absolute bottom-0 inset-x-0 p-4 md:p-5 text-[#fff] ${big ? 'md:p-7' : ''}`}>

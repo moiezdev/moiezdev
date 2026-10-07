@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import LazyImage from './LazyImage';
+import Img from './Img';
 import TechChip from './TechChip';
 import { Chevron } from './SectionTitle';
 import { useContent } from '../../i18n/content';
@@ -41,11 +41,11 @@ const Card = ({ project, featured = false, eyebrow, maxTech = 4, className = '' 
             <span className="font-mono text-[12px] text-label-3">{tech.slice(0, 4).join(' · ')}</span>
           </div>
         ) : (
-          <LazyImage
+          <Img
             src={project.imageUrl}
-            alt={`${project.title} preview`}
-            wrapperClass="absolute inset-0 w-full h-full"
-            className="w-full h-full object-cover transition-transform duration-700 ease-[var(--ease-apple)] group-hover:scale-[1.04]"
+            alt={`${project.title} — ${project.subtitle}`}
+            sizes={featured ? '(min-width: 1024px) 700px, 100vw' : '(min-width: 1024px) 400px, (min-width: 768px) 50vw, 100vw'}
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-[var(--ease-apple)] group-hover:scale-[1.04]"
           />
         )}
       </div>

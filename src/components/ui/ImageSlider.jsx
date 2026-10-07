@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import LazyImage from './LazyImage';
+import Img from './Img';
 
 const Arrow = ({ dir, onClick, label }) => (
   <button
@@ -15,7 +15,7 @@ const Arrow = ({ dir, onClick, label }) => (
 );
 
 /** Crossfading gallery with swipe, keyboard arrows, and pill page indicators. */
-export default function ImageSlider({ images = [] }) {
+export default function ImageSlider({ images = [], title = '' }) {
   const [idx, setIdx] = useState(0);
   const touchX = useRef(null);
   const count = images.length;
@@ -54,7 +54,13 @@ export default function ImageSlider({ images = [] }) {
           style={{ opacity: i === idx ? 1 : 0, transform: i === idx ? 'scale(1)' : 'scale(1.03)' }}
           aria-hidden={i !== idx}
         >
-          <LazyImage src={src} alt={`Screenshot ${i + 1}`} wrapperClass="w-full h-full" className="object-cover" />
+          <Img
+            src={src}
+            alt={`${title ? `${title} — ` : ''}screenshot ${i + 1}`}
+            sizes="(min-width: 1280px) 1200px, 100vw"
+            priority={i === 0}
+            className="w-full h-full object-cover"
+          />
         </div>
       ))}
 
