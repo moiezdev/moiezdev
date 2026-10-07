@@ -60,7 +60,7 @@ const PROJECTS = {
   'twlm-pos': {
     title: 'TWLM POS & Loyalty Platform',
     description:
-      'Restaurant POS and CMS platform for Gulf retail: POS, Gulf tax, inventory, loyalty, gift cards and Apple/Google Wallet passes, built with NestJS and React.',
+      'Restaurant POS and CMS platform for Gulf retail with Gulf tax, inventory, loyalty, gift cards and Apple/Google Wallet passes, built with NestJS and React.',
   },
   'aa-tourism': {
     title: 'AA Travel & Tourism — Flight Booking Platform',
@@ -137,7 +137,7 @@ function projectBlurb(project) {
 /**
  * @param {string} pathname
  * @param {{ id: string, title: string, subtitle?: string, listed?: boolean, description?: unknown[] }[]} projects
- * @returns {{ title: string, description: string, image: string, url: string, path: string, noindex?: boolean }}
+ * @returns {{ title: string, description: string, image: string, url: string, path: string, noindex?: boolean, project?: object }}
  */
 export function metaFor(pathname = '/', projects = []) {
   const path = pathname.replace(/\/+$/, '') || '/';
@@ -150,6 +150,7 @@ export function metaFor(pathname = '/', projects = []) {
         title: `${seo?.title || `${project.title} — ${project.subtitle}`} · ${SITE_NAME}`,
         description: seo?.description || projectBlurb(project),
         image: `/og/works/${project.id}.jpg`,
+        project,
         // unlisted projects keep their page but stay out of search results and the sitemap
         ...(project.listed === false && { noindex: true }),
       }
@@ -175,30 +176,137 @@ export const staticRoutes = (projects) => [
   ...projects.map((p) => `/works/${p.id}`),
 ];
 
+/** Routes search engines should index: no 404, no unlisted projects. */
+export const sitemapRoutes = (projects) =>
+  staticRoutes(projects.filter((p) => p.listed !== false));
+
+/* ---------- structured data (JSON-LD) ---------- */
+
+const PERSON_ID = `${SITE_URL}/#person`;
+const WEBSITE_ID = `${SITE_URL}/#website`;
+
+/** Facts from src/data (contacts, experience, education, skills) and the CV. */
+const PERSON = {
+  '@type': 'Person',
+  '@id': PERSON_ID,
+  name: SITE_NAME,
+  jobTitle: 'Senior Full Stack Engineer',
+  description:
+    'Senior Full Stack Engineer and Software Architect in Riyadh, building POS, payments, loyalty and AI products for retail and SaaS.',
+  url: SITE_URL,
+  image: `${SITE_URL}/img/heroSection/hero-img-960.webp`,
+  email: 'mailto:moiezdev@gmail.com',
+  address: { '@type': 'PostalAddress', addressLocality: 'Riyadh', addressCountry: 'SA' },
+  sameAs: ['https://www.linkedin.com/in/moiezdev', 'https://github.com/moiezdev'],
+  worksFor: { '@type': 'Organization', name: 'TWLM', url: 'https://twlm.solutions/' },
+  alumniOf: { '@type': 'CollegeOrUniversity', name: 'National College of Business Administration & Economics' },
+  knowsLanguage: ['English', 'Urdu', 'Hindi'],
+  knowsAbout: [
+    'Full stack development',
+    'Software architecture',
+    'TypeScript',
+    'Node.js',
+    'NestJS',
+    'React',
+    'Next.js',
+    'PostgreSQL',
+    'Prisma',
+    'Redis',
+    'Event-driven architecture',
+    'LLM integration',
+    'Point of sale (POS) systems',
+    'Payment gateway integration',
+    'Loyalty programs',
+    'Apple Wallet and Google Wallet passes',
+    'OAuth2 and SSO',
+  ],
+};
+
+const ref = (id) => ({ '@id': id });
+
+/** Schema.org graph for one page: the person everywhere, plus what the page is about. */
+export function jsonLdFor(meta) {
+  if (meta === NOT_FOUND) return null;
+  const graph = [PERSON];
+  const page = { '@id': `${meta.url}#webpage`, url: meta.url, name: meta.title, isPartOf: ref(WEBSITE_ID), inLanguage: 'en' };
+
+  if (meta.path === '/') {
+    graph.push(
+      { '@type': 'WebSite', '@id': WEBSITE_ID, url: SITE_URL, name: SITE_NAME, description: meta.description, inLanguage: 'en', publisher: ref(PERSON_ID) },
+      { '@type': 'ProfilePage', ...page, mainEntity: ref(PERSON_ID) },
+    );
+  } else if (meta.path === '/about') {
+    graph.push({ '@type': 'ProfilePage', ...page, mainEntity: ref(PERSON_ID) });
+  } else if (meta.project) {
+    const p = meta.project;
+    graph.push({
+      '@type': 'CreativeWork',
+      '@id': `${meta.url}#work`,
+      name: p.title,
+      headline: meta.title.replace(` · ${SITE_NAME}`, ''),
+      description: meta.description,
+      url: meta.url,
+      image: `${SITE_URL}${meta.image}`,
+      creator: ref(PERSON_ID),
+      inLanguage: 'en',
+      ...(p.technologies?.length && { keywords: p.technologies.join(', ') }),
+      // the live product, when there is one
+      ...(p.projectUrl && { sameAs: p.projectUrl }),
+      ...(p.status === 'in-progress' && { creativeWorkStatus: 'In progress' }),
+    });
+  }
+  return { '@context': 'https://schema.org', '@graph': graph };
+}
+
+/* ---------- <head> tags ---------- */
+
+/**
+ * The <head> tags for one route as [tag, attributes, text] — title, description,
+ * canonical, Open Graph, X and JSON-LD. The build renders them to HTML
+ * (renderSeoTags) and RouteMeta swaps them in on client-side navigation, both
+ * marked `data-seo` so they can be found again.
+ */
+export function headTags(meta) {
+  const image = `${SITE_URL}${meta.image}`;
+  const ld = jsonLdFor(meta);
+  const m = (key, name, content) => ['meta', { [key]: name, content }];
+  return [
+    ['title', {}, meta.title],
+    m('name', 'description', meta.description),
+    meta.noindex ? m('name', 'robots', 'noindex') : ['link', { rel: 'canonical', href: meta.url }],
+    m('property', 'og:type', meta.project ? 'article' : 'website'),
+    m('property', 'og:site_name', SITE_NAME),
+    m('property', 'og:url', meta.url),
+    m('property', 'og:title', meta.title),
+    m('property', 'og:description', meta.description),
+    m('property', 'og:image', image),
+    m('property', 'og:image:type', 'image/jpeg'),
+    m('property', 'og:image:width', '1200'),
+    m('property', 'og:image:height', '630'),
+    m('property', 'og:image:alt', meta.title),
+    m('name', 'twitter:card', 'summary_large_image'),
+    m('name', 'twitter:title', meta.title),
+    m('name', 'twitter:description', meta.description),
+    m('name', 'twitter:image', image),
+    m('name', 'twitter:image:alt', meta.title),
+    ...(ld ? [['script', { type: 'application/ld+json' }, JSON.stringify(ld)]] : []),
+  ];
+}
+
 const esc = (s) =>
   String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-/** The <head> tags for one route (title, description, canonical, Open Graph, X). */
+/** headTags() as HTML for the static page of one route. */
 export function renderSeoTags(meta) {
-  const image = `${SITE_URL}${meta.image}`;
-  return [
-    `<title>${esc(meta.title)}</title>`,
-    `<meta name="description" content="${esc(meta.description)}" />`,
-    meta.noindex ? `<meta name="robots" content="noindex" />` : `<link rel="canonical" href="${meta.url}" />`,
-    `<meta property="og:type" content="${meta.path.startsWith('/works/') ? 'article' : 'website'}" />`,
-    `<meta property="og:site_name" content="${SITE_NAME}" />`,
-    `<meta property="og:url" content="${meta.url}" />`,
-    `<meta property="og:title" content="${esc(meta.title)}" />`,
-    `<meta property="og:description" content="${esc(meta.description)}" />`,
-    `<meta property="og:image" content="${image}" />`,
-    `<meta property="og:image:type" content="image/jpeg" />`,
-    `<meta property="og:image:width" content="1200" />`,
-    `<meta property="og:image:height" content="630" />`,
-    `<meta property="og:image:alt" content="${esc(meta.title)}" />`,
-    `<meta name="twitter:card" content="summary_large_image" />`,
-    `<meta name="twitter:title" content="${esc(meta.title)}" />`,
-    `<meta name="twitter:description" content="${esc(meta.description)}" />`,
-    `<meta name="twitter:image" content="${image}" />`,
-    `<meta name="twitter:image:alt" content="${esc(meta.title)}" />`,
-  ].join('\n    ');
+  return headTags(meta)
+    .map(([tag, attrs, text]) => {
+      const open = `<${tag}${tag === 'title' ? '' : ' data-seo'}${Object.entries(attrs)
+        .map(([k, v]) => ` ${k}="${esc(v)}"`)
+        .join('')}`;
+      if (tag === 'title') return `${open}>${esc(text)}</title>`;
+      // `<` can't close the script early once escaped; JSON.parse reads \u003c as `<`
+      if (tag === 'script') return `${open}>${text.replace(/</g, '\\u003c')}</script>`;
+      return `${open} />`;
+    })
+    .join('\n    ');
 }
