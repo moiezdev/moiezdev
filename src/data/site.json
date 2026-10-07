@@ -4,5 +4,16 @@
     "fileName": "moieez-ur-rehman-cv.pdf"
   },
   "calendlyUrl": "",
-  "_todo": "TODO(moiez): set calendlyUrl to your Calendly link; every \"Book a 15-min call\" link stays hidden while it is empty"
+  "_todo": "TODO(moiez): set calendlyUrl to your Calendly link; every \"Book a 15-min call\" link stays hidden while it is empty",
+  "logoStrip": {
+    "enabled": false,
+    "_todo": "TODO(moiez): confirm you may show each company's logo (ask the company or check its brand guidelines), set \"permitted\": true on those logos, then set \"enabled\": true. The strip renders nothing unless it is enabled and at least one logo is permitted.",
+    "logos": [
+      { "name": "TWLM", "logo": "/company-logos/twlm.svg", "permitted": false },
+      { "name": "ACCIONA", "logo": "/company-logos/acciona.jpg", "permitted": false },
+      { "name": "SCM Borba", "logo": "/company-logos/scm-borba.jpg", "permitted": false },
+      { "name": "Creative Inter Tech", "logo": "/company-logos/cit.svg", "permitted": false },
+      { "name": "Content Arcade", "logo": "/company-logos/content-arcade.png", "wide": true, "permitted": false }
+    ]
+  }
 }

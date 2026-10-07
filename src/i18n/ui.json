@@ -290,6 +290,9 @@
       "title": "What colleagues say.",
       "separator": " · ",
       "linkedin": "{{name}} on LinkedIn"
+    },
+    "logos": {
+      "title": "Worked with"
     }
   },
   "ar": {
@@ -583,6 +586,9 @@
       "title": "ماذا يقول الزملاء.",
       "separator": " · ",
       "linkedin": "{{name}} على LinkedIn"
+    },
+    "logos": {
+      "title": "عملتُ مع"
     }
   }
 }

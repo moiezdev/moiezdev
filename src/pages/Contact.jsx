@@ -1,4 +1,5 @@
 import ContactSection from '../components/home/Contact/ContactSection';
+import LogoStrip from '../components/credibility/LogoStrip';
 import Testimonials from '../components/credibility/Testimonials';
 import Transition from '../components/functions/Transition';
 import PageHeader from '../components/ui/PageHeader';
@@ -14,7 +15,9 @@ const Contact = () => {
           <ContactSection />
         </div>
       </section>
-      {/* renders nothing until src/data/testimonials.json has quotes */}
+      {/* both render nothing until they have content: quotes in src/data/testimonials.json,
+          and site.logoStrip enabled with at least one permitted logo */}
+      <LogoStrip />
       <Testimonials />
     </Transition>
   );
