@@ -12,7 +12,6 @@ import ainSaas from './projects/ain-saas.json';
 import cityArrivals from './projects/city-arrivals.json';
 import mtlnation from './projects/mtlnation.json';
 import tdm from './projects/tdm.json';
-import joshuaPortfolio from './projects/joshua-portfolio.json';
 import eims from './projects/eims.json';
 import lms from './projects/lms.json';
 
@@ -28,7 +27,6 @@ const projectsById = {
   'city-arrivals': cityArrivals,
   mtlnation,
   tdm,
-  'joshua-portfolio': joshuaPortfolio,
   eims,
   lms,
 };
