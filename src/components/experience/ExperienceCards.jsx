@@ -39,7 +39,7 @@ const ExperienceCard = ({ job, highlightLimit }) => {
               {job.title}
             </h3>
             {job.current && (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[color-mix(in_srgb,var(--color-green)_14%,transparent)] px-2.5 py-0.5 text-[12px] font-semibold text-green">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[color-mix(in_srgb,var(--color-green)_14%,transparent)] px-2.5 py-0.5 text-[12px] font-semibold text-[color-mix(in_srgb,var(--color-green)_55%,var(--color-label))]">
                 <span className="size-1.5 rounded-full bg-green" aria-hidden />
                 {t('experience.present')}
               </span>
