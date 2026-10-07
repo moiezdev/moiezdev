@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import { Suspense, lazy, useEffect } from 'react';
@@ -12,6 +12,7 @@ import CommandPalette from './components/CommandPalette';
 import ScrollToTop from './components/functions/ScrollToTop';
 import { startSmoothScroll } from './utils/smoothScroll';
 import RouteMeta from './components/functions/RouteMeta';
+import { markMounted } from './utils/pageTransition';
 
 const Home = lazy(() => import('./pages/Index'));
 const Projects = lazy(() => import('./pages/Projects'));
@@ -64,14 +65,17 @@ function AppShell() {
   );
 }
 
+/** The whole site. The router comes from the entry point: BrowserRouter in the
+ *  browser (main.jsx), StaticRouter when prerendering (entry-server.jsx). */
 function App() {
+  useEffect(markMounted, []);
   return (
-    <Router>
+    <>
       <RouteMeta />
       <AppShell />
       <Analytics />
       <SpeedInsights />
-    </Router>
+    </>
   );
 }
 

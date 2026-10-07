@@ -64,7 +64,7 @@ function routeMeta() {
 
 /** Serves the Vercel functions in /api during `vite` dev and `vite preview`. */
 function apiRoutes(env) {
-  const routes = ['chat', 'og']
+  const routes = ['chat']
   const mount = (server, load) => {
     Object.assign(process.env, env)
     for (const name of routes) {
@@ -93,7 +93,16 @@ function apiRoutes(env) {
 }
 
 // https://vite.dev/config/
-export default defineConfig(({ mode }) => ({
+// `vite build` makes the site; `vite build --ssr` makes dist-ssr/entry-server.js,
+// which scripts/prerender.mjs uses to fill each route's HTML (see package.json)
+export default defineConfig(({ mode, isSsrBuild }) => ({
   title: 'MoizDev',
-  plugins: [react(), tailwindcss(), flowbiteReact(), routeMeta(), apiRoutes(loadEnv(mode, process.cwd(), ''))],
+  plugins: [
+    react(),
+    tailwindcss(),
+    flowbiteReact(),
+    ...(isSsrBuild ? [] : [routeMeta()]),
+    apiRoutes(loadEnv(mode, process.cwd(), '')),
+  ],
+  build: isSsrBuild ? { outDir: 'dist-ssr' } : { manifest: true },
 }))

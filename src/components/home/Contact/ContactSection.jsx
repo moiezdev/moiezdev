@@ -33,11 +33,14 @@ const Field = ({ name, label, type = 'text', multiline = false }) => {
 
 /** Live local time in Riyadh, ticking once a minute. */
 const RiyadhTime = ({ lang }) => {
-  const [now, setNow] = useState(() => new Date());
+  // null until mounted: the time at build would be wrong (and break hydration)
+  const [now, setNow] = useState(null);
   useEffect(() => {
+    setNow(new Date());
     const id = setInterval(() => setNow(new Date()), 15000);
     return () => clearInterval(id);
   }, []);
+  if (!now) return '—';
   return new Intl.DateTimeFormat(lang === 'ar' ? 'ar-SA-u-nu-latn' : 'en-US', {
     timeZone: 'Asia/Riyadh',
     hour: 'numeric',
@@ -53,6 +56,7 @@ const ContactSection = () => {
 
   const sendEmail = (e) => {
     e.preventDefault();
+    formRef.current.elements.time.value = formattedDate(new Date()); // sent time, not page-load time
     setStatus('sending');
     emailjs
       .sendForm(
@@ -141,7 +145,7 @@ const ContactSection = () => {
 
       <Reveal delay={100}>
         <form ref={formRef} onSubmit={sendEmail} className="surface p-6 md:p-8 flex flex-col gap-4 relative">
-          <input type="hidden" name="time" defaultValue={formattedDate(new Date())} />
+          <input type="hidden" name="time" />
           <div className="grid gap-4 sm:grid-cols-2">
             <Field name="name" label={t('contact.name')} />
             <Field name="email" type="email" label={t('contact.email')} />

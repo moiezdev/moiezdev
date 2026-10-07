@@ -8,7 +8,7 @@ const Cv = () => {
   const cv = getCv(lang);
 
   return (
-    <div className="cv-page" data-cv-theme={theme} lang={cv.lang} dir={cv.dir}>
+    <div className="cv-page" lang={cv.lang} dir={cv.dir}>
       <div className="cv-toolbar">
         <Link to="/" className="cv-btn">
           {cv.labels.back}

@@ -36,16 +36,14 @@ const PrefsToggles = () => {
         className={iconBtn}
         aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
       >
-        {theme === 'dark' ? (
-          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden>
-            <circle cx="12" cy="12" r="4" />
-            <path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4" />
-          </svg>
-        ) : (
-          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-            <path d="M21 14.3A8.5 8.5 0 0 1 9.7 3 7 7 0 1 0 21 14.3Z" />
-          </svg>
-        )}
+        {/* both icons render; CSS picks one, so prerendered HTML matches any theme */}
+        <svg className="w-4 h-4 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden>
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4" />
+        </svg>
+        <svg className="w-4 h-4 dark:hidden" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+          <path d="M21 14.3A8.5 8.5 0 0 1 9.7 3 7 7 0 1 0 21 14.3Z" />
+        </svg>
       </button>
     </div>
   );
@@ -56,7 +54,10 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const { pathname } = useLocation();
   const { t } = useContent();
+  // OS-specific shortcut label, set after mount so prerendered HTML matches
+  const [mac, setMac] = useState(false);
 
+  useEffect(() => setMac(isMac()), []);
   useEffect(() => setOpen(false), [pathname]);
 
   useEffect(() => {
@@ -113,7 +114,7 @@ const Navbar = () => {
             </svg>
             {t('cmd.search')}
             <kbd className="text-[11px] font-medium rounded-full bg-surface px-2 py-0.5 ring-1 ring-separator">
-              {isMac() ? '⌘K' : 'Ctrl K'}
+              {mac ? '⌘K' : 'Ctrl K'}
             </kbd>
           </button>
           <button

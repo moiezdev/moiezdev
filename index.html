@@ -24,6 +24,11 @@
           document.documentElement.lang = lang;
           document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
           document.documentElement.setAttribute('data-theme', theme);
+          // pages are prerendered in English: keep them hidden until the app renders
+          // Arabic (or the page an old #/ link points to)
+          if (lang === 'ar' || location.hash.indexOf('#/') === 0) {
+            document.documentElement.classList.add('prerender-hide');
+          }
         } catch (e) {
           document.documentElement.setAttribute('data-theme', 'dark');
         }

@@ -85,6 +85,11 @@ html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
 }
+/* see the inline script in index.html */
+.prerender-hide #root {
+  visibility: hidden;
+}
+
 /* Lenis drives the scroll itself; native smoothing would fight it */
 html.lenis {
   scroll-behavior: auto;
@@ -346,7 +351,7 @@ textarea:-webkit-autofill {
   }
 }
 .page-in {
-  animation: page-in 0.6s var(--ease-apple) both;
+  animation: page-in 0.3s var(--ease-apple) both;
 }
 
 @keyframes spin {
