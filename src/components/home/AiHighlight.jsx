@@ -5,19 +5,9 @@ import Reveal from '../ui/Reveal';
 import TechChip from '../ui/TechChip';
 import { chatbot } from '../../data';
 import { useContent } from '../../i18n/content';
+import { openBotfolio } from '../../utils/botfolio';
 
 const BOT_NAME = chatbot.botName || 'BotFolio';
-
-/** Opens the BotFolio chat (it mounts once the page is idle, so wait for it briefly). */
-function openBot() {
-  const started = Date.now();
-  const tryOpen = () => {
-    const fab = document.querySelector(`button[aria-label="Open ${BOT_NAME}"]`);
-    if (fab) fab.click();
-    else if (Date.now() - started < 4000) setTimeout(tryOpen, 150);
-  };
-  tryOpen();
-}
 
 const Item = ({ icon, title, body, tags, children }) => {
   const Icon = icon;
@@ -67,7 +57,7 @@ const AiHighlight = () => {
             </Link>
           </Item>
           <Item icon={MdOutlineChatBubbleOutline} title={t('ai.botTitle', { name: BOT_NAME })} body={t('ai.botBody', { name: BOT_NAME })} tags={['OpenRouter', 'DeepSeek']}>
-            <button type="button" onClick={openBot} className="link-arrow text-[15px] cursor-pointer">
+            <button type="button" onClick={openBotfolio} className="link-arrow text-[15px] cursor-pointer">
               {t('ai.botCta', { name: BOT_NAME })}
               <Chevron />
             </button>

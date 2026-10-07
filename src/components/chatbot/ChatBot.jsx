@@ -18,6 +18,7 @@ import {
 } from '../../utils/speech';
 import { t } from '../../i18n/content';
 import { usePreferences } from '../../context/Preferences';
+import { BOTFOLIO_OPEN_EVENT, takeBotfolioRequest } from '../../utils/botfolio';
 
 const VOICE_PREF_KEY = 'botfolio-voice';
 
@@ -231,6 +232,38 @@ const ChatBot = () => {
 
   const closeChatRef = useRef(() => {});
   closeChatRef.current = closeChat;
+  const openChatRef = useRef(() => {});
+  openChatRef.current = openChat;
+
+  // "Ask BotFolio" buttons elsewhere on the site (see utils/botfolio)
+  useEffect(() => {
+    const onRequest = () => {
+      if (takeBotfolioRequest()) openChatRef.current();
+    };
+    onRequest();
+    window.addEventListener(BOTFOLIO_OPEN_EVENT, onRequest);
+    return () => window.removeEventListener(BOTFOLIO_OPEN_EVENT, onRequest);
+  }, []);
+
+  // The launcher stays out of the way until the visitor scrolls: past the hero
+  // on the home page, a little way down elsewhere.
+  const [revealed, setRevealed] = useState(false);
+  useEffect(() => {
+    const update = () => {
+      const hero = pathname === '/' ? document.querySelector('[data-hero]') : null;
+      const threshold = hero
+        ? hero.getBoundingClientRect().bottom + window.scrollY - window.innerHeight * 0.5
+        : 200;
+      setRevealed(window.scrollY > Math.max(threshold, 120));
+    };
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    return () => {
+      window.removeEventListener('scroll', update);
+      window.removeEventListener('resize', update);
+    };
+  }, [pathname]);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -394,12 +427,12 @@ const ChatBot = () => {
   return (
     <div
       ref={rootRef}
-      className="fixed bottom-3 sm:bottom-6 end-3 sm:end-6 z-50 flex flex-col items-end max-h-[calc(100dvh-1.5rem)]"
+      className="pointer-events-none fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom))] sm:bottom-[calc(1.5rem+env(safe-area-inset-bottom))] end-3 sm:end-6 z-50 flex flex-col items-end max-h-[calc(100dvh-1.5rem-env(safe-area-inset-bottom))]"
     >
       {open && (
         <div
           ref={panelRef}
-          className="w-[min(100vw-1.5rem,390px)] max-h-full h-[min(78vh,680px)] flex flex-col overflow-hidden rounded-[28px] glass ring-1 ring-separator shadow-[0_24px_64px_rgba(0,0,0,0.28)] origin-bottom-right"
+          className="pointer-events-auto w-[min(100vw-1.5rem,390px)] max-h-full h-[min(78vh,680px)] flex flex-col overflow-hidden rounded-[28px] glass ring-1 ring-separator shadow-[0_24px_64px_rgba(0,0,0,0.28)] origin-bottom-right"
           role="dialog"
           aria-label={`${BOT_NAME} portfolio chat`}
         >
@@ -570,17 +603,25 @@ const ChatBot = () => {
       )}
 
       {!open && (
-        <button
-          type="button"
-          ref={fabRef}
-          onClick={openChat}
-          className="relative size-16 rounded-full glass ring-1 ring-separator shadow-[0_12px_32px_rgba(0,0,0,0.2)] inline-flex items-center justify-center hover:scale-105 active:scale-95 transition-transform duration-300 cursor-pointer"
-          aria-label={`Open ${BOT_NAME}`}
-          aria-expanded={false}
+        <div
+          className={`botfolio-launcher transition-[opacity,translate,visibility] duration-300 ease-[var(--ease-apple)] ${
+            revealed ? 'pointer-events-auto' : 'invisible opacity-0 translate-y-4'
+          }`}
         >
-          <span className="absolute top-1 end-1 size-3 rounded-full bg-green ring-2 ring-bg" aria-hidden />
-          <RobotAvatar size={46} isOpen={false} mood="idle" />
-        </button>
+          <button
+            type="button"
+            ref={fabRef}
+            onClick={openChat}
+            className="relative size-12 sm:size-16 rounded-full glass ring-1 ring-separator shadow-[0_12px_32px_rgba(0,0,0,0.2)] inline-flex items-center justify-center hover:scale-105 active:scale-95 transition-transform duration-300 cursor-pointer"
+            aria-label={`Open ${BOT_NAME}`}
+            aria-expanded={false}
+          >
+            <span className="absolute top-0.5 end-0.5 sm:top-1 sm:end-1 size-2.5 sm:size-3 rounded-full bg-green ring-2 ring-bg" aria-hidden />
+            <span className="inline-flex scale-[0.74] sm:scale-100">
+              <RobotAvatar size={46} isOpen={false} mood="idle" />
+            </span>
+          </button>
+        </div>
       )}
     </div>
   );

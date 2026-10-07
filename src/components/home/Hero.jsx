@@ -31,7 +31,7 @@ const Hero = () => {
   const { t, projects, jobs } = useContent();
 
   return (
-    <section className="relative px-5 pt-[112px] md:pt-[140px] pb-16 md:pb-24 overflow-hidden">
+    <section data-hero className="relative px-5 pt-[112px] md:pt-[140px] pb-16 md:pb-24 overflow-hidden">
       {/* ambient glow */}
       <div
         aria-hidden

@@ -12,11 +12,18 @@ import ScrollToTop from './components/functions/ScrollToTop';
 import { startSmoothScroll } from './utils/smoothScroll';
 import RouteMeta from './components/functions/RouteMeta';
 import { markMounted } from './utils/pageTransition';
+import { BOTFOLIO_OPEN_EVENT } from './utils/botfolio';
 
 // BotFolio isn't needed for first paint: load it once the browser is idle
 const ChatBot = lazy(() => import('./components/chatbot/ChatBot'));
 const useIdle = (timeout = 4000) => {
   const [idle, setIdle] = useState(false);
+  // a request to open the chat mounts it right away
+  useEffect(() => {
+    const now = () => setIdle(true);
+    window.addEventListener(BOTFOLIO_OPEN_EVENT, now);
+    return () => window.removeEventListener(BOTFOLIO_OPEN_EVENT, now);
+  }, []);
   useEffect(() => {
     if ('requestIdleCallback' in window) {
       const id = window.requestIdleCallback(() => setIdle(true), { timeout });
