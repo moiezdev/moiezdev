@@ -4,6 +4,7 @@ import Skills from '../components/home/Skills';
 import CodeWindow from '../components/ui/CodeWindow';
 import Reveal from '../components/ui/Reveal';
 import Moments from '../components/home/Moments';
+import Process from '../components/home/Process';
 import { AboutStory } from '../components/home/About';
 import { useContent } from '../i18n/content';
 
@@ -18,6 +19,7 @@ const About = () => {
           <AboutStory full />
         </div>
       </section>
+      <Process />
       <section className="w-full px-5 pt-28 md:pt-40">
         <div className="app-container grid grid-cols-[minmax(0,1fr)] gap-10 lg:gap-16 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] items-center">
           <div>
@@ -36,8 +38,8 @@ const About = () => {
           </Reveal>
         </div>
       </section>
-      <Moments />
       <Skills />
+      <Moments compact />
     </Transition>
   );
 };

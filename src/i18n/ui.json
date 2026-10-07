@@ -77,7 +77,8 @@
           "label": "less downtime from digitized operations"
         }
       ],
-      "impactTitle": "Impact at a glance"
+      "impactTitle": "Impact at a glance",
+      "relatedWork": "See the work"
     },
     "projects": {
       "section": "projects",
@@ -304,6 +305,12 @@
     },
     "logos": {
       "title": "Worked with"
+    },
+    "arch": {
+      "eyebrow": "Architecture",
+      "headline": "How the platform fits together.",
+      "subtitle": "The system behind TWLM: clients, a NestJS API, domain services, and the data and integrations underneath.",
+      "caseStudy": "Read the TWLM case study"
     }
   },
   "ar": {
@@ -384,7 +391,8 @@
           "label": "توقف أقل بعد رقمنة العمليات"
         }
       ],
-      "impactTitle": "الأثر باختصار"
+      "impactTitle": "الأثر باختصار",
+      "relatedWork": "شاهد العمل"
     },
     "projects": {
       "section": "المشاريع",
@@ -611,6 +619,12 @@
     },
     "logos": {
       "title": "عملتُ مع"
+    },
+    "arch": {
+      "eyebrow": "المعمارية",
+      "headline": "كيف تترابط أجزاء المنصة.",
+      "subtitle": "النظام خلف TWLM: التطبيقات، وواجهة NestJS، والخدمات، والبيانات والتكاملات تحتها.",
+      "caseStudy": "اقرأ دراسة حالة TWLM"
     }
   }
 }

@@ -1,23 +1,21 @@
 import Hero from '../components/home/Hero.jsx';
 import Projects from '../components/home/Projects.jsx';
+import Architecture from '../components/home/Architecture.jsx';
 import Experience from '../components/home/Experience.jsx';
-import Process from '../components/home/Process.jsx';
-import Moments from '../components/home/Moments.jsx';
-import Skills from '../components/home/Skills.jsx';
-import About from '../components/home/About.jsx';
 import Contact from '../components/home/Contact.jsx';
 import Transition from '../components/functions/Transition.jsx';
 
+/**
+ * Home: hero → selected work → architecture → short experience → contact.
+ * "How I build", the toolkit, the long story and LEAP live on /about.
+ */
 export default function Index() {
   return (
     <Transition>
       <Hero />
       <Projects />
-      <Process />
+      <Architecture />
       <Experience />
-      <Moments />
-      <Skills />
-      <About />
       <Contact />
     </Transition>
   );

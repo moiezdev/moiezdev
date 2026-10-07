@@ -87,8 +87,8 @@ const Lightbox = ({ photos, index, onClose, onGo, lang }) => {
   );
 };
 
-/** Bento gallery of industry events, e.g. LEAP. */
-const Moments = () => {
+/** Gallery of industry events, e.g. LEAP: a bento grid, or a compact strip. */
+const Moments = ({ compact = false }) => {
   const { t, lang } = useContent();
   const event = events[0];
   const [open, setOpen] = useState(null);
@@ -125,18 +125,41 @@ const Moments = () => {
   return (
     <section className="w-full px-5 pt-28 md:pt-40" id="moments">
       <div className="app-container">
-        <SectionTitle eyebrow={t('moments.eyebrow')} title={t('moments.headline')} subtitle={event.summary[lang]} />
-
-        <div className="grid gap-3 md:gap-4 grid-cols-2 lg:grid-cols-4 lg:grid-rows-2 lg:h-[640px]">
-          <Reveal className="col-span-2 row-span-2 aspect-[4/5] sm:aspect-[4/3] lg:aspect-auto">
-            <Tile photo={cover} index={0} big />
-          </Reveal>
-          {rest.map((photo, i) => (
-            <Reveal key={photo.src} delay={(i + 1) * 70} className="aspect-[3/4] lg:aspect-auto">
-              <Tile photo={photo} index={i + 1} />
+        {compact ? (
+          <>
+            <Reveal className="mb-6 md:mb-8 flex flex-col gap-2 md:flex-row md:items-end md:justify-between md:gap-10">
+              <div>
+                <p className="eyebrow mb-2">{t('moments.eyebrow')}</p>
+                <h2 className="headline-2 text-label">
+                  {event.name} <span className="text-label-3">· {event.place[lang]}</span>
+                </h2>
+              </div>
+              <p className="text-[15px] leading-relaxed text-label-2 max-w-xl">{event.summary[lang]}</p>
             </Reveal>
-          ))}
-        </div>
+            <div className="grid gap-2 md:gap-3 grid-cols-2 sm:grid-cols-5">
+              {event.photos.map((photo, i) => (
+                <Reveal key={photo.src} delay={i * 50} className={`aspect-[4/5] ${i === 0 ? 'col-span-2 aspect-[16/10] sm:col-span-1 sm:aspect-[4/5]' : ''}`}>
+                  <Tile photo={photo} index={i} />
+                </Reveal>
+              ))}
+            </div>
+          </>
+        ) : (
+          <>
+            <SectionTitle eyebrow={t('moments.eyebrow')} title={t('moments.headline')} subtitle={event.summary[lang]} />
+
+            <div className="grid gap-3 md:gap-4 grid-cols-2 lg:grid-cols-4 lg:grid-rows-2 lg:h-[640px]">
+              <Reveal className="col-span-2 row-span-2 aspect-[4/5] sm:aspect-[4/3] lg:aspect-auto">
+                <Tile photo={cover} index={0} big />
+              </Reveal>
+              {rest.map((photo, i) => (
+                <Reveal key={photo.src} delay={(i + 1) * 70} className="aspect-[3/4] lg:aspect-auto">
+                  <Tile photo={photo} index={i + 1} />
+                </Reveal>
+              ))}
+            </div>
+          </>
+        )}
       </div>
 
       {open !== null &&

@@ -13,7 +13,7 @@ const STEP = 14; // each card pins a little lower, so the stack edges peek out
  */
 const Projects = () => {
   const { t, projects } = useContent();
-  const list = projects.filter((p) => p.status !== 'in-progress').slice(0, 5);
+  const list = projects.filter((p) => p.status !== 'in-progress').slice(0, 4);
   const stackRef = useRef(null);
 
   useScrollFrame(stackRef, (root) => {

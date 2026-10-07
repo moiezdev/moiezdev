@@ -3,7 +3,7 @@ import Button from '../ui/Button';
 import Reveal from '../ui/Reveal';
 import { useContent } from '../../i18n/content';
 
-/** Portrait + story block, shared by the home page and the About page. */
+/** Portrait + story block on the About page (`full`), or a two-paragraph teaser. */
 export const AboutStory = ({ full = false }) => {
   const { t } = useContent();
   const paragraphs = t('about.paragraphs');
@@ -56,19 +56,3 @@ export const AboutStory = ({ full = false }) => {
     </div>
   );
 };
-
-const About = () => {
-  const { t } = useContent();
-  return (
-    <section className="w-full px-5 pt-28 md:pt-40" id="about">
-      <div className="app-container">
-        <Reveal as="p" className="eyebrow mb-6">
-          {t('about.eyebrow')}
-        </Reveal>
-        <AboutStory />
-      </div>
-    </section>
-  );
-};
-
-export default About;
