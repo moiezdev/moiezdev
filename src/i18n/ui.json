@@ -284,6 +284,12 @@
       "eyebrow": "Beyond the code",
       "headline": "Out in the industry.",
       "view": "View"
+    },
+    "testimonials": {
+      "eyebrow": "Recommendations",
+      "title": "What colleagues say.",
+      "separator": " · ",
+      "linkedin": "{{name}} on LinkedIn"
     }
   },
   "ar": {
@@ -571,6 +577,12 @@
       "eyebrow": "ما وراء الكود",
       "headline": "في قلب الصناعة.",
       "view": "عرض"
+    },
+    "testimonials": {
+      "eyebrow": "توصيات",
+      "title": "ماذا يقول الزملاء.",
+      "separator": " · ",
+      "linkedin": "{{name}} على LinkedIn"
     }
   }
 }

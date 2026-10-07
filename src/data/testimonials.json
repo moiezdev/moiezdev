@@ -1,0 +1,4 @@
+{
+  "_todo": "TODO(moiez): add 2-3 real recommendations you have permission to publish (e.g. from LinkedIn). The Testimonials section renders nothing while \"items\" is empty. Shape of each item: { \"id\": \"unique-slug\", \"name\": \"Full Name\" or { \"en\": \"…\", \"ar\": \"…\" }, \"role\": { \"en\": \"Engineering Manager\", \"ar\": \"…\" }, \"company\": \"Company\" or { \"en\": \"…\", \"ar\": \"…\" }, \"quote\": { \"en\": \"English quote\", \"ar\": \"Arabic quote\" }, \"photo\": \"/testimonials/name.jpg\" (optional, square, at least 96x96, put the file in public/testimonials/), \"linkedin\": \"https://www.linkedin.com/in/…\" (optional) }. Never publish a quote without the person's permission.",
+  "items": []
+}
