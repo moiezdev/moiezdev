@@ -135,7 +135,7 @@
       "message": "Message",
       "send": "Send Message",
       "sending": "Sending...",
-      "fail": "Something went wrong! Please try again.",
+      "fail": "Your message couldn’t be sent. Please try again in a moment, or email me directly at",
       "eyebrow": "Contact",
       "headline": "Let’s build something great.",
       "sent": "Thanks — your message is on its way. I’ll reply soon.",
@@ -143,7 +143,17 @@
       "available": "Available",
       "localTime": "Riyadh time",
       "replies": "Replies",
-      "replyTime": "Within 24h"
+      "replyTime": "Within 24h",
+      "sentTitle": "Message sent",
+      "sendAnother": "Send another message",
+      "honeypot": "Leave this field empty",
+      "errors": {
+        "name": "Please enter your name.",
+        "email": "Please enter your email address.",
+        "emailInvalid": "Please enter a valid email address, like name@company.com.",
+        "subject": "Please add a subject.",
+        "message": "Please write a short message."
+      }
     },
     "footer": {
       "role": "Senior Full Stack Engineer & Software Architect",
@@ -431,7 +441,7 @@
       "message": "الرسالة",
       "send": "إرسال",
       "sending": "جارٍ الإرسال...",
-      "fail": "حدث خطأ! حاول مرة أخرى.",
+      "fail": "تعذّر إرسال رسالتك. يرجى المحاولة مرة أخرى بعد قليل، أو مراسلتي مباشرة على",
       "eyebrow": "التواصل",
       "headline": "لنبنِ شيئاً رائعاً.",
       "sent": "شكراً — رسالتك في الطريق. سأرد قريباً.",
@@ -439,7 +449,17 @@
       "available": "متاح",
       "localTime": "توقيت الرياض",
       "replies": "الرد",
-      "replyTime": "خلال يوم"
+      "replyTime": "خلال يوم",
+      "sentTitle": "تم إرسال الرسالة",
+      "sendAnother": "إرسال رسالة أخرى",
+      "honeypot": "اترك هذا الحقل فارغاً",
+      "errors": {
+        "name": "يرجى إدخال اسمك.",
+        "email": "يرجى إدخال بريدك الإلكتروني.",
+        "emailInvalid": "يرجى إدخال بريد إلكتروني صحيح، مثل name@company.com.",
+        "subject": "يرجى إضافة موضوع.",
+        "message": "يرجى كتابة رسالة قصيرة."
+      }
     },
     "footer": {
       "role": "مهندس برمجيات متكامل أول ومعماري برمجيات",
