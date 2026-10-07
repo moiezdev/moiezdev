@@ -82,7 +82,7 @@ const Node = ({ node, state, onEnter, onLeave, registerRef }) => {
       onMouseLeave={onLeave}
       onFocus={onEnter}
       onBlur={onLeave}
-      className={`relative z-10 flex items-center gap-3 rounded-2xl bg-surface px-3 py-2.5 outline-none transition-all duration-300 ${hub ? 'order-first lg:order-none sm:col-span-2 lg:col-span-1' : ''} ${
+      className={`relative z-10 flex items-center gap-3 rounded-2xl bg-surface px-3 py-2.5 outline-none transition-all duration-300 ${hub ? 'order-first @3xl:order-none @lg:col-span-2 @3xl:col-span-1' : ''} ${
         hub
           ? 'ring-1 ring-label/25 shadow-[0_10px_30px_rgba(0,0,0,0.10)] py-3.5'
           : 'ring-1 ring-separator shadow-[0_1px_2px_rgba(0,0,0,0.04)]'
@@ -107,7 +107,8 @@ const Node = ({ node, state, onEnter, onLeave, registerRef }) => {
 
 /**
  * Interactive system diagram. Edges are measured from the rendered nodes, so
- * they follow any layout (widths, RTL). Hover or focus a node to trace its
+ * they follow any layout (widths, RTL). Breakpoints are container queries, so
+ * the diagram adapts to the column it sits in (home band or case study). Hover or focus a node to trace its
  * connections; pulses show data moving along each edge.
  */
 export default function ArchitectureGraph({ titles }) {
@@ -121,7 +122,8 @@ export default function ArchitectureGraph({ titles }) {
 
   const measure = useCallback(() => {
     const wrap = wrapRef.current;
-    if (!wrap || window.innerWidth < 1024) return setPaths([]);
+    // edges only in the four-column layout (container ≥ 48rem, see the classes below)
+    if (!wrap || wrap.clientWidth < 768) return setPaths([]);
     const box = wrap.getBoundingClientRect();
     const rect = (id) => {
       const r = nodeRefs.current[id]?.getBoundingClientRect();
@@ -183,10 +185,10 @@ export default function ArchitectureGraph({ titles }) {
   const edgeOn = (p) => active && (p.from === active || p.to === active);
 
   return (
-    <div ref={wrapRef} className="relative" onMouseLeave={() => setActive(null)}>
+    <div ref={wrapRef} className="@container relative" onMouseLeave={() => setActive(null)}>
       {/* edges (desktop) */}
       {paths.length > 0 && (
-        <svg className="absolute inset-0 pointer-events-none hidden lg:block" width={size.w} height={size.h} aria-hidden>
+        <svg className="absolute inset-0 pointer-events-none hidden @3xl:block" width={size.w} height={size.h} aria-hidden>
           {paths.map((p, i) => (
             <path
               key={p.id}
@@ -223,11 +225,11 @@ export default function ArchitectureGraph({ titles }) {
         </svg>
       )}
 
-      <div className="relative grid gap-4 lg:gap-x-20 lg:grid-cols-4">
+      <div className="relative grid gap-4 @3xl:gap-x-12 @5xl:gap-x-20 @3xl:grid-cols-4">
         {LAYERS.map((layer, li) => (
           <div key={layer.key} className="flex flex-col">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-label-3 mb-3">{titles[layer.key]}</p>
-            <div className={`grid gap-2.5 sm:grid-cols-2 lg:flex lg:flex-col lg:flex-1 lg:justify-center ${layer.key === 'api' ? 'lg:gap-6' : 'lg:gap-3'}`}>
+            <div className={`grid gap-2.5 @lg:grid-cols-2 @3xl:flex @3xl:flex-col @3xl:flex-1 @3xl:justify-center ${layer.key === 'api' ? '@3xl:gap-6' : '@3xl:gap-3'}`}>
               {layer.nodes.map((node) => (
                 <Node
                   key={node.id}
@@ -241,7 +243,7 @@ export default function ArchitectureGraph({ titles }) {
             </div>
             {/* phone/tablet: vertical flow between stacked layers */}
             {li < LAYERS.length - 1 && (
-              <div className="relative lg:hidden h-10 mt-4 flex justify-center" aria-hidden>
+              <div className="relative @3xl:hidden h-10 mt-4 flex justify-center" aria-hidden>
                 <span className="absolute inset-y-0 w-px bg-separator" />
                 <span className="wire-pulse" style={{ animationDelay: `${li * 0.5}s` }} />
               </div>

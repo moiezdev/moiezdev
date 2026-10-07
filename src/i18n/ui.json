@@ -325,6 +325,49 @@
       "headline": "How the platform fits together.",
       "subtitle": "The system behind TWLM: clients, a NestJS API, domain services, and the data and integrations underneath.",
       "caseStudy": "Read the TWLM case study"
+    },
+    "caseStudy": {
+      "contents": "On this page",
+      "role": "Role",
+      "company": "Company",
+      "timeline": "Timeline",
+      "team": "Team",
+      "stack": "Stack",
+      "links": "Links",
+      "overview": "Overview",
+      "problem": "Problem",
+      "myRole": "My role",
+      "architecture": "Architecture & key decisions",
+      "challenges": "Challenges",
+      "results": "Results",
+      "next": "What I’d do next",
+      "builtWith": "Stack",
+      "measured": "How these were measured",
+      "seq": {
+        "title": "Wallet pass update flow (simplified)",
+        "actor": {
+          "source": "Webhook source",
+          "api": "NestJS API",
+          "queue": "BullMQ · Redis",
+          "worker": "Worker",
+          "wallet": "Apple / Google",
+          "device": "Customer phone"
+        },
+        "webhook": "webhook event",
+        "enqueue": "add job",
+        "process": "run job",
+        "update": "update pass",
+        "push": "push",
+        "refresh": "pass refreshes",
+        "steps": {
+          "webhook": "A webhook event reaches the NestJS API.",
+          "enqueue": "The API adds a wallet-update job to a Redis-backed BullMQ queue.",
+          "process": "A BullMQ worker picks up the job asynchronously.",
+          "update": "The worker updates the Apple Wallet or Google Wallet pass.",
+          "push": "Apple or Google sends a push to the customer’s phone.",
+          "refresh": "The pass on the phone refreshes with the new data."
+        }
+      }
     }
   },
   "ar": {
@@ -653,6 +696,49 @@
       "headline": "كيف تترابط أجزاء المنصة.",
       "subtitle": "النظام خلف TWLM: التطبيقات، وواجهة NestJS، والخدمات، والبيانات والتكاملات تحتها.",
       "caseStudy": "اقرأ دراسة حالة TWLM"
+    },
+    "caseStudy": {
+      "contents": "في هذه الصفحة",
+      "role": "الدور",
+      "company": "الشركة",
+      "timeline": "المدة",
+      "team": "الفريق",
+      "stack": "التقنيات",
+      "links": "روابط",
+      "overview": "نظرة عامة",
+      "problem": "المشكلة",
+      "myRole": "دوري",
+      "architecture": "المعمارية والقرارات الأساسية",
+      "challenges": "التحديات",
+      "results": "النتائج",
+      "next": "ما سأفعله لاحقاً",
+      "builtWith": "التقنيات",
+      "measured": "كيف قيست هذه الأرقام",
+      "seq": {
+        "title": "تدفق تحديث بطاقة المحفظة (مبسّط)",
+        "actor": {
+          "source": "مصدر الويب هوك",
+          "api": "NestJS API",
+          "queue": "BullMQ · Redis",
+          "worker": "العامل",
+          "wallet": "Apple / Google",
+          "device": "هاتف العميل"
+        },
+        "webhook": "حدث ويب هوك",
+        "enqueue": "إضافة مهمة",
+        "process": "تنفيذ المهمة",
+        "update": "تحديث البطاقة",
+        "push": "إشعار",
+        "refresh": "تتحدّث البطاقة",
+        "steps": {
+          "webhook": "يصل حدث ويب هوك إلى واجهة NestJS.",
+          "enqueue": "تضيف الواجهة مهمة تحديث محفظة إلى طابور BullMQ على Redis.",
+          "process": "يلتقط عامل BullMQ المهمة بشكل غير متزامن.",
+          "update": "يحدّث العامل بطاقة Apple Wallet أو Google Wallet.",
+          "push": "ترسل Apple أو Google إشعاراً إلى هاتف العميل.",
+          "refresh": "تتحدّث البطاقة على الهاتف بالبيانات الجديدة."
+        }
+      }
     }
   }
 }

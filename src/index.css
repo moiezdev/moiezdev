@@ -502,7 +502,8 @@ textarea:-webkit-autofill {
   15%, 85% { opacity: 1; }
   100% { left: calc(100% - 6px); opacity: 0; }
 }
-@media (min-width: 1024px) {
+/* horizontal only in the diagram's four-column layout (container ≥ 48rem) */
+@container (min-width: 48rem) {
   .wire-pulse {
     top: calc(50% - 3px);
     animation-name: wire-h;
