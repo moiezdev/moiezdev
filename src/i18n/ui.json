@@ -368,6 +368,16 @@
           "refresh": "The pass on the phone refreshes with the new data."
         }
       }
+    },
+    "ai": {
+      "eyebrow": "AI integration",
+      "headline": "LLMs, wired into real products.",
+      "subtitle": "Where I’ve integrated large language models — and one you can try right now.",
+      "twlmTitle": "Smart menu search · TWLM-POS",
+      "twlmBody": "Led the OpenRouter AI (DeepSeek) integration that powers smart menu search and AI-based analysis of restaurant data.",
+      "botTitle": "{{name}} · this site",
+      "botBody": "{{name}}, the assistant on this site, answers questions about my work through a server-side OpenRouter (DeepSeek) endpoint.",
+      "botCta": "Ask {{name}}"
     }
   },
   "ar": {
@@ -739,6 +749,16 @@
           "refresh": "تتحدّث البطاقة على الهاتف بالبيانات الجديدة."
         }
       }
+    },
+    "ai": {
+      "eyebrow": "تكامل الذكاء الاصطناعي",
+      "headline": "نماذج لغوية داخل منتجات حقيقية.",
+      "subtitle": "أين دمجت النماذج اللغوية الكبيرة — وواحد يمكنك تجربته الآن.",
+      "twlmTitle": "البحث الذكي في القوائم · TWLM",
+      "twlmBody": "قدت دمج OpenRouter AI (DeepSeek) الذي يشغّل البحث الذكي في القوائم وتحليل بيانات المطاعم بالذكاء الاصطناعي.",
+      "botTitle": "{{name}} · هذا الموقع",
+      "botBody": "{{name}} هو المساعد في هذا الموقع، يجيب عن الأسئلة حول عملي عبر خادم يتصل بـ OpenRouter (DeepSeek).",
+      "botCta": "اسأل {{name}}"
     }
   }
 }
