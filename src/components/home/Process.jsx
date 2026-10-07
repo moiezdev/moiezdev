@@ -1,7 +1,27 @@
 import SectionTitle from '../ui/SectionTitle';
 import Reveal from '../ui/Reveal';
 import WindowChrome from '../ui/WindowChrome';
-import ArchitectureGraph from './ArchitectureGraph';
+import { Suspense, lazy, useEffect, useRef, useState } from 'react';
+
+// the diagram's code loads only as it approaches the viewport
+const ArchitectureGraph = lazy(() => import('./ArchitectureGraph'));
+
+const WhenNear = ({ children, minHeight }) => {
+  const ref = useRef(null);
+  const [near, setNear] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return undefined;
+    const io = new IntersectionObserver(([e]) => e.isIntersecting && (setNear(true), io.disconnect()), { rootMargin: '600px 0px' });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return (
+    <div ref={ref} style={near ? undefined : { minHeight }}>
+      {near && <Suspense fallback={<div style={{ minHeight }} />}>{children}</Suspense>}
+    </div>
+  );
+};
 import { useContent } from '../../i18n/content';
 
 const STEP_ICONS = [
@@ -40,14 +60,16 @@ const Process = () => {
         <Reveal className="mt-16 md:mt-20">
           <WindowChrome title="system-architecture.ts" meta={t('process.live')}>
             <div className="blueprint p-6 md:p-10">
-              <ArchitectureGraph
-                titles={{
-                  clients: t('process.layers.clients'),
-                  api: t('process.layers.api'),
-                  services: t('process.layers.services'),
-                  data: t('process.layers.data'),
-                }}
-              />
+              <WhenNear minHeight={420}>
+                <ArchitectureGraph
+                  titles={{
+                    clients: t('process.layers.clients'),
+                    api: t('process.layers.api'),
+                    services: t('process.layers.services'),
+                    data: t('process.layers.data'),
+                  }}
+                />
+              </WhenNear>
               <div className="mt-10 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-[13px] text-label-2 max-w-2xl">{t('process.caption')}</p>
                 <p className="hidden lg:block text-[12px] text-label-3">{t('process.hint')}</p>
