@@ -10,6 +10,9 @@ import { useContent } from '../../i18n/content';
  * Each logo is blended against its own tile (isolate + mix-blend), so white
  * JPEG backgrounds disappear: multiply on the light tile, and invert + screen
  * on the dark one.
+ *
+ * Logo options: "wide" for wordmarks (no separate name label), plus "crop" for
+ * a wordmark inside a square image with empty margins (cropped to a band).
  */
 const LogoStrip = ({ config = site.logoStrip, className = 'pt-20 md:pt-28' }) => {
   const { t } = useContent();
@@ -34,8 +37,8 @@ const LogoStrip = ({ config = site.logoStrip, className = 'pt-20 md:pt-28' }) =>
                 loading="lazy"
                 decoding="async"
                 className={`${
-                  logo.wide ? 'h-7 w-auto max-w-[150px]' : 'size-8'
-                } object-contain grayscale contrast-[1.1] opacity-60 mix-blend-multiply transition-opacity duration-300 group-hover:opacity-85 dark:invert dark:mix-blend-screen`}
+                  logo.crop ? 'h-9 w-[100px] object-cover' : logo.wide ? 'h-7 w-auto max-w-[150px] object-contain' : 'size-8 object-contain'
+                } grayscale contrast-[1.1] opacity-60 mix-blend-multiply transition-opacity duration-300 group-hover:opacity-85 dark:invert dark:mix-blend-screen`}
               />
               {!logo.wide && (
                 <span className="text-[14px] font-semibold tracking-[-0.01em] text-label-2 whitespace-nowrap" dir="ltr">
