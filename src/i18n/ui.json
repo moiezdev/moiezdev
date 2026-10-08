@@ -457,6 +457,33 @@
       "replay": "Replay",
       "step": "Step {{n}} of {{total}}",
       "why": "Why"
+    },
+    "aiConsole": {
+      "label": "Example requests",
+      "tabs": {
+        "order": "Create order",
+        "search": "AI menu search"
+      },
+      "replay": "Replay",
+      "illustrative": "Illustrative example — shows the shape of the API, not live data.",
+      "query": "spicy chicken under 30 SAR",
+      "results": [
+        {
+          "name": "Spicy chicken burger",
+          "price": 27,
+          "score": 0.94
+        },
+        {
+          "name": "Hot chicken shawarma wrap",
+          "price": 22,
+          "score": 0.89
+        },
+        {
+          "name": "Nashville chicken bites",
+          "price": 29,
+          "score": 0.83
+        }
+      ]
     }
   },
   "ar": {
@@ -921,6 +948,33 @@
       "replay": "إعادة",
       "step": "الخطوة {{n}} من {{total}}",
       "why": "لماذا"
+    },
+    "aiConsole": {
+      "label": "أمثلة على الطلبات",
+      "tabs": {
+        "order": "إنشاء طلب",
+        "search": "بحث ذكي في القائمة"
+      },
+      "replay": "إعادة",
+      "illustrative": "مثال توضيحي — يوضّح شكل الواجهة البرمجية وليس بيانات حقيقية.",
+      "query": "دجاج حار بأقل من 30 ريال",
+      "results": [
+        {
+          "name": "برجر دجاج حار",
+          "price": 27,
+          "score": 0.94
+        },
+        {
+          "name": "شاورما دجاج حارة",
+          "price": 22,
+          "score": 0.89
+        },
+        {
+          "name": "قطع دجاج ناشفيل",
+          "price": 29,
+          "score": 0.83
+        }
+      ]
     }
   }
 }

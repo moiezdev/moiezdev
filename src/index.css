@@ -761,3 +761,27 @@ html[dir='rtl'] .latency-bar {
 .latency-bar[data-phase='in'] {
   transition: transform var(--dur-slow) var(--ease-spring);
 }
+
+/* ---------- API console (home AI section) ---------- */
+.api-console {
+  color: var(--tok-plain, var(--color-label));
+}
+.con-m { font-weight: 600; color: var(--color-label); }
+.con-k { color: var(--tok-p, var(--color-label-2)); }
+.con-s { color: var(--tok-s, var(--color-label)); }
+.con-n { color: var(--tok-n, var(--color-label)); }
+.con-p { color: var(--color-label-2); }
+/* lines fade in one by one when played; complete by default */
+.api-console[data-phase='armed'] .con-line {
+  opacity: 0;
+}
+.api-console[data-phase='play'] .con-line {
+  animation: con-in var(--dur-fast) var(--ease-out) both;
+  animation-delay: calc(var(--i) * 80ms);
+}
+@keyframes con-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}

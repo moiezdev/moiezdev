@@ -6,6 +6,11 @@ import TechChip from '../ui/TechChip';
 import { chatbot } from '../../data';
 import { useContent } from '../../i18n/content';
 import { openBotfolio } from '../../utils/botfolio';
+import { lazy } from 'react';
+import WhenNear from '../ui/WhenNear';
+
+// the console's code loads only as it approaches the viewport
+const ApiConsole = lazy(() => import('./ApiConsole'));
 
 const BOT_NAME = chatbot.botName || 'BotFolio';
 
@@ -43,11 +48,14 @@ const AiHighlight = () => {
 
   return (
     <section className="w-full px-5 py-20 md:py-28" id="ai">
-      <div className="app-container grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
-        <Reveal>
+      <div className="app-container grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
+        <Reveal className="min-w-0">
           <p className="eyebrow mb-3">{t('ai.eyebrow')}</p>
           <h2 className="headline-1 text-label">{t('ai.headline')}</h2>
           <p className="lead mt-4">{t('ai.subtitle')}</p>
+          <WhenNear minHeight={340}>
+            <ApiConsole />
+          </WhenNear>
         </Reveal>
         <Reveal as="ul" delay={80} className="flex flex-col">
           <Item icon={MdOutlineManageSearch} title={t('ai.twlmTitle')} body={t('ai.twlmBody')} tags={['OpenRouter', 'DeepSeek', 'NestJs']}>
