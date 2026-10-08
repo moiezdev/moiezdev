@@ -673,6 +673,7 @@ var twlm_pos_default = {
   teamSize: "",
   diagrams: [
     "architecture",
+    "stackFlow",
     "walletSequence",
     "queue",
     "walletPass"
@@ -760,18 +761,60 @@ var aa_tourism_default = {
     "Sabre",
     "Amadeus"
   ],
-  imageUrl: "/projects-media/aa-tourism/main.webp",
+  imageUrl: "/projects-media/aa-tourism/cover.webp",
   projectUrl: "http://aatourism.ca/",
   githubUrl: "https://github.com/moiezdev/AAtourism",
   repoPublic: true,
   media: [
-    "main.webp",
-    "img1.webp",
-    "img2.webp",
-    "img3.webp",
-    "img4.webp"
+    "cover.webp",
+    "main-framed.webp",
+    "img1-framed.webp",
+    "img2-framed.webp",
+    "img3-framed.webp",
+    "img4-framed.webp"
   ],
-  group: "client"
+  group: "client",
+  caseStudy: {
+    summary: "A flight booking and tour-planning platform for a Canadian travel agency, wired to Sabre and Amadeus for real-time flight data.",
+    problem: [
+      "Travellers needed to search, compare and book real flights and tours without getting lost in a complex booking journey.",
+      "Flight data had to come live from global distribution systems (Sabre, Amadeus) using IATA codes, on desktop and mobile."
+    ],
+    role: [
+      "Frontend lead at Creative Inter Tech for the B2B travel platforms (AA Tourism, City Arrivals).",
+      "Built the booking journey in Nuxt: search forms, flight lists, filters and step-by-step booking.",
+      "Worked with the backend team so live GDS data reached the UI reliably and consistently."
+    ],
+    architecture: [
+      "Nuxt (Vue) frontend with Vuex for search and booking state.",
+      "Buefy and Bootstrap components on a custom SCSS theme in the brand's colours.",
+      "Flight search and availability through Sabre and Amadeus, mapped by IATA codes."
+    ],
+    challenges: [
+      "Keeping a multi-step booking flow simple while showing a lot of live flight data.",
+      "Consistent behaviour across mobile and desktop with real-time results."
+    ],
+    results: [
+      "Live platform at aatourism.ca with real-time flight search and booking.",
+      "Part of the B2B travel platforms serving 10K+ monthly users."
+    ],
+    next: [],
+    measured: ""
+  },
+  metrics: [
+    {
+      value: "10K+",
+      label: "monthly users across the B2B travel platforms"
+    },
+    {
+      value: "2",
+      label: "live GDS integrations (Sabre, Amadeus)"
+    }
+  ],
+  experienceId: "creative-inter-tech",
+  diagrams: [
+    "stackFlow"
+  ]
 };
 
 // src/data/projects/scmborba.json
@@ -797,17 +840,47 @@ var scmborba_default = {
     "TailwindCSS",
     "JavaScript"
   ],
-  imageUrl: "/projects-media/scmborba/main.webp",
+  imageUrl: "/projects-media/scmborba/cover.webp",
   projectUrl: "http://scmborba.pt",
   media: [
-    "main.webp",
-    "img1.webp",
-    "img2.webp",
-    "img3.webp",
-    "img4.webp"
+    "cover.webp",
+    "main-framed.webp",
+    "img1-framed.webp",
+    "img2-framed.webp",
+    "img3-framed.webp",
+    "img4-framed.webp"
   ],
   repoPublic: false,
-  group: "client"
+  group: "client",
+  caseStudy: {
+    summary: "The website of Santa Casa da Miseric\xF3rdia de Borba, a Portuguese social-services institution \u2014 full stack with Vue/Nuxt and Node/Express.",
+    problem: [
+      "A non-profit needed a modern site that clearly communicates its mission, services and community work.",
+      "The audience includes elderly users and families looking for support, so it had to be simple and fast."
+    ],
+    role: [
+      "Built and maintained full-stack features with Node.js, Express and Vue/Nuxt.",
+      "Translated Figma/XD designs into responsive, production UI.",
+      "Designed backend APIs and refined queries and application logic."
+    ],
+    architecture: [
+      "Nuxt (Vue) front end styled with Tailwind CSS.",
+      "Node.js and Express API serving the site's content."
+    ],
+    challenges: [
+      "Usability and performance for a wide audience, including elderly users."
+    ],
+    results: [
+      "Live at scmborba.pt with a modernised visual identity.",
+      "Faster, more efficient data handling after query and logic refinements."
+    ],
+    next: [],
+    measured: ""
+  },
+  experienceId: "scm-borba",
+  diagrams: [
+    "stackFlow"
+  ]
 };
 
 // src/data/projects/docean-fisheries.json
@@ -830,13 +903,43 @@ var docean_fisheries_default = {
     "CSS3",
     "JavaScript"
   ],
-  imageUrl: "/projects-media/docean-fisheries/main.webp",
+  imageUrl: "/projects-media/docean-fisheries/cover.webp",
   projectUrl: "https://doceanfisheries.com/",
   media: [
-    "main.webp"
+    "cover.webp",
+    "main-framed.webp"
   ],
   repoPublic: false,
-  group: "earlier"
+  group: "earlier",
+  caseStudy: {
+    summary: "A responsive website for a Bahrain seafood supplier, with product categories and quote forms.",
+    problem: [
+      "Customers needed to explore live, frozen and fillet products and send inquiries easily."
+    ],
+    role: [
+      "Designed and built the front end, product sections, quick links and quote/contact forms."
+    ],
+    architecture: [
+      "Hand-built HTML5, CSS3 and JavaScript \u2014 no framework needed for a fast, simple site."
+    ],
+    challenges: [
+      "A professional look that stays clear and uncluttered."
+    ],
+    results: [
+      "Live at doceanfisheries.com, responsive on desktop and mobile."
+    ],
+    next: [],
+    measured: ""
+  },
+  metrics: [
+    {
+      value: "3",
+      label: "seafood categories: live, frozen and fillets"
+    }
+  ],
+  diagrams: [
+    "stackFlow"
+  ]
 };
 
 // src/data/projects/my-portfolio.json
@@ -860,13 +963,37 @@ var my_portfolio_default = {
     "JavaScript",
     "Redux Toolkit"
   ],
-  imageUrl: "/projects-media/portfolio/main.webp",
+  imageUrl: "/projects-media/portfolio/cover.webp",
   githubUrl: "https://github.com/moiezdev/my-portfolio-react",
   repoPublic: true,
   media: [
-    "main.webp"
+    "cover.webp",
+    "main-framed.webp"
   ],
-  group: "earlier"
+  group: "earlier",
+  caseStudy: {
+    summary: "The first version of this portfolio \u2014 React, Tailwind CSS and Redux Toolkit, built from scratch.",
+    problem: [
+      "A place to show projects, skills and experience that loads fast and feels alive."
+    ],
+    role: [
+      "Designed and built it end to end: project previews, animations and responsive layouts."
+    ],
+    architecture: [
+      "React with Redux Toolkit for state and Tailwind CSS for styling."
+    ],
+    challenges: [
+      "Rich interactions without hurting load time or accessibility."
+    ],
+    results: [
+      "The foundation the current moiez.dev grew from."
+    ],
+    next: [],
+    measured: ""
+  },
+  diagrams: [
+    "stackFlow"
+  ]
 };
 
 // src/data/projects/gala-travels.json
@@ -893,14 +1020,46 @@ var gala_travels_default = {
     "JavaScript",
     "SCSS"
   ],
-  imageUrl: "/projects-media/gala-travels/main.webp",
+  imageUrl: "/projects-media/gala-travels/cover.webp",
   githubUrl: "https://github.com/moiezdev/gala-saber",
   repoPublic: true,
   media: [
-    "main.webp",
-    "img1.webp"
+    "cover.webp",
+    "main-framed.webp",
+    "img1-framed.webp"
   ],
-  group: "client"
+  group: "client",
+  caseStudy: {
+    summary: "A travel-agency platform for booking flights, hotels, vacations and cruises \u2014 Vue/Nuxt on a Laravel backend.",
+    problem: [
+      "Agents and travellers needed one place to book four kinds of travel without the interface getting complicated."
+    ],
+    role: [
+      "Built the Vue/Nuxt front end: booking forms, listings and itinerary views.",
+      "Connected the booking flows to the Laravel backend."
+    ],
+    architecture: [
+      "Nuxt (Vue) front end with Buefy and Bootstrap on SCSS.",
+      "Laravel backend powering the booking flows."
+    ],
+    challenges: [
+      "Four booking types with different data, in one consistent and approachable UI."
+    ],
+    results: [
+      "Responsive booking flows for flights, hotels, vacations and cruises."
+    ],
+    next: [],
+    measured: ""
+  },
+  metrics: [
+    {
+      value: "4",
+      label: "booking types: flights, hotels, vacations, cruises"
+    }
+  ],
+  diagrams: [
+    "stackFlow"
+  ]
 };
 
 // src/data/projects/mian-travels.json
@@ -927,14 +1086,42 @@ var mian_travels_default = {
     "SCSS",
     "Sabre"
   ],
-  imageUrl: "/projects-media/mian-travels/main.webp",
+  imageUrl: "/projects-media/mian-travels/cover.webp",
   githubUrl: "https://github.com/moiezdev/MiansTravels",
   repoPublic: false,
   media: [
-    "main.webp",
-    "img1.webp"
+    "cover.webp",
+    "main-framed.webp",
+    "img1-framed.webp"
   ],
-  group: "client"
+  group: "client",
+  caseStudy: {
+    summary: "A flight booking platform on the Sabre API, built at Creative Inter Tech to feel simple and intuitive.",
+    problem: [
+      "Travellers needed a straightforward way to search flights and book, with data coming live from Sabre."
+    ],
+    role: [
+      "Built the Nuxt 2 front end: flight search, listings and booking forms.",
+      "Connected the UI to Sabre API data and kept it reliable on mobile and desktop."
+    ],
+    architecture: [
+      "Nuxt 2 (Vue) with Buefy and Bootstrap components on SCSS.",
+      "Live flight data from the Sabre API.",
+      "Small, purposeful animations to guide users through booking."
+    ],
+    challenges: [
+      "Turning raw GDS data into clean, readable flight results."
+    ],
+    results: [
+      "A clean, brand-consistent booking flow backed by live Sabre data."
+    ],
+    next: [],
+    measured: ""
+  },
+  experienceId: "creative-inter-tech",
+  diagrams: [
+    "stackFlow"
+  ]
 };
 
 // src/data/projects/ain-saas.json
@@ -957,16 +1144,40 @@ var ain_saas_default = {
     "SCSS",
     "JavaScript"
   ],
-  imageUrl: "/projects-media/ain-saas/main.webp",
+  imageUrl: "/projects-media/ain-saas/cover.webp",
   projectUrl: "https://ain-saiss.ma",
   media: [
-    "main.webp",
-    "img1.webp",
-    "img2.webp",
-    "img3.webp"
+    "cover.webp",
+    "main-framed.webp",
+    "img1-framed.webp",
+    "img2-framed.webp",
+    "img3-framed.webp"
   ],
   repoPublic: false,
-  group: "earlier"
+  group: "earlier",
+  caseStudy: {
+    summary: "A modern, accessible website for A\xEFn Sa\xEFss, a Moroccan mineral-water brand \u2014 products, services and brand content.",
+    problem: [
+      "The brand needed its products and information presented clearly on every screen size."
+    ],
+    role: [
+      "Built the front end with interactive menus and cards, keeping it fast and accessible."
+    ],
+    architecture: [
+      "HTML5, SCSS and JavaScript with a responsive, component-like structure."
+    ],
+    challenges: [
+      "Accessibility for everyone, including people using assistive tech."
+    ],
+    results: [
+      "A fast, consistent brand site that adapts to desktop and mobile."
+    ],
+    next: [],
+    measured: ""
+  },
+  diagrams: [
+    "stackFlow"
+  ]
 };
 
 // src/data/projects/city-arrivals.json
@@ -990,15 +1201,49 @@ var city_arrivals_default = {
     "JavaScript",
     "Jquery"
   ],
-  imageUrl: "/projects-media/city-arrivals/main.webp",
+  imageUrl: "/projects-media/city-arrivals/cover.webp",
   projectUrl: "https://cityarrivals.ca",
   media: [
-    "main.webp",
-    "img1.webp",
-    "img2.webp"
+    "cover.webp",
+    "main-framed.webp",
+    "img1-framed.webp",
+    "img2-framed.webp"
   ],
   repoPublic: false,
-  group: "earlier"
+  group: "earlier",
+  caseStudy: {
+    summary: "Luxury car booking for a Canadian operator, built for B2B travel operations alongside AA Travel & Tourism.",
+    problem: [
+      "Customers needed to book premium vehicles \u2014 point-to-point, hourly or airport \u2014 quickly and with confidence."
+    ],
+    role: [
+      "Built the booking front end at Creative Inter Tech as part of the B2B travel platforms.",
+      "Integrated the booking flow so users can schedule and manage rides."
+    ],
+    architecture: [
+      "Responsive HTML5 and SCSS layouts with jQuery-driven booking interactions.",
+      "Location search and map-based pickup/drop-off feeding the booking flow."
+    ],
+    challenges: [
+      "A premium feel with fast, smooth navigation on every device."
+    ],
+    results: [
+      "Live at cityarrivals.ca.",
+      "Part of the B2B travel platforms serving 10K+ monthly users."
+    ],
+    next: [],
+    measured: ""
+  },
+  metrics: [
+    {
+      value: "10K+",
+      label: "monthly users across the B2B travel platforms"
+    }
+  ],
+  experienceId: "creative-inter-tech",
+  diagrams: [
+    "stackFlow"
+  ]
 };
 
 // src/data/projects/mtlnation.json
@@ -1022,13 +1267,39 @@ var mtlnation_default = {
     "SCSS",
     "Bootstrap"
   ],
-  imageUrl: "/projects-media/mtlnation/main.webp",
+  imageUrl: "/projects-media/mtlnation/cover.webp",
   projectUrl: "https://mtlnation.com",
   media: [
-    "main.webp"
+    "cover.webp",
+    "main-framed.webp"
   ],
   repoPublic: false,
-  group: "client"
+  group: "client",
+  caseStudy: {
+    summary: "A Vue.js web platform for web novels \u2014 library, leaderboard and reading pages built from reusable components.",
+    problem: [
+      "Readers needed to browse, discover and follow content smoothly, with dynamic sections that stay fast."
+    ],
+    role: [
+      "Built the site in Vue.js with reusable components.",
+      "Added dynamic sections (news, events, media) with smooth transitions, plus forms and interactive parts."
+    ],
+    architecture: [
+      "Vue.js single-page app structured as reusable components.",
+      "Bootstrap and SCSS for a consistent, modern design system."
+    ],
+    challenges: [
+      "Lots of dynamic content without losing speed or responsiveness."
+    ],
+    results: [
+      "A component-based codebase that's easy to maintain and extend."
+    ],
+    next: [],
+    measured: ""
+  },
+  diagrams: [
+    "stackFlow"
+  ]
 };
 
 // src/data/projects/tdm.json
@@ -1051,17 +1322,41 @@ var tdm_default = {
     "CSS3",
     "JavaScript"
   ],
-  imageUrl: "/projects-media/tdm/main.webp",
+  imageUrl: "/projects-media/tdm/cover.webp",
   githubUrl: "https://github.com/moiezdev/tdm",
   repoPublic: true,
   media: [
-    "main.webp",
-    "img1.webp",
-    "img2.webp",
-    "img3.webp",
-    "img4.webp"
+    "cover.webp",
+    "main-framed.webp",
+    "img1-framed.webp",
+    "img2-framed.webp",
+    "img3-framed.webp",
+    "img4-framed.webp"
   ],
-  group: "earlier"
+  group: "earlier",
+  caseStudy: {
+    summary: "The corporate website of TDM, a Portuguese civil-engineering and project-management company.",
+    problem: [
+      "Visitors needed to understand TDM's services and projects quickly and get in touch."
+    ],
+    role: [
+      "Developed the front end with clear sections for services, projects and contact."
+    ],
+    architecture: [
+      "HTML5, CSS3 and JavaScript with a responsive layout."
+    ],
+    challenges: [
+      "Conveying technical reliability through a clean, simple design."
+    ],
+    results: [
+      "A professional, responsive site aligned with TDM's brand."
+    ],
+    next: [],
+    measured: ""
+  },
+  diagrams: [
+    "stackFlow"
+  ]
 };
 
 // src/data/projects/eims.json
@@ -1090,7 +1385,29 @@ var eims_default = {
     "main.webp"
   ],
   screenshot: false,
-  status: "in-progress"
+  status: "in-progress",
+  caseStudy: {
+    summary: "An AI-powered learning management system in progress, with a .NET backend that recommends courses.",
+    problem: [
+      "Students struggle to pick the right courses for their interests and goals."
+    ],
+    role: [
+      "Designing and building the system and its recommendation logic."
+    ],
+    architecture: [
+      "ASP.NET and Entity Framework on PostgreSQL.",
+      "AI-driven recommendations to personalise each learning path."
+    ],
+    challenges: [],
+    results: [
+      "In progress."
+    ],
+    next: [],
+    measured: ""
+  },
+  diagrams: [
+    "stackFlow"
+  ]
 };
 
 // src/data/projects/lms.json
@@ -1204,6 +1521,13 @@ var projectDetail = (project) => ({
   name: project.title,
   path: `/works/${project.id}`,
   what: project.subtitle,
+  ...project.caseStudy ? {
+    summary: project.caseStudy.summary,
+    architecture: project.caseStudy.architecture,
+    role: project.caseStudy.role,
+    results: project.caseStudy.results
+  } : {},
+  ...project.metrics?.length ? { metrics: project.metrics.map((m) => `${m.value} ${m.label}`) } : {},
   details: projectLines(project, 10).map((l) => l.slice(0, 220)),
   stack: project.technologies || [],
   live: project.projectUrl || void 0,

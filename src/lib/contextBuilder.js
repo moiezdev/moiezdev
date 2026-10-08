@@ -40,6 +40,15 @@ const projectDetail = (project) => ({
   name: project.title,
   path: `/works/${project.id}`,
   what: project.subtitle,
+  ...(project.caseStudy
+    ? {
+        summary: project.caseStudy.summary,
+        architecture: project.caseStudy.architecture,
+        role: project.caseStudy.role,
+        results: project.caseStudy.results,
+      }
+    : {}),
+  ...(project.metrics?.length ? { metrics: project.metrics.map((m) => `${m.value} ${m.label}`) } : {}),
   details: projectLines(project, 10).map((l) => l.slice(0, 220)),
   stack: project.technologies || [],
   live: project.projectUrl || undefined,
