@@ -34,11 +34,11 @@
   "technologies": [
     "React",
     "Flutter",
-    "NestJs",
+    "NestJS",
     "Fastify",
     "Node",
     "Prisma",
-    "PostGreSQL",
+    "PostgreSQL",
     "Apple Wallet",
     "Google Wallet",
     "REST APIs",

@@ -14,7 +14,7 @@
     "ASP.NET",
     "C# (C Sharp)",
     "Entity Framework",
-    "PostGreSQL"
+    "PostgreSQL"
   ],
   "imageUrl": "/projects-media/eims/main.webp",
   "githubUrl": "https://github.com/moiezdev/EIMS.WebAPI",

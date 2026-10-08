@@ -50,7 +50,7 @@
     "items": [
       "Node",
       "Express",
-      "NestJs",
+      "NestJS",
       "Fastify",
       "REST APIs",
       "ASP.NET",
@@ -64,7 +64,7 @@
   {
     "category": "Databases",
     "items": [
-      "PostGreSQL",
+      "PostgreSQL",
       "MySQL",
       "SQL Server",
       "MongoDB",

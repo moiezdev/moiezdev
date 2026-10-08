@@ -58,7 +58,7 @@ const AiHighlight = () => {
           </WhenNear>
         </Reveal>
         <Reveal as="ul" delay={80} className="flex flex-col">
-          <Item icon={MdOutlineManageSearch} title={t('ai.twlmTitle')} body={t('ai.twlmBody')} tags={['OpenRouter', 'DeepSeek', 'NestJs']}>
+          <Item icon={MdOutlineManageSearch} title={t('ai.twlmTitle')} body={t('ai.twlmBody')} tags={['OpenRouter', 'DeepSeek', 'NestJS']}>
             <Link to="/works/twlm-pos" className="link-arrow text-[15px]">
               {t('projects.caseStudy')}
               <Chevron />
