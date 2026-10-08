@@ -46,16 +46,12 @@
     "TanStack Query",
     "OpenRouter"
   ],
-  "imageUrl": "/projects-media/twlm-pos/main.webp",
+  "imageUrl": "/projects-media/twlm-pos/cover.webp",
   "projectUrl": "https://twlm.solutions",
   "githubUrl": "https://github.com/Twlm-App/twlm-solutions",
   "githubBackendUrl": "https://github.com/Twlm-App/twlm-solutions-backend",
   "repoPublic": false,
-  "media": [
-    "main.webp",
-    "img1.webp",
-    "img2.webp"
-  ],
+  "media": ["cover.webp", "home-framed.webp", "features-framed.webp", "bundle-framed.webp", "ownapp-framed.webp", "pricing-framed.webp"],
   "featured": true,
   "featuredMetric": 1,
   "productUrl": "https://twlm.solutions/pos",
