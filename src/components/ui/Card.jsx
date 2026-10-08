@@ -56,7 +56,7 @@ const Card = ({ project, featured = false, eyebrow, maxTech = 3, className = '' 
         >
           <Link
             to={`/works/${project.id}`}
-            data-cursor-label={t('projects.view')}
+            data-cursor-label={t('cursor.view')}
             className="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none">
             {project.title}
           </Link>

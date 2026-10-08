@@ -281,7 +281,7 @@ export default function ProjectDetail() {
               <Reveal key={dir} delay={i * 80} className="min-w-0">
                 <Link
                   to={`/works/${p.id}`}
-                  data-cursor-label={t('projects.view')}
+                  data-cursor-label={t('cursor.view')}
                   className={`group surface surface-hover flex items-center gap-4 p-4 md:p-5 h-full ${dir === 'forward' ? 'sm:flex-row-reverse sm:text-end' : ''}`}
                 >
                   <span className="relative size-16 md:size-20 shrink-0 overflow-hidden rounded-[14px] bg-surface-2 ring-1 ring-separator">

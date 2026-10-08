@@ -437,6 +437,7 @@ const ChatBot = () => {
           ref={panelRef}
           className="pointer-events-auto w-[min(100vw-1.5rem,390px)] max-h-full h-[min(78vh,680px)] flex flex-col overflow-hidden rounded-[28px] glass ring-1 ring-separator shadow-[0_24px_64px_rgba(0,0,0,0.28)] origin-bottom-right rtl:origin-bottom-left"
           role="dialog"
+          data-native-cursor
           aria-label={`${BOT_NAME} portfolio chat`}
         >
           <div className="flex items-center gap-2 border-b border-separator px-4 py-3">

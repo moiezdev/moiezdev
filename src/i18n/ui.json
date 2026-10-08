@@ -412,6 +412,10 @@
       "doneSpeaking": "Done speaking — send",
       "chatInput": "Ask {{name}} a question",
       "pageLinks": "Other pages"
+    },
+    "cursor": {
+      "view": "View ↗",
+      "flip": "Flip pass"
     }
   },
   "ar": {
@@ -831,6 +835,10 @@
       "doneSpeaking": "انتهيت من الكلام — إرسال",
       "chatInput": "اسأل {{name}} سؤالًا",
       "pageLinks": "صفحات أخرى"
+    },
+    "cursor": {
+      "view": "عرض ↖",
+      "flip": "اقلب البطاقة"
     }
   }
 }

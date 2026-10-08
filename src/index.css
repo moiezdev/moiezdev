@@ -466,18 +466,15 @@ textarea:-webkit-autofill {
   }
 }
 
-/* ---------- Adaptive pointer ---------- */
+/* ---------- Custom pointer (fine pointers only; see ui/Cursor.jsx) ---------- */
+/* the native cursor is hidden only while the custom one is active */
 .has-custom-cursor,
 .has-custom-cursor * {
   cursor: none !important;
 }
-.has-custom-cursor input:not([type='button']):not([type='submit']),
-.has-custom-cursor textarea,
-.has-custom-cursor [contenteditable='true'] {
-  cursor: text !important;
-}
 .cursor-ring,
-.cursor-dot {
+.cursor-dot,
+.cursor-label {
   position: fixed;
   top: 0;
   left: 0;
@@ -485,58 +482,44 @@ textarea:-webkit-autofill {
   z-index: 10000;
   opacity: 0;
   will-change: transform;
+  transition: opacity var(--dur-fast) var(--ease-out);
 }
 .cursor-dot {
   width: 6px;
   height: 6px;
+  margin: -3px 0 0 -3px;
   border-radius: 999px;
   background: var(--color-label);
-  transition:
-    opacity 0.2s,
-    transform 0.05s linear;
 }
 .cursor-ring {
-  width: 36px;
-  height: 36px;
-  border-radius: 999px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: color-mix(in srgb, var(--color-label) 8%, transparent);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-label) 14%, transparent);
-  -webkit-backdrop-filter: blur(2px);
-  backdrop-filter: blur(2px);
-  transition:
-    opacity 0.25s,
-    background-color 0.3s var(--ease-apple),
-    box-shadow 0.3s var(--ease-apple),
-    border-radius 0.3s var(--ease-apple);
+  margin: -18px 0 0 -18px;
+  overflow: visible;
 }
-.cursor-ring[data-mode='shape'] {
-  background: color-mix(in srgb, var(--color-label) 7%, transparent);
-  box-shadow: none;
-  backdrop-filter: none;
+/* transparent fill, 1px hairline at any scale */
+.cursor-ring circle {
+  fill: none;
+  stroke: rgba(0, 0, 0, 0.25);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
 }
-.cursor-ring[data-mode='hover'] {
-  background: color-mix(in srgb, var(--color-accent) 14%, transparent);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-accent) 35%, transparent);
-}
-.cursor-ring[data-mode='label'] {
-  background: var(--color-accent);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
-  backdrop-filter: none;
-}
-.cursor-ring[data-mode='text'] {
-  opacity: 0 !important;
+html[data-theme='dark'] .cursor-ring circle {
+  stroke: rgba(255, 255, 255, 0.3);
 }
 .cursor-label {
-  color: var(--color-on-accent);
-  font-size: 13px;
+  translate: -50% -50%;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: -0.01em;
   white-space: nowrap;
+  color: var(--color-label);
+  background: color-mix(in srgb, var(--color-bg) 72%, transparent);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+  backdrop-filter: blur(12px) saturate(1.4);
 }
-
+.cursor-label:empty {
+  display: none;
+}
 /* ---------- Engineering visuals ---------- */
 .blueprint {
   background-image: radial-gradient(

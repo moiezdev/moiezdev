@@ -25,7 +25,7 @@ const FeaturedCard = ({ project, className = '' }) => {
         to={to}
         tabIndex={-1}
         aria-hidden
-        data-cursor-label={t('projects.view')}
+        data-cursor-label={t('cursor.view')}
         className="relative block overflow-hidden bg-surface-2 aspect-[16/10] lg:aspect-auto lg:min-h-[440px]"
       >
         <Img
