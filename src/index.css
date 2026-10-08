@@ -536,11 +536,6 @@ textarea:-webkit-autofill {
 .has-custom-cursor * {
   cursor: none !important;
 }
-.has-custom-cursor input:not([type='button']):not([type='submit']),
-.has-custom-cursor textarea,
-.has-custom-cursor [contenteditable='true'] {
-  cursor: text !important;
-}
 /* the chat panel keeps the native pointer */
 .has-custom-cursor [data-native-cursor],
 .has-custom-cursor [data-native-cursor] * {
@@ -602,7 +597,15 @@ textarea:-webkit-autofill {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
   backdrop-filter: none;
 }
+/* text fields: a slim caret in the label colour */
 .cursor-ring[data-mode='text'] {
+  border-radius: 2px;
+  background: var(--color-label);
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.cursor-ring[data-mode='native'] {
   opacity: 0 !important;
 }
 .cursor-label {

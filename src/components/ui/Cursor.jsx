@@ -38,6 +38,7 @@ const Cursor = () => {
     let target = null; // { el, mode: 'shape' | 'label' }
     let hidden = true;
     let pressed = false;
+    let caretH = 22;
     let raf = 0;
 
     const setVisible = (v) => {
@@ -58,9 +59,20 @@ const Cursor = () => {
 
     const resolve = (el) => {
       if (!el || !(el instanceof Element)) return release();
-      if (el.closest(TEXT_INPUT) || el.closest(NATIVE)) {
+      if (el.closest(NATIVE)) {
+        // chat panel: hand over to the native pointer
+        release();
+        ring.dataset.mode = 'native';
+        dot.style.opacity = '0';
+        return undefined;
+      }
+      const field = el.closest(TEXT_INPUT);
+      if (field) {
+        // text fields: the ring becomes an iPad-style caret sized to the field's text
         release();
         ring.dataset.mode = 'text';
+        ring.style.borderRadius = '2px';
+        caretH = Math.round(Math.min(Math.max((parseFloat(getComputedStyle(field).fontSize) || 16) * 1.35, 18), 34));
         dot.style.opacity = '0';
         return undefined;
       }
@@ -135,8 +147,8 @@ const Cursor = () => {
         tw = 52;
         th = 52;
       } else if (ring.dataset.mode === 'text') {
-        tw = 3;
-        th = 26;
+        tw = 2;
+        th = caretH;
       }
 
       if (pressed) {
@@ -144,7 +156,7 @@ const Cursor = () => {
         th *= 0.9;
       }
 
-      const k = target?.mode === 'shape' ? 0.28 : 0.2;
+      const k = ring.dataset.mode === 'text' ? 0.6 : target?.mode === 'shape' ? 0.28 : 0.2;
       pos.x = lerp(pos.x, tx, k);
       pos.y = lerp(pos.y, ty, k);
       pos.w = lerp(pos.w, tw, 0.25);
