@@ -114,8 +114,14 @@ body {
 
 html[lang='ar'],
 html[lang='ar'] body,
-[lang='ar'] {
+html[lang='ar'] [lang='ar'] {
   font-family: 'IBM Plex Sans Arabic', var(--font-default);
+  letter-spacing: 0;
+}
+/* Arabic snippets on English pages (e.g. the "عربي" switch) use the system's Arabic
+   font, so English pages never download the Arabic webfont for a few glyphs */
+html:not([lang='ar']) [lang='ar'] {
+  font-family: system-ui, 'Geeza Pro', 'Segoe UI', Tahoma, 'Noto Sans Arabic', var(--font-default);
   letter-spacing: 0;
 }
 
