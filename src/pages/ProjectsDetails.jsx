@@ -13,6 +13,8 @@ import WalletSequence from '../components/project/WalletSequence';
 import WalletPass from '../components/project/WalletPass';
 import LatencyBar from '../components/project/LatencyBar';
 import QueueVisual from '../components/project/QueueVisual';
+import StackFlow from '../components/project/StackFlow';
+import { openBotfolio } from '../utils/botfolio';
 import ScrollProgress from '../components/ui/ScrollProgress';
 import { getProjectById } from '../data';
 import { useContent } from '../i18n/content';
@@ -36,6 +38,7 @@ const DIAGRAMS = {
   walletSequence: WalletSequence,
   walletPass: WalletPass,
   queue: QueueVisual,
+  stackFlow: StackFlow,
 };
 
 const nonEmpty = (v) => (Array.isArray(v) ? v.filter(Boolean).length > 0 : typeof v === 'string' && v.trim() !== '');
@@ -205,16 +208,22 @@ export default function ProjectDetail() {
             ))}
           </dl>
 
-          {links.length > 0 && (
-            <div className="mt-8 flex flex-wrap gap-3">
-              {links.map((l) => (
-                <Button key={l.href} href={l.href} primary={l.primary} variant={l.primary ? undefined : 'outline'}>
-                  {l.label}
-                  <ExternalIcon />
-                </Button>
-              ))}
-            </div>
-          )}
+          <div className="mt-8 flex flex-wrap gap-3">
+            {links.map((l) => (
+              <Button key={l.href} href={l.href} primary={l.primary} variant={l.primary ? undefined : 'outline'}>
+                {l.label}
+                <ExternalIcon />
+              </Button>
+            ))}
+            {/* hands the question to BotFolio, which answers from this project's data */}
+            <Button
+              variant={links.length ? 'secondary' : undefined}
+              primary={!links.length}
+              onClick={() => openBotfolio(t('caseStudy.askBotQuestion', { name: project.title }))}
+            >
+              {t('caseStudy.askBot')}
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -228,7 +237,10 @@ export default function ProjectDetail() {
 
         {project.metrics?.length > 0 && (
           <div className="app-container mt-8 md:mt-10">
-            <Reveal className="grid grid-cols-3 gap-2 sm:gap-3">
+            <Reveal
+              className="grid gap-2 sm:gap-3"
+              style={{ gridTemplateColumns: `repeat(${Math.min(project.metrics.length, 3)}, minmax(0, 1fr))` }}
+            >
               {project.metrics.map((m) => (
                 <div key={m.label} className="surface min-w-0 p-4 sm:p-6 md:p-7">
                   <p className="text-[26px] sm:text-[40px] md:text-[48px] font-bold tracking-[-0.04em] leading-none text-label">

@@ -242,7 +242,11 @@ const ChatBot = () => {
   // "Ask BotFolio" buttons elsewhere on the site (see utils/botfolio)
   useEffect(() => {
     const onRequest = () => {
-      if (takeBotfolioRequest()) openChatRef.current();
+      const req = takeBotfolioRequest();
+      if (!req) return;
+      openChatRef.current();
+      // a page asked a specific question ("Ask BotFolio about this project")
+      if (req.question) window.setTimeout(() => sendRef.current?.(req.question), 120);
     };
     onRequest();
     window.addEventListener(BOTFOLIO_OPEN_EVENT, onRequest);
