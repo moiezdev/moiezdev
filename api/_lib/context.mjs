@@ -593,14 +593,15 @@ var events_default = [
 // src/data/projects/index.json
 var projects_default = [
   "twlm-pos",
+  "design-dynamo",
   "aa-tourism",
   "scmborba",
   "docean-fisheries",
+  "ain-saas",
+  "city-arrivals",
   "my-portfolio",
   "gala-travels",
   "mian-travels",
-  "ain-saas",
-  "city-arrivals",
   "mtlnation",
   "tdm",
   "eims",
@@ -911,7 +912,7 @@ var docean_fisheries_default = {
     "main-framed.webp"
   ],
   repoPublic: false,
-  group: "earlier",
+  group: "client",
   caseStudy: {
     summary: "A responsive website for a Bahrain seafood supplier, with product categories and quote forms.",
     problem: [
@@ -1155,7 +1156,7 @@ var ain_saas_default = {
     "img3-framed.webp"
   ],
   repoPublic: false,
-  group: "earlier",
+  group: "client",
   caseStudy: {
     summary: "A modern, accessible website for A\xEFn Sa\xEFss, a Moroccan mineral-water brand \u2014 products, services and brand content.",
     problem: [
@@ -1211,7 +1212,7 @@ var city_arrivals_default = {
     "img2-framed.webp"
   ],
   repoPublic: false,
-  group: "earlier",
+  group: "client",
   caseStudy: {
     summary: "Luxury car booking for a Canadian operator, built for B2B travel operations alongside AA Travel & Tourism.",
     problem: [
@@ -1446,9 +1447,82 @@ var lms_default = {
   _todo: 'TODO(moiez): replace main.webp/main.jpg (the image reads "Dashobard"), then delete "listed": false'
 };
 
+// src/data/projects/design-dynamo.json
+var design_dynamo_default = {
+  id: "design-dynamo",
+  title: "Design Dynamo",
+  subtitle: "Portfolio for a Graphic & Web Designer \u2014 Photoshop-style UI",
+  description: [
+    "Design Dynamo \u2013 Interactive Designer Portfolio (designdynamo.art)",
+    [
+      "A portfolio for Riyadh-based graphic and web designer Ahmad Abdullah, built as a Photoshop-style workspace: a toolbar, a layers panel, rulers and every section as an artboard.",
+      "React front end with advanced, scroll-driven animations; an Express and PostgreSQL backend for live client reviews; EmailJS for project enquiries.",
+      "Fully bilingual: English and Arabic with a mirrored right-to-left layout.",
+      "Case studies, a filterable archive, services pages, pricing and a contact flow \u2014 fast and responsive on laptop, tablet and phone."
+    ]
+  ],
+  technologies: [
+    "React",
+    "Express",
+    "PostgreSQL",
+    "EmailJS",
+    "Node",
+    "JavaScript"
+  ],
+  imageUrl: "/projects-media/design-dynamo/cover.webp",
+  projectUrl: "https://www.designdynamo.art/",
+  repoPublic: false,
+  media: [
+    "cover.webp"
+  ],
+  group: "client",
+  metrics: [
+    {
+      value: "11",
+      label: "artboard sections on the home page"
+    },
+    {
+      value: "2",
+      label: "languages, with a full Arabic RTL layout"
+    }
+  ],
+  caseStudy: {
+    summary: "A portfolio for a Riyadh graphic and web designer that behaves like Photoshop \u2014 React with advanced animations, an Express + PostgreSQL backend for live reviews, and EmailJS for enquiries.",
+    problem: [
+      "A designer's portfolio is itself the product: it had to prove craft at first glance, not just list work.",
+      "Clients needed to browse case studies, services and pricing, leave reviews and get in touch \u2014 in English or Arabic."
+    ],
+    role: [
+      "Designed the interaction model and built the whole site end to end: front end, backend and deployment.",
+      "Turned the brand idea \u2014 'every section is a layer' \u2014 into a working Photoshop-style interface.",
+      "Built the animation system, the bilingual RTL layout, and the reviews and contact flows."
+    ],
+    architecture: [
+      "React front end: every section is an artboard, with a layers panel that tracks scroll position and shortcuts to jump between sections.",
+      "Express API on PostgreSQL for client reviews, shown live on the home page and on each case study.",
+      "EmailJS for project enquiries straight from the site, with no mail server to run.",
+      "One codebase for English and Arabic: a mirrored RTL layout, not just translated text."
+    ],
+    challenges: [
+      "Rich, scroll-driven motion \u2014 horizontal panning, a logo that builds as you scroll, misregistration hovers \u2014 while staying fast on phones.",
+      "An editor-like UI that still reads as a website for visitors who have never opened Photoshop."
+    ],
+    results: [
+      "Live at designdynamo.art on laptop, tablet and phone.",
+      "Case studies, a 66-piece filterable archive, services, pricing, reviews and contact in one cohesive experience."
+    ],
+    next: [],
+    measured: ""
+  },
+  diagrams: [
+    "stackFlow"
+  ]
+};
+
 // src/data/projects.js
 var projectsById = {
   "twlm-pos": twlm_pos_default,
+  "design-dynamo": design_dynamo_default,
   "aa-tourism": aa_tourism_default,
   scmborba: scmborba_default,
   "docean-fisheries": docean_fisheries_default,

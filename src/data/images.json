@@ -275,6 +275,19 @@
     "blur": "data:image/webp;base64,UklGRmoAAABXRUJQVlA4IF4AAAAQAgCdASoQAAoAA4BaJbACdAEPCgrY8XoAAP64Uxq2cORzu/OWlcz1nZle5BKYzP7x/3wJj8tJmzeLHXOAjvfVqwlCBpC4G1dt8pewbU8SJKLzwpjvPz7RtOiMnEAA",
     "hash": "4592300a7814"
   },
+  "/projects-media/design-dynamo/cover.webp": {
+    "w": 1600,
+    "h": 1000,
+    "base": "/img/projects-media/design-dynamo/cover",
+    "widths": [
+      480,
+      960,
+      1440,
+      1600
+    ],
+    "blur": "data:image/webp;base64,UklGRmAAAABXRUJQVlA4IFQAAAAwAgCdASoQAAoAA4BaJZwAD48Qd2p98LxYYAD+8nBfdItjr6t0QRDpsdm8YqIzz5JzpwlHmSedfYi1HWDp7A7sB7RaetTeyaPGr8xxMo8SvVtgAAA=",
+    "hash": "3f11fd921ae5"
+  },
   "/projects-media/docean-fisheries/cover.webp": {
     "w": 2400,
     "h": 1500,

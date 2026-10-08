@@ -62,10 +62,15 @@ const PROJECTS = {
     description:
       'Restaurant POS and CMS platform for Gulf retail with Gulf tax, inventory, loyalty, gift cards and Apple/Google Wallet passes, built with NestJS and React.',
   },
-  'aa-tourism': {
-    title: 'AA Travel & Tourism — Flight Booking Platform',
+  'design-dynamo': {
+    title: 'Design Dynamo — Interactive Designer Portfolio',
     description:
-      'Flight booking and tour-planning platform with real-time flight data from Sabre and Amadeus and IATA codes, with a Nuxt, Vuex and Buefy frontend.',
+      'A Photoshop-style portfolio for a Riyadh graphic and web designer: React with advanced scroll animations, an Express and PostgreSQL reviews API, EmailJS enquiries and a full Arabic RTL layout.',
+  },
+  'aa-tourism': {
+    title: 'AA Travel & Tourism — Full-Stack Flight Booking Platform',
+    description:
+      'Full-stack flight booking and tour-planning system: Laravel backend, Nuxt 2 web app and React Native mobile app with real-time Sabre and Amadeus flight data.',
   },
   scmborba: {
     title: 'SCM Borba — Institutional Website',

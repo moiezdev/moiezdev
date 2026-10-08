@@ -76,6 +76,10 @@
     "React Native": {
       "en": "Mobile booking app on shared APIs",
       "ar": "تطبيق حجز للجوال على واجهات مشتركة"
+    },
+    "EmailJS": {
+      "en": "Contact and enquiry emails without a mail server",
+      "ar": "رسائل التواصل والاستفسارات دون خادم بريد"
     }
   }
 }

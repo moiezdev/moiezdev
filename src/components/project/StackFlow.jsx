@@ -16,7 +16,7 @@ const LAYER_OF = {
   // persistence
   PostgreSQL: 'data', MongoDB: 'data', MySQL: 'data', Prisma: 'data', 'Entity Framework': 'data', Redis: 'data',
   // third parties
-  Sabre: 'ext', Amadeus: 'ext', OpenRouter: 'ext', 'Apple Wallet': 'ext', 'Google Wallet': 'ext', MyFatoorah: 'ext', Moyasar: 'ext',
+  Sabre: 'ext', Amadeus: 'ext', OpenRouter: 'ext', 'Apple Wallet': 'ext', 'Google Wallet': 'ext', MyFatoorah: 'ext', Moyasar: 'ext', EmailJS: 'ext',
 };
 const ORDER = ['app', 'ui', 'api', 'data', 'ext'];
 
