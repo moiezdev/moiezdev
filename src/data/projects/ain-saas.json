@@ -17,14 +17,38 @@
     "SCSS",
     "JavaScript"
   ],
-  "imageUrl": "/projects-media/ain-saas/main.webp",
+  "imageUrl": "/projects-media/ain-saas/cover.webp",
   "projectUrl": "https://ain-saiss.ma",
   "media": [
-    "main.webp",
-    "img1.webp",
-    "img2.webp",
-    "img3.webp"
+    "cover.webp",
+    "main-framed.webp",
+    "img1-framed.webp",
+    "img2-framed.webp",
+    "img3-framed.webp"
   ],
   "repoPublic": false,
-  "group": "earlier"
+  "group": "client",
+  "caseStudy": {
+    "summary": "A modern, accessible website for Aïn Saïss, a Moroccan mineral-water brand — products, services and brand content.",
+    "problem": [
+      "The brand needed its products and information presented clearly on every screen size."
+    ],
+    "role": [
+      "Built the front end with interactive menus and cards, keeping it fast and accessible."
+    ],
+    "architecture": [
+      "HTML5, SCSS and JavaScript with a responsive, component-like structure."
+    ],
+    "challenges": [
+      "Accessibility for everyone, including people using assistive tech."
+    ],
+    "results": [
+      "A fast, consistent brand site that adapts to desktop and mobile."
+    ],
+    "next": [],
+    "measured": ""
+  },
+  "diagrams": [
+    "stackFlow"
+  ]
 }

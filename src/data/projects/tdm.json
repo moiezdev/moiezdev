@@ -17,15 +17,39 @@
     "CSS3",
     "JavaScript"
   ],
-  "imageUrl": "/projects-media/tdm/main.webp",
+  "imageUrl": "/projects-media/tdm/cover.webp",
   "githubUrl": "https://github.com/moiezdev/tdm",
   "repoPublic": true,
   "media": [
-    "main.webp",
-    "img1.webp",
-    "img2.webp",
-    "img3.webp",
-    "img4.webp"
+    "cover.webp",
+    "main-framed.webp",
+    "img1-framed.webp",
+    "img2-framed.webp",
+    "img3-framed.webp",
+    "img4-framed.webp"
   ],
-  "group": "earlier"
+  "group": "earlier",
+  "caseStudy": {
+    "summary": "The corporate website of TDM, a Portuguese civil-engineering and project-management company.",
+    "problem": [
+      "Visitors needed to understand TDM's services and projects quickly and get in touch."
+    ],
+    "role": [
+      "Developed the front end with clear sections for services, projects and contact."
+    ],
+    "architecture": [
+      "HTML5, CSS3 and JavaScript with a responsive layout."
+    ],
+    "challenges": [
+      "Conveying technical reliability through a clean, simple design."
+    ],
+    "results": [
+      "A professional, responsive site aligned with TDM's brand."
+    ],
+    "next": [],
+    "measured": ""
+  },
+  "diagrams": [
+    "stackFlow"
+  ]
 }

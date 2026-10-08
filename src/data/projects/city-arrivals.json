@@ -18,13 +18,47 @@
     "JavaScript",
     "Jquery"
   ],
-  "imageUrl": "/projects-media/city-arrivals/main.webp",
+  "imageUrl": "/projects-media/city-arrivals/cover.webp",
   "projectUrl": "https://cityarrivals.ca",
   "media": [
-    "main.webp",
-    "img1.webp",
-    "img2.webp"
+    "cover.webp",
+    "main-framed.webp",
+    "img1-framed.webp",
+    "img2-framed.webp"
   ],
   "repoPublic": false,
-  "group": "earlier"
+  "group": "client",
+  "caseStudy": {
+    "summary": "Luxury car booking for a Canadian operator, built for B2B travel operations alongside AA Travel & Tourism.",
+    "problem": [
+      "Customers needed to book premium vehicles — point-to-point, hourly or airport — quickly and with confidence."
+    ],
+    "role": [
+      "Built the booking front end at Creative Inter Tech as part of the B2B travel platforms.",
+      "Integrated the booking flow so users can schedule and manage rides."
+    ],
+    "architecture": [
+      "Responsive HTML5 and SCSS layouts with jQuery-driven booking interactions.",
+      "Location search and map-based pickup/drop-off feeding the booking flow."
+    ],
+    "challenges": [
+      "A premium feel with fast, smooth navigation on every device."
+    ],
+    "results": [
+      "Live at cityarrivals.ca.",
+      "Part of the B2B travel platforms serving 10K+ monthly users."
+    ],
+    "next": [],
+    "measured": ""
+  },
+  "metrics": [
+    {
+      "value": "10K+",
+      "label": "monthly users across the B2B travel platforms"
+    }
+  ],
+  "experienceId": "creative-inter-tech",
+  "diagrams": [
+    "stackFlow"
+  ]
 }

@@ -11,9 +11,9 @@
     "summary": "Restaurant POS, loyalty, wallets and AI search for Gulf retail — designed and built from architecture to production.",
     "stack": [
       "React",
-      "NestJs",
+      "NestJS",
       "Prisma",
-      "PostGreSQL",
+      "PostgreSQL",
       "BullMQ",
       "Redis",
       "Flutter",

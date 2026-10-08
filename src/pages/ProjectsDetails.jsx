@@ -13,6 +13,8 @@ import WalletSequence from '../components/project/WalletSequence';
 import WalletPass from '../components/project/WalletPass';
 import LatencyBar from '../components/project/LatencyBar';
 import QueueVisual from '../components/project/QueueVisual';
+import StackFlow from '../components/project/StackFlow';
+import { openBotfolio } from '../utils/botfolio';
 import ScrollProgress from '../components/ui/ScrollProgress';
 import { getProjectById } from '../data';
 import { useContent } from '../i18n/content';
@@ -21,12 +23,22 @@ import { sortTech, topTech } from '../utils/techRank';
 import { scrollToTarget } from '../utils/smoothScroll';
 import TransitionLink from '../components/ui/TransitionLink';
 
+const sameHost = (a, b) => {
+  try {
+    return Boolean(a && b) && new URL(a).host.replace(/^www\./, '') === new URL(b).host.replace(/^www\./, '');
+  } catch {
+    return false;
+  }
+};
+
+
 /** Diagrams a project can list in its `diagrams` field. */
 const DIAGRAMS = {
   architecture: ArchitectureFigure,
   walletSequence: WalletSequence,
   walletPass: WalletPass,
   queue: QueueVisual,
+  stackFlow: StackFlow,
 };
 
 const nonEmpty = (v) => (Array.isArray(v) ? v.filter(Boolean).length > 0 : typeof v === 'string' && v.trim() !== '');
@@ -151,7 +163,13 @@ export default function ProjectDetail() {
 
   const links = [
     project.productUrl && { href: project.productUrl, label: t('projects.liveProduct'), primary: true },
-    project.projectUrl && { href: project.projectUrl, label: t('projects.visit'), primary: !project.productUrl },
+    // one button per site: skip "Visit site" when the live product is on the same domain
+    project.projectUrl &&
+      !sameHost(project.projectUrl, project.productUrl) && {
+        href: project.projectUrl,
+        label: t('projects.visit'),
+        primary: !project.productUrl,
+      },
     project.githubUrl && { href: project.githubUrl, label: t('projects.github') },
     project.githubBackendUrl && { href: project.githubBackendUrl, label: t('projects.backend') },
   ].filter(Boolean);
@@ -176,7 +194,7 @@ export default function ProjectDetail() {
             <Chevron dir="back" />
             {t('projects.back')}
           </TransitionLink>
-          <h1 className="mt-5 max-w-4xl text-[clamp(2rem,4.6vw,3.25rem)] font-semibold leading-[1.1] tracking-[-0.03em] text-label [html[lang=ar]_&]:tracking-normal [html[lang=ar]_&]:leading-[1.3]">
+          <h1 className="mt-5 max-w-4xl text-[clamp(2rem,4.6vw,3.25rem)] font-semibold leading-[1.1] tracking-[-0.03em] text-label [html[lang=ar]_&]:tracking-normal [html[lang=ar]_&]:leading-[1.3] [html[lang=ar]_&]:text-[clamp(1.625rem,3.6vw,2.5rem)]">
             {project.title}
           </h1>
           <p className="mt-4 max-w-3xl text-[19px] md:text-[21px] leading-[1.45] text-label-2">{cs.summary || project.subtitle}</p>
@@ -190,16 +208,22 @@ export default function ProjectDetail() {
             ))}
           </dl>
 
-          {links.length > 0 && (
-            <div className="mt-8 flex flex-wrap gap-3">
-              {links.map((l) => (
-                <Button key={l.href} href={l.href} primary={l.primary} variant={l.primary ? undefined : 'outline'}>
-                  {l.label}
-                  <ExternalIcon />
-                </Button>
-              ))}
-            </div>
-          )}
+          <div className="mt-8 flex flex-wrap gap-3">
+            {links.map((l) => (
+              <Button key={l.href} href={l.href} primary={l.primary} variant={l.primary ? undefined : 'outline'}>
+                {l.label}
+                <ExternalIcon />
+              </Button>
+            ))}
+            {/* hands the question to BotFolio, which answers from this project's data */}
+            <Button
+              variant={links.length ? 'secondary' : undefined}
+              primary={!links.length}
+              onClick={() => openBotfolio(t('caseStudy.askBotQuestion', { name: project.title }))}
+            >
+              {t('caseStudy.askBot')}
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -213,7 +237,10 @@ export default function ProjectDetail() {
 
         {project.metrics?.length > 0 && (
           <div className="app-container mt-8 md:mt-10">
-            <Reveal className="grid grid-cols-3 gap-2 sm:gap-3">
+            <Reveal
+              className="grid gap-2 sm:gap-3"
+              style={{ gridTemplateColumns: `repeat(${Math.min(project.metrics.length, 3)}, minmax(0, 1fr))` }}
+            >
               {project.metrics.map((m) => (
                 <div key={m.label} className="surface min-w-0 p-4 sm:p-6 md:p-7">
                   <p className="text-[26px] sm:text-[40px] md:text-[48px] font-bold tracking-[-0.04em] leading-none text-label">

@@ -18,11 +18,37 @@
     "SCSS",
     "Bootstrap"
   ],
-  "imageUrl": "/projects-media/mtlnation/main.webp",
+  "imageUrl": "/projects-media/mtlnation/cover.webp",
   "projectUrl": "https://mtlnation.com",
   "media": [
-    "main.webp"
+    "cover.webp",
+    "main-framed.webp"
   ],
   "repoPublic": false,
-  "group": "client"
+  "group": "client",
+  "caseStudy": {
+    "summary": "A Vue.js web platform for web novels — library, leaderboard and reading pages built from reusable components.",
+    "problem": [
+      "Readers needed to browse, discover and follow content smoothly, with dynamic sections that stay fast."
+    ],
+    "role": [
+      "Built the site in Vue.js with reusable components.",
+      "Added dynamic sections (news, events, media) with smooth transitions, plus forms and interactive parts."
+    ],
+    "architecture": [
+      "Vue.js single-page app structured as reusable components.",
+      "Bootstrap and SCSS for a consistent, modern design system."
+    ],
+    "challenges": [
+      "Lots of dynamic content without losing speed or responsiveness."
+    ],
+    "results": [
+      "A component-based codebase that's easy to maintain and extend."
+    ],
+    "next": [],
+    "measured": ""
+  },
+  "diagrams": [
+    "stackFlow"
+  ]
 }

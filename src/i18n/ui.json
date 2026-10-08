@@ -30,16 +30,22 @@
       "statLatency": "Lower API latency",
       "name": "Moieez ur Rehman",
       "eyebrow": "Senior Full Stack Engineer · Riyadh",
-      "title": "I build POS, payments & AI features for Gulf retail.",
-      "subtitle": "Node.js/NestJS, React/Next.js, PostgreSQL and LLM integrations — from architecture to production.",
+      "title": "I design and build full-stack products — from architecture to AI.",
+      "subtitle": "{{years}} years across retail, travel and SaaS — POS & payments, booking engines, e-commerce, dashboards and LLM integrations.",
       "viewWork": "View my work",
       "bookCall": "Book a 15-min call",
-      "viewResume": "View résumé"
+      "viewResume": "View résumé",
+      "statTicketsValue": "~70%",
+      "statTickets": "Fewer support tickets",
+      "statYearsLabel": "Years shipping software",
+      "resumeShort": "Résumé",
+      "portraitAlt": "Moieez ur Rehman",
+      "stack": "Node.js/NestJS · React/Next.js · PostgreSQL"
     },
     "about": {
       "section": "about me",
       "page": "about-me",
-      "blurb": "Get to know the person behind the work.",
+      "blurb": "How I work, what I've shipped, and what I'm building next.",
       "title": "Hello, I'm Moieez ur Rehman.",
       "viewExperience": "View experience",
       "paragraphs": [
@@ -210,11 +216,11 @@
       ]
     },
     "chat": {
-      "welcome": "Hey — I'm BotFolio. I'll walk you through Moieez's work as a Full Stack Engineer and Software Architect. You can explore [[nav:/works|All works]], [[nav:/experience|Experience]], or [[nav:/about|About Moieez]].",
+      "welcome": "Hi — I'm BotFolio, Moieez's AI guide. Hiring for a role, or have a project in mind? I can give you the 30-second overview, match him to a job description you paste, or show his best work.",
       "thinking": "thinking…",
       "listening": "listening…",
       "speaking": "speaking…",
-      "placeholder": "Ask about Moieez…",
+      "placeholder": "Ask about Moieez, or paste a job description…",
       "placeholderListen": "Keep talking — tap done when finished…",
       "tryAsking": "Try asking",
       "send": "Send",
@@ -224,7 +230,7 @@
         "Tech stack"
       ],
       "fallback": "Sorry about that — something didn't go through. Try again, or open [[nav:/contact|Contact page]] to reach Moieez directly.",
-      "fail": "I stay focused on Moieez's work — explore [[nav:/works|All works]] or reach him via [[nav:/contact|Contact page]].",
+      "fail": "I couldn't put an answer together just now — try again in a moment, or reach Moieez directly on the [[nav:/contact|Contact page]].",
       "rateLimited": "You're asking faster than I can keep up — give it a minute, or reach Moieez directly on the [[nav:/contact|Contact page]].",
       "newChat": "New chat",
       "sugg": {
@@ -234,14 +240,14 @@
         "thisImpact": "What impact did this have?",
         "similar": "Similar projects?",
         "home": [
-          "Show his best projects",
-          "What's his experience?",
-          "What's his tech stack?"
+          "I'm hiring — 30-second pitch",
+          "I have a project in mind",
+          "Show his best work"
         ],
         "works": [
           "Which project had the most impact?",
-          "Any AI projects?",
-          "Travel & booking work?"
+          "Can he build something like this for me?",
+          "Any AI projects?"
         ],
         "experience": [
           "What does he do at TWLM?",
@@ -255,10 +261,11 @@
         ],
         "contact": [
           "Is he open to new roles?",
-          "Fastest way to reach him?",
+          "I have a project — how do we start?",
           "Where's his CV?"
         ],
-        "hire": "Why should we hire Moieez?"
+        "hire": "Why should we hire Moieez?",
+        "client": "I have a project in mind"
       }
     },
     "common": {
@@ -313,7 +320,8 @@
         "data": "Data & integrations"
       },
       "caption": "A simplified view of the retail platforms I architect: POS, loyalty and wallets on a typed NestJS API, with Redis-backed workers and PostgreSQL underneath.",
-      "hint": "Hover a node to trace its connections"
+      "hint": "Hover a node to trace its connections",
+      "hintTouch": "Tap a node to trace its connections"
     },
     "moments": {
       "eyebrow": "Beyond the code",
@@ -378,12 +386,12 @@
         }
       },
       "pass": {
-        "title": "A TWLM loyalty pass",
-        "caption": "A stamp pass from the platform, as customers see it in their wallet. Flip it to see what keeps it up to date.",
-        "showBack": "Flip pass",
-        "showFront": "Show front",
-        "frontAlt": "Loyalty stamp pass in a mobile wallet, with a QR code and stamp progress",
-        "backAlt": "Back of the loyalty pass",
+        "title": "TWLM loyalty passes in Apple & Google Wallet",
+        "caption": "Real stamp passes from the platform, as customers see them on their phones — the same pass issued to Apple Wallet and Google Wallet, kept up to date by webhooks and BullMQ jobs. Flip to compare.",
+        "showBack": "Show Google Wallet",
+        "showFront": "Show Apple Wallet",
+        "frontAlt": "Loyalty stamp pass in Apple Wallet: salon logo, five stamps, 0/5 progress and a QR code",
+        "backAlt": "The same loyalty pass in Google Wallet",
         "backTitle": "What powers it",
         "rows": [
           {
@@ -420,7 +428,9 @@
         "failed": "failed",
         "alt": "Jobs moving from waiting to active to completed in a BullMQ queue; one job fails and is retried.",
         "caption": "Notification and wallet-update jobs run in Redis-backed BullMQ workers, outside the request path. A failed job is retried instead of being lost."
-      }
+      },
+      "askBot": "Ask BotFolio about this project",
+      "askBotQuestion": "What stack was used in {{name}}, and how was it built?"
     },
     "ai": {
       "eyebrow": "AI integration",
@@ -470,7 +480,8 @@
       "simplified": "Simplified flow",
       "replay": "Replay",
       "step": "Step {{n}} of {{total}}",
-      "why": "Why"
+      "why": "Why",
+      "trace": "Trace a request"
     },
     "aiConsole": {
       "label": "Example requests",
@@ -502,6 +513,17 @@
     "tech": {
       "usedFor": "Used for",
       "usedIn": "Used in"
+    },
+    "stackFlow": {
+      "title": "How it's built",
+      "caption": "A request, from the visitor's screen to the data",
+      "visitor": "Visitors",
+      "visitorBody": "Desktop & mobile",
+      "app": "App",
+      "ui": "UI & state",
+      "api": "API & server",
+      "data": "Data",
+      "ext": "External services"
     }
   },
   "ar": {
@@ -535,16 +557,22 @@
       "statLatency": "زمن استجابة أقل للواجهات",
       "name": "معيز الرحمن",
       "eyebrow": "مهندس برمجيات متكامل أول · الرياض",
-      "title": "أبني أنظمة نقاط البيع والمدفوعات وميزات الذكاء الاصطناعي لقطاع التجزئة في الخليج.",
-      "subtitle": "Node.js/NestJS وReact/Next.js وPostgreSQL وتكامل النماذج اللغوية — من التصميم المعماري حتى الإنتاج.",
+      "title": "أصمّم وأبني منتجات متكاملة — من المعمارية حتى الذكاء الاصطناعي.",
+      "subtitle": "{{years}} سنوات في التجزئة والسفر والبرمجيات كخدمة — نقاط البيع والمدفوعات، ومحركات الحجز، والتجارة الإلكترونية، ولوحات التحكم، وتكامل النماذج اللغوية.",
       "viewWork": "شاهد أعمالي",
       "bookCall": "احجز مكالمة لمدة 15 دقيقة",
-      "viewResume": "عرض السيرة الذاتية"
+      "viewResume": "عرض السيرة الذاتية",
+      "statTicketsValue": "~70٪",
+      "statTickets": "طلبات دعم أقل",
+      "statYearsLabel": "سنوات في بناء البرمجيات",
+      "resumeShort": "السيرة الذاتية",
+      "portraitAlt": "معيز الرحمن",
+      "stack": "Node.js/NestJS · React/Next.js · PostgreSQL"
     },
     "about": {
       "section": "نبذتي",
       "page": "نبذتي",
-      "blurb": "تعرّف على الشخص خلف العمل.",
+      "blurb": "كيف أعمل، وما أنجزته، وما أبنيه الآن.",
       "title": "مرحباً، أنا معيز الرحمن.",
       "viewExperience": "عرض الخبرة",
       "paragraphs": [
@@ -719,11 +747,11 @@
       ]
     },
     "chat": {
-      "welcome": "مرحباً — أنا BotFolio. أعرّفك بعمل معيز كمهندس برمجيات متكامل ومعماري برمجيات. يمكنك استكشاف [[nav:/works|كل الأعمال]] أو [[nav:/experience|الخبرة]] أو [[nav:/about|نبذة عن معيز]].",
+      "welcome": "مرحباً — أنا BotFolio، دليل معيز الذكي. هل توظّف لدور ما، أم لديك مشروع؟ أستطيع إعطاءك لمحة في ٣٠ ثانية، أو مطابقته مع وصف وظيفي تلصقه هنا، أو عرض أبرز أعماله.",
       "thinking": "يفكر…",
       "listening": "يستمع…",
       "speaking": "يتحدث…",
-      "placeholder": "اسأل عن معيز…",
+      "placeholder": "اسأل عن معيز، أو الصق وصفاً وظيفياً…",
       "placeholderListen": "استمر بالحديث — اضغط تم عند الانتهاء…",
       "tryAsking": "جرّب السؤال",
       "send": "إرسال",
@@ -733,7 +761,7 @@
         "المكدس التقني"
       ],
       "fallback": "عذراً — لم يكتمل الطلب. حاول مرة أخرى، أو افتح [[nav:/contact|صفحة التواصل]] للوصول إلى معيز مباشرة.",
-      "fail": "أركّز على عمل معيز — استكشف [[nav:/works|كل الأعمال]] أو تواصل عبر [[nav:/contact|صفحة التواصل]].",
+      "fail": "لم أتمكن من إعداد إجابة الآن — حاول مجدداً بعد لحظات، أو تواصل مع معيز مباشرة عبر [[nav:/contact|صفحة التواصل]].",
       "rateLimited": "أسئلتك أسرع مما أستطيع مواكبته — انتظر دقيقة، أو تواصل مع معيز مباشرة عبر [[nav:/contact|صفحة التواصل]].",
       "newChat": "محادثة جديدة",
       "sugg": {
@@ -743,14 +771,14 @@
         "thisImpact": "ما أثر هذا المشروع؟",
         "similar": "مشاريع مشابهة؟",
         "home": [
-          "أبرز مشاريعه",
-          "ما خبرته؟",
-          "ما التقنيات التي يستخدمها؟"
+          "أوظّف — لمحة في ٣٠ ثانية",
+          "لدي مشروع",
+          "أبرز أعماله"
         ],
         "works": [
           "أي مشروع كان له أكبر أثر؟",
-          "هل لديه مشاريع ذكاء اصطناعي؟",
-          "أعمال السفر والحجز؟"
+          "هل يستطيع بناء شيء مشابه لي؟",
+          "هل لديه مشاريع ذكاء اصطناعي؟"
         ],
         "experience": [
           "ماذا يعمل في TWLM؟",
@@ -764,10 +792,11 @@
         ],
         "contact": [
           "هل هو متاح لأدوار جديدة؟",
-          "أسرع طريقة للتواصل معه؟",
+          "لدي مشروع — كيف نبدأ؟",
           "أين سيرته الذاتية؟"
         ],
-        "hire": "لماذا يجب أن نوظف معيز؟"
+        "hire": "لماذا يجب أن نوظف معيز؟",
+        "client": "لدي مشروع"
       }
     },
     "common": {
@@ -822,7 +851,8 @@
         "data": "البيانات والتكاملات"
       },
       "caption": "عرض مبسّط لمنصات التجزئة التي أصمم معماريتها: نقاط البيع والولاء والمحافظ على واجهة NestJS مُنمّطة، مع عمّال خلفية على Redis وقاعدة PostgreSQL.",
-      "hint": "مرّر فوق أي عنصر لتتبّع اتصالاته"
+      "hint": "مرّر فوق أي عنصر لتتبّع اتصالاته",
+      "hintTouch": "انقر على أي عنصر لتتبّع اتصالاته"
     },
     "moments": {
       "eyebrow": "ما وراء الكود",
@@ -887,12 +917,12 @@
         }
       },
       "pass": {
-        "title": "بطاقة ولاء من TWLM",
-        "caption": "بطاقة أختام من المنصة كما يراها العملاء في محافظهم. اقلبها لترى ما يبقيها محدّثة.",
-        "showBack": "اقلب البطاقة",
-        "showFront": "اعرض الواجهة",
-        "frontAlt": "بطاقة أختام ولاء في محفظة الهاتف مع رمز QR وتقدّم الأختام",
-        "backAlt": "الوجه الخلفي لبطاقة الولاء",
+        "title": "بطاقات ولاء TWLM في محفظتي Apple وGoogle",
+        "caption": "بطاقات أختام حقيقية من المنصة كما يراها العملاء على هواتفهم — البطاقة نفسها في Apple Wallet وGoogle Wallet، وتُحدَّث عبر Webhooks ومهام BullMQ. اقلبها للمقارنة.",
+        "showBack": "عرض Google Wallet",
+        "showFront": "عرض Apple Wallet",
+        "frontAlt": "بطاقة أختام في Apple Wallet: شعار الصالون وخمسة أختام وتقدم 0/5 ورمز QR",
+        "backAlt": "بطاقة الولاء نفسها في Google Wallet",
         "backTitle": "ما الذي يشغّلها",
         "rows": [
           {
@@ -929,7 +959,9 @@
         "failed": "فشلت",
         "alt": "مهام تنتقل من الانتظار إلى التنفيذ ثم الاكتمال في طابور BullMQ، وتفشل مهمة مرة ثم يُعاد تنفيذها.",
         "caption": "تعمل مهام الإشعارات وتحديث المحافظ في عمّال BullMQ مدعومين بـ Redis، خارج مسار الطلب. وتُعاد المهمة الفاشلة بدلاً من أن تضيع."
-      }
+      },
+      "askBot": "اسأل BotFolio عن هذا المشروع",
+      "askBotQuestion": "ما التقنيات المستخدمة في {{name}}، وكيف بُني؟"
     },
     "ai": {
       "eyebrow": "تكامل الذكاء الاصطناعي",
@@ -979,7 +1011,8 @@
       "simplified": "تدفق مبسّط",
       "replay": "إعادة",
       "step": "الخطوة {{n}} من {{total}}",
-      "why": "لماذا"
+      "why": "لماذا",
+      "trace": "تتبّع طلباً"
     },
     "aiConsole": {
       "label": "أمثلة على الطلبات",
@@ -1011,6 +1044,17 @@
     "tech": {
       "usedFor": "الاستخدام",
       "usedIn": "مستخدم في"
+    },
+    "stackFlow": {
+      "title": "كيف بُني",
+      "caption": "طلب واحد، من شاشة الزائر حتى البيانات",
+      "visitor": "الزوار",
+      "visitorBody": "الحاسوب والجوال",
+      "app": "التطبيق",
+      "ui": "الواجهة والحالة",
+      "api": "الواجهة البرمجية والخادم",
+      "data": "البيانات",
+      "ext": "خدمات خارجية"
     }
   }
 }

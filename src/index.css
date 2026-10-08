@@ -31,8 +31,8 @@
   --color-label: #1d1d1f;
   --color-label-2: #545458;
   --color-label-3: #646469;
-  --color-accent: #3d4451;
-  --color-accent-hover: #2b313b;
+  --color-accent: #1d1d1f;
+  --color-accent-hover: #000000;
   --color-on-accent: #ffffff;
   --color-green: #6f9a80;
   --color-danger: #a8574b;
@@ -69,8 +69,8 @@ html[data-theme='dark'] {
   --color-label: #f5f5f7;
   --color-label-2: #aeaeb2;
   --color-label-3: #9a9a9f;
-  --color-accent: #d5dae2;
-  --color-accent-hover: #eef1f5;
+  --color-accent: #f5f5f7;
+  --color-accent-hover: #ffffff;
   --color-on-accent: #111114;
   --color-green: #7fa88f;
   --color-danger: #d08a7e;
@@ -104,7 +104,7 @@ body {
   letter-spacing: -0.022em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.4s var(--ease-apple);
+  transition: background-color 0.4s var(--ease-spring);
 }
 
 html[lang='ar'],
@@ -145,7 +145,7 @@ html:not([lang='ar']) [lang='ar'] {
   font-size: 15px;
   font-weight: 600;
   transform: translateY(-150%);
-  transition: transform 0.2s var(--ease-apple);
+  transition: transform 0.2s var(--ease-spring);
 }
 .skip-link:focus-visible,
 .skip-link:focus {
@@ -192,6 +192,10 @@ html:not([lang='ar']) [lang='ar'] {
   font-weight: 700;
   letter-spacing: -0.025em;
 }
+/* the home hero runs a little smaller than other page heroes */
+.headline-hero.is-compact {
+  font-size: clamp(2.125rem, 5.2vw, 4.25rem);
+}
 .lead {
   font-size: clamp(1.1875rem, 2vw, 1.5rem);
   line-height: 1.38;
@@ -228,14 +232,28 @@ html[lang='ar'] :is(p, li, dd, blockquote, figcaption):not([class*='leading-none
 html[lang='ar'] :is(h1, h2, h3, h4):not([class*='leading-none'], .cv-page *) {
   line-height: 1.4;
 }
+/* Arabic glyphs are taller and heavier than Latin at the same size: run headings
+   ~20% smaller and one weight lighter so they carry the same visual weight */
 html[lang='ar'] .headline-hero {
-  line-height: 1.25;
-}
-html[lang='ar'] .headline-1,
-html[lang='ar'] .headline-2 {
+  font-size: clamp(2.25rem, 5.6vw, 4.25rem);
+  font-weight: 600;
   line-height: 1.3;
 }
+html[lang='ar'] .headline-hero.is-compact {
+  font-size: clamp(1.75rem, 4vw, 3.25rem);
+}
+html[lang='ar'] .headline-1 {
+  font-size: clamp(1.875rem, 4vw, 2.75rem);
+  font-weight: 600;
+  line-height: 1.35;
+}
+html[lang='ar'] .headline-2 {
+  font-size: clamp(1.5rem, 2.8vw, 2rem);
+  font-weight: 600;
+  line-height: 1.35;
+}
 html[lang='ar'] .lead {
+  font-size: clamp(1.0625rem, 1.7vw, 1.3125rem);
   line-height: 1.65;
 }
 /* small caps-style labels: no uppercase tracking, and a touch larger */
@@ -412,7 +430,7 @@ html[dir='rtl'] .surface-hover:is(:hover, :has(:focus-visible)) .link-arrow svg 
   pointer-events: none;
   transform-origin: top left;
   transition:
-    transform 0.2s var(--ease-apple),
+    transform 0.2s var(--ease-spring),
     color 0.2s;
 }
 html[dir='rtl'] .field label {
@@ -531,15 +549,24 @@ textarea:-webkit-autofill {
   }
 }
 
-/* ---------- Custom pointer (fine pointers only; see ui/Cursor.jsx) ---------- */
-/* the native cursor is hidden only while the custom one is active */
+/* ---------- Adaptive pointer ---------- */
 .has-custom-cursor,
 .has-custom-cursor * {
   cursor: none !important;
 }
+/* the chat panel keeps the native pointer */
+.has-custom-cursor [data-native-cursor],
+.has-custom-cursor [data-native-cursor] * {
+  cursor: auto !important;
+}
+.has-custom-cursor [data-native-cursor] :is(button, a) {
+  cursor: pointer !important;
+}
+.has-custom-cursor [data-native-cursor] :is(input, textarea) {
+  cursor: text !important;
+}
 .cursor-ring,
-.cursor-dot,
-.cursor-label {
+.cursor-dot {
   position: fixed;
   top: 0;
   left: 0;
@@ -547,43 +574,65 @@ textarea:-webkit-autofill {
   z-index: 10000;
   opacity: 0;
   will-change: transform;
-  transition: opacity var(--dur-fast) var(--ease-out);
 }
 .cursor-dot {
   width: 6px;
   height: 6px;
-  margin: -3px 0 0 -3px;
   border-radius: 999px;
   background: var(--color-label);
+  transition:
+    opacity 0.2s,
+    transform 0.05s linear;
 }
 .cursor-ring {
-  margin: -18px 0 0 -18px;
-  overflow: visible;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--color-label) 8%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-label) 14%, transparent);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  transition:
+    opacity 0.25s,
+    background-color 0.3s var(--ease-spring),
+    box-shadow 0.3s var(--ease-spring),
+    border-radius 0.3s var(--ease-spring);
 }
-/* transparent fill, 1px hairline at any scale */
-.cursor-ring circle {
-  fill: none;
-  stroke: rgba(0, 0, 0, 0.25);
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
+.cursor-ring[data-mode='shape'] {
+  background: color-mix(in srgb, var(--color-label) 7%, transparent);
+  box-shadow: none;
+  backdrop-filter: none;
 }
-html[data-theme='dark'] .cursor-ring circle {
-  stroke: rgba(255, 255, 255, 0.3);
+.cursor-ring[data-mode='hover'] {
+  background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-accent) 35%, transparent);
+}
+.cursor-ring[data-mode='label'] {
+  background: var(--color-accent);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  backdrop-filter: none;
+}
+/* text fields: a slim caret in the label colour, shown instantly (no colour fade) */
+.cursor-ring[data-mode='text'] {
+  transition: opacity 0.15s;
+  border-radius: 2px;
+  background: var(--color-label);
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.cursor-ring[data-mode='native'] {
+  opacity: 0 !important;
 }
 .cursor-label {
-  translate: -50% -50%;
-  padding: 3px 9px;
-  border-radius: 999px;
-  font-size: 12px;
+  color: var(--color-on-accent);
+  font-size: 13px;
   font-weight: 600;
+  letter-spacing: -0.01em;
   white-space: nowrap;
-  color: var(--color-label);
-  background: color-mix(in srgb, var(--color-bg) 72%, transparent);
-  -webkit-backdrop-filter: blur(12px) saturate(1.4);
-  backdrop-filter: blur(12px) saturate(1.4);
-}
-.cursor-label:empty {
-  display: none;
 }
 /* ---------- Engineering visuals ---------- */
 .blueprint {
@@ -648,8 +697,8 @@ html[data-theme='dark'] .code-window {
   --color-label: #f5f5f7;
   --color-label-2: #aeaeb2;
   --color-label-3: #9a9a9f;
-  --color-accent: #d5dae2;
-  --color-accent-hover: #eef1f5;
+  --color-accent: #f5f5f7;
+  --color-accent-hover: #ffffff;
   --color-on-accent: #111114;
   --color-green: #7fa88f;
   --glow-a: rgba(120, 132, 155, 0.2);
@@ -689,7 +738,8 @@ html[dir='rtl'] .seg-thumb {
 .arch-node {
   transition:
     opacity var(--dur-base) var(--ease-out),
-    transform var(--dur-base) var(--ease-spring);
+    transform var(--dur-base) var(--ease-spring),
+    box-shadow var(--dur-base) var(--ease-out);
 }
 .arch-node:focus-visible {
   outline: 2px solid var(--color-accent);
@@ -712,6 +762,31 @@ html[dir='rtl'] .seg-thumb {
 .arch-edge-lit {
   transition: stroke-dashoffset var(--dur-slow) var(--ease-in-out);
 }
+/* ambient data flow along the wires; paused off-screen / in hidden tabs via data-running */
+.arch-flow-path {
+  stroke-dasharray: 2 14;
+  opacity: 0.35;
+  animation: arch-flow 1.8s linear infinite;
+  animation-play-state: paused;
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+.arch-flow[data-running='true'] .arch-flow-path {
+  animation-play-state: running;
+}
+.arch-flow-path.is-on {
+  opacity: 0.9;
+  stroke-dasharray: 3 11;
+  animation-duration: 0.8s;
+}
+.arch-flow-path.is-reversed {
+  animation-direction: reverse;
+}
+@keyframes arch-flow {
+  to {
+    stroke-dashoffset: -16;
+  }
+}
+
 .arch-packet {
   position: absolute;
   top: 0;
@@ -736,6 +811,13 @@ html[dir='rtl'] .seg-thumb {
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .arch-flow-path {
+    display: none;
+  }
+  .arch-edge-lit,
+  .arch-node {
+    transition-delay: 0ms !important;
+  }
   .arch-packet {
     display: none;
   }
@@ -1021,13 +1103,13 @@ html[dir='rtl'] .scroll-progress {
     opacity var(--dur-fast) var(--ease-out),
     transform var(--dur-fast) var(--ease-spring);
 }
-.tech-chip:focus .tech-tip,
-.tech-chip:focus-visible .tech-tip {
+.tech-chip:focus + .tech-tip,
+.tech-chip:focus-visible + .tech-tip {
   opacity: 1;
   transform: none;
 }
 @media (hover: hover) {
-  .tech-chip:hover .tech-tip {
+  .tech-chip-wrap:hover .tech-tip {
     opacity: 1;
     transform: none;
   }
@@ -1095,4 +1177,64 @@ html[dir='rtl'] .scroll-progress {
 }
 .menu-line-2[data-open] {
   transform: translateY(-3px) rotate(-45deg);
+}
+
+/* ---------- Case study: stack flow (components/project/StackFlow.jsx) ---------- */
+.stack-link {
+  position: relative;
+  flex: none;
+  align-self: center;
+  width: 2px;
+  height: 22px;
+  margin: 4px 0;
+  background: color-mix(in srgb, var(--color-label) 22%, transparent);
+  border-radius: 2px;
+}
+@media (min-width: 768px) {
+  .stack-link {
+    width: 28px;
+    height: 2px;
+    margin: 0 6px;
+  }
+}
+.stack-dot {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 6px;
+  height: 6px;
+  margin: -2px 0 0 -3px;
+  border-radius: 999px;
+  background: var(--color-label);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-label) 15%, transparent);
+  opacity: 0;
+  animation: stack-dot-v 1.6s var(--ease-in-out) infinite;
+  animation-play-state: paused;
+}
+@media (min-width: 768px) {
+  .stack-dot {
+    left: 0;
+    top: 50%;
+    margin: -3px 0 0 -3px;
+    animation-name: stack-dot-h;
+  }
+  html[dir='rtl'] .stack-dot {
+    animation-direction: reverse;
+  }
+}
+[data-running='true'] .stack-dot {
+  animation-play-state: running;
+}
+@keyframes stack-dot-v {
+  0% { transform: translateY(0); opacity: 0; }
+  20%, 80% { opacity: 1; }
+  100% { transform: translateY(22px); opacity: 0; }
+}
+@keyframes stack-dot-h {
+  0% { transform: translateX(0); opacity: 0; }
+  20%, 80% { opacity: 1; }
+  100% { transform: translateX(28px); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stack-dot { display: none; }
 }

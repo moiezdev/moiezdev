@@ -11,6 +11,7 @@ import './index.css';
 import App from './App.jsx';
 import { PreferencesProvider } from './context/Preferences.jsx';
 import { readPrefs } from './context/prefs';
+import { preloadRoute } from './routes/pages';
 
 // The site used hash URLs (moiez.dev/#/works/tdm). Keep old shared links working.
 const fromHash = window.location.hash.startsWith('#/');
@@ -33,5 +34,13 @@ const app = (
   </StrictMode>
 );
 
-if (hydrate) hydrateRoot(container, app);
-else createRoot(container).render(app);
+if (hydrate) {
+  // Load this page's code before hydrating. If the lazy page chunk is still in
+  // flight, any early state update (e.g. syncing saved prefs) makes React drop the
+  // prerendered HTML and show the Suspense fallback ("Loading…") instead.
+  preloadRoute(window.location.pathname)
+    .catch(() => {})
+    .then(() => hydrateRoot(container, app));
+} else {
+  createRoot(container).render(app);
+}

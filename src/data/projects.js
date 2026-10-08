@@ -14,9 +14,11 @@ import mtlnation from './projects/mtlnation.json';
 import tdm from './projects/tdm.json';
 import eims from './projects/eims.json';
 import lms from './projects/lms.json';
+import designDynamo from './projects/design-dynamo.json';
 
 const projectsById = {
   'twlm-pos': twlmPos,
+  'design-dynamo': designDynamo,
   'aa-tourism': aaTourism,
   scmborba,
   'docean-fisheries': doceanFisheries,

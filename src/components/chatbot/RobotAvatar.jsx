@@ -2,7 +2,9 @@ import { useEffect, useId, useRef } from 'react';
 import { gsap } from 'gsap';
 
 /**
- * Friendly robot mascot — aluminium shell, glass visor, glowing capsule eyes.
+ * Friendly robot mascot — one rounded head: pearl shell, dark glass visor,
+ * soft white eyes (like an Apple status light), a small smile, and the antenna
+ * tip in the site's "available" green — no colours outside the site palette.
  * `mood`: idle | thinking | speaking
  * `faceOnly` crops to head + antenna and shows a mouth for expression / lip-sync.
  */
@@ -18,7 +20,6 @@ const RobotAvatar = ({
   const rightEyeRef = useRef(null);
   const antennaRef = useRef(null);
   const antennaDotRef = useRef(null);
-  const chestRef = useRef(null);
   const mouthRef = useRef(null);
   const headRef = useRef(null);
   const moodTweensRef = useRef([]);
@@ -152,7 +153,7 @@ const RobotAvatar = ({
         killMoodTweens();
         gsap.set([left, right], { x: 0, y: 0, scaleX: 1, opacity: 1 });
         if (head) gsap.set(head, { rotation: 0 });
-        if (mouth) gsap.set(mouth, { scaleY: 0.35, scaleX: 1, y: 0 });
+        if (mouth) gsap.set(mouth, { scaleY: 1, scaleX: 1, y: 0 });
         if (antennaDot) gsap.set(antennaDot, { opacity: 1 });
       };
     }
@@ -185,7 +186,7 @@ const RobotAvatar = ({
 
       return () => {
         killMoodTweens();
-        gsap.set(mouth, { scaleY: 0.35, scaleX: 1 });
+        gsap.set(mouth, { scaleY: 1, scaleX: 1 });
         gsap.set(left, { opacity: 1 });
       };
     }
@@ -193,18 +194,10 @@ const RobotAvatar = ({
     // idle
     gsap.to([left, right], { x: 0, y: 0, scaleX: 1, opacity: 1, duration: 0.25 });
     if (head) gsap.to(head, { rotation: 0, duration: 0.25 });
-    if (mouth) gsap.to(mouth, { scaleY: 0.35, scaleX: 1, y: 0, duration: 0.2 });
+    if (mouth) gsap.to(mouth, { scaleY: 1, scaleX: 1, y: 0, duration: 0.2 });
 
     return () => killMoodTweens();
   }, [mood]);
-
-  useEffect(() => {
-    if (!chestRef.current) return;
-    gsap.to(chestRef.current, {
-      fill: isOpen ? '#a7b4c4' : '#c7c7cc',
-      duration: 0.25,
-    });
-  }, [isOpen]);
 
   // Eyes glance toward the pointer.
   useEffect(() => {
@@ -223,77 +216,81 @@ const RobotAvatar = ({
     return () => window.removeEventListener('mousemove', onMove);
   }, []);
 
-  const viewBox = faceOnly ? '6 0 68 50' : '0 0 80 80';
-  const aspectH = faceOnly ? size * (50 / 68) : size;
+  // one head for both sizes; the panel header (faceOnly) just drops the floor shadow
+  const viewBox = '4 0 72 68';
+  const aspectH = size * (68 / 72);
+  const id = (name) => `${uid}-${name}`;
 
   return (
     <div
       ref={rootRef}
       className={`relative select-none ${className}`}
+      data-open={isOpen || undefined}
       style={{ width: size, height: aspectH }}
       aria-hidden
     >
       <svg viewBox={viewBox} width={size} height={aspectH} fill="none">
         <defs>
-          <linearGradient id={`${uid}-shell`} x1="0" y1="0" x2="0" y2="1">
+          <radialGradient id={id('shell')} cx="0.34" cy="0.22" r="0.95">
             <stop offset="0" stopColor="#ffffff" />
-            <stop offset="0.55" stopColor="#ececf0" />
-            <stop offset="1" stopColor="#c9c9d1" />
+            <stop offset="0.55" stopColor="#e8eaef" />
+            <stop offset="1" stopColor="#aeb4c0" />
+          </radialGradient>
+          <radialGradient id={id('pod')} cx="0.35" cy="0.3" r="0.9">
+            <stop offset="0" stopColor="#f4f5f8" />
+            <stop offset="1" stopColor="#9ea5b2" />
+          </radialGradient>
+          <linearGradient id={id('visor')} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#22252e" />
+            <stop offset="1" stopColor="#05060a" />
           </linearGradient>
-          <linearGradient id={`${uid}-visor`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#2c2c34" />
-            <stop offset="1" stopColor="#0b0b0f" />
+          <linearGradient id={id('glow')} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#ffffff" />
+            <stop offset="1" stopColor="#d7dce4" />
           </linearGradient>
-          <linearGradient id={`${uid}-glow`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#f4f6f9" />
-            <stop offset="1" stopColor="#a7b4c4" />
-          </linearGradient>
-          <filter id={`${uid}-blur`} x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="1.6" />
+          <filter id={id('blur')} x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="2.2" />
+          </filter>
+          <filter id={id('shadow')} x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="2.4" />
           </filter>
         </defs>
 
+        {!faceOnly && <ellipse cx="40" cy="64" rx="20" ry="2.6" fill="#000" opacity="0.3" filter={`url(#${id('shadow')})`} />}
+
         <g ref={headRef}>
-          {/* antenna */}
+          {/* antenna with a glowing tip */}
           <g ref={antennaRef}>
-            <line x1="40" y1="12" x2="40" y2="5.5" stroke="#b8b8c0" strokeWidth="2" strokeLinecap="round" />
-            <circle ref={antennaDotRef} cx="40" cy="4" r="3" fill={`url(#${uid}-glow)`} />
+            <line x1="40" y1="15" x2="40" y2="8" stroke="#c3c7cf" strokeWidth="2.2" strokeLinecap="round" />
+            <g ref={antennaDotRef}>
+              <circle cx="40" cy="6" r="4.5" fill="var(--color-green)" opacity="0.55" filter={`url(#${id('blur')})`} />
+              <circle cx="40" cy="6" r="3" fill="var(--color-green)" />
+            </g>
           </g>
 
-          {/* ears */}
-          <rect x="11" y="23" width="5" height="12" rx="2.5" fill="#b8b8c0" />
-          <rect x="64" y="23" width="5" height="12" rx="2.5" fill="#b8b8c0" />
+          {/* side pods */}
+          <circle cx="11.5" cy="38" r="5.5" fill={`url(#${id('pod')})`} />
+          <circle cx="68.5" cy="38" r="5.5" fill={`url(#${id('pod')})`} />
 
-          {/* head shell */}
-          <rect x="14" y="11" width="52" height="36" rx="15" fill={`url(#${uid}-shell)`} />
-          <rect x="14.5" y="11.5" width="51" height="35" rx="14.5" stroke="rgba(0,0,0,0.08)" />
-          {/* specular highlight */}
-          <path d="M22 15.5c4-2 12-2.5 18-2.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" opacity="0.9" />
+          {/* shell: soft light from the top-left, a bright rim */}
+          <rect x="12" y="14" width="56" height="48" rx="22" fill={`url(#${id('shell')})`} />
+          <rect x="12.6" y="14.6" width="54.8" height="46.8" rx="21.4" stroke="rgba(255,255,255,0.9)" strokeWidth="1.2" opacity="0.7" />
 
-          {/* glass visor */}
-          <rect x="20" y="17" width="40" height="24" rx="11" fill={`url(#${uid}-visor)`} />
-          <path d="M25 20.5c5-1.6 17-1.8 26-0.6" stroke="rgba(255,255,255,0.14)" strokeWidth="1.4" strokeLinecap="round" />
+          {/* glass visor with a reflection */}
+          <rect x="18" y="22" width="44" height="29" rx="14.5" fill={`url(#${id('visor')})`} />
+          <rect x="18.5" y="22.5" width="43" height="28" rx="14" stroke="rgba(255,255,255,0.08)" />
+          <path d="M24 28.5c4.5-3.4 15-4.6 24-3" stroke="rgba(255,255,255,0.22)" strokeWidth="1.6" strokeLinecap="round" />
 
           <g ref={eyesRef}>
-            {/* glow */}
-            <rect x="28" y="23" width="6" height="10" rx="3" fill="#a7b4c4" filter={`url(#${uid}-blur)`} opacity="0.8" />
-            <rect x="46" y="23" width="6" height="10" rx="3" fill="#a7b4c4" filter={`url(#${uid}-blur)`} opacity="0.8" />
-            <rect ref={leftEyeRef} x="28" y="23" width="6" height="10" rx="3" fill={`url(#${uid}-glow)`} />
-            <rect ref={rightEyeRef} x="46" y="23" width="6" height="10" rx="3" fill={`url(#${uid}-glow)`} />
+            <rect x="27.5" y="29.5" width="7" height="12" rx="3.5" fill="#ffffff" opacity="0.45" filter={`url(#${id('blur')})`} />
+            <rect x="45.5" y="29.5" width="7" height="12" rx="3.5" fill="#ffffff" opacity="0.45" filter={`url(#${id('blur')})`} />
+            <rect ref={leftEyeRef} x="27.5" y="29.5" width="7" height="12" rx="3.5" fill={`url(#${id('glow')})`} />
+            <rect ref={rightEyeRef} x="45.5" y="29.5" width="7" height="12" rx="3.5" fill={`url(#${id('glow')})`} />
           </g>
 
-          {faceOnly && (
-            <rect ref={mouthRef} x="36" y="35" width="8" height="3" rx="1.5" fill={`url(#${uid}-glow)`} />
-          )}
+          {/* smile — flattens while thinking, moves while speaking */}
+          <path ref={mouthRef} d="M36.5 45.2q3.5 2.2 7 0" stroke="#e3e7ee" strokeWidth="1.8" strokeLinecap="round" />
         </g>
-
-        {!faceOnly && (
-          <>
-            <rect x="24" y="51" width="32" height="23" rx="11" fill={`url(#${uid}-shell)`} />
-            <rect x="24.5" y="51.5" width="31" height="22" rx="10.5" stroke="rgba(0,0,0,0.08)" />
-            <circle ref={chestRef} cx="40" cy="62.5" r="3.5" fill={isOpen ? '#a7b4c4' : '#c7c7cc'} />
-          </>
-        )}
       </svg>
     </div>
   );

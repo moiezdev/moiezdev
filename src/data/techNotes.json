@@ -1,7 +1,7 @@
 {
   "_todo": "TODO(moiez): add or correct a short \"Used for\" note for any technology (en/ar). Chips always also list the projects that use the tech, computed from the project data.",
   "notes": {
-    "NestJs": {
+    "NestJS": {
       "en": "The TWLM API layer, on Fastify",
       "ar": "طبقة واجهات TWLM البرمجية، على Fastify"
     },
@@ -17,7 +17,7 @@
       "en": "Data layer and schema migrations at TWLM",
       "ar": "طبقة البيانات وترحيل المخططات في TWLM"
     },
-    "PostGreSQL": {
+    "PostgreSQL": {
       "en": "TWLM's main database, via Prisma",
       "ar": "قاعدة بيانات TWLM الرئيسية عبر Prisma"
     },
@@ -68,6 +68,18 @@
     "Amadeus": {
       "en": "Flight booking engine integration",
       "ar": "تكامل محرك حجز الطيران"
+    },
+    "Laravel": {
+      "en": "Backend APIs for booking platforms",
+      "ar": "واجهات برمجة خلفية لمنصات الحجز"
+    },
+    "React Native": {
+      "en": "Mobile booking app on shared APIs",
+      "ar": "تطبيق حجز للجوال على واجهات مشتركة"
+    },
+    "EmailJS": {
+      "en": "Contact and enquiry emails without a mail server",
+      "ar": "رسائل التواصل والاستفسارات دون خادم بريد"
     }
   }
 }

@@ -18,11 +18,35 @@
     "JavaScript",
     "Redux Toolkit"
   ],
-  "imageUrl": "/projects-media/portfolio/main.webp",
+  "imageUrl": "/projects-media/portfolio/cover.webp",
   "githubUrl": "https://github.com/moiezdev/my-portfolio-react",
   "repoPublic": true,
   "media": [
-    "main.webp"
+    "cover.webp",
+    "main-framed.webp"
   ],
-  "group": "earlier"
+  "group": "earlier",
+  "caseStudy": {
+    "summary": "The first version of this portfolio — React, Tailwind CSS and Redux Toolkit, built from scratch.",
+    "problem": [
+      "A place to show projects, skills and experience that loads fast and feels alive."
+    ],
+    "role": [
+      "Designed and built it end to end: project previews, animations and responsive layouts."
+    ],
+    "architecture": [
+      "React with Redux Toolkit for state and Tailwind CSS for styling."
+    ],
+    "challenges": [
+      "Rich interactions without hurting load time or accessibility."
+    ],
+    "results": [
+      "The foundation the current moiez.dev grew from."
+    ],
+    "next": [],
+    "measured": ""
+  },
+  "diagrams": [
+    "stackFlow"
+  ]
 }

@@ -1,37 +1,81 @@
 {
   "id": "aa-tourism",
   "title": "AATourism",
-  "subtitle": "Flight Booking & Tour Planning Platform",
+  "subtitle": "Full-Stack Flight Booking & Tour Platform — Web + Mobile",
   "description": [
-    "AA Travel & Tourism – Flight Booking Platform",
+    "AA Travel & Tourism – Full-Stack Flight Booking Platform",
     [
-      "A flight booking and tour-planning platform integrated with IATA codes, Sabre, and Amadeus for real-time flight data.",
-      "Developed high-quality UI focused on UX, animations, and seamless booking journeys.",
-      "Forms, flight lists, and booking steps stay interactive but simple so users don’t get lost.",
-      "Worked closely with backend teams to deliver reliable, consistent booking experiences on mobile and desktop.",
-      "Kept the visuals clean and consistent with the brand colors and style."
+      "A full-stack flight booking and tour-planning system: a Laravel backend, a Nuxt 2 web app and a React Native mobile app, integrated with Sabre and Amadeus for real-time flight data using IATA codes.",
+      "Built the booking journey — search forms, flight lists, filters and step-by-step booking — focused on UX and smooth interactions.",
+      "Forms, flight lists and booking steps stay interactive but simple so users don't get lost.",
+      "Delivered a consistent booking experience across web and mobile, backed by the same Laravel APIs.",
+      "Kept the visuals clean and consistent with the brand colours and style."
     ]
   ],
   "technologies": [
     "NuxtJs",
+    "Laravel",
+    "React Native",
+    "Sabre",
+    "Amadeus",
     "Vuex",
     "Buefy",
     "Bootstrap",
-    "JavaScript",
     "SCSS",
-    "Sabre",
-    "Amadeus"
+    "JavaScript"
   ],
-  "imageUrl": "/projects-media/aa-tourism/main.webp",
+  "imageUrl": "/projects-media/aa-tourism/cover.webp",
   "projectUrl": "http://aatourism.ca/",
   "githubUrl": "https://github.com/moiezdev/AAtourism",
   "repoPublic": true,
   "media": [
-    "main.webp",
-    "img1.webp",
-    "img2.webp",
-    "img3.webp",
-    "img4.webp"
+    "cover.webp",
+    "main-framed.webp",
+    "img1-framed.webp",
+    "img2-framed.webp",
+    "img3-framed.webp",
+    "img4-framed.webp"
   ],
-  "group": "client"
+  "group": "client",
+  "caseStudy": {
+    "summary": "A full-stack flight booking and tour-planning system for a Canadian travel agency — Laravel backend, Nuxt 2 web app and React Native mobile app, wired to Sabre and Amadeus for real-time flight data.",
+    "problem": [
+      "Travellers needed to search, compare and book real flights and tours — on the web and on their phones — without getting lost in a complex booking journey.",
+      "Flight data had to come live from global distribution systems (Sabre, Amadeus) using IATA codes, through one backend serving both web and mobile."
+    ],
+    "role": [
+      "At Creative Inter Tech, on the B2B travel platforms (AA Tourism, City Arrivals).",
+      "Built the booking journey in Nuxt 2: search forms, flight lists, filters and step-by-step booking.",
+      "Worked across the stack so live GDS data flowed from the Laravel APIs to the web and React Native apps reliably and consistently."
+    ],
+    "architecture": [
+      "Laravel backend exposing the booking APIs and integrating Sabre and Amadeus (flight search and availability, mapped by IATA codes).",
+      "Nuxt 2 (Vue) web app with Vuex for search and booking state; Buefy and Bootstrap components on a custom SCSS theme.",
+      "React Native mobile app on the same Laravel APIs, so web and mobile share one booking backend."
+    ],
+    "challenges": [
+      "Keeping a multi-step booking flow simple while showing a lot of live flight data.",
+      "One backend and consistent behaviour across web and mobile with real-time results."
+    ],
+    "results": [
+      "Live platform at aatourism.ca with real-time flight search and booking on web and mobile.",
+      "Part of the B2B travel platforms serving 10K+ monthly users."
+    ],
+    "next": [],
+    "measured": ""
+  },
+  "metrics": [
+    {
+      "value": "10K+",
+      "label": "monthly users across the B2B travel platforms"
+    },
+    {
+      "value": "2",
+      "label": "live GDS integrations (Sabre, Amadeus)"
+    }
+  ],
+  "experienceId": "creative-inter-tech",
+  "diagrams": [
+    "stackFlow"
+  ]
 }

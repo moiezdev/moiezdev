@@ -24,7 +24,10 @@ const ArchitectureFigure = ({ className = '' }) => {
         </WhenNear>
         <div className="mt-10 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-[13px] text-label-2 max-w-2xl">{t('process.caption')}</p>
-          <p className="hidden lg:block text-[12px] text-label-3">{t('process.hint')}</p>
+          <p className="text-[12px] text-label-3">
+            <span className="hidden [@media(hover:hover)]:inline">{t('process.hint')}</span>
+            <span className="[@media(hover:hover)]:hidden">{t('process.hintTouch')}</span>
+          </p>
         </div>
       </div>
     </WindowChrome>

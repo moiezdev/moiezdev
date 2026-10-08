@@ -1,0 +1,70 @@
+{
+  "id": "design-dynamo",
+  "title": "Design Dynamo",
+  "subtitle": "Portfolio for a Graphic & Web Designer — Photoshop-style UI",
+  "description": [
+    "Design Dynamo – Interactive Designer Portfolio (designdynamo.art)",
+    [
+      "A portfolio for Riyadh-based graphic and web designer Ahmad Abdullah, built as a Photoshop-style workspace: a toolbar, a layers panel, rulers and every section as an artboard.",
+      "React front end with advanced, scroll-driven animations; an Express and PostgreSQL backend for live client reviews; EmailJS for project enquiries.",
+      "Fully bilingual: English and Arabic with a mirrored right-to-left layout.",
+      "Case studies, a filterable archive, services pages, pricing and a contact flow — fast and responsive on laptop, tablet and phone."
+    ]
+  ],
+  "technologies": [
+    "React",
+    "Express",
+    "PostgreSQL",
+    "EmailJS",
+    "Node",
+    "JavaScript"
+  ],
+  "imageUrl": "/projects-media/design-dynamo/cover.webp",
+  "projectUrl": "https://www.designdynamo.art/",
+  "repoPublic": false,
+  "media": [
+    "cover.webp"
+  ],
+  "group": "client",
+  "metrics": [
+    {
+      "value": "11",
+      "label": "artboard sections on the home page"
+    },
+    {
+      "value": "2",
+      "label": "languages, with a full Arabic RTL layout"
+    }
+  ],
+  "caseStudy": {
+    "summary": "A portfolio for a Riyadh graphic and web designer that behaves like Photoshop — React with advanced animations, an Express + PostgreSQL backend for live reviews, and EmailJS for enquiries.",
+    "problem": [
+      "A designer's portfolio is itself the product: it had to prove craft at first glance, not just list work.",
+      "Clients needed to browse case studies, services and pricing, leave reviews and get in touch — in English or Arabic."
+    ],
+    "role": [
+      "Designed the interaction model and built the whole site end to end: front end, backend and deployment.",
+      "Turned the brand idea — 'every section is a layer' — into a working Photoshop-style interface.",
+      "Built the animation system, the bilingual RTL layout, and the reviews and contact flows."
+    ],
+    "architecture": [
+      "React front end: every section is an artboard, with a layers panel that tracks scroll position and shortcuts to jump between sections.",
+      "Express API on PostgreSQL for client reviews, shown live on the home page and on each case study.",
+      "EmailJS for project enquiries straight from the site, with no mail server to run.",
+      "One codebase for English and Arabic: a mirrored RTL layout, not just translated text."
+    ],
+    "challenges": [
+      "Rich, scroll-driven motion — horizontal panning, a logo that builds as you scroll, misregistration hovers — while staying fast on phones.",
+      "An editor-like UI that still reads as a website for visitors who have never opened Photoshop."
+    ],
+    "results": [
+      "Live at designdynamo.art on laptop, tablet and phone.",
+      "Case studies, a 66-piece filterable archive, services, pricing, reviews and contact in one cohesive experience."
+    ],
+    "next": [],
+    "measured": ""
+  },
+  "diagrams": [
+    "stackFlow"
+  ]
+}

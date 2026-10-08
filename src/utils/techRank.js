@@ -6,13 +6,13 @@
  */
 const ORDER = [
   // backend & frontend core
-  'NestJs',
+  'NestJS',
   'Node',
   'NextJs',
   'Next.js',
   'React',
   'TypeScript',
-  'PostGreSQL',
+  'PostgreSQL',
   'Redis',
   'BullMQ',
   'OpenRouter',

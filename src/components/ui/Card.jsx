@@ -30,8 +30,8 @@ const Card = ({ project, featured = false, eyebrow, maxTech = 3, className = '' 
     >
       <div
         data-vt-image
-        className={`relative overflow-hidden bg-surface-2 rounded-t-[var(--radius-card)] ${
-          featured ? 'aspect-[16/10] lg:aspect-auto lg:w-[58%] lg:min-h-[420px] lg:rounded-t-none lg:rounded-s-[var(--radius-card)]' : 'aspect-[16/10]'
+        className={`relative isolate overflow-hidden bg-surface-2 rounded-ss-[var(--radius-card)] rounded-se-[var(--radius-card)] ${
+          featured ? 'aspect-[16/10] lg:aspect-auto lg:w-[58%] lg:min-h-[420px] lg:rounded-se-none lg:rounded-es-[var(--radius-card)]' : 'aspect-[16/10]'
         }`}
       >
         {project.screenshot === false ? (

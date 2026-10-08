@@ -57,7 +57,7 @@ export default function WalletPass({ project }) {
             aria-label={flipped ? t('caseStudy.pass.showFront') : t('caseStudy.pass.showBack')}
             data-cursor-label={t('cursor.flip')}
             className={`pass-flip block w-full ${flipped ? 'is-flipped' : ''}`}
-            style={{ aspectRatio: '337 / 432' }}
+            style={{ aspectRatio: '1075 / 1497' }}
           >
             <span className="pass-face" aria-hidden={flipped}>
               <Img src={pass.front} alt={t('caseStudy.pass.frontAlt')} sizes="280px" className="size-full object-contain" />

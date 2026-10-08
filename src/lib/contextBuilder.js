@@ -40,6 +40,15 @@ const projectDetail = (project) => ({
   name: project.title,
   path: `/works/${project.id}`,
   what: project.subtitle,
+  ...(project.caseStudy
+    ? {
+        summary: project.caseStudy.summary,
+        architecture: project.caseStudy.architecture,
+        role: project.caseStudy.role,
+        results: project.caseStudy.results,
+      }
+    : {}),
+  ...(project.metrics?.length ? { metrics: project.metrics.map((m) => `${m.value} ${m.label}`) } : {}),
   details: projectLines(project, 10).map((l) => l.slice(0, 220)),
   stack: project.technologies || [],
   live: project.projectUrl || undefined,
@@ -100,9 +109,12 @@ export function buildContext(question = '', { path = '/', previousQuestion = '' 
       location: profile.location,
       experienceYears: years,
       summary: profile.identity,
-      availability: 'Open to senior full stack engineering and software architect roles and projects',
+      availability: 'Open to senior full stack engineering and software architect roles, and to freelance/contract projects',
       workAuthorization: profile.iqama,
     },
+    // what each kind of visitor needs: recruiters get the pitch, clients get scope + how to start
+    forRecruiters: chatbot.audiences?.recruiters,
+    forClients: chatbot.audiences?.clients,
     experience: experience.map((job) => ({
       title: job.title,
       company: job.company,
@@ -110,7 +122,7 @@ export function buildContext(question = '', { path = '/', previousQuestion = '' 
       location: job.location,
       current: Boolean(job.current),
       summary: job.summary,
-      highlights: (job.highlights || []).slice(0, 3).map((h) => h.slice(0, 180)),
+      highlights: (job.highlights || []).slice(0, 4).map((h) => h.slice(0, 180)),
       stack: (job.stack || []).slice(0, 8),
     })),
     relevantProjects: relevant.map(projectDetail),
