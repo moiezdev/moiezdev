@@ -1,7 +1,7 @@
 import ExperienceCards from '../components/experience/ExperienceCards';
 import Transition from '../components/functions/Transition';
 import PageHeader from '../components/ui/PageHeader';
-import Reveal from '../components/ui/Reveal';
+import Reveal from '../motion/Reveal';
 import Button from '../components/ui/Button';
 import ExternalIcon from '../components/ui/ExternalIcon';
 import { useContent } from '../i18n/content';

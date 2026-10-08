@@ -1,5 +1,5 @@
 import SectionTitle from '../ui/SectionTitle';
-import Reveal from '../ui/Reveal';
+import Reveal from '../../motion/Reveal';
 import { useContent } from '../../i18n/content';
 
 const STEP_ICONS = [

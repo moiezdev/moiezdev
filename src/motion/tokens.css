@@ -1,0 +1,28 @@
+/*
+ * Motion tokens — the only durations and easings the site uses (see MOTION.md).
+ * Animate transform and opacity only. With reduced motion every duration is 0,
+ * so token-based transitions jump straight to their final state.
+ */
+:root {
+  --dur-fast: 150ms; /* presses, hovers, small state changes */
+  --dur-base: 250ms; /* reveals, tooltips, panels */
+  --dur-slow: 400ms; /* view transitions, explainer steps */
+
+  --ease-spring: cubic-bezier(0.32, 0.72, 0, 1); /* default: calm, physical settle */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1); /* fades and things entering */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1); /* things moving between two points */
+
+  --reveal-distance: 8px;
+
+  /* legacy name, now the spring curve */
+  --ease-apple: var(--ease-spring);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur-base: 0ms;
+    --dur-slow: 0ms;
+    --reveal-distance: 0px;
+  }
+}

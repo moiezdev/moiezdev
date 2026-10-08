@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import Card from '../components/ui/Card';
 import FeaturedCard from '../components/ui/FeaturedCard';
-import Reveal from '../components/ui/Reveal';
+import Reveal from '../motion/Reveal';
 import PageHeader from '../components/ui/PageHeader';
 import Transition from '../components/functions/Transition';
 import { Chevron } from '../components/ui/SectionTitle';

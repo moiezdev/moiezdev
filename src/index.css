@@ -9,6 +9,7 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @import 'tailwindcss';
+@import './motion/tokens.css';
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
@@ -55,7 +56,6 @@
   --text-xlarge: 32px;
 
   --radius-card: 28px;
-  --ease-apple: cubic-bezier(0.28, 0.11, 0.32, 1);
   --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.04), 0 12px 32px rgba(0, 0, 0, 0.06);
   --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.06), 0 24px 56px rgba(0, 0, 0, 0.12);
 }
@@ -399,19 +399,19 @@ textarea:-webkit-autofill {
 /* ---------- Motion ---------- */
 .reveal-hidden {
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(var(--reveal-distance));
 }
 .reveal-shown {
   transition:
-    opacity 0.3s var(--ease-apple),
-    transform 0.3s var(--ease-apple);
+    opacity var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-spring);
   transition-delay: var(--reveal-delay, 0ms);
 }
 
 @keyframes page-in {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(var(--reveal-distance));
   }
   to {
     opacity: 1;
@@ -419,7 +419,7 @@ textarea:-webkit-autofill {
   }
 }
 .page-in {
-  animation: page-in 0.3s var(--ease-apple) both;
+  animation: page-in var(--dur-base) var(--ease-out) both;
 }
 
 @keyframes spin {

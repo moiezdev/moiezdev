@@ -1,6 +1,6 @@
 import Img from '../ui/Img';
 import Button from '../ui/Button';
-import Reveal from '../ui/Reveal';
+import Reveal from '../../motion/Reveal';
 import { useContent } from '../../i18n/content';
 
 /** Portrait + story block on the About page (`full`), or a two-paragraph teaser. */

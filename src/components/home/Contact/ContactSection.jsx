@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import emailjs from '@emailjs/browser';
 import Button from '../../ui/Button';
-import Reveal from '../../ui/Reveal';
+import Reveal from '../../../motion/Reveal';
 import { Chevron } from '../../ui/SectionTitle';
 import { Spinner } from '../../Loading';
 import { contacts } from '../../../data';

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import SectionTitle from '../ui/SectionTitle';
-import Reveal from '../ui/Reveal';
+import Reveal from '../../motion/Reveal';
 import Img from '../ui/Img';
 import { events } from '../../data';
 import { useContent } from '../../i18n/content';

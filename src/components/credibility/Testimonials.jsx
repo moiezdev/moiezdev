@@ -1,4 +1,4 @@
-import Reveal from '../ui/Reveal';
+import Reveal from '../../motion/Reveal';
 import testimonialsData from '../../data/testimonials.json';
 import { useContent } from '../../i18n/content';
 

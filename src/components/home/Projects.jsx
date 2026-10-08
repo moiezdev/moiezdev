@@ -1,6 +1,6 @@
 import Card from '../ui/Card';
 import FeaturedCard from '../ui/FeaturedCard';
-import Reveal from '../ui/Reveal';
+import Reveal from '../../motion/Reveal';
 import SectionTitle from '../ui/SectionTitle';
 import { useContent } from '../../i18n/content';
 

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { MdOutlineChatBubbleOutline, MdOutlineManageSearch, MdOutlineScience } from 'react-icons/md';
 import { Chevron } from '../ui/SectionTitle';
-import Reveal from '../ui/Reveal';
+import Reveal from '../../motion/Reveal';
 import TechChip from '../ui/TechChip';
 import { chatbot } from '../../data';
 import { useContent } from '../../i18n/content';

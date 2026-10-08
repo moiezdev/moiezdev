@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import SectionTitle, { Chevron } from '../ui/SectionTitle';
-import Reveal from '../ui/Reveal';
+import Reveal from '../../motion/Reveal';
 import ArchitectureFigure from './ArchitectureFigure';
 import { useContent } from '../../i18n/content';
 

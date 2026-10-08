@@ -1,4 +1,4 @@
-import Reveal from './Reveal';
+import Reveal from '../../motion/Reveal';
 
 /** Large centered page header used at the top of every inner page. */
 const PageHeader = ({ eyebrow, title, subtitle, children }) => (

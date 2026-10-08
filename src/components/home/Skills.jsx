@@ -1,5 +1,5 @@
 import SectionTitle from '../ui/SectionTitle';
-import Reveal from '../ui/Reveal';
+import Reveal from '../../motion/Reveal';
 import { getSkillIcon, readableIconColor } from '../../utils/skillIcons';
 import { getProjectsForSkill } from '../../utils/skillProjects';
 import { skillPracticeMessage, skillProjectCountLabel, useContent } from '../../i18n/content';

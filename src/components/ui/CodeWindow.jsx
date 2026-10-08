@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, useState } from 'react';
-import { prefersReducedMotion } from '../../hooks/useScrollFrame';
+import { prefersReducedMotion } from '../../motion/reducedMotion';
 import WindowChrome from './WindowChrome';
 import { getExperienceYears } from '../../utils/experience';
 import { useContent } from '../../i18n/content';

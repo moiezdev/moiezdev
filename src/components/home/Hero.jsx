@@ -1,6 +1,6 @@
 import Img from '../ui/Img';
 import Button from '../ui/Button';
-import Reveal from '../ui/Reveal';
+import Reveal from '../../motion/Reveal';
 import ExternalIcon from '../ui/ExternalIcon';
 import { useContent } from '../../i18n/content';
 import site from '../../data/site.json';

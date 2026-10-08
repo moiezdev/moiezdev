@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import SectionTitle, { Chevron } from '../ui/SectionTitle';
-import Reveal from '../ui/Reveal';
+import Reveal from '../../motion/Reveal';
 import { useContent } from '../../i18n/content';
 
 /** Home: the current and previous role in two short rows; the full timeline lives on /experience. */

@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { Link } from 'react-router-dom';
-import Reveal from '../ui/Reveal';
+import Reveal from '../../motion/Reveal';
 import TechChip from '../ui/TechChip';
 import { Chevron } from '../ui/SectionTitle';
 import { getProjectById } from '../../data';

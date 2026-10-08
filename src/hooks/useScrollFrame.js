@@ -1,7 +1,5 @@
 import { useEffect, useRef } from 'react';
-
-export const prefersReducedMotion = () =>
-  typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+import { prefersReducedMotion } from '../motion/reducedMotion';
 
 export const clamp01 = (v) => Math.min(1, Math.max(0, v));
 

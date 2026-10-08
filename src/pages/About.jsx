@@ -2,7 +2,7 @@ import Transition from '../components/functions/Transition';
 import PageHeader from '../components/ui/PageHeader';
 import Skills from '../components/home/Skills';
 import CodeWindow from '../components/ui/CodeWindow';
-import Reveal from '../components/ui/Reveal';
+import Reveal from '../motion/Reveal';
 import Moments from '../components/home/Moments';
 import Process from '../components/home/Process';
 import { AboutStory } from '../components/home/About';
