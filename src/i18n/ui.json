@@ -399,6 +399,13 @@
             "v": "Geo-targeted promotional messages with branch-level tracking"
           }
         ]
+      },
+      "latency": {
+        "title": "API response time",
+        "before": "Before",
+        "after": "After",
+        "relative": "Relative to before (100%)",
+        "measured": "Measured"
       }
     },
     "ai": {
@@ -856,6 +863,13 @@
             "v": "رسائل ترويجية مستهدفة جغرافياً مع تتبع على مستوى الفروع"
           }
         ]
+      },
+      "latency": {
+        "title": "زمن استجابة الواجهات",
+        "before": "قبل",
+        "after": "بعد",
+        "relative": "نسبةً إلى ما قبل (100٪)",
+        "measured": "قياس فعلي"
       }
     },
     "ai": {

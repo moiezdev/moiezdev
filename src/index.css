@@ -745,3 +745,19 @@ header[data-site-header] {
 .pass-back {
   transform: rotateY(180deg);
 }
+
+/* ---------- Latency before/after bars (case study) ---------- */
+.latency-bar {
+  transform: scaleX(var(--to));
+  transform-origin: left center;
+}
+html[dir='rtl'] .latency-bar {
+  transform-origin: right center;
+}
+/* full unless armed below the fold; grows once when it scrolls in */
+.latency-bar[data-phase='armed'] {
+  transform: scaleX(0);
+}
+.latency-bar[data-phase='in'] {
+  transition: transform var(--dur-slow) var(--ease-spring);
+}

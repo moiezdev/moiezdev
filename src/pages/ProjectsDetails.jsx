@@ -11,6 +11,7 @@ import { Chevron } from '../components/ui/SectionTitle';
 import ArchitectureFigure from '../components/home/ArchitectureFigure';
 import WalletSequence from '../components/project/WalletSequence';
 import WalletPass from '../components/project/WalletPass';
+import LatencyBar from '../components/project/LatencyBar';
 import { getProjectById } from '../data';
 import { useContent } from '../i18n/content';
 import NotFound from './NotFound';
@@ -207,6 +208,7 @@ export default function ProjectDetail() {
                 </Reveal>
               ))}
             </div>
+            <LatencyBar latency={project.latency} />
             {/* TODO(moiez): caseStudy.measured — how the numbers were measured; hidden until filled */}
             {nonEmpty(cs.measured) && (
               <p className="mt-3 text-[13px] leading-relaxed text-label-3">

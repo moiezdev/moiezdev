@@ -114,5 +114,12 @@
     "front": "/projects-media/twlm-pos/pass-front.webp",
     "back": null,
     "_todo": "TODO(moiez): replace with proper Apple Wallet screenshots (front and back, ~2x size) — set \"front\"/\"back\" to the new public paths and run npm run images. Today the front is cropped from img2 and the back is drawn from the facts in the case study."
+  },
+  "latency": {
+    "reduction": 64,
+    "percentile": "p95",
+    "beforeMs": null,
+    "afterMs": null,
+    "_todo": "TODO(moiez): set beforeMs/afterMs to the measured p95 API response times (ms) behind the ~64% figure; the bar then shows them instead of relative values"
   }
 }
