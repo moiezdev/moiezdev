@@ -21,6 +21,15 @@ import { sortTech, topTech } from '../utils/techRank';
 import { scrollToTarget } from '../utils/smoothScroll';
 import TransitionLink from '../components/ui/TransitionLink';
 
+const sameHost = (a, b) => {
+  try {
+    return Boolean(a && b) && new URL(a).host.replace(/^www\./, '') === new URL(b).host.replace(/^www\./, '');
+  } catch {
+    return false;
+  }
+};
+
+
 /** Diagrams a project can list in its `diagrams` field. */
 const DIAGRAMS = {
   architecture: ArchitectureFigure,
@@ -151,7 +160,13 @@ export default function ProjectDetail() {
 
   const links = [
     project.productUrl && { href: project.productUrl, label: t('projects.liveProduct'), primary: true },
-    project.projectUrl && { href: project.projectUrl, label: t('projects.visit'), primary: !project.productUrl },
+    // one button per site: skip "Visit site" when the live product is on the same domain
+    project.projectUrl &&
+      !sameHost(project.projectUrl, project.productUrl) && {
+        href: project.projectUrl,
+        label: t('projects.visit'),
+        primary: !project.productUrl,
+      },
     project.githubUrl && { href: project.githubUrl, label: t('projects.github') },
     project.githubBackendUrl && { href: project.githubBackendUrl, label: t('projects.backend') },
   ].filter(Boolean);
