@@ -20,14 +20,15 @@
     "TailwindCSS",
     "JavaScript"
   ],
-  "imageUrl": "/projects-media/scmborba/main.webp",
+  "imageUrl": "/projects-media/scmborba/cover.webp",
   "projectUrl": "http://scmborba.pt",
   "media": [
-    "main.webp",
-    "img1.webp",
-    "img2.webp",
-    "img3.webp",
-    "img4.webp"
+    "cover.webp",
+    "main-framed.webp",
+    "img1-framed.webp",
+    "img2-framed.webp",
+    "img3-framed.webp",
+    "img4-framed.webp"
   ],
   "repoPublic": false,
   "group": "client"

@@ -18,11 +18,12 @@
     "JavaScript",
     "Redux Toolkit"
   ],
-  "imageUrl": "/projects-media/portfolio/main.webp",
+  "imageUrl": "/projects-media/portfolio/cover.webp",
   "githubUrl": "https://github.com/moiezdev/my-portfolio-react",
   "repoPublic": true,
   "media": [
-    "main.webp"
+    "cover.webp",
+    "main-framed.webp"
   ],
   "group": "earlier"
 }

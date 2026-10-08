@@ -18,10 +18,11 @@
     "SCSS",
     "Bootstrap"
   ],
-  "imageUrl": "/projects-media/mtlnation/main.webp",
+  "imageUrl": "/projects-media/mtlnation/cover.webp",
   "projectUrl": "https://mtlnation.com",
   "media": [
-    "main.webp"
+    "cover.webp",
+    "main-framed.webp"
   ],
   "repoPublic": false,
   "group": "client"

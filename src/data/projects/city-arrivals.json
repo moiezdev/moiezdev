@@ -18,12 +18,13 @@
     "JavaScript",
     "Jquery"
   ],
-  "imageUrl": "/projects-media/city-arrivals/main.webp",
+  "imageUrl": "/projects-media/city-arrivals/cover.webp",
   "projectUrl": "https://cityarrivals.ca",
   "media": [
-    "main.webp",
-    "img1.webp",
-    "img2.webp"
+    "cover.webp",
+    "main-framed.webp",
+    "img1-framed.webp",
+    "img2-framed.webp"
   ],
   "repoPublic": false,
   "group": "earlier"

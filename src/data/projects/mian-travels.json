@@ -21,12 +21,13 @@
     "SCSS",
     "Sabre"
   ],
-  "imageUrl": "/projects-media/mian-travels/main.webp",
+  "imageUrl": "/projects-media/mian-travels/cover.webp",
   "githubUrl": "https://github.com/moiezdev/MiansTravels",
   "repoPublic": false,
   "media": [
-    "main.webp",
-    "img1.webp"
+    "cover.webp",
+    "main-framed.webp",
+    "img1-framed.webp"
   ],
   "group": "client"
 }

@@ -17,10 +17,11 @@
     "CSS3",
     "JavaScript"
   ],
-  "imageUrl": "/projects-media/docean-fisheries/main.webp",
+  "imageUrl": "/projects-media/docean-fisheries/cover.webp",
   "projectUrl": "https://doceanfisheries.com/",
   "media": [
-    "main.webp"
+    "cover.webp",
+    "main-framed.webp"
   ],
   "repoPublic": false,
   "group": "earlier"

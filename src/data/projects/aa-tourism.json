@@ -22,16 +22,17 @@
     "Sabre",
     "Amadeus"
   ],
-  "imageUrl": "/projects-media/aa-tourism/main.webp",
+  "imageUrl": "/projects-media/aa-tourism/cover.webp",
   "projectUrl": "http://aatourism.ca/",
   "githubUrl": "https://github.com/moiezdev/AAtourism",
   "repoPublic": true,
   "media": [
-    "main.webp",
-    "img1.webp",
-    "img2.webp",
-    "img3.webp",
-    "img4.webp"
+    "cover.webp",
+    "main-framed.webp",
+    "img1-framed.webp",
+    "img2-framed.webp",
+    "img3-framed.webp",
+    "img4-framed.webp"
   ],
   "group": "client"
 }
