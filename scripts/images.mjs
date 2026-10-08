@@ -25,6 +25,7 @@ for (const id of json('src/data/projects/index.json')) {
   const base = p.imageUrl.split('/').slice(0, -1).join('/');
   urls.add(p.imageUrl);
   (p.media || []).forEach((m) => urls.add(`${base}/${m}`));
+  [p.walletPass?.front, p.walletPass?.back].filter(Boolean).forEach((u) => urls.add(u));
 }
 json('src/data/events.json').forEach((e) => e.photos.forEach((ph) => urls.add(ph.src)));
 

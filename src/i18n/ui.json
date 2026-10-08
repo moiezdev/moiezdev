@@ -372,6 +372,33 @@
           "push": "Apple or Google sends a push to the customer’s phone.",
           "refresh": "The pass on the phone refreshes with the new data."
         }
+      },
+      "pass": {
+        "title": "A TWLM loyalty pass",
+        "caption": "A stamp pass from the platform, as customers see it in their wallet. Flip it to see what keeps it up to date.",
+        "showBack": "Flip pass",
+        "showFront": "Show front",
+        "frontAlt": "Loyalty stamp pass in a mobile wallet, with a QR code and stamp progress",
+        "backAlt": "Back of the loyalty pass",
+        "backTitle": "What powers it",
+        "rows": [
+          {
+            "k": "Pass types",
+            "v": "Points, loyalty passes, gift cards and discount coupons"
+          },
+          {
+            "k": "Wallets",
+            "v": "Apple Wallet and Google Wallet"
+          },
+          {
+            "k": "Updates",
+            "v": "Webhook → BullMQ job → pass update → push"
+          },
+          {
+            "k": "Campaigns",
+            "v": "Geo-targeted promotional messages with branch-level tracking"
+          }
+        ]
       }
     },
     "ai": {
@@ -802,6 +829,33 @@
           "push": "ترسل Apple أو Google إشعاراً إلى هاتف العميل.",
           "refresh": "تتحدّث البطاقة على الهاتف بالبيانات الجديدة."
         }
+      },
+      "pass": {
+        "title": "بطاقة ولاء من TWLM",
+        "caption": "بطاقة أختام من المنصة كما يراها العملاء في محافظهم. اقلبها لترى ما يبقيها محدّثة.",
+        "showBack": "اقلب البطاقة",
+        "showFront": "اعرض الواجهة",
+        "frontAlt": "بطاقة أختام ولاء في محفظة الهاتف مع رمز QR وتقدّم الأختام",
+        "backAlt": "الوجه الخلفي لبطاقة الولاء",
+        "backTitle": "ما الذي يشغّلها",
+        "rows": [
+          {
+            "k": "أنواع البطاقات",
+            "v": "النقاط وبطاقات الولاء وبطاقات الهدايا وقسائم الخصم"
+          },
+          {
+            "k": "المحافظ",
+            "v": "Apple Wallet وGoogle Wallet"
+          },
+          {
+            "k": "التحديثات",
+            "v": "ويب هوك ← مهمة BullMQ ← تحديث البطاقة ← إشعار"
+          },
+          {
+            "k": "الحملات",
+            "v": "رسائل ترويجية مستهدفة جغرافياً مع تتبع على مستوى الفروع"
+          }
+        ]
       }
     },
     "ai": {

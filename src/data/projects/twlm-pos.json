@@ -63,7 +63,8 @@
   "teamSize": "",
   "diagrams": [
     "architecture",
-    "walletSequence"
+    "walletSequence",
+    "walletPass"
   ],
   "caseStudy": {
     "summary": "Restaurant POS, loyalty, wallet passes and AI menu search for Gulf retail — a B2B2C platform I designed and built from architecture to production.",
@@ -108,5 +109,10 @@
     "architectureWhy": "TODO(moiez): confirm or rewrite before this is shown anywhere. Draft rationale: NestJS for a modular, typed structure across many domains (POS, loyalty, CMS, AI); Fastify as its HTTP adapter for lower overhead; Prisma for typed queries and versioned migrations on PostgreSQL; BullMQ on Redis to take wallet-pass updates and push notifications off the request path, with retries when Apple/Google calls fail; webhooks so external events (payments, CRM, wallet) drive updates instead of polling.",
     "walletSequence": "TODO(moiez): confirm the wallet pass update sequence diagram (webhook → API → BullMQ job → worker → Apple/Google Wallet pass update → push to the customer's device) matches the real flow."
   },
-  "_todo": "TODO(moiez): fill teamSize (e.g. \"4 engineers\"), caseStudy.measured (how ~64% latency and ~70% support requests were measured, e.g. p95 before/after and over which period), caseStudy.next (what you'd do next), and confirm the _draft notes. Empty fields stay hidden on the site; add the same fields in Arabic under twlm-pos.caseStudy in src/i18n/projects-ar.json."
+  "_todo": "TODO(moiez): fill teamSize (e.g. \"4 engineers\"), caseStudy.measured (how ~64% latency and ~70% support requests were measured, e.g. p95 before/after and over which period), caseStudy.next (what you'd do next), and confirm the _draft notes. Empty fields stay hidden on the site; add the same fields in Arabic under twlm-pos.caseStudy in src/i18n/projects-ar.json.",
+  "walletPass": {
+    "front": "/projects-media/twlm-pos/pass-front.webp",
+    "back": null,
+    "_todo": "TODO(moiez): replace with proper Apple Wallet screenshots (front and back, ~2x size) — set \"front\"/\"back\" to the new public paths and run npm run images. Today the front is cropped from img2 and the back is drawn from the facts in the case study."
+  }
 }

@@ -10,6 +10,7 @@ import ExternalIcon from '../components/ui/ExternalIcon';
 import { Chevron } from '../components/ui/SectionTitle';
 import ArchitectureFigure from '../components/home/ArchitectureFigure';
 import WalletSequence from '../components/project/WalletSequence';
+import WalletPass from '../components/project/WalletPass';
 import { getProjectById } from '../data';
 import { useContent } from '../i18n/content';
 import NotFound from './NotFound';
@@ -21,6 +22,7 @@ import TransitionLink from '../components/ui/TransitionLink';
 const DIAGRAMS = {
   architecture: ArchitectureFigure,
   walletSequence: WalletSequence,
+  walletPass: WalletPass,
 };
 
 const nonEmpty = (v) => (Array.isArray(v) ? v.filter(Boolean).length > 0 : typeof v === 'string' && v.trim() !== '');
@@ -262,7 +264,7 @@ export default function ProjectDetail() {
                       const Diagram = DIAGRAMS[d];
                       return (
                         <Reveal key={d}>
-                          <Diagram />
+                          <Diagram project={project} />
                         </Reveal>
                       );
                     })}
