@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { getCv } from '../utils/cv';
 import { usePreferences } from '../context/Preferences';
 import './cv.css';
+import { transitionLang, transitionTheme } from '../motion/prefsTransitions';
 
 const Cv = () => {
   const { lang, theme, setLang, setTheme } = usePreferences();
@@ -20,28 +21,28 @@ const Cv = () => {
           <button
             type="button"
             className={`cv-btn${lang === 'en' ? ' is-active' : ''}`}
-            onClick={() => setLang('en')}
+            onClick={() => transitionLang(() => setLang('en'))}
           >
             {cv.labels.langEn}
           </button>
           <button
             type="button"
             className={`cv-btn${lang === 'ar' ? ' is-active' : ''}`}
-            onClick={() => setLang('ar')}
+            onClick={() => transitionLang(() => setLang('ar'))}
           >
             {cv.labels.langAr}
           </button>
           <button
             type="button"
             className={`cv-btn${theme === 'light' ? ' is-active' : ''}`}
-            onClick={() => setTheme('light')}
+            onClick={(e) => transitionTheme(() => setTheme('light'), e.currentTarget)}
           >
             {cv.labels.themeLight}
           </button>
           <button
             type="button"
             className={`cv-btn${theme === 'dark' ? ' is-active' : ''}`}
-            onClick={() => setTheme('dark')}
+            onClick={(e) => transitionTheme(() => setTheme('dark'), e.currentTarget)}
           >
             {cv.labels.themeDark}
           </button>

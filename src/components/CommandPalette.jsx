@@ -4,6 +4,7 @@ import { contacts } from '../data';
 import { usePreferences } from '../context/Preferences';
 import { useContent } from '../i18n/content';
 import site from '../data/site.json';
+import { transitionLang, transitionTheme } from '../motion/prefsTransitions';
 
 const Icon = ({ d }) => (
   <svg className="w-4 h-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -80,8 +81,8 @@ const CommandPalette = () => {
     }));
 
     const actions = [
-      { id: 'a-theme', title: theme === 'dark' ? t('cmd.light') : t('cmd.dark'), run: toggleTheme },
-      { id: 'a-lang', title: t('cmd.lang'), run: toggleLang },
+      { id: 'a-theme', title: theme === 'dark' ? t('cmd.light') : t('cmd.dark'), run: () => transitionTheme(toggleTheme) },
+      { id: 'a-lang', title: t('cmd.lang'), run: () => transitionLang(toggleLang) },
       {
         id: 'a-cv',
         title: t('hero.resume'),

@@ -4,6 +4,7 @@ import Logo from './ui/Logo';
 import { usePreferences } from '../context/Preferences';
 import { useContent } from '../i18n/content';
 import { isMac, openCommandPalette } from '../utils/commandPalette';
+import { transitionLang, transitionTheme } from '../motion/prefsTransitions';
 
 const NAV = [
   { id: 'home', key: 'nav.home', link: '/' },
@@ -32,7 +33,7 @@ const PrefsToggles = () => {
       {/* names the language it switches to, in that language: "عربي" / "EN" */}
       <button
         type="button"
-        onClick={toggleLang}
+        onClick={() => transitionLang(toggleLang)}
         className="relative inline-flex h-8 min-w-8 items-center justify-center rounded-full px-2.5 text-[13px] font-semibold text-label-2 ring-1 ring-inset ring-separator hover:text-label hover:bg-fill transition-colors cursor-pointer after:absolute after:-inset-1.5 after:content-['']"
       >
         <span lang={other} className={other === 'ar' ? 'leading-none' : 'tracking-[0.02em]'}>
@@ -40,7 +41,7 @@ const PrefsToggles = () => {
         </span>
         <span className="sr-only">{t('a11y.switchLang')}</span>
       </button>
-      <button type="button" onClick={toggleTheme} className={`${iconBtn} group`}>
+      <button type="button" onClick={(e) => transitionTheme(toggleTheme, e.currentTarget)} className={`${iconBtn} group`}>
         {/* both icons and both labels render; CSS picks one, so prerendered HTML matches any theme */}
         <svg className="w-4 h-4 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden>
           <circle cx="12" cy="12" r="4" />

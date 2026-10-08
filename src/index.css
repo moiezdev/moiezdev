@@ -807,3 +807,30 @@ html[dir='rtl'] .latency-bar {
   --tw-ring-color: var(--color-label-3);
   border-style: dashed;
 }
+
+/* theme: the new theme grows as a circle from the toggle (snapshot clip-path, 400ms) */
+html[data-vt='theme'] header[data-site-header],
+html[data-vt='lang'] header[data-site-header] {
+  view-transition-name: none;
+}
+html[data-vt='theme']::view-transition-old(root),
+html[data-vt='theme']::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+html[data-vt='theme']::view-transition-new(root) {
+  animation: theme-reveal var(--dur-slow) var(--ease-in-out);
+}
+@keyframes theme-reveal {
+  from {
+    clip-path: circle(0 at var(--vt-x) var(--vt-y));
+  }
+  to {
+    clip-path: circle(var(--vt-r) at var(--vt-x) var(--vt-y));
+  }
+}
+/* language: a quick crossfade over the direction flip */
+html[data-vt='lang']::view-transition-old(root),
+html[data-vt='lang']::view-transition-new(root) {
+  animation-duration: var(--dur-base);
+}
