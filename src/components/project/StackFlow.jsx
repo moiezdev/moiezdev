@@ -7,7 +7,7 @@ import { useContent } from '../../i18n/content';
 /** Which layer of a system each technology lives in. Unknown names are skipped. */
 const LAYER_OF = {
   // what the visitor's browser or phone runs
-  React: 'app', NextJs: 'app', 'Next.js': 'app', Vue: 'app', NuxtJs: 'app', Flutter: 'app', HTML5: 'app',
+  React: 'app', 'React Native': 'app', NextJs: 'app', 'Next.js': 'app', Vue: 'app', NuxtJs: 'app', Flutter: 'app', HTML5: 'app',
   // look, components and client state
   TailwindCSS: 'ui', Bootstrap: 'ui', Buefy: 'ui', SCSS: 'ui', CSS3: 'ui', Jquery: 'ui', jQuery: 'ui',
   Vuex: 'ui', 'Redux Toolkit': 'ui', Zustand: 'ui', Pinia: 'ui', 'TanStack Query': 'ui',

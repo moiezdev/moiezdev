@@ -68,6 +68,14 @@
     "Amadeus": {
       "en": "Flight booking engine integration",
       "ar": "تكامل محرك حجز الطيران"
+    },
+    "Laravel": {
+      "en": "Backend APIs for booking platforms",
+      "ar": "واجهات برمجة خلفية لمنصات الحجز"
+    },
+    "React Native": {
+      "en": "Mobile booking app on shared APIs",
+      "ar": "تطبيق حجز للجوال على واجهات مشتركة"
     }
   }
 }

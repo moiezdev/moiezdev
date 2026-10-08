@@ -87,6 +87,7 @@ export const skillIcons = {
   'Context API': { Icon: SiReact, color: '#61DAFB' },
   Pinia: { Icon: SiVuedotjs, color: '#FFD859' },
   Laravel: { Icon: SiLaravel, color: '#FF2D20' },
+  'React Native': { Icon: SiReact, color: '#61DAFB' },
   PHP: { Icon: SiPhp, color: '#777BB4' },
   'SQL Server': { Icon: BiData, color: '#CC2927' },
   'Code Splitting': { Icon: MdSpeed, color: '#ffff00' },

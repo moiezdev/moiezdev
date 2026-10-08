@@ -723,9 +723,8 @@ var twlm_pos_default = {
   },
   _todo: `TODO(moiez): fill teamSize (e.g. "4 engineers"), caseStudy.measured (how ~64% latency and ~70% support requests were measured, e.g. p95 before/after and over which period), caseStudy.next (what you'd do next), and confirm the _draft notes. Empty fields stay hidden on the site; add the same fields in Arabic under twlm-pos.caseStudy in src/i18n/projects-ar.json.`,
   walletPass: {
-    front: "/projects-media/twlm-pos/pass-front.webp",
-    back: null,
-    _todo: 'TODO(moiez): replace with proper Apple Wallet screenshots (front and back, ~2x size) \u2014 set "front"/"back" to the new public paths and run npm run images. Today the front is cropped from img2 and the back is drawn from the facts in the case study.'
+    front: "/projects-media/twlm-pos/pass-apple.webp",
+    back: "/projects-media/twlm-pos/pass-google.webp"
   },
   latency: {
     reduction: 64,
@@ -740,26 +739,28 @@ var twlm_pos_default = {
 var aa_tourism_default = {
   id: "aa-tourism",
   title: "AATourism",
-  subtitle: "Flight Booking & Tour Planning Platform",
+  subtitle: "Full-Stack Flight Booking & Tour Platform \u2014 Web + Mobile",
   description: [
-    "AA Travel & Tourism \u2013 Flight Booking Platform",
+    "AA Travel & Tourism \u2013 Full-Stack Flight Booking Platform",
     [
-      "A flight booking and tour-planning platform integrated with IATA codes, Sabre, and Amadeus for real-time flight data.",
-      "Developed high-quality UI focused on UX, animations, and seamless booking journeys.",
-      "Forms, flight lists, and booking steps stay interactive but simple so users don\u2019t get lost.",
-      "Worked closely with backend teams to deliver reliable, consistent booking experiences on mobile and desktop.",
-      "Kept the visuals clean and consistent with the brand colors and style."
+      "A full-stack flight booking and tour-planning system: a Laravel backend, a Nuxt 2 web app and a React Native mobile app, integrated with Sabre and Amadeus for real-time flight data using IATA codes.",
+      "Built the booking journey \u2014 search forms, flight lists, filters and step-by-step booking \u2014 focused on UX and smooth interactions.",
+      "Forms, flight lists and booking steps stay interactive but simple so users don't get lost.",
+      "Delivered a consistent booking experience across web and mobile, backed by the same Laravel APIs.",
+      "Kept the visuals clean and consistent with the brand colours and style."
     ]
   ],
   technologies: [
     "NuxtJs",
+    "Laravel",
+    "React Native",
+    "Sabre",
+    "Amadeus",
     "Vuex",
     "Buefy",
     "Bootstrap",
-    "JavaScript",
     "SCSS",
-    "Sabre",
-    "Amadeus"
+    "JavaScript"
   ],
   imageUrl: "/projects-media/aa-tourism/cover.webp",
   projectUrl: "http://aatourism.ca/",
@@ -775,27 +776,27 @@ var aa_tourism_default = {
   ],
   group: "client",
   caseStudy: {
-    summary: "A flight booking and tour-planning platform for a Canadian travel agency, wired to Sabre and Amadeus for real-time flight data.",
+    summary: "A full-stack flight booking and tour-planning system for a Canadian travel agency \u2014 Laravel backend, Nuxt 2 web app and React Native mobile app, wired to Sabre and Amadeus for real-time flight data.",
     problem: [
-      "Travellers needed to search, compare and book real flights and tours without getting lost in a complex booking journey.",
-      "Flight data had to come live from global distribution systems (Sabre, Amadeus) using IATA codes, on desktop and mobile."
+      "Travellers needed to search, compare and book real flights and tours \u2014 on the web and on their phones \u2014 without getting lost in a complex booking journey.",
+      "Flight data had to come live from global distribution systems (Sabre, Amadeus) using IATA codes, through one backend serving both web and mobile."
     ],
     role: [
-      "Frontend lead at Creative Inter Tech for the B2B travel platforms (AA Tourism, City Arrivals).",
-      "Built the booking journey in Nuxt: search forms, flight lists, filters and step-by-step booking.",
-      "Worked with the backend team so live GDS data reached the UI reliably and consistently."
+      "At Creative Inter Tech, on the B2B travel platforms (AA Tourism, City Arrivals).",
+      "Built the booking journey in Nuxt 2: search forms, flight lists, filters and step-by-step booking.",
+      "Worked across the stack so live GDS data flowed from the Laravel APIs to the web and React Native apps reliably and consistently."
     ],
     architecture: [
-      "Nuxt (Vue) frontend with Vuex for search and booking state.",
-      "Buefy and Bootstrap components on a custom SCSS theme in the brand's colours.",
-      "Flight search and availability through Sabre and Amadeus, mapped by IATA codes."
+      "Laravel backend exposing the booking APIs and integrating Sabre and Amadeus (flight search and availability, mapped by IATA codes).",
+      "Nuxt 2 (Vue) web app with Vuex for search and booking state; Buefy and Bootstrap components on a custom SCSS theme.",
+      "React Native mobile app on the same Laravel APIs, so web and mobile share one booking backend."
     ],
     challenges: [
       "Keeping a multi-step booking flow simple while showing a lot of live flight data.",
-      "Consistent behaviour across mobile and desktop with real-time results."
+      "One backend and consistent behaviour across web and mobile with real-time results."
     ],
     results: [
-      "Live platform at aatourism.ca with real-time flight search and booking.",
+      "Live platform at aatourism.ca with real-time flight search and booking on web and mobile.",
       "Part of the B2B travel platforms serving 10K+ monthly users."
     ],
     next: [],
