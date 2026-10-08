@@ -1,4 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { DUR } from '../motion/tokens';
+import { prefersReducedMotion } from '../motion/reducedMotion';
 import { useNavigate } from 'react-router-dom';
 import { contacts } from '../data';
 import { usePreferences } from '../context/Preferences';
@@ -21,7 +23,33 @@ const ICONS = {
 
 /** Spotlight-style command palette. Opens with ⌘K / Ctrl+K. */
 const CommandPalette = () => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpenState] = useState(false);
+  const [closing, setClosing] = useState(false);
+  const openRef = useRef(false);
+  const closeTimer = useRef(0);
+  const highlightRef = useRef(null);
+  // opening is immediate; closing plays a short exit (--dur-fast) before unmounting
+  const setOpen = useCallback((next) => {
+    const want = typeof next === 'function' ? next(openRef.current) : next;
+    clearTimeout(closeTimer.current);
+    if (want) {
+      openRef.current = true;
+      setClosing(false);
+      setOpenState(true);
+      return;
+    }
+    if (!openRef.current) return;
+    openRef.current = false;
+    if (prefersReducedMotion()) {
+      setOpenState(false);
+      return;
+    }
+    setClosing(true);
+    closeTimer.current = setTimeout(() => {
+      setClosing(false);
+      setOpenState(false);
+    }, DUR.fast);
+  }, []);
   const [query, setQuery] = useState('');
   const [active, setActive] = useState(0);
   const [copied, setCopied] = useState(false);
@@ -45,7 +73,7 @@ const CommandPalette = () => {
       window.removeEventListener('keydown', onKey);
       window.removeEventListener('open-command-palette', onOpen);
     };
-  }, []);
+  }, [setOpen]);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -81,6 +109,7 @@ const CommandPalette = () => {
     }));
 
     const actions = [
+      { id: 'a-twlm', title: t('cmd.twlm'), hint: 'TWLM POS · NestJS · BullMQ', run: go('/works/twlm-pos') },
       { id: 'a-theme', title: theme === 'dark' ? t('cmd.light') : t('cmd.dark'), run: () => transitionTheme(toggleTheme) },
       { id: 'a-lang', title: t('cmd.lang'), run: () => transitionLang(toggleLang) },
       {
@@ -92,6 +121,12 @@ const CommandPalette = () => {
           a.download = site.cv.fileName;
           a.click();
         },
+      },
+      {
+        id: 'a-whatsapp',
+        title: t('cmd.whatsapp'),
+        hint: contacts.find((c) => c.platform === 'WhatsApp')?.handle,
+        run: () => window.open(contacts.find((c) => c.platform === 'WhatsApp')?.url, '_blank', 'noopener'),
       },
       {
         id: 'a-email',
@@ -131,6 +166,20 @@ const CommandPalette = () => {
     listRef.current?.querySelector(`[data-index="${active}"]`)?.scrollIntoView({ block: 'nearest' });
   }, [active]);
 
+  // one highlight slides to the active row (transform), instead of each row repainting
+  useLayoutEffect(() => {
+    const row = listRef.current?.querySelector(`[data-index="${active}"]`);
+    const hl = highlightRef.current;
+    if (!hl) return;
+    if (!row) {
+      hl.style.opacity = '0';
+      return;
+    }
+    hl.style.opacity = '1';
+    hl.style.height = `${row.offsetHeight}px`;
+    hl.style.transform = `translateY(${row.offsetTop}px)`;
+  }, [active, results, open]);
+
   const run = (item) => {
     if (!item) return;
     item.run();
@@ -151,13 +200,14 @@ const CommandPalette = () => {
   };
 
   if (!open) return null;
+  const state = closing ? 'closing' : 'open';
 
   let lastGroup = null;
 
   return (
     <div className="fixed inset-0 z-[60] flex items-start justify-center px-4 pt-[12vh]" role="dialog" aria-modal="true" aria-label={t('cmd.placeholder')}>
-      <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px] page-in" onClick={() => setOpen(false)} />
-      <div className="relative w-full max-w-[620px] overflow-hidden rounded-[22px] glass ring-1 ring-separator shadow-[0_32px_80px_rgba(0,0,0,0.35)] page-in" onKeyDown={onKeyDown}>
+      <div className="palette-backdrop absolute inset-0 bg-black/30 backdrop-blur-[2px]" data-state={state} onClick={() => setOpen(false)} />
+      <div className="palette-panel relative w-full max-w-[620px] overflow-hidden rounded-[22px] glass ring-1 ring-separator shadow-[0_32px_80px_rgba(0,0,0,0.35)]" data-state={state} onKeyDown={onKeyDown}>
         <div className="flex items-center gap-3 px-5 border-b border-separator">
           <svg className="w-5 h-5 text-label-3 shrink-0" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden>
             <circle cx="9" cy="9" r="6" />
@@ -174,7 +224,8 @@ const CommandPalette = () => {
           <kbd className="text-[11px] font-medium text-label-3 rounded-md ring-1 ring-separator px-1.5 py-0.5">esc</kbd>
         </div>
 
-        <ul ref={listRef} className="max-h-[52vh] overflow-y-auto p-2" role="listbox">
+        <ul ref={listRef} className="relative max-h-[52vh] overflow-y-auto p-2" role="listbox">
+          <span ref={highlightRef} className="palette-highlight" aria-hidden />
           {results.length === 0 && <li className="px-4 py-10 text-center text-label-2">{t('cmd.empty')}</li>}
           {results.map((item, index) => {
             const header = item.group !== lastGroup ? item.group : null;
@@ -190,8 +241,8 @@ const CommandPalette = () => {
                   aria-selected={index === active}
                   onMouseMove={() => setActive(index)}
                   onClick={() => run(item)}
-                  className={`w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-start transition-colors ${
-                    index === active ? 'bg-accent text-on-accent' : 'text-label'
+                  className={`relative w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-start transition-colors duration-(--dur-fast) ${
+                    index === active ? 'text-on-accent' : 'text-label'
                   }`}
                 >
                   <span className={`inline-flex size-7 shrink-0 items-center justify-center rounded-lg ${index === active ? 'bg-[color-mix(in_srgb,var(--color-on-accent)_16%,transparent)]' : 'bg-fill text-label-2'}`}>

@@ -271,13 +271,15 @@
       "links": "Links",
       "light": "Switch to light appearance",
       "dark": "Switch to dark appearance",
-      "lang": "التبديل إلى العربية",
+      "lang": "Switch to Arabic · عربي",
       "copyEmail": "Copy email address",
       "copied": "Copied to clipboard ✓",
       "empty": "No results. Try “React” or “POS”.",
       "footer": "Built like a product — try it anywhere with ⌘K",
       "navigate": "navigate",
-      "open": "open"
+      "open": "open",
+      "twlm": "Open TWLM case study",
+      "whatsapp": "Contact via WhatsApp"
     },
     "process": {
       "eyebrow": "How I build",
@@ -772,13 +774,15 @@
       "links": "روابط",
       "light": "التبديل للمظهر الفاتح",
       "dark": "التبديل للمظهر الداكن",
-      "lang": "Switch to English",
+      "lang": "التبديل إلى الإنجليزية · English",
       "copyEmail": "نسخ البريد الإلكتروني",
       "copied": "تم النسخ ✓",
       "empty": "لا نتائج. جرّب «React» أو «POS».",
       "footer": "مبني كمنتج — افتحه من أي مكان بـ ⌘K",
       "navigate": "تنقل",
-      "open": "فتح"
+      "open": "فتح",
+      "twlm": "افتح دراسة حالة TWLM",
+      "whatsapp": "تواصل عبر واتساب"
     },
     "process": {
       "eyebrow": "كيف أبني",
