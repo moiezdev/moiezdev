@@ -1,24 +1,21 @@
 import { useEffect, useRef } from 'react';
 
-const INTERACTIVE = 'a, button, [role="button"], label[for], select, summary';
-const NATIVE = 'input:not([type="button"]):not([type="submit"]):not([type="checkbox"]):not([type="radio"]), textarea, select, [contenteditable="true"], [data-native-cursor]';
-const TEXT = 'p, h1, h2, h3, h4, h5, h6, li, blockquote, dd, dt, figcaption, td, th, pre, code';
+const INTERACTIVE = 'a, button, [role="button"], label[for], select, summary, [data-cursor]';
+const TEXT_INPUT = 'input:not([type="button"]):not([type="submit"]):not([type="checkbox"]):not([type="radio"]), textarea, [contenteditable="true"]';
+// inside these (the chat panel) the native pointer is used and the custom one hides
+const NATIVE = '[data-native-cursor]';
 
-const RING = 36; // px, unscaled diameter
-const TRAIL_MS = 16; // ring time constant: lags ~16ms in steady motion; ~95% caught up after 50ms
-const SCALE = { default: 1, hidden: 1, link: 1.4, label: 2.4 };
+const lerp = (a, b, t) => a + (b - a) * t;
 
 /**
- * Custom pointer for fine pointers only.
- * - The dot sits exactly on the pointer (written every frame, no smoothing).
- * - A hairline ring trails it by at most ~80ms, frame-rate independent.
- * - States: text → dot only; links/buttons → ring ×1.4; elements with
- *   `data-cursor-label` (project cards, case-study images) → larger ring with
- *   the label; inputs, textareas and anything inside `[data-native-cursor]`
- *   (the chat panel) → custom cursor hidden, native cursor shown.
- * - Off on touch/coarse pointers and with reduced motion; the native cursor is
- *   only hidden while this one is active. The rAF loop idles when the ring has
- *   settled and stops while the tab is hidden.
+ * iPadOS-style adaptive pointer.
+ * - A dot tracks the mouse; a soft ring trails behind it.
+ * - Over buttons and links the ring morphs into the element's own shape and
+ *   the element leans slightly toward the pointer.
+ * - Elements with `data-cursor-label` turn the ring into a labelled bubble.
+ * - The chat panel ([data-native-cursor]) and text fields use the native pointer.
+ * Disabled on touch devices and when the user prefers reduced motion; the loop
+ * stops while the tab is hidden.
  */
 const Cursor = () => {
   const ringRef = useRef(null);
@@ -28,129 +25,171 @@ const Cursor = () => {
   useEffect(() => {
     const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (!fine.matches || reduce.matches) return undefined;
+
     const ring = ringRef.current;
     const dot = dotRef.current;
     const label = labelRef.current;
     const root = document.documentElement;
+    root.classList.add('has-custom-cursor');
 
-    const mouse = { x: 0, y: 0 };
-    const pos = { x: 0, y: 0, s: 1 };
-    let mode = 'default'; // default | text | link | label | native
-    let seen = false;
+    const mouse = { x: -100, y: -100 };
+    const pos = { x: -100, y: -100, w: 36, h: 36 };
+    let target = null; // { el, mode: 'shape' | 'label' }
+    let hidden = true;
+    let pressed = false;
     let raf = 0;
-    let last = 0;
-    let enabled = false;
 
-    const paint = (now) => {
-      raf = 0;
-      const dt = last ? Math.min(now - last, 64) : 16;
-      last = now;
-      const k = 1 - Math.exp(-dt / TRAIL_MS);
-      pos.x += (mouse.x - pos.x) * k;
-      pos.y += (mouse.y - pos.y) * k;
-      const target = SCALE[mode] ?? 1;
-      pos.s += (target - pos.s) * (1 - Math.exp(-dt / 60));
-
-      dot.style.transform = `translate3d(${mouse.x}px, ${mouse.y}px, 0)`;
-      ring.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0) scale(${pos.s})`;
-      label.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0)`;
-
-      const settled = Math.abs(mouse.x - pos.x) < 0.1 && Math.abs(mouse.y - pos.y) < 0.1 && Math.abs(target - pos.s) < 0.002;
-      if (!settled && document.visibilityState !== 'hidden') raf = requestAnimationFrame(paint);
-      else last = 0;
-    };
-    const wake = () => {
-      if (!raf && enabled && document.visibilityState !== 'hidden') raf = requestAnimationFrame(paint);
+    const setVisible = (v) => {
+      if (hidden === !v) return;
+      hidden = !v;
+      ring.style.opacity = v ? '1' : '0';
+      dot.style.opacity = v && (!target || target.mode === 'none') ? '1' : '0';
     };
 
-    const show = () => {
-      const custom = seen && mode !== 'native';
-      root.classList.toggle('has-custom-cursor', custom);
-      dot.style.opacity = custom ? '1' : '0';
-      ring.style.opacity = custom && mode !== 'text' ? '1' : '0';
-      label.style.opacity = custom && mode === 'label' ? '1' : '0';
+    const release = () => {
+      if (target?.el && target.mode === 'shape' && target.lean) target.el.style.translate = '';
+      target = null;
+      ring.dataset.mode = 'default';
+      ring.style.borderRadius = '999px';
+      label.textContent = '';
+      dot.style.opacity = hidden ? '0' : '1';
     };
 
     const resolve = (el) => {
-      let next = 'default';
-      let text = '';
-      if (el instanceof Element) {
-        const labelled = el.closest('[data-cursor-label]');
-        if (el.closest(NATIVE)) next = 'native';
-        else if (labelled) {
-          next = 'label';
-          text = labelled.getAttribute('data-cursor-label');
-        } else if (el.closest(INTERACTIVE)) next = 'link';
-        else if (el.closest(TEXT)) next = 'text';
+      if (!el || !(el instanceof Element)) return release();
+      if (el.closest(TEXT_INPUT) || el.closest(NATIVE)) {
+        release();
+        ring.dataset.mode = 'text';
+        dot.style.opacity = '0';
+        return undefined;
       }
-      if (next === mode && text === label.textContent) return;
-      mode = next;
-      label.textContent = text;
-      show();
-      wake();
+      const hit = el.closest(INTERACTIVE);
+      if (!hit || hit.hasAttribute('disabled')) return release();
+      if (target?.el === hit) return undefined;
+      release();
+
+      const text = hit.getAttribute('data-cursor-label');
+      if (text) {
+        target = { el: hit, mode: 'label' };
+        ring.dataset.mode = 'label';
+        label.textContent = text;
+        dot.style.opacity = '0';
+        return undefined;
+      }
+
+      const rect = hit.getBoundingClientRect();
+      if (rect.width > 420 || rect.height > 140) {
+        ring.dataset.mode = 'hover';
+        target = { el: hit, mode: 'hover' };
+        return undefined;
+      }
+      const lean = getComputedStyle(hit).translate === 'none';
+      target = { el: hit, mode: 'shape', lean };
+      ring.dataset.mode = 'shape';
+      const radius = parseFloat(getComputedStyle(hit).borderTopLeftRadius) || 10;
+      ring.style.borderRadius = `${Math.min(radius + 4, 999)}px`;
+      dot.style.opacity = '0';
+      return undefined;
     };
 
     const onMove = (e) => {
       mouse.x = e.clientX;
       mouse.y = e.clientY;
-      if (!seen) {
-        seen = true;
-        pos.x = mouse.x;
-        pos.y = mouse.y;
-        resolve(e.target);
-        show();
-      }
-      wake();
+      setVisible(true);
     };
     const onOver = (e) => resolve(e.target);
-    const onLeave = () => {
-      seen = false;
-      show();
+    const onDown = () => {
+      pressed = true;
     };
-    const onScroll = () => seen && resolve(document.elementFromPoint(mouse.x, mouse.y));
-    const onVisibility = () => (document.visibilityState === 'hidden' ? cancelAnimationFrame(raf) || (raf = 0) : wake());
+    const onUp = () => {
+      pressed = false;
+    };
+    const onLeave = () => setVisible(false);
+    const onScroll = () => resolve(document.elementFromPoint(mouse.x, mouse.y));
 
-    const enable = () => {
-      if (enabled) return;
-      enabled = true;
-      window.addEventListener('mousemove', onMove, { passive: true });
-      window.addEventListener('scroll', onScroll, { passive: true });
-      document.addEventListener('mouseover', onOver);
-      root.addEventListener('mouseleave', onLeave);
-      document.addEventListener('visibilitychange', onVisibility);
+    const tick = () => {
+      let tx = mouse.x;
+      let ty = mouse.y;
+      let tw = 36;
+      let th = 36;
+
+      if (target?.el && !target.el.isConnected) release();
+
+      if (target?.mode === 'shape') {
+        const r = target.el.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        const dx = mouse.x - cx;
+        const dy = mouse.y - cy;
+        // element leans toward the pointer, ring follows a bit further
+        if (target.lean) target.el.style.translate = `${dx * 0.12}px ${dy * 0.18}px`;
+        tx = cx + dx * 0.2;
+        ty = cy + dy * 0.25;
+        tw = r.width + 14;
+        th = r.height + 10;
+      } else if (target?.mode === 'label') {
+        tw = 76;
+        th = 76;
+      } else if (target?.mode === 'hover') {
+        tw = 52;
+        th = 52;
+      } else if (ring.dataset.mode === 'text') {
+        tw = 3;
+        th = 26;
+      }
+
+      if (pressed) {
+        tw *= 0.9;
+        th *= 0.9;
+      }
+
+      const k = target?.mode === 'shape' ? 0.28 : 0.2;
+      pos.x = lerp(pos.x, tx, k);
+      pos.y = lerp(pos.y, ty, k);
+      pos.w = lerp(pos.w, tw, 0.25);
+      pos.h = lerp(pos.h, th, 0.25);
+
+      ring.style.width = `${pos.w}px`;
+      ring.style.height = `${pos.h}px`;
+      ring.style.transform = `translate3d(${pos.x - pos.w / 2}px, ${pos.y - pos.h / 2}px, 0)`;
+      dot.style.transform = `translate3d(${mouse.x - 3}px, ${mouse.y - 3}px, 0) scale(${pressed ? 0.6 : 1})`;
+      // stop while the tab is hidden; resumes on visibilitychange
+      raf = document.visibilityState === 'hidden' ? 0 : requestAnimationFrame(tick);
     };
-    const disable = () => {
-      if (!enabled) return;
-      enabled = false;
-      seen = false;
+    raf = requestAnimationFrame(tick);
+    const onVisibility = () => {
+      if (document.visibilityState !== 'hidden' && !raf) raf = requestAnimationFrame(tick);
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+
+    window.addEventListener('mousemove', onMove, { passive: true });
+    window.addEventListener('mousedown', onDown);
+    window.addEventListener('mouseup', onUp);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    document.addEventListener('mouseover', onOver);
+    document.documentElement.addEventListener('mouseleave', onLeave);
+
+    return () => {
       cancelAnimationFrame(raf);
-      raf = 0;
-      show(); // removes has-custom-cursor: native cursor back
+      document.removeEventListener('visibilitychange', onVisibility);
+      release();
+      root.classList.remove('has-custom-cursor');
       window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mousedown', onDown);
+      window.removeEventListener('mouseup', onUp);
       window.removeEventListener('scroll', onScroll);
       document.removeEventListener('mouseover', onOver);
-      root.removeEventListener('mouseleave', onLeave);
-      document.removeEventListener('visibilitychange', onVisibility);
-    };
-    const sync = () => (fine.matches && !reduce.matches ? enable() : disable());
-
-    sync();
-    fine.addEventListener('change', sync);
-    reduce.addEventListener('change', sync);
-    return () => {
-      fine.removeEventListener('change', sync);
-      reduce.removeEventListener('change', sync);
-      disable();
+      document.documentElement.removeEventListener('mouseleave', onLeave);
     };
   }, []);
 
   return (
     <>
-      <svg ref={ringRef} className="cursor-ring" width={RING} height={RING} viewBox={`0 0 ${RING} ${RING}`} aria-hidden>
-        <circle cx={RING / 2} cy={RING / 2} r={RING / 2 - 1} />
-      </svg>
-      <span ref={labelRef} className="cursor-label" aria-hidden />
-      <span ref={dotRef} className="cursor-dot" aria-hidden />
+      <div ref={ringRef} className="cursor-ring" data-mode="default" aria-hidden>
+        <span ref={labelRef} className="cursor-label" />
+      </div>
+      <div ref={dotRef} className="cursor-dot" aria-hidden />
     </>
   );
 };

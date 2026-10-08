@@ -104,7 +104,7 @@ body {
   letter-spacing: -0.022em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.4s var(--ease-apple);
+  transition: background-color 0.4s var(--ease-spring);
 }
 
 html[lang='ar'],
@@ -145,7 +145,7 @@ html:not([lang='ar']) [lang='ar'] {
   font-size: 15px;
   font-weight: 600;
   transform: translateY(-150%);
-  transition: transform 0.2s var(--ease-apple);
+  transition: transform 0.2s var(--ease-spring);
 }
 .skip-link:focus-visible,
 .skip-link:focus {
@@ -412,7 +412,7 @@ html[dir='rtl'] .surface-hover:is(:hover, :has(:focus-visible)) .link-arrow svg 
   pointer-events: none;
   transform-origin: top left;
   transition:
-    transform 0.2s var(--ease-apple),
+    transform 0.2s var(--ease-spring),
     color 0.2s;
 }
 html[dir='rtl'] .field label {
@@ -531,15 +531,29 @@ textarea:-webkit-autofill {
   }
 }
 
-/* ---------- Custom pointer (fine pointers only; see ui/Cursor.jsx) ---------- */
-/* the native cursor is hidden only while the custom one is active */
+/* ---------- Adaptive pointer ---------- */
 .has-custom-cursor,
 .has-custom-cursor * {
   cursor: none !important;
 }
+.has-custom-cursor input:not([type='button']):not([type='submit']),
+.has-custom-cursor textarea,
+.has-custom-cursor [contenteditable='true'] {
+  cursor: text !important;
+}
+/* the chat panel keeps the native pointer */
+.has-custom-cursor [data-native-cursor],
+.has-custom-cursor [data-native-cursor] * {
+  cursor: auto !important;
+}
+.has-custom-cursor [data-native-cursor] :is(button, a) {
+  cursor: pointer !important;
+}
+.has-custom-cursor [data-native-cursor] :is(input, textarea) {
+  cursor: text !important;
+}
 .cursor-ring,
-.cursor-dot,
-.cursor-label {
+.cursor-dot {
   position: fixed;
   top: 0;
   left: 0;
@@ -547,43 +561,56 @@ textarea:-webkit-autofill {
   z-index: 10000;
   opacity: 0;
   will-change: transform;
-  transition: opacity var(--dur-fast) var(--ease-out);
 }
 .cursor-dot {
   width: 6px;
   height: 6px;
-  margin: -3px 0 0 -3px;
   border-radius: 999px;
   background: var(--color-label);
+  transition:
+    opacity 0.2s,
+    transform 0.05s linear;
 }
 .cursor-ring {
-  margin: -18px 0 0 -18px;
-  overflow: visible;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--color-label) 8%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-label) 14%, transparent);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  transition:
+    opacity 0.25s,
+    background-color 0.3s var(--ease-spring),
+    box-shadow 0.3s var(--ease-spring),
+    border-radius 0.3s var(--ease-spring);
 }
-/* transparent fill, 1px hairline at any scale */
-.cursor-ring circle {
-  fill: none;
-  stroke: rgba(0, 0, 0, 0.25);
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
+.cursor-ring[data-mode='shape'] {
+  background: color-mix(in srgb, var(--color-label) 7%, transparent);
+  box-shadow: none;
+  backdrop-filter: none;
 }
-html[data-theme='dark'] .cursor-ring circle {
-  stroke: rgba(255, 255, 255, 0.3);
+.cursor-ring[data-mode='hover'] {
+  background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-accent) 35%, transparent);
+}
+.cursor-ring[data-mode='label'] {
+  background: var(--color-accent);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  backdrop-filter: none;
+}
+.cursor-ring[data-mode='text'] {
+  opacity: 0 !important;
 }
 .cursor-label {
-  translate: -50% -50%;
-  padding: 3px 9px;
-  border-radius: 999px;
-  font-size: 12px;
+  color: var(--color-on-accent);
+  font-size: 13px;
   font-weight: 600;
+  letter-spacing: -0.01em;
   white-space: nowrap;
-  color: var(--color-label);
-  background: color-mix(in srgb, var(--color-bg) 72%, transparent);
-  -webkit-backdrop-filter: blur(12px) saturate(1.4);
-  backdrop-filter: blur(12px) saturate(1.4);
-}
-.cursor-label:empty {
-  display: none;
 }
 /* ---------- Engineering visuals ---------- */
 .blueprint {
