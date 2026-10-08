@@ -543,37 +543,6 @@ html[data-theme='dark'] .cursor-ring circle {
   background-position: -9px -9px;
 }
 
-.wire-pulse {
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  border-radius: 999px;
-  background: var(--color-accent);
-  box-shadow: 0 0 10px 2px color-mix(in srgb, var(--color-accent) 60%, transparent);
-  left: calc(50% - 3px);
-  animation: wire-v 2.4s var(--ease-apple) infinite;
-}
-@keyframes wire-v {
-  0% { top: 0; opacity: 0; }
-  15%, 85% { opacity: 1; }
-  100% { top: calc(100% - 6px); opacity: 0; }
-}
-@keyframes wire-h {
-  0% { left: 0; opacity: 0; }
-  15%, 85% { opacity: 1; }
-  100% { left: calc(100% - 6px); opacity: 0; }
-}
-/* horizontal only in the diagram's four-column layout (container ≥ 48rem) */
-@container (min-width: 48rem) {
-  .wire-pulse {
-    top: calc(50% - 3px);
-    animation-name: wire-h;
-  }
-  html[dir='rtl'] .wire-pulse {
-    animation-direction: reverse;
-  }
-}
-
 /* Xcode palettes */
 .code-window {
   --tok-plain: #1d1d1f;
@@ -605,13 +574,6 @@ html[data-theme='dark'] .code-window {
 .tok-t { color: var(--tok-t); }
 .tok-c { color: var(--tok-c); font-style: italic; }
 .tok-ln { color: var(--tok-ln); }
-@media (prefers-reduced-motion: reduce) {
-  .wire-pulse {
-    animation: none;
-    display: none;
-  }
-}
-
 /* Fade the bottom of cut-out portraits into the stage */
 .portrait-fade {
   -webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent 98%);
@@ -655,4 +617,77 @@ html[data-theme='dark'] .code-window {
   visibility: hidden;
   opacity: 0;
   pointer-events: none;
+}
+
+/* ---------- Architecture explainer (home + TWLM case study) ---------- */
+.seg-thumb {
+  position: absolute;
+  inset-block: 4px;
+  inset-inline-start: 4px;
+  width: calc((100% - 8px) / var(--seg-n));
+  border-radius: 999px;
+  background: var(--color-surface);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 0 0.5px rgba(0, 0, 0, 0.04);
+  transform: translateX(calc(var(--seg-i) * 100%));
+  transition: transform var(--dur-base) var(--ease-spring);
+}
+html[dir='rtl'] .seg-thumb {
+  transform: translateX(calc(var(--seg-i) * -100%));
+}
+.arch-node {
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-spring);
+}
+.arch-node:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+.arch-node[data-state='dim'] {
+  opacity: 0.4;
+}
+.arch-node[data-state='on'],
+.arch-node[data-state='current'] {
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 0 1.5px var(--color-label),
+    0 12px 28px rgba(0, 0, 0, 0.14);
+}
+.arch-node[data-state='lit'] {
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-label) 55%, transparent);
+}
+/* the drawn-in highlight (stroke-dashoffset on a pathLength=1 path) */
+.arch-edge-lit {
+  transition: stroke-dashoffset var(--dur-slow) var(--ease-in-out);
+}
+.arch-packet {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--color-label);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-label) 18%, transparent);
+  offset-anchor: center;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+.arch-tip {
+  animation: tip-in var(--dur-fast) var(--ease-out) both;
+}
+@keyframes tip-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .arch-packet {
+    display: none;
+  }
+  .arch-tip {
+    animation: none;
+  }
 }

@@ -416,6 +416,13 @@
     "cursor": {
       "view": "View ↗",
       "flip": "Flip pass"
+    },
+    "explainer": {
+      "label": "Scenario",
+      "simplified": "Simplified flow",
+      "replay": "Replay",
+      "step": "Step {{n}} of {{total}}",
+      "why": "Why"
     }
   },
   "ar": {
@@ -839,6 +846,13 @@
     "cursor": {
       "view": "عرض ↖",
       "flip": "اقلب البطاقة"
+    },
+    "explainer": {
+      "label": "السيناريو",
+      "simplified": "تدفق مبسّط",
+      "replay": "إعادة",
+      "step": "الخطوة {{n}} من {{total}}",
+      "why": "لماذا"
     }
   }
 }

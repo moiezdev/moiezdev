@@ -1,0 +1,297 @@
+{
+  "_todo": "TODO(moiez): (1) fill each node's \"why\" (en/ar) with why that technology was chosen; tooltips show it only when set. (2) Confirm the three scenarios below match the real flows (they are simplified and labelled as such on the page).",
+  "nodes": {
+    "web": {
+      "role": {
+        "en": "React web apps (some in Vue) for the back office and management.",
+        "ar": "تطبيقات ويب بـ React (وبعضها بـ Vue) للإدارة والتشغيل."
+      },
+      "why": {
+        "en": "",
+        "ar": ""
+      }
+    },
+    "store": {
+      "role": {
+        "en": "Next.js storefronts and the customizable e-menu where customers order online.",
+        "ar": "واجهات متاجر بـ Next.js وقائمة إلكترونية قابلة للتخصيص يطلب منها العملاء عبر الإنترنت."
+      },
+      "why": {
+        "en": "",
+        "ar": ""
+      }
+    },
+    "mobile": {
+      "role": {
+        "en": "Flutter app for storefront management and online ordering.",
+        "ar": "تطبيق Flutter لإدارة واجهات المتاجر والطلب عبر الإنترنت."
+      },
+      "why": {
+        "en": "",
+        "ar": ""
+      }
+    },
+    "terminal": {
+      "role": {
+        "en": "In-store cashier POS.",
+        "ar": "نقاط بيع الكاشير داخل الفروع."
+      },
+      "why": {
+        "en": "",
+        "ar": ""
+      }
+    },
+    "auth": {
+      "role": {
+        "en": "RBAC with OAuth2/JWT and SSO for multi-role access.",
+        "ar": "صلاحيات RBAC مع OAuth2/JWT وSSO للوصول متعدد الأدوار."
+      },
+      "why": {
+        "en": "",
+        "ar": ""
+      }
+    },
+    "gateway": {
+      "role": {
+        "en": "NestJS on Fastify: one REST API for every client.",
+        "ar": "NestJS على Fastify: واجهة REST واحدة لكل التطبيقات."
+      },
+      "why": {
+        "en": "",
+        "ar": ""
+      }
+    },
+    "events": {
+      "role": {
+        "en": "Webhook-driven, event-based workflows for wallet updates and notifications.",
+        "ar": "تدفقات قائمة على الأحداث وويب هوك لتحديثات المحافظ والإشعارات."
+      },
+      "why": {
+        "en": "",
+        "ar": ""
+      }
+    },
+    "orders": {
+      "role": {
+        "en": "POS and orders: Gulf tax integration and inventory.",
+        "ar": "نقاط البيع والطلبات: تكامل ضريبة الخليج والمخزون."
+      },
+      "why": {
+        "en": "",
+        "ar": ""
+      }
+    },
+    "loyalty": {
+      "role": {
+        "en": "Points, loyalty passes, gift cards and discount coupons.",
+        "ar": "النقاط وبطاقات الولاء وبطاقات الهدايا وقسائم الخصم."
+      },
+      "why": {
+        "en": "",
+        "ar": ""
+      }
+    },
+    "cms": {
+      "role": {
+        "en": "Block-based page builder for menus and e-commerce storefronts.",
+        "ar": "منشئ صفحات قائم على الكتل للقوائم والمتاجر الإلكترونية."
+      },
+      "why": {
+        "en": "",
+        "ar": ""
+      }
+    },
+    "ai": {
+      "role": {
+        "en": "Smart menu search and AI-based analysis of restaurant data.",
+        "ar": "بحث ذكي في القوائم وتحليل بيانات المطاعم بالذكاء الاصطناعي."
+      },
+      "why": {
+        "en": "",
+        "ar": ""
+      }
+    },
+    "pg": {
+      "role": {
+        "en": "PostgreSQL with Prisma ORM: schema migrations and query optimization.",
+        "ar": "PostgreSQL مع Prisma ORM: ترحيل المخططات وتحسين الاستعلامات."
+      },
+      "why": {
+        "en": "",
+        "ar": ""
+      }
+    },
+    "redis": {
+      "role": {
+        "en": "Redis-backed BullMQ workers process notification and wallet-update jobs asynchronously.",
+        "ar": "عمّال BullMQ مدعومون بـ Redis يعالجون مهام الإشعارات وتحديث المحافظ بشكل غير متزامن."
+      },
+      "why": {
+        "en": "",
+        "ar": ""
+      }
+    },
+    "pay": {
+      "role": {
+        "en": "Gulf payment gateways: MyFatoorah and Moyasar.",
+        "ar": "بوابات الدفع الخليجية: MyFatoorah وMoyasar."
+      },
+      "why": {
+        "en": "",
+        "ar": ""
+      }
+    },
+    "wallet": {
+      "role": {
+        "en": "Apple Wallet and Google Wallet passes with real-time updates.",
+        "ar": "بطاقات Apple Wallet وGoogle Wallet مع تحديثات فورية."
+      },
+      "why": {
+        "en": "",
+        "ar": ""
+      }
+    },
+    "llm": {
+      "role": {
+        "en": "OpenRouter AI (DeepSeek).",
+        "ar": "OpenRouter AI (DeepSeek)."
+      },
+      "why": {
+        "en": "",
+        "ar": ""
+      }
+    }
+  },
+  "scenarios": [
+    {
+      "id": "order",
+      "label": {
+        "en": "Place an order",
+        "ar": "إنشاء طلب"
+      },
+      "steps": [
+        {
+          "from": "terminal",
+          "to": "gateway",
+          "caption": {
+            "en": "The POS terminal sends the order to the NestJS API",
+            "ar": "نقطة البيع ترسل الطلب إلى واجهة NestJS"
+          }
+        },
+        {
+          "from": "gateway",
+          "to": "auth",
+          "caption": {
+            "en": "JWT verified and role checked (RBAC)",
+            "ar": "التحقق من JWT والصلاحيات (RBAC)"
+          }
+        },
+        {
+          "from": "gateway",
+          "to": "orders",
+          "caption": {
+            "en": "The POS service applies Gulf tax and inventory",
+            "ar": "خدمة نقاط البيع تطبّق ضريبة الخليج والمخزون"
+          }
+        },
+        {
+          "from": "orders",
+          "to": "pay",
+          "caption": {
+            "en": "Payment through MyFatoorah or Moyasar",
+            "ar": "الدفع عبر MyFatoorah أو Moyasar"
+          }
+        },
+        {
+          "from": "orders",
+          "to": "pg",
+          "caption": {
+            "en": "Order saved in PostgreSQL via Prisma",
+            "ar": "حفظ الطلب في PostgreSQL عبر Prisma"
+          }
+        }
+      ]
+    },
+    {
+      "id": "wallet",
+      "label": {
+        "en": "Update wallet pass",
+        "ar": "تحديث بطاقة المحفظة"
+      },
+      "steps": [
+        {
+          "from": "events",
+          "to": "loyalty",
+          "caption": {
+            "en": "A webhook event reaches the loyalty service",
+            "ar": "حدث ويب هوك يصل إلى خدمة الولاء"
+          }
+        },
+        {
+          "from": "loyalty",
+          "to": "redis",
+          "caption": {
+            "en": "Job queued in BullMQ (Redis)",
+            "ar": "إضافة المهمة إلى طابور BullMQ ‏(Redis)"
+          }
+        },
+        {
+          "from": "redis",
+          "to": "wallet",
+          "caption": {
+            "en": "A worker updates the Apple / Google Wallet pass",
+            "ar": "عامل يحدّث بطاقة Apple / Google Wallet"
+          }
+        },
+        {
+          "at": "wallet",
+          "caption": {
+            "en": "Pass update pushed to the customer’s phone",
+            "ar": "إرسال تحديث البطاقة إلى هاتف العميل"
+          }
+        }
+      ]
+    },
+    {
+      "id": "ai",
+      "label": {
+        "en": "AI menu search",
+        "ar": "بحث ذكي في القائمة"
+      },
+      "steps": [
+        {
+          "from": "store",
+          "to": "gateway",
+          "caption": {
+            "en": "The e-menu sends a natural-language search",
+            "ar": "القائمة الإلكترونية ترسل بحثاً باللغة الطبيعية"
+          }
+        },
+        {
+          "from": "gateway",
+          "to": "ai",
+          "caption": {
+            "en": "Routed to the AI search service",
+            "ar": "توجيه الطلب إلى خدمة البحث الذكي"
+          }
+        },
+        {
+          "from": "ai",
+          "to": "llm",
+          "caption": {
+            "en": "OpenRouter (DeepSeek) interprets the query",
+            "ar": "OpenRouter ‏(DeepSeek) يفسّر الاستعلام"
+          }
+        },
+        {
+          "from": "llm",
+          "to": "ai",
+          "caption": {
+            "en": "Matching menu items return to the storefront",
+            "ar": "عودة الأصناف المطابقة إلى واجهة المتجر"
+          }
+        }
+      ]
+    }
+  ]
+}
