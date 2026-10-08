@@ -34,7 +34,12 @@
       "subtitle": "Node.js/NestJS, React/Next.js, PostgreSQL and LLM integrations — from architecture to production.",
       "viewWork": "View my work",
       "bookCall": "Book a 15-min call",
-      "viewResume": "View résumé"
+      "viewResume": "View résumé",
+      "statTicketsValue": "~70%",
+      "statTickets": "Fewer support tickets",
+      "statYearsLabel": "Years shipping software",
+      "resumeShort": "Résumé",
+      "portraitAlt": "Moieez ur Rehman"
     },
     "about": {
       "section": "about me",
@@ -539,7 +544,12 @@
       "subtitle": "Node.js/NestJS وReact/Next.js وPostgreSQL وتكامل النماذج اللغوية — من التصميم المعماري حتى الإنتاج.",
       "viewWork": "شاهد أعمالي",
       "bookCall": "احجز مكالمة لمدة 15 دقيقة",
-      "viewResume": "عرض السيرة الذاتية"
+      "viewResume": "عرض السيرة الذاتية",
+      "statTicketsValue": "~70٪",
+      "statTickets": "طلبات دعم أقل",
+      "statYearsLabel": "سنوات في بناء البرمجيات",
+      "resumeShort": "السيرة الذاتية",
+      "portraitAlt": "معيز الرحمن"
     },
     "about": {
       "section": "نبذتي",
