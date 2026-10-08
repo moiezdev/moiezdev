@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Transition from '../components/functions/Transition';
 import ImageSlider from '../components/ui/ImageSlider';
@@ -13,6 +13,7 @@ import WalletSequence from '../components/project/WalletSequence';
 import WalletPass from '../components/project/WalletPass';
 import LatencyBar from '../components/project/LatencyBar';
 import QueueVisual from '../components/project/QueueVisual';
+import ScrollProgress from '../components/ui/ScrollProgress';
 import { getProjectById } from '../data';
 import { useContent } from '../i18n/content';
 import NotFound from './NotFound';
@@ -113,6 +114,17 @@ export default function ProjectDetail() {
       ].filter((s) => s.stack || nonEmpty(s.items) || (s.diagrams && diagrams.length))
     : [];
   const active = useActiveSection(sections.map((s) => s.id));
+  const tocRef = useRef(null);
+  const markerRef = useRef(null);
+  // one marker slides to the active contents entry
+  useLayoutEffect(() => {
+    const link = tocRef.current?.querySelector(`[data-toc="${active}"]`);
+    const marker = markerRef.current;
+    if (!link || !marker) return;
+    marker.style.height = `${link.offsetHeight}px`;
+    marker.style.transform = `translateY(${link.offsetTop}px)`;
+    marker.style.opacity = '1';
+  }, [active, sections.length]);
 
   if (!project) return <NotFound />;
 
@@ -148,6 +160,7 @@ export default function ProjectDetail() {
 
   return (
     <Transition>
+      {project.caseStudy && <ScrollProgress />}
       <header className="relative px-5 pt-[112px] md:pt-[136px] pb-10 md:pb-14 overflow-hidden">
         <div
           aria-hidden
@@ -230,15 +243,17 @@ export default function ProjectDetail() {
             <nav aria-label={t('caseStudy.contents')} className="hidden lg:block">
               <div className="sticky top-24">
                 <p className="text-[12px] font-semibold uppercase tracking-wider text-label-3 mb-3">{t('caseStudy.contents')}</p>
-                <ol className="flex flex-col border-s border-separator">
+                <ol ref={tocRef} className="relative flex flex-col border-s border-separator">
+                  <span ref={markerRef} className="toc-marker" aria-hidden />
                   {sections.map((s) => (
                     <li key={s.id}>
                       <a
                         href={`#${s.id}`}
                         onClick={(e) => goToSection(e, s.id)}
                         aria-current={active === s.id ? 'location' : undefined}
-                        className={`-ms-px block border-s-2 ps-4 py-1.5 text-[14px] leading-snug transition-colors ${
-                          active === s.id ? 'border-label text-label font-medium' : 'border-transparent text-label-2 hover:text-label'
+                        data-toc={s.id}
+                        className={`block ps-4 py-1.5 text-[14px] leading-snug transition-colors duration-(--dur-fast) ${
+                          active === s.id ? 'text-label font-medium' : 'text-label-2 hover:text-label'
                         }`}
                       >
                         {s.title}

@@ -880,3 +880,38 @@ html[data-vt='lang']::view-transition-new(root) {
     transform var(--dur-fast) var(--ease-spring),
     opacity var(--dur-fast) var(--ease-out);
 }
+
+/* ---------- Case study: reading progress + contents marker ---------- */
+.scroll-progress {
+  position: fixed;
+  top: 52px; /* below the header */
+  left: 0;
+  right: 0;
+  z-index: 39;
+  height: 2px;
+  background: var(--color-label);
+  opacity: 0.55;
+  transform: scaleX(0);
+  transform-origin: left center;
+  pointer-events: none;
+}
+html[dir='rtl'] .scroll-progress {
+  transform-origin: right center;
+}
+@media (prefers-reduced-motion: reduce) {
+  .scroll-progress {
+    display: none;
+  }
+}
+.toc-marker {
+  position: absolute;
+  top: 0;
+  inset-inline-start: -1px;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--color-label);
+  opacity: 0;
+  transition:
+    transform var(--dur-base) var(--ease-spring),
+    opacity var(--dur-fast) var(--ease-out);
+}
