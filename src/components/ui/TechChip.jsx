@@ -28,8 +28,12 @@ const TechChip = ({ name, className = '' }) => {
   if (!note && !usedIn.length) return <span className={`chip ${className}`}>{label}</span>;
 
   return (
-    <button type="button" className={`chip tech-chip relative z-10 ${className}`} aria-describedby={tipId}>
-      {label}
+    // the tooltip is a sibling, not a child: inside the button it would become part
+    // of the button's accessible name and be read out with every chip
+    <span className={`tech-chip-wrap relative z-10 inline-flex ${className}`}>
+      <button type="button" className="chip tech-chip" aria-describedby={tipId}>
+        {label}
+      </button>
       <span id={tipId} role="tooltip" className="tech-tip glass ring-1 ring-separator">
         {note && (
           <span className="block">
@@ -44,7 +48,7 @@ const TechChip = ({ name, className = '' }) => {
           </span>
         )}
       </span>
-    </button>
+    </span>
   );
 };
 

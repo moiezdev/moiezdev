@@ -1021,13 +1021,13 @@ html[dir='rtl'] .scroll-progress {
     opacity var(--dur-fast) var(--ease-out),
     transform var(--dur-fast) var(--ease-spring);
 }
-.tech-chip:focus .tech-tip,
-.tech-chip:focus-visible .tech-tip {
+.tech-chip:focus + .tech-tip,
+.tech-chip:focus-visible + .tech-tip {
   opacity: 1;
   transform: none;
 }
 @media (hover: hover) {
-  .tech-chip:hover .tech-tip {
+  .tech-chip-wrap:hover .tech-tip {
     opacity: 1;
     transform: none;
   }
