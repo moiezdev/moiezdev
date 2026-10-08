@@ -3,7 +3,8 @@ import { gsap } from 'gsap';
 
 /**
  * Friendly robot mascot — one rounded head: pearl shell, dark glass visor,
- * glowing mint eyes, a small smile and a glowing antenna tip.
+ * soft white eyes (like an Apple status light), a small smile, and the antenna
+ * tip in the site's "available" green — no colours outside the site palette.
  * `mood`: idle | thinking | speaking
  * `faceOnly` crops to head + antenna and shows a mouth for expression / lip-sync.
  */
@@ -244,8 +245,8 @@ const RobotAvatar = ({
             <stop offset="1" stopColor="#05060a" />
           </linearGradient>
           <linearGradient id={id('glow')} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#e6fff8" />
-            <stop offset="1" stopColor="#56e0c2" />
+            <stop offset="0" stopColor="#ffffff" />
+            <stop offset="1" stopColor="#d7dce4" />
           </linearGradient>
           <filter id={id('blur')} x="-80%" y="-80%" width="260%" height="260%">
             <feGaussianBlur stdDeviation="2.2" />
@@ -262,8 +263,8 @@ const RobotAvatar = ({
           <g ref={antennaRef}>
             <line x1="40" y1="15" x2="40" y2="8" stroke="#c3c7cf" strokeWidth="2.2" strokeLinecap="round" />
             <g ref={antennaDotRef}>
-              <circle cx="40" cy="6" r="4.5" fill="#56e0c2" opacity="0.6" filter={`url(#${id('blur')})`} />
-              <circle cx="40" cy="6" r="3" fill={`url(#${id('glow')})`} />
+              <circle cx="40" cy="6" r="4.5" fill="var(--color-green)" opacity="0.55" filter={`url(#${id('blur')})`} />
+              <circle cx="40" cy="6" r="3" fill="var(--color-green)" />
             </g>
           </g>
 
@@ -281,14 +282,14 @@ const RobotAvatar = ({
           <path d="M24 28.5c4.5-3.4 15-4.6 24-3" stroke="rgba(255,255,255,0.22)" strokeWidth="1.6" strokeLinecap="round" />
 
           <g ref={eyesRef}>
-            <rect x="27.5" y="29.5" width="7" height="12" rx="3.5" fill="#56e0c2" opacity="0.75" filter={`url(#${id('blur')})`} />
-            <rect x="45.5" y="29.5" width="7" height="12" rx="3.5" fill="#56e0c2" opacity="0.75" filter={`url(#${id('blur')})`} />
+            <rect x="27.5" y="29.5" width="7" height="12" rx="3.5" fill="#ffffff" opacity="0.45" filter={`url(#${id('blur')})`} />
+            <rect x="45.5" y="29.5" width="7" height="12" rx="3.5" fill="#ffffff" opacity="0.45" filter={`url(#${id('blur')})`} />
             <rect ref={leftEyeRef} x="27.5" y="29.5" width="7" height="12" rx="3.5" fill={`url(#${id('glow')})`} />
             <rect ref={rightEyeRef} x="45.5" y="29.5" width="7" height="12" rx="3.5" fill={`url(#${id('glow')})`} />
           </g>
 
           {/* smile — flattens while thinking, moves while speaking */}
-          <path ref={mouthRef} d="M36.5 45.2q3.5 2.2 7 0" stroke="#7debd2" strokeWidth="1.8" strokeLinecap="round" />
+          <path ref={mouthRef} d="M36.5 45.2q3.5 2.2 7 0" stroke="#e3e7ee" strokeWidth="1.8" strokeLinecap="round" />
         </g>
       </svg>
     </div>
