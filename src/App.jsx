@@ -9,7 +9,6 @@ import Loading from './components/Loading';
 import Cursor from './components/ui/Cursor';
 import CommandPalette from './components/CommandPalette';
 import ScrollToTop from './components/functions/ScrollToTop';
-import { startSmoothScroll } from './utils/smoothScroll';
 import RouteMeta from './components/functions/RouteMeta';
 import { markMounted } from './utils/pageTransition';
 import { BOTFOLIO_OPEN_EVENT } from './utils/botfolio';
@@ -51,8 +50,6 @@ function AppShell() {
   const idle = useIdle();
   const { t } = useContent();
 
-  // the printable CV keeps plain native scrolling
-  useEffect(() => (isCv ? undefined : startSmoothScroll()), [isCv]);
 
   if (isCv) {
     return (

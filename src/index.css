@@ -94,11 +94,6 @@ html {
   visibility: hidden;
 }
 
-/* Lenis drives the scroll itself; native smoothing would fight it */
-html.lenis {
-  scroll-behavior: auto;
-}
-
 html,
 body {
   font-family: var(--font-default);
