@@ -993,3 +993,42 @@ html[dir='rtl'] .scroll-progress {
     transform: scale(0.6);
   }
 }
+
+/* ---------- Tech chip tooltips (hover, keyboard focus, tap) ---------- */
+.tech-chip {
+  cursor: default;
+}
+.tech-tip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  inset-inline-start: 0;
+  z-index: 30;
+  width: max-content;
+  max-width: min(260px, 80vw);
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.45;
+  text-align: start;
+  white-space: normal;
+  color: var(--color-label-2);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px);
+  transition:
+    opacity var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-spring);
+}
+.tech-chip:focus .tech-tip,
+.tech-chip:focus-visible .tech-tip {
+  opacity: 1;
+  transform: none;
+}
+@media (hover: hover) {
+  .tech-chip:hover .tech-tip {
+    opacity: 1;
+    transform: none;
+  }
+}

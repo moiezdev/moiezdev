@@ -496,6 +496,10 @@
           "score": 0.83
         }
       ]
+    },
+    "tech": {
+      "usedFor": "Used for",
+      "usedIn": "Used in"
     }
   },
   "ar": {
@@ -999,6 +1003,10 @@
           "score": 0.83
         }
       ]
+    },
+    "tech": {
+      "usedFor": "الاستخدام",
+      "usedIn": "مستخدم في"
     }
   }
 }
