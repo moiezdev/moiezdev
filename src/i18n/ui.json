@@ -174,7 +174,9 @@
         "subject": "Please add a subject.",
         "message": "Please write a short message."
       },
-      "bookCall": "Book a 15-min call"
+      "bookCall": "Book a 15-min call",
+      "copy": "Copy",
+      "copied": "Copied to clipboard"
     },
     "footer": {
       "role": "Senior Full Stack Engineer & Software Architect",
@@ -681,7 +683,9 @@
         "subject": "يرجى إضافة موضوع.",
         "message": "يرجى كتابة رسالة قصيرة."
       },
-      "bookCall": "احجز مكالمة لمدة 15 دقيقة"
+      "bookCall": "احجز مكالمة لمدة 15 دقيقة",
+      "copy": "نسخ",
+      "copied": "تم النسخ"
     },
     "footer": {
       "role": "مهندس برمجيات متكامل أول ومعماري برمجيات",

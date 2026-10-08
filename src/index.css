@@ -1032,3 +1032,37 @@ html[dir='rtl'] .scroll-progress {
     transform: none;
   }
 }
+
+/* ---------- Toast + copy buttons ---------- */
+.toast-wrap {
+  position: fixed;
+  inset-inline: 0;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  z-index: 70;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+.toast {
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-label);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-spring);
+}
+.toast.is-visible {
+  opacity: 1;
+  transform: none;
+}
+/* 44px tap area around the 32px copy button */
+.copy-btn::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+}

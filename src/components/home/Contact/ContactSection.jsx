@@ -7,6 +7,7 @@ import { Spinner } from '../../Loading';
 import { contacts } from '../../../data';
 import site from '../../../data/site.json';
 import { useContent } from '../../../i18n/content';
+import { copyWithToast } from '../../../utils/toast';
 
 const FIELDS = ['name', 'email', 'subject', 'message'];
 // Bots fill every field they find; people never see this one. Its value is
@@ -218,7 +219,7 @@ const ContactSection = () => {
           </p>
           <ul className="surface overflow-hidden !rounded-[20px]">
             {direct.map((contact, i) => (
-              <li key={contact.platform}>
+              <li key={contact.platform} className="relative">
                 <a
                   href={contact.url}
                   target={contact.url.startsWith('http') ? '_blank' : undefined}
@@ -242,6 +243,19 @@ const ContactSection = () => {
                     <Chevron className="w-3 h-3 text-label-3 shrink-0" />
                   </span>
                 </a>
+                {(contact.platform === 'Email' || contact.platform === 'Phone') && (
+                  <button
+                    type="button"
+                    onClick={() => copyWithToast(contact.handle, t('contact.copied'))}
+                    aria-label={`${t('contact.copy')} ${contact.platform} (${contact.handle})`}
+                    className="copy-btn absolute top-1/2 end-10 -translate-y-1/2 inline-flex size-8 items-center justify-center rounded-full text-label-2 hover:text-label hover:bg-fill"
+                  >
+                    <svg className="w-4 h-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                      <rect x="7" y="7" width="10" height="10" rx="2" />
+                      <path d="M13 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2" />
+                    </svg>
+                  </button>
+                )}
               </li>
             ))}
           </ul>

@@ -37,6 +37,7 @@ const useIdle = (timeout = 4000) => {
 
 // pages load on demand; each can be preloaded (view transitions do, see routes/pages.js)
 import { About, Contact, Cv, Experience, Home, NotFound, ProjectDetail, Projects } from './routes/pages';
+import Toast from './components/ui/Toast';
 
 function AppShell() {
   const { pathname } = useLocation();
@@ -82,6 +83,7 @@ function AppShell() {
         </Suspense>
       )}
       <CommandPalette />
+      <Toast />
       <Cursor />
     </>
   );
