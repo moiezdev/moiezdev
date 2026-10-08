@@ -59,9 +59,10 @@ const ChatBot = () => {
   const [voiceOn, setVoiceOn] = useState(() => {
     try {
       const saved = localStorage.getItem(VOICE_PREF_KEY);
-      return saved == null ? true : saved === '1';
+      // voice is opt-in: a portfolio shouldn't start talking in someone's office
+      return saved === '1';
     } catch {
-      return true;
+      return false;
     }
   });
   const [speechReady] = useState(() => ({
@@ -195,6 +196,14 @@ const ChatBot = () => {
       return;
     }
 
+    // same reason as openChat: close even if the animation never finishes
+    let closed = false;
+    const finish = () => {
+      if (closed) return;
+      closed = true;
+      setOpen(false);
+    };
+    window.setTimeout(finish, 400);
     gsap.to(panel, {
       opacity: 0,
       y: 20,
@@ -203,7 +212,7 @@ const ChatBot = () => {
       ease: 'power2.in',
       transformOrigin: launcherCorner(),
       onComplete: () => {
-        setOpen(false);
+        finish();
         requestAnimationFrame(() => {
           if (!fabRef.current) return;
           gsap.fromTo(
@@ -216,21 +225,13 @@ const ChatBot = () => {
     });
   };
 
+  // Open right away. Never gate state on an animation's onComplete: browsers pause
+  // animation frames in background tabs and on throttled devices, which used to
+  // leave the launcher hidden with no panel. The panel animates itself in.
   const openChat = () => {
     unlockSpeech();
-    const fab = fabRef.current;
-    if (!fab) {
-      setOpen(true);
-      return;
-    }
-
-    gsap.to(fab, {
-      scale: 0.7,
-      opacity: 0,
-      duration: 0.22,
-      ease: 'power2.in',
-      onComplete: () => setOpen(true),
-    });
+    if (fabRef.current) gsap.killTweensOf(fabRef.current);
+    setOpen(true);
   };
 
   const closeChatRef = useRef(() => {});
