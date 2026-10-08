@@ -1,10 +1,6 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import arch from '../../data/architecture.json';
 import { useContent } from '../../i18n/content';
-import { usePrefersReducedMotion } from '../../motion/reducedMotion';
-import { usePauseWhenHidden } from '../../motion/usePauseWhenHidden';
-import { useInView } from '../../motion/useInView';
-import { DUR, EASE } from '../../motion/tokens';
 import { SiApple, SiFlutter, SiNestjs, SiNextdotjs, SiPostgresql, SiReact, SiRedis } from 'react-icons/si';
 import {
   MdOutlineBolt,
@@ -80,7 +76,6 @@ const EDGES = [
 ];
 
 const edgeKey = (a, b) => [a, b].sort().join('|');
-const DWELL = 900; // ms a step's caption stays before the next hop
 
 const Node = ({ node, state, onEnter, onLeave, registerRef, describedBy }) => {
   const { Icon, label, sub, hub } = node;
@@ -107,76 +102,23 @@ const Node = ({ node, state, onEnter, onLeave, registerRef, describedBy }) => {
   );
 };
 
-/** Apple-style segmented control; arrow keys move between segments (mirrored in RTL). */
-function Segmented({ options, value, onChange, label }) {
-  const idx = Math.max(0, options.findIndex((o) => o.id === value));
-  const refs = useRef([]);
-  const onKeyDown = (e) => {
-    const keys = { ArrowRight: 1, ArrowLeft: -1, Home: 'first', End: 'last' };
-    if (!(e.key in keys)) return;
-    e.preventDefault();
-    const rtl = document.documentElement.dir === 'rtl';
-    let n = keys[e.key] === 'first' ? 0 : keys[e.key] === 'last' ? options.length - 1 : idx + keys[e.key] * (rtl ? -1 : 1);
-    n = (n + options.length) % options.length;
-    onChange(options[n].id);
-    refs.current[n]?.focus();
-  };
-  return (
-    <div
-      role="radiogroup"
-      aria-label={label}
-      onKeyDown={onKeyDown}
-      className="seg relative grid rounded-full bg-fill p-1"
-      style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))`, '--seg-i': idx, '--seg-n': options.length }}
-    >
-      <span className="seg-thumb" aria-hidden />
-      {options.map((o, i) => (
-        <button
-          key={o.id}
-          ref={(el) => (refs.current[i] = el)}
-          type="button"
-          role="radio"
-          aria-checked={i === idx}
-          tabIndex={i === idx ? 0 : -1}
-          onClick={() => onChange(o.id)}
-          className={`relative z-10 min-h-9 rounded-full px-3 py-1.5 text-[13px] font-medium leading-tight transition-colors duration-(--dur-fast) ${i === idx ? 'text-label' : 'text-label-2 hover:text-label'}`}
-        >
-          {o.label}
-        </button>
-      ))}
-    </div>
-  );
-}
-
 /**
- * "How it works" explainer for the TWLM platform.
- * - Pick a scenario; it plays once, hop by hop: the hop's edge draws in, a
- *   packet travels it, the node lights and a caption explains the step. The
- *   final state stays (no loop); playback pauses off-screen or in a hidden tab.
- * - Hover or focus a node: its connections highlight and a frosted tooltip
- *   shows what it does (and why it was chosen, once that's written).
+ * The TWLM platform as a system map.
+ * - Every node and connection is visible at rest — the whole architecture reads
+ *   at a glance, no tabs or playback.
+ * - Hover or focus a node: its connections light up, everything else steps back,
+ *   and a frosted tooltip says what it does (and why it was chosen, once written).
  * - Edges are measured from the rendered nodes, so they follow any layout and
- *   RTL; in the stacked (narrow) layout nodes light in order instead.
- * - Reduced motion: the chosen scenario's whole path is shown lit, statically.
+ *   RTL; the stacked (narrow) layout uses simple connectors between layers.
  */
 export default function ArchitectureGraph({ titles }) {
   const { t, lang } = useContent();
-  const reduced = usePrefersReducedMotion();
   const wrapRef = useRef(null);
-  const packetRef = useRef(null);
   const nodeRefs = useRef({});
   const [paths, setPaths] = useState([]);
   const [size, setSize] = useState({ w: 0, h: 0 });
   const [hovered, setHovered] = useState(null);
   const [tip, setTip] = useState(null);
-  const [scenarioId, setScenarioId] = useState(arch.scenarios[0].id);
-  const [step, setStep] = useState(-1);
-  const [playing, setPlaying] = useState(false);
-
-  const scenario = arch.scenarios.find((s) => s.id === scenarioId);
-  const total = scenario.steps.length;
-  const seen = useInView(wrapRef, { once: true, rootMargin: '0px 0px -20% 0px' });
-  const canRun = usePauseWhenHidden(wrapRef);
 
   const measure = useCallback(() => {
     const wrap = wrapRef.current;
@@ -216,84 +158,11 @@ export default function ArchitectureGraph({ titles }) {
     return () => ro.disconnect();
   }, [measure, lang]);
 
-  const play = useCallback(
-    (id) => {
-      setScenarioId(id);
-      setHovered(null);
-      if (reduced) {
-        setStep(arch.scenarios.find((s) => s.id === id).steps.length - 1);
-        setPlaying(false);
-      } else {
-        setStep(0);
-        setPlaying(true);
-      }
-    },
-    [reduced],
-  );
-
-  // first time the diagram is in view: play the first scenario (or show it whole)
-  useEffect(() => {
-    if (seen && step === -1) play(scenarioId);
-  }, [seen, step, play, scenarioId]);
-
-  // one hop: packet travels the edge, then the caption dwells, then the next hop
-  useEffect(() => {
-    if (!playing || !canRun || step < 0) return undefined;
-    const s = scenario.steps[step];
-    const packet = packetRef.current;
-    let anim;
-    if (s.from && packet) {
-      const path = paths.find((p) => p.key === edgeKey(s.from, s.to));
-      if (path) {
-        const reversed = path.from !== s.from;
-        packet.style.offsetPath = `path('${path.d}')`;
-        anim = packet.animate(
-          [
-            { offsetDistance: reversed ? '100%' : '0%', opacity: 0 },
-            { opacity: 1, offset: 0.15 },
-            { opacity: 1, offset: 0.85 },
-            { offsetDistance: reversed ? '0%' : '100%', opacity: 0 },
-          ],
-          { duration: DUR.slow, easing: EASE.inOut, fill: 'forwards' },
-        );
-      }
-    }
-    const id = setTimeout(() => {
-      if (step < total - 1) setStep(step + 1);
-      else setPlaying(false);
-    }, DUR.slow + DWELL);
-    return () => {
-      clearTimeout(id);
-      anim?.cancel();
-    };
-  }, [playing, canRun, step, scenario, paths, total]);
-
-  // what the current scenario has lit so far
-  const lit = useMemo(() => {
-    const nodes = new Set();
-    const edges = new Map(); // key -> drawn from `from`
-    scenario.steps.slice(0, step + 1).forEach((s) => {
-      if (s.at) nodes.add(s.at);
-      if (s.from) {
-        nodes.add(s.from);
-        nodes.add(s.to);
-        edges.set(edgeKey(s.from, s.to), s.from);
-      }
-    });
-    const cur = scenario.steps[step];
-    return { nodes, edges, current: cur ? cur.at || cur.to : null };
-  }, [scenario, step]);
-  // which end each of this scenario's edges is travelled from (so it draws in that way)
-  const startsAt = useMemo(() => new Map(scenario.steps.filter((s) => s.from).map((s) => [edgeKey(s.from, s.to), s.from])), [scenario]);
-  const involved = useMemo(() => new Set(scenario.steps.flatMap((s) => (s.at ? [s.at] : [s.from, s.to]))), [scenario]);
-
-  const linkedToHover = (id) => hovered && (id === hovered || EDGES.some(([a, b]) => (a === hovered && b === id) || (b === hovered && a === id)));
+  const linked = (id) => EDGES.some(([a, b]) => (a === hovered && b === id) || (b === hovered && a === id));
   const nodeState = (id) => {
-    if (hovered) return id === hovered ? 'on' : linkedToHover(id) ? 'linked' : 'dim';
-    if (step < 0) return 'idle';
-    if (id === lit.current) return 'current';
-    if (lit.nodes.has(id)) return 'lit';
-    return involved.has(id) ? 'idle' : 'dim';
+    if (!hovered) return 'idle';
+    if (id === hovered) return 'on';
+    return linked(id) ? 'lit' : 'dim';
   };
 
   const showTip = (id) => {
@@ -315,46 +184,29 @@ export default function ArchitectureGraph({ titles }) {
   const node = (id) => LAYERS.flatMap((l) => l.nodes).find((n) => n.id === id);
   const info = tip && arch.nodes[tip.id];
   const why = info?.why?.[lang] || info?.why?.en;
-  const current = step >= 0 ? scenario.steps[step] : null;
 
   return (
     <div>
-      <div className="mb-6 flex flex-col gap-3 @container/ctl">
-        <Segmented
-          options={arch.scenarios.map((s) => ({ id: s.id, label: s.label[lang] || s.label.en }))}
-          value={scenarioId}
-          onChange={play}
-          label={t('explainer.label')}
-        />
-      </div>
-
       <div ref={wrapRef} className="@container relative" onMouseLeave={hideTip}>
         {paths.length > 0 && (
           <svg className="absolute inset-0 pointer-events-none hidden @3xl:block" width={size.w} height={size.h} aria-hidden>
             {paths.map((p) => {
-              const hoverOn = hovered && (p.from === hovered || p.to === hovered);
-              const drawnFrom = lit.edges.get(p.key);
+              const on = hovered && (p.from === hovered || p.to === hovered);
               return (
-                <g key={p.id} opacity={hovered && !hoverOn ? 0.25 : 1} className="transition-opacity duration-(--dur-base)">
-                  <path d={p.d} fill="none" strokeLinecap="round" stroke="color-mix(in srgb, var(--color-label) 22%, transparent)" strokeWidth={1.25} />
+                <g key={p.id} opacity={hovered && !on ? 0.2 : 1} className="transition-opacity duration-(--dur-base)">
                   <path
                     d={p.d}
-                    pathLength="1"
                     fill="none"
                     strokeLinecap="round"
-                    stroke="var(--color-label)"
-                    strokeWidth={2}
-                    strokeDasharray="1 1"
-                    className="arch-edge-lit"
-                    // hidden: dash shifted off the end it will draw in from
-                    style={{ strokeDashoffset: drawnFrom || hoverOn ? 0 : startsAt.get(p.key) && startsAt.get(p.key) !== p.from ? -1 : 1 }}
+                    stroke={on ? 'var(--color-label)' : 'color-mix(in srgb, var(--color-label) 38%, transparent)'}
+                    strokeWidth={on ? 2 : 1.25}
+                    className="transition-[stroke,stroke-width] duration-(--dur-fast)"
                   />
                 </g>
               );
             })}
           </svg>
         )}
-        <span ref={packetRef} className="arch-packet" aria-hidden />
 
         <div className="relative grid gap-4 @3xl:gap-x-12 @5xl:gap-x-20 @3xl:grid-cols-4">
           {LAYERS.map((layer, li) => (
@@ -392,35 +244,6 @@ export default function ArchitectureGraph({ titles }) {
             )}
           </div>
         )}
-      </div>
-
-      {/* captions: the current step is announced; the full list doubles as the static (reduced-motion) view */}
-      <div className="mt-8 grid gap-4 @container/cap">
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-          <span className="chip text-[12px]">{t('explainer.simplified')}</span>
-          {current && (
-            <span className="text-[12px] font-mono text-label-3">{t('explainer.step', { n: step + 1, total })}</span>
-          )}
-          <button type="button" onClick={() => play(scenarioId)} className="link-arrow text-[13px] ms-auto">
-            {t('explainer.replay')}
-          </button>
-        </div>
-        <p className="sr-only" aria-live="polite">
-          {current ? current.caption[lang] || current.caption.en : ''}
-        </p>
-        <ol className="grid gap-x-6 gap-y-2 sm:grid-cols-2">
-          {scenario.steps.map((s, i) => (
-            <li
-              key={i}
-              className={`flex gap-3 text-[14px] leading-snug transition-opacity duration-(--dur-base) ${i === step ? 'text-label font-medium' : i < step ? 'text-label-2' : 'text-label-3 opacity-60'}`}
-            >
-              <span className={`mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold ${i <= step ? 'bg-label text-bg' : 'bg-fill text-label-2'}`}>
-                {i + 1}
-              </span>
-              <span>{s.caption[lang] || s.caption.en}</span>
-            </li>
-          ))}
-        </ol>
       </div>
     </div>
   );
