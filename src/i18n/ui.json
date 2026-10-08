@@ -318,7 +318,8 @@
         "data": "Data & integrations"
       },
       "caption": "A simplified view of the retail platforms I architect: POS, loyalty and wallets on a typed NestJS API, with Redis-backed workers and PostgreSQL underneath.",
-      "hint": "Hover a node to trace its connections"
+      "hint": "Hover a node to trace its connections",
+      "hintTouch": "Tap a node to trace its connections"
     },
     "moments": {
       "eyebrow": "Beyond the code",
@@ -475,7 +476,8 @@
       "simplified": "Simplified flow",
       "replay": "Replay",
       "step": "Step {{n}} of {{total}}",
-      "why": "Why"
+      "why": "Why",
+      "trace": "Trace a request"
     },
     "aiConsole": {
       "label": "Example requests",
@@ -832,7 +834,8 @@
         "data": "البيانات والتكاملات"
       },
       "caption": "عرض مبسّط لمنصات التجزئة التي أصمم معماريتها: نقاط البيع والولاء والمحافظ على واجهة NestJS مُنمّطة، مع عمّال خلفية على Redis وقاعدة PostgreSQL.",
-      "hint": "مرّر فوق أي عنصر لتتبّع اتصالاته"
+      "hint": "مرّر فوق أي عنصر لتتبّع اتصالاته",
+      "hintTouch": "انقر على أي عنصر لتتبّع اتصالاته"
     },
     "moments": {
       "eyebrow": "ما وراء الكود",
@@ -989,7 +992,8 @@
       "simplified": "تدفق مبسّط",
       "replay": "إعادة",
       "step": "الخطوة {{n}} من {{total}}",
-      "why": "لماذا"
+      "why": "لماذا",
+      "trace": "تتبّع طلباً"
     },
     "aiConsole": {
       "label": "أمثلة على الطلبات",

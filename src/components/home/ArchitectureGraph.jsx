@@ -1,4 +1,4 @@
-import { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import arch from '../../data/architecture.json';
 import { useContent } from '../../i18n/content';
 import { SiApple, SiFlutter, SiNestjs, SiNextdotjs, SiPostgresql, SiReact, SiRedis } from 'react-icons/si';
@@ -47,8 +47,8 @@ const LAYERS = [
     nodes: [
       { id: 'pg', Icon: SiPostgresql, label: 'PostgreSQL', sub: 'Prisma ORM' },
       { id: 'redis', Icon: SiRedis, label: 'Redis', sub: 'BullMQ workers' },
-      { id: 'pay', Icon: MdOutlineCreditCard, label: 'Payments', sub: 'MyFatoorah · Moyasar' },
       { id: 'wallet', Icon: SiApple, label: 'Wallet passes', sub: 'Apple · Google' },
+      { id: 'pay', Icon: MdOutlineCreditCard, label: 'Payments', sub: 'MyFatoorah · Moyasar' },
       { id: 'llm', Icon: MdOutlineBolt, label: 'LLM', sub: 'OpenRouter · DeepSeek' },
     ],
   },
@@ -108,6 +108,8 @@ const Node = ({ node, state, onEnter, onLeave, registerRef, describedBy }) => {
  *   at a glance, no tabs or playback.
  * - Hover or focus a node: its connections light up, everything else steps back,
  *   and a frosted tooltip says what it does (and why it was chosen, once written).
+ * - "Trace a request" chips light one request's whole path at once (static, no
+ *   playback); click again to clear. Hover still wins while the pointer is on a node.
  * - Edges are measured from the rendered nodes, so they follow any layout and
  *   RTL; the stacked (narrow) layout uses simple connectors between layers.
  */
@@ -119,6 +121,24 @@ export default function ArchitectureGraph({ titles }) {
   const [size, setSize] = useState({ w: 0, h: 0 });
   const [hovered, setHovered] = useState(null);
   const [tip, setTip] = useState(null);
+  const [pathId, setPathId] = useState(null);
+
+  // the selected request path: every node and edge it touches
+  const trace = useMemo(() => {
+    const sc = arch.scenarios.find((x) => x.id === pathId);
+    if (!sc) return null;
+    const nodes = new Set();
+    const edges = new Set();
+    sc.steps.forEach((st) => {
+      if (st.at) nodes.add(st.at);
+      if (st.from) {
+        nodes.add(st.from);
+        nodes.add(st.to);
+        edges.add(edgeKey(st.from, st.to));
+      }
+    });
+    return { nodes, edges };
+  }, [pathId]);
 
   const measure = useCallback(() => {
     const wrap = wrapRef.current;
@@ -160,10 +180,15 @@ export default function ArchitectureGraph({ titles }) {
 
   const linked = (id) => EDGES.some(([a, b]) => (a === hovered && b === id) || (b === hovered && a === id));
   const nodeState = (id) => {
-    if (!hovered) return 'idle';
-    if (id === hovered) return 'on';
-    return linked(id) ? 'lit' : 'dim';
+    if (hovered) {
+      if (id === hovered) return 'on';
+      return linked(id) ? 'lit' : 'dim';
+    }
+    if (trace) return trace.nodes.has(id) ? 'lit' : 'dim';
+    return 'idle';
   };
+  const edgeOn = (p) => (hovered ? p.from === hovered || p.to === hovered : Boolean(trace?.edges.has(p.key)));
+  const focusing = Boolean(hovered || trace);
 
   const showTip = (id) => {
     setHovered(id);
@@ -191,9 +216,9 @@ export default function ArchitectureGraph({ titles }) {
         {paths.length > 0 && (
           <svg className="absolute inset-0 pointer-events-none hidden @3xl:block" width={size.w} height={size.h} aria-hidden>
             {paths.map((p) => {
-              const on = hovered && (p.from === hovered || p.to === hovered);
+              const on = edgeOn(p);
               return (
-                <g key={p.id} opacity={hovered && !on ? 0.2 : 1} className="transition-opacity duration-(--dur-base)">
+                <g key={p.id} opacity={focusing && !on ? 0.2 : 1} className="transition-opacity duration-(--dur-base)">
                   <path
                     d={p.d}
                     fill="none"
@@ -244,6 +269,27 @@ export default function ArchitectureGraph({ titles }) {
             )}
           </div>
         )}
+      </div>
+
+      {/* light one request's path through the system */}
+      <div className="mt-8 flex flex-wrap items-center gap-2" role="group" aria-label={t('explainer.trace')}>
+        <span className="me-1 text-[12px] font-semibold uppercase tracking-wider text-label-3">{t('explainer.trace')}</span>
+        {arch.scenarios.map((sc) => {
+          const active = sc.id === pathId;
+          return (
+            <button
+              key={sc.id}
+              type="button"
+              aria-pressed={active}
+              onClick={() => setPathId(active ? null : sc.id)}
+              className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium ring-1 transition-colors duration-(--dur-fast) ${
+                active ? 'bg-label text-bg ring-label' : 'bg-fill text-label-2 ring-separator hover:text-label'
+              }`}
+            >
+              {sc.label[lang] || sc.label.en}
+            </button>
+          );
+        })}
       </div>
     </div>
   );
