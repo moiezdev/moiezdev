@@ -76,7 +76,7 @@ var skills_default = [
     items: [
       "Node",
       "Express",
-      "NestJs",
+      "NestJS",
       "Fastify",
       "REST APIs",
       "ASP.NET",
@@ -90,7 +90,7 @@ var skills_default = [
   {
     category: "Databases",
     items: [
-      "PostGreSQL",
+      "PostgreSQL",
       "MySQL",
       "SQL Server",
       "MongoDB",
@@ -190,7 +190,7 @@ var contacts_default = [
     platform: "WhatsApp",
     handle: "+966 573240913",
     categories: ["contact"],
-    url: "https://wa.me/qr/CCKSULC4NRAZI1",
+    url: "https://wa.me/966573240913",
     icon: "/socialMediaIcons/Whatsapp.svg"
   },
   {
@@ -342,9 +342,9 @@ var experience_default = [
     summary: "Restaurant POS, loyalty, wallets and AI search for Gulf retail \u2014 designed and built from architecture to production.",
     stack: [
       "React",
-      "NestJs",
+      "NestJS",
       "Prisma",
-      "PostGreSQL",
+      "PostgreSQL",
       "BullMQ",
       "Redis",
       "Flutter",
@@ -612,11 +612,11 @@ var twlm_pos_default = {
   technologies: [
     "React",
     "Flutter",
-    "NestJs",
+    "NestJS",
     "Fastify",
     "Node",
     "Prisma",
-    "PostGreSQL",
+    "PostgreSQL",
     "Apple Wallet",
     "Google Wallet",
     "REST APIs",
@@ -1049,7 +1049,7 @@ var eims_default = {
     "ASP.NET",
     "C# (C Sharp)",
     "Entity Framework",
-    "PostGreSQL"
+    "PostgreSQL"
   ],
   imageUrl: "/projects-media/eims/main.webp",
   githubUrl: "https://github.com/moiezdev/EIMS.WebAPI",
