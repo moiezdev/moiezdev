@@ -1,5 +1,4 @@
 import { requestReply } from './aiClient';
-import { buildContext } from './contextBuilder';
 
 const HISTORY_TURNS = 8;
 
@@ -12,13 +11,13 @@ const HISTORY_TURNS = 8;
 export async function handleChat(query, { signal, history = [], lang = 'en', path = '/' } = {}) {
   const question = String(query || '').trim();
   const turns = history.filter((m) => (m.role === 'user' || m.role === 'bot') && m.id !== 'welcome');
-  const previousQuestion = [...turns].reverse().find((m) => m.role === 'user')?.text || '';
 
   return requestReply(
     {
       question,
       lang,
-      context: buildContext(question, { path, previousQuestion }),
+      // the server builds the fact sheet itself from the site's data (api/chat.js)
+      path,
       history: turns.slice(-HISTORY_TURNS).map((m) => ({
         role: m.role === 'bot' ? 'assistant' : 'user',
         content: m.text,

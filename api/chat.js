@@ -2,11 +2,14 @@
  * BotFolio chat endpoint (Vercel serverless function).
  *
  * Keeps the OpenRouter key on the server. The browser sends the visitor's
- * question, recent history and the portfolio context; this function owns the
- * system prompt, model list and token limits so the endpoint can't be used as
- * a general-purpose LLM proxy.
+ * question, recent history and the page they're on. This function builds the
+ * fact sheet itself from the site's data (api/_lib/context.mjs, generated from
+ * src/lib/contextBuilder.js) and owns the system prompt, model list and token
+ * limits — so answers can't be steered by a forged context, and the endpoint
+ * can't be used as a general-purpose LLM proxy.
  */
 import { SYSTEM_PROMPT } from '../src/lib/systemPrompt.js';
+import { buildContext } from './_lib/context.mjs';
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const DEFAULT_MODELS = ['deepseek/deepseek-chat', 'mistralai/mistral-7b-instruct'];
@@ -14,7 +17,6 @@ const DEFAULT_MODELS = ['deepseek/deepseek-chat', 'mistralai/mistral-7b-instruct
 const MAX_QUESTION = 600;
 const MAX_HISTORY = 8;
 const MAX_HISTORY_ITEM = 700;
-const MAX_CONTEXT = 16000;
 
 // Best-effort per-instance rate limit: 20 requests per IP per 5 minutes.
 const WINDOW_MS = 5 * 60 * 1000;
@@ -70,13 +72,15 @@ export default async function handler(req, res) {
   if (!question) return send(res, 400, { error: 'empty_question' });
 
   const lang = body.lang === 'ar' ? 'ar' : 'en';
-  // reject rather than cut: a clipped JSON fact sheet would mislead the model
-  const context = JSON.stringify(body.context ?? {});
-  if (context.length > MAX_CONTEXT) return send(res, 413, { error: 'context_too_large' });
   const history = (Array.isArray(body.history) ? body.history : [])
     .filter((m) => m && (m.role === 'user' || m.role === 'assistant'))
     .slice(-MAX_HISTORY)
     .map((m) => ({ role: m.role, content: clip(m.content, MAX_HISTORY_ITEM) }));
+
+  // Facts come from the server, never from the request body (body.context is ignored).
+  const path = /^\/[a-z0-9/_-]{0,80}$/i.test(String(body.path || '')) ? body.path : '/';
+  const previousQuestion = [...history].reverse().find((m) => m.role === 'user')?.content || '';
+  const context = JSON.stringify(buildContext(question, { path, previousQuestion }));
 
   const system =
     lang === 'ar'
@@ -84,7 +88,10 @@ export default async function handler(req, res) {
       : SYSTEM_PROMPT;
 
   const messages = [
-    { role: 'system', content: `${system}\n\nCONTEXT (the only source of facts):\n${context}` },
+    {
+      role: 'system',
+      content: `${system}\n\nCONTEXT (the only source of facts — if something isn't here, say it isn't on Moieez's portfolio and point to the Contact page; never fill gaps from general knowledge):\n${context}`,
+    },
     ...history,
     { role: 'user', content: question },
   ];
