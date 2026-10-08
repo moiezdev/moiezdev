@@ -689,7 +689,8 @@ html[dir='rtl'] .seg-thumb {
 .arch-node {
   transition:
     opacity var(--dur-base) var(--ease-out),
-    transform var(--dur-base) var(--ease-spring);
+    transform var(--dur-base) var(--ease-spring),
+    box-shadow var(--dur-base) var(--ease-out);
 }
 .arch-node:focus-visible {
   outline: 2px solid var(--color-accent);
@@ -712,6 +713,31 @@ html[dir='rtl'] .seg-thumb {
 .arch-edge-lit {
   transition: stroke-dashoffset var(--dur-slow) var(--ease-in-out);
 }
+/* ambient data flow along the wires; paused off-screen / in hidden tabs via data-running */
+.arch-flow-path {
+  stroke-dasharray: 2 14;
+  opacity: 0.35;
+  animation: arch-flow 1.8s linear infinite;
+  animation-play-state: paused;
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+.arch-flow[data-running='true'] .arch-flow-path {
+  animation-play-state: running;
+}
+.arch-flow-path.is-on {
+  opacity: 0.9;
+  stroke-dasharray: 3 11;
+  animation-duration: 0.8s;
+}
+.arch-flow-path.is-reversed {
+  animation-direction: reverse;
+}
+@keyframes arch-flow {
+  to {
+    stroke-dashoffset: -16;
+  }
+}
+
 .arch-packet {
   position: absolute;
   top: 0;
@@ -736,6 +762,13 @@ html[dir='rtl'] .seg-thumb {
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .arch-flow-path {
+    display: none;
+  }
+  .arch-edge-lit,
+  .arch-node {
+    transition-delay: 0ms !important;
+  }
   .arch-packet {
     display: none;
   }

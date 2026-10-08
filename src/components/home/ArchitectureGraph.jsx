@@ -1,6 +1,7 @@
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import arch from '../../data/architecture.json';
 import { useContent } from '../../i18n/content';
+import { usePauseWhenHidden } from '../../motion/usePauseWhenHidden';
 import { SiApple, SiFlutter, SiNestjs, SiNextdotjs, SiPostgresql, SiReact, SiRedis } from 'react-icons/si';
 import {
   MdOutlineBolt,
@@ -77,7 +78,7 @@ const EDGES = [
 
 const edgeKey = (a, b) => [a, b].sort().join('|');
 
-const Node = ({ node, state, onEnter, onLeave, registerRef, describedBy }) => {
+const Node = ({ node, state, delay = 0, onEnter, onLeave, registerRef, describedBy }) => {
   const { Icon, label, sub, hub } = node;
   return (
     <div
@@ -89,6 +90,7 @@ const Node = ({ node, state, onEnter, onLeave, registerRef, describedBy }) => {
       onFocus={onEnter}
       onBlur={onLeave}
       data-state={state}
+      style={delay ? { transitionDelay: `${delay}ms` } : undefined}
       className={`arch-node relative z-10 flex items-center gap-3 rounded-2xl bg-surface px-3 py-2.5 ${hub ? 'order-first @3xl:order-none @lg:col-span-2 @3xl:col-span-1 py-3.5 ring-1 ring-label/25 shadow-[0_10px_30px_rgba(0,0,0,0.10)]' : 'ring-1 ring-separator shadow-[0_1px_2px_rgba(0,0,0,0.04)]'}`}
     >
       <span className={`inline-flex shrink-0 items-center justify-center rounded-xl ${hub ? 'size-10 bg-label text-bg' : 'size-8 bg-fill text-label'}`}>
@@ -122,19 +124,22 @@ export default function ArchitectureGraph({ titles }) {
   const [hovered, setHovered] = useState(null);
   const [tip, setTip] = useState(null);
   const [pathId, setPathId] = useState(null);
+  // ambient data flow runs only while the diagram is on screen (and motion is allowed)
+  const running = usePauseWhenHidden(wrapRef);
 
   // the selected request path: every node and edge it touches
   const trace = useMemo(() => {
     const sc = arch.scenarios.find((x) => x.id === pathId);
     if (!sc) return null;
-    const nodes = new Set();
-    const edges = new Set();
-    sc.steps.forEach((st) => {
-      if (st.at) nodes.add(st.at);
+    // order matters: the path draws in hop by hop and nodes light in sequence
+    const nodes = new Map(); // id -> hop index it lights at
+    const edges = new Map(); // key -> { from, i }
+    sc.steps.forEach((st, i) => {
+      if (st.at && !nodes.has(st.at)) nodes.set(st.at, i);
       if (st.from) {
-        nodes.add(st.from);
-        nodes.add(st.to);
-        edges.add(edgeKey(st.from, st.to));
+        if (!nodes.has(st.from)) nodes.set(st.from, i);
+        if (!nodes.has(st.to)) nodes.set(st.to, i + 1);
+        if (!edges.has(edgeKey(st.from, st.to))) edges.set(edgeKey(st.from, st.to), { from: st.from, i });
       }
     });
     return { nodes, edges };
@@ -188,6 +193,10 @@ export default function ArchitectureGraph({ titles }) {
     return 'idle';
   };
   const edgeOn = (p) => (hovered ? p.from === hovered || p.to === hovered : Boolean(trace?.edges.has(p.key)));
+  // which end an edge is travelled from right now (hover: away from the hovered node)
+  const edgeFrom = (p) => (hovered ? (p.to === hovered ? p.to : p.from) : trace?.edges.get(p.key)?.from || p.from);
+  const HOP = 220; // ms between hops when a traced path draws in
+  const nodeDelay = (id) => (!hovered && trace?.nodes.has(id) ? trace.nodes.get(id) * HOP : 0);
   const focusing = Boolean(hovered || trace);
 
   const showTip = (id) => {
@@ -214,18 +223,44 @@ export default function ArchitectureGraph({ titles }) {
     <div>
       <div ref={wrapRef} className="@container relative" onMouseLeave={hideTip}>
         {paths.length > 0 && (
-          <svg className="absolute inset-0 pointer-events-none hidden @3xl:block" width={size.w} height={size.h} aria-hidden>
+          <svg
+            className="arch-flow absolute inset-0 pointer-events-none hidden @3xl:block"
+            data-running={running}
+            width={size.w}
+            height={size.h}
+            aria-hidden
+          >
             {paths.map((p) => {
               const on = edgeOn(p);
+              const reversed = edgeFrom(p) !== p.from;
+              const hop = !hovered && trace?.edges.get(p.key);
               return (
-                <g key={p.id} opacity={focusing && !on ? 0.2 : 1} className="transition-opacity duration-(--dur-base)">
+                <g key={p.id} opacity={focusing && !on ? 0.18 : 1} className="transition-opacity duration-(--dur-base)">
+                  {/* the wire */}
+                  <path d={p.d} fill="none" strokeLinecap="round" stroke="color-mix(in srgb, var(--color-label) 30%, transparent)" strokeWidth={1.25} />
+                  {/* data flowing along it: quiet at rest, brighter and faster when highlighted */}
                   <path
                     d={p.d}
                     fill="none"
                     strokeLinecap="round"
-                    stroke={on ? 'var(--color-label)' : 'color-mix(in srgb, var(--color-label) 38%, transparent)'}
-                    strokeWidth={on ? 2 : 1.25}
-                    className="transition-[stroke,stroke-width] duration-(--dur-fast)"
+                    stroke="var(--color-label)"
+                    strokeWidth={on ? 2 : 1.5}
+                    className={`arch-flow-path ${on ? 'is-on' : ''} ${reversed ? 'is-reversed' : ''}`}
+                  />
+                  {/* highlight that draws in from the end the request starts at */}
+                  <path
+                    d={p.d}
+                    pathLength="1"
+                    fill="none"
+                    strokeLinecap="round"
+                    stroke="var(--color-label)"
+                    strokeWidth={2}
+                    strokeDasharray="1 1"
+                    className="arch-edge-lit"
+                    style={{
+                      strokeDashoffset: on ? 0 : reversed ? -1 : 1,
+                      transitionDelay: on && hop ? `${hop.i * HOP}ms` : '0ms',
+                    }}
                   />
                 </g>
               );
@@ -243,6 +278,7 @@ export default function ArchitectureGraph({ titles }) {
                     key={n.id}
                     node={n}
                     state={nodeState(n.id)}
+                    delay={nodeDelay(n.id)}
                     describedBy={tip?.id === n.id ? 'arch-tip' : undefined}
                     onEnter={() => showTip(n.id)}
                     onLeave={hideTip}
