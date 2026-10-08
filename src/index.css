@@ -1066,3 +1066,33 @@ html[dir='rtl'] .scroll-progress {
   position: absolute;
   inset: -6px;
 }
+
+/* ---------- Mobile menu (sheet + hamburger) ---------- */
+.menu-sheet {
+  height: calc(100dvh - 52px);
+  background: var(--color-bg);
+  opacity: 0;
+  transform: translateY(-8px);
+  visibility: hidden;
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-spring),
+    visibility 0s linear var(--dur-base);
+}
+.menu-sheet[data-open] {
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+  transition-delay: 0s;
+}
+.menu-line {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform var(--dur-base) var(--ease-spring);
+}
+.menu-line[data-open] {
+  transform: translateY(3px) rotate(45deg);
+}
+.menu-line-2[data-open] {
+  transform: translateY(-3px) rotate(-45deg);
+}

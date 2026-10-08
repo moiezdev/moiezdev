@@ -62,7 +62,7 @@ const Projects = () => {
       type="button"
       onClick={() => setFilter(value)}
       aria-pressed={filter === value}
-      className={`inline-flex items-center gap-1.5 h-9 px-4 rounded-full text-[14px] font-medium transition-all duration-300 ${
+      className={`inline-flex items-center gap-1.5 h-9 px-4 rounded-full text-[14px] font-medium btn-press ${
         filter === value ? 'bg-label text-bg shadow-sm' : 'bg-fill text-label hover:bg-[color-mix(in_srgb,var(--color-fill)_170%,transparent)]'
       }`}
     >
@@ -121,7 +121,7 @@ const Projects = () => {
                       </span>
                       <span className="block mt-1 text-[15px] text-label-2">{t('projects.groupEarlierBlurb')}</span>
                     </span>
-                    <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-fill text-label transition-transform duration-300 group-open/earlier:rotate-180" aria-hidden>
+                    <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-fill text-label transition-transform duration-(--dur-base) group-open/earlier:rotate-180" aria-hidden>
                       <Chevron dir="down" />
                     </span>
                   </summary>

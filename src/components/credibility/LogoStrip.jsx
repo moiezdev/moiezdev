@@ -38,7 +38,7 @@ const LogoStrip = ({ config = site.logoStrip, className = 'pt-20 md:pt-28' }) =>
                 decoding="async"
                 className={`${
                   logo.crop ? 'h-9 w-[100px] object-cover' : logo.wide ? 'h-7 w-auto max-w-[150px] object-contain' : 'size-8 object-contain'
-                } grayscale contrast-[1.1] opacity-60 mix-blend-multiply transition-opacity duration-300 group-hover:opacity-85 dark:invert dark:mix-blend-screen`}
+                } grayscale contrast-[1.1] opacity-60 mix-blend-multiply transition-opacity duration-(--dur-base) group-hover:opacity-85 dark:invert dark:mix-blend-screen`}
               />
               {!logo.wide && (
                 <span className="text-[14px] font-semibold tracking-[-0.01em] text-label-2 whitespace-nowrap" dir="ltr">

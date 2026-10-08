@@ -609,7 +609,7 @@ const ChatBot = () => {
 
       {!open && (
         <div
-          className={`botfolio-launcher transition-[opacity,translate,visibility] duration-300 ease-[var(--ease-apple)] ${
+          className={`botfolio-launcher transition-[opacity,translate,visibility] duration-(--dur-base) ease-(--ease-spring) ${
             revealed ? 'pointer-events-auto' : 'invisible opacity-0 translate-y-4'
           }`}
         >
@@ -617,7 +617,7 @@ const ChatBot = () => {
             type="button"
             ref={fabRef}
             onClick={openChat}
-            className="relative size-12 sm:size-16 rounded-full glass ring-1 ring-separator shadow-[0_12px_32px_rgba(0,0,0,0.2)] inline-flex items-center justify-center hover:scale-105 active:scale-95 transition-transform duration-300 cursor-pointer"
+            className="relative size-12 sm:size-16 rounded-full glass ring-1 ring-separator shadow-[0_12px_32px_rgba(0,0,0,0.2)] inline-flex items-center justify-center hover:scale-105 active:scale-95 transition-transform duration-(--dur-base) cursor-pointer"
             aria-label={t(lang, 'a11y.openChat', { name: BOT_NAME })}
             aria-expanded={false}
           >

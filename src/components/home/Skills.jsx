@@ -25,7 +25,7 @@ const SkillTip = ({ name }) => {
   return (
     <span
       role="tooltip"
-      className="pointer-events-none absolute left-1/2 bottom-full z-30 mb-2.5 w-max max-w-[260px] -translate-x-1/2 translate-y-1 opacity-0 scale-95 group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100 group-focus-visible:opacity-100 group-focus-visible:scale-100 transition-all duration-300 ease-[var(--ease-apple)] origin-bottom"
+      className="pointer-events-none absolute left-1/2 bottom-full z-30 mb-2.5 w-max max-w-[260px] -translate-x-1/2 translate-y-1 opacity-0 scale-95 group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100 group-focus-visible:opacity-100 group-focus-visible:scale-100 transition-[opacity,transform,translate,scale] duration-(--dur-fast) ease-(--ease-spring) origin-bottom"
     >
       <span className="block glass ring-1 ring-separator rounded-2xl px-3.5 py-3 text-start shadow-xl">
         <span className="block text-[13px] font-semibold text-label mb-1">{name}</span>

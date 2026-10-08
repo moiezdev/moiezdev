@@ -21,7 +21,7 @@ const iconBtn =
 // a small label under a header control, shown on hover and keyboard focus;
 // it also gives the control its accessible name
 const tipClass =
-  'pointer-events-none absolute top-full end-0 z-10 mt-2.5 whitespace-nowrap rounded-lg bg-label px-2.5 py-1 text-[12px] font-medium tracking-normal text-bg opacity-0 shadow-[0_4px_16px_rgba(0,0,0,0.16)] -translate-y-0.5 transition-[opacity,translate] duration-200 group-hover:opacity-100 group-hover:translate-y-0 group-focus-visible:opacity-100 group-focus-visible:translate-y-0';
+  'pointer-events-none absolute top-full end-0 z-10 mt-2.5 whitespace-nowrap rounded-lg bg-label px-2.5 py-1 text-[12px] font-medium tracking-normal text-bg opacity-0 shadow-[0_4px_16px_rgba(0,0,0,0.16)] -translate-y-0.5 transition-[opacity,translate] duration-(--dur-fast) group-hover:opacity-100 group-hover:translate-y-0 group-focus-visible:opacity-100 group-focus-visible:translate-y-0';
 
 const PrefsToggles = () => {
   const { lang, toggleLang, toggleTheme } = usePreferences();
@@ -93,7 +93,7 @@ const Navbar = () => {
 
   return (
     <header data-site-header
-      className={`fixed top-0 inset-x-0 z-40 transition-[background-color,border-color] duration-500 border-b ${
+      className={`fixed top-0 inset-x-0 z-40 transition-[background-color,border-color] duration-(--dur-base) border-b ${
         scrolled || open ? 'glass border-separator' : 'bg-transparent border-transparent'
       }`}
     >
@@ -151,14 +151,9 @@ const Navbar = () => {
             aria-controls="mobile-menu"
           >
             <svg className="w-4 h-4" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden>
-              <path
-                className="transition-all duration-300"
-                d={open ? 'M4 4l10 10' : 'M2.5 6h13'}
-              />
-              <path
-                className="transition-all duration-300"
-                d={open ? 'M4 14 14 4' : 'M2.5 12h13'}
-              />
+              {/* two lines that rotate into an ✕ (transform only) */}
+              <path className="menu-line" data-open={open || undefined} d="M2.5 6h13" />
+              <path className="menu-line menu-line-2" data-open={open || undefined} d="M2.5 12h13" />
             </svg>
           </button>
         </div>
@@ -169,21 +164,12 @@ const Navbar = () => {
         id="mobile-menu"
         // closed: keep its links out of the tab order and the accessibility tree
         inert={!open}
-        className={`md:hidden overflow-hidden transition-[max-height,opacity] duration-500 ease-[var(--ease-apple)] ${
-          open ? 'max-h-[100dvh] opacity-100' : 'max-h-0 opacity-0'
-        }`}
+        data-open={open || undefined}
+        className="menu-sheet md:hidden absolute top-full inset-x-0 border-b border-separator"
       >
-        <ul className="px-8 pt-4 pb-10 flex flex-col gap-1 h-[calc(100dvh-52px)]">
-          {NAV.map((item, i) => (
-            <li
-              key={item.id}
-              className="transition-all duration-500"
-              style={{
-                transitionDelay: open ? `${80 + i * 40}ms` : '0ms',
-                opacity: open ? 1 : 0,
-                transform: open ? 'none' : 'translateY(-8px)',
-              }}
-            >
+        <ul className="px-8 pt-4 pb-10 flex flex-col gap-1">
+          {NAV.map((item) => (
+            <li key={item.id}>
               <NavLink
                 to={item.link}
                 end={item.link === '/'}

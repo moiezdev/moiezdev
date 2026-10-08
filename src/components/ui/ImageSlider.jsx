@@ -8,7 +8,7 @@ const Arrow = ({ dir, onClick, label }) => (
     type="button"
     onClick={onClick}
     aria-label={label}
-    className={`absolute top-1/2 -translate-y-1/2 z-20 ${dir === 'prev' ? 'start-4' : 'end-4'} size-10 rounded-full glass ring-1 ring-separator text-label inline-flex items-center justify-center opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-all duration-300 hover:scale-105 cursor-pointer`}
+    className={`absolute top-1/2 -translate-y-1/2 z-20 ${dir === 'prev' ? 'start-4' : 'end-4'} size-10 rounded-full glass ring-1 ring-separator text-label inline-flex items-center justify-center opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-[opacity,transform] duration-(--dur-fast) hover:scale-105 cursor-pointer`}
   >
     <svg className={`w-4 h-4 ${dir === 'prev' ? 'ltr:rotate-180' : 'rtl:rotate-180'}`} viewBox="0 0 16 16" fill="none" aria-hidden>
       <path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
@@ -59,7 +59,7 @@ export default function ImageSlider({ images = [], title = '' }) {
       {images.map((src, i) => (
         <div
           key={src}
-          className="absolute inset-0 transition-[opacity,transform] duration-700 ease-[var(--ease-apple)]"
+          className="absolute inset-0 transition-[opacity,transform] duration-(--dur-slow) ease-(--ease-out)"
           style={{ opacity: i === idx ? 1 : 0, transform: i === idx ? 'scale(1)' : 'scale(1.03)' }}
           aria-hidden={i !== idx}
         >
@@ -90,8 +90,9 @@ export default function ImageSlider({ images = [], title = '' }) {
               >
                 <span
                   aria-hidden
-                  className={`h-1.5 rounded-full transition-all duration-500 ${
-                    i === idx ? 'w-5 bg-label' : 'w-1.5 bg-label-3 group-hover/dot:bg-label-2'
+                  // the active pill grows with scaleX (no width animation)
+                  className={`h-1.5 w-5 rounded-full origin-center transition-[transform,background-color] duration-(--dur-base) ease-(--ease-spring) ${
+                    i === idx ? 'scale-x-100 bg-label' : 'scale-x-[0.3] bg-label-3 group-hover/dot:bg-label-2'
                   }`}
                 />
               </button>
