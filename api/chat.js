@@ -14,7 +14,8 @@ import { buildContext } from './_lib/context.mjs';
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const DEFAULT_MODELS = ['deepseek/deepseek-chat', 'mistralai/mistral-7b-instruct'];
 
-const MAX_QUESTION = 600;
+// room for a pasted job description
+const MAX_QUESTION = 3000;
 const MAX_HISTORY = 8;
 const MAX_HISTORY_ITEM = 700;
 
@@ -109,7 +110,9 @@ export default async function handler(req, res) {
           'HTTP-Referer': 'https://www.moiez.dev',
           'X-Title': 'BotFolio Portfolio Chat',
         },
-        body: JSON.stringify({ model, messages, max_tokens: 380, temperature: 0.4 }),
+        body: JSON.stringify({ model, messages, max_tokens: 520, temperature: 0.35 }),
+        // don't let one slow model hold the visitor hostage: fall through to the next
+        signal: AbortSignal.timeout(20000),
       });
       if (!r.ok) {
         console.warn(`Model ${model} failed:`, r.status, await r.text().catch(() => ''));

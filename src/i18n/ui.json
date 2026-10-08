@@ -216,11 +216,11 @@
       ]
     },
     "chat": {
-      "welcome": "Hey — I'm BotFolio. I'll walk you through Moieez's work as a Full Stack Engineer and Software Architect. You can explore [[nav:/works|All works]], [[nav:/experience|Experience]], or [[nav:/about|About Moieez]].",
+      "welcome": "Hi — I'm BotFolio, Moieez's AI guide. Hiring for a role, or have a project in mind? I can give you the 30-second overview, match him to a job description you paste, or show his best work.",
       "thinking": "thinking…",
       "listening": "listening…",
       "speaking": "speaking…",
-      "placeholder": "Ask about Moieez…",
+      "placeholder": "Ask about Moieez, or paste a job description…",
       "placeholderListen": "Keep talking — tap done when finished…",
       "tryAsking": "Try asking",
       "send": "Send",
@@ -230,7 +230,7 @@
         "Tech stack"
       ],
       "fallback": "Sorry about that — something didn't go through. Try again, or open [[nav:/contact|Contact page]] to reach Moieez directly.",
-      "fail": "I stay focused on Moieez's work — explore [[nav:/works|All works]] or reach him via [[nav:/contact|Contact page]].",
+      "fail": "I couldn't put an answer together just now — try again in a moment, or reach Moieez directly on the [[nav:/contact|Contact page]].",
       "rateLimited": "You're asking faster than I can keep up — give it a minute, or reach Moieez directly on the [[nav:/contact|Contact page]].",
       "newChat": "New chat",
       "sugg": {
@@ -240,14 +240,14 @@
         "thisImpact": "What impact did this have?",
         "similar": "Similar projects?",
         "home": [
-          "Show his best projects",
-          "What's his experience?",
-          "What's his tech stack?"
+          "I'm hiring — 30-second pitch",
+          "I have a project in mind",
+          "Show his best work"
         ],
         "works": [
           "Which project had the most impact?",
-          "Any AI projects?",
-          "Travel & booking work?"
+          "Can he build something like this for me?",
+          "Any AI projects?"
         ],
         "experience": [
           "What does he do at TWLM?",
@@ -261,10 +261,11 @@
         ],
         "contact": [
           "Is he open to new roles?",
-          "Fastest way to reach him?",
+          "I have a project — how do we start?",
           "Where's his CV?"
         ],
-        "hire": "Why should we hire Moieez?"
+        "hire": "Why should we hire Moieez?",
+        "client": "I have a project in mind"
       }
     },
     "common": {
@@ -733,11 +734,11 @@
       ]
     },
     "chat": {
-      "welcome": "مرحباً — أنا BotFolio. أعرّفك بعمل معيز كمهندس برمجيات متكامل ومعماري برمجيات. يمكنك استكشاف [[nav:/works|كل الأعمال]] أو [[nav:/experience|الخبرة]] أو [[nav:/about|نبذة عن معيز]].",
+      "welcome": "مرحباً — أنا BotFolio، دليل معيز الذكي. هل توظّف لدور ما، أم لديك مشروع؟ أستطيع إعطاءك لمحة في ٣٠ ثانية، أو مطابقته مع وصف وظيفي تلصقه هنا، أو عرض أبرز أعماله.",
       "thinking": "يفكر…",
       "listening": "يستمع…",
       "speaking": "يتحدث…",
-      "placeholder": "اسأل عن معيز…",
+      "placeholder": "اسأل عن معيز، أو الصق وصفاً وظيفياً…",
       "placeholderListen": "استمر بالحديث — اضغط تم عند الانتهاء…",
       "tryAsking": "جرّب السؤال",
       "send": "إرسال",
@@ -747,7 +748,7 @@
         "المكدس التقني"
       ],
       "fallback": "عذراً — لم يكتمل الطلب. حاول مرة أخرى، أو افتح [[nav:/contact|صفحة التواصل]] للوصول إلى معيز مباشرة.",
-      "fail": "أركّز على عمل معيز — استكشف [[nav:/works|كل الأعمال]] أو تواصل عبر [[nav:/contact|صفحة التواصل]].",
+      "fail": "لم أتمكن من إعداد إجابة الآن — حاول مجدداً بعد لحظات، أو تواصل مع معيز مباشرة عبر [[nav:/contact|صفحة التواصل]].",
       "rateLimited": "أسئلتك أسرع مما أستطيع مواكبته — انتظر دقيقة، أو تواصل مع معيز مباشرة عبر [[nav:/contact|صفحة التواصل]].",
       "newChat": "محادثة جديدة",
       "sugg": {
@@ -757,14 +758,14 @@
         "thisImpact": "ما أثر هذا المشروع؟",
         "similar": "مشاريع مشابهة؟",
         "home": [
-          "أبرز مشاريعه",
-          "ما خبرته؟",
-          "ما التقنيات التي يستخدمها؟"
+          "أوظّف — لمحة في ٣٠ ثانية",
+          "لدي مشروع",
+          "أبرز أعماله"
         ],
         "works": [
           "أي مشروع كان له أكبر أثر؟",
-          "هل لديه مشاريع ذكاء اصطناعي؟",
-          "أعمال السفر والحجز؟"
+          "هل يستطيع بناء شيء مشابه لي؟",
+          "هل لديه مشاريع ذكاء اصطناعي؟"
         ],
         "experience": [
           "ماذا يعمل في TWLM؟",
@@ -778,10 +779,11 @@
         ],
         "contact": [
           "هل هو متاح لأدوار جديدة؟",
-          "أسرع طريقة للتواصل معه؟",
+          "لدي مشروع — كيف نبدأ؟",
           "أين سيرته الذاتية؟"
         ],
-        "hire": "لماذا يجب أن نوظف معيز؟"
+        "hire": "لماذا يجب أن نوظف معيز؟",
+        "client": "لدي مشروع"
       }
     },
     "common": {

@@ -227,16 +227,17 @@ var contacts_default = [
 var chatbot_default = {
   botName: "BotFolio",
   profile: {
-    name: "Moiez ur Rehman",
+    name: "Moieez ur Rehman",
     alsoKnownAs: [
       "Moiz",
-      "Moiz Dev",
+      "Moiez",
+      "MoizDev",
       "MoiezDev"
     ],
-    headline: "Senior Full Stack Engineer & Software Architect | Product-Focused | React, Vue, Next.js, Node.js, NestJS",
+    headline: "Senior Full Stack Engineer & Software Architect | Node.js/NestJS, React/Next.js, PostgreSQL, LLM integrations",
     location: "Riyadh, Saudi Arabia",
     careerStart: "2019-05-01",
-    identity: "Product-focused Full Stack Engineer and Software Architect who owns features end-to-end across frontend, backend, architecture and product direction. Designs system architectures (event-driven workflows, data access layers, auth/RBAC, background jobs) and helps teams execute on them. Builds POS, loyalty, ecommerce, payments, booking systems, dashboards, and AI-assisted product features (OpenRouter / DeepSeek).",
+    identity: "Product-focused Full Stack Engineer and Software Architect with experience across retail, travel and SaaS. Owns features end to end \u2014 from understanding the business problem to architecture, build, deploy and iteration. Designs systems (event-driven workflows, data access layers, auth/RBAC, background jobs) and ships them across web, mobile and integrations: POS and payments, loyalty and wallet passes, booking engines, e-commerce storefronts, internal dashboards, and AI features with OpenRouter/DeepSeek.",
     iqama: "Transferable Iqama \xB7 Available Immediately",
     portfolioUrl: "https://www.moiez.dev"
   },
@@ -325,6 +326,37 @@ var chatbot_default = {
       "lms",
       "learning management"
     ]
+  },
+  audiences: {
+    recruiters: {
+      lookingFor: "Senior Full Stack Engineer / Software Architect roles (full-time) \u2014 Node.js/NestJS, React/Next.js, AI-integration work.",
+      pitch: [
+        "Senior full stack engineer who owns features end to end \u2014 architecture, backend, frontend and delivery.",
+        "Proven impact: ~70% fewer support requests and ~64% lower API latency at TWLM; ~25% less downtime at ACCIONA; B2B travel platforms serving 10K+ monthly users.",
+        "Built production integrations recruiters in the Gulf care about: MyFatoorah and Moyasar payments, Apple/Google Wallet, Sabre/Amadeus booking engines, OpenRouter/DeepSeek LLMs.",
+        "Based in Riyadh and building for the Gulf market; transferable Iqama, available immediately."
+      ],
+      nextSteps: "CV at /cv, email moiezdev@gmail.com, WhatsApp +966 573240913, LinkedIn linkedin.com/in/moiezdev."
+    },
+    clients: {
+      openTo: "Freelance and contract product work alongside full-time roles: new builds, rescuing or scaling existing apps, integrations and AI features.",
+      canBuild: [
+        "Web apps and SaaS platforms (React/Next.js or Vue/Nuxt front ends, Node.js/NestJS APIs, PostgreSQL)",
+        "POS, ordering, loyalty, gift cards and Apple/Google Wallet passes",
+        "Payments with Gulf gateways (MyFatoorah, Moyasar) and webhook-driven workflows",
+        "Booking and travel engines (Sabre, Amadeus), e-commerce storefronts and CMS/page builders",
+        "Internal dashboards, reporting and admin tools with RBAC/SSO",
+        "AI features: LLM search, assistants and data analysis via OpenRouter/DeepSeek",
+        "Mobile apps with Flutter (as part of a product)"
+      ],
+      howHeWorks: [
+        "Understand: the business goal, users and constraints first.",
+        "Architect: data models, APIs and service boundaries that stay clean as the product grows.",
+        "Build: typed, tested, maintainable code across frontend, backend and integrations.",
+        "Ship & measure: deploy, monitor and iterate on real usage."
+      ],
+      toStart: "Share what you're building, who it's for, the must-have features and your timeline via the Contact page, email or WhatsApp \u2014 he replies within 24 hours. Pricing and timelines are discussed directly with him."
+    }
   }
 };
 
@@ -1216,9 +1248,12 @@ function buildContext(question = "", { path = "/", previousQuestion = "" } = {})
       location: profile.location,
       experienceYears: years,
       summary: profile.identity,
-      availability: "Open to senior full stack engineering and software architect roles and projects",
+      availability: "Open to senior full stack engineering and software architect roles, and to freelance/contract projects",
       workAuthorization: profile.iqama
     },
+    // what each kind of visitor needs: recruiters get the pitch, clients get scope + how to start
+    forRecruiters: chatbot_default.audiences?.recruiters,
+    forClients: chatbot_default.audiences?.clients,
     experience: experience_default.map((job) => ({
       title: job.title,
       company: job.company,
@@ -1226,7 +1261,7 @@ function buildContext(question = "", { path = "/", previousQuestion = "" } = {})
       location: job.location,
       current: Boolean(job.current),
       summary: job.summary,
-      highlights: (job.highlights || []).slice(0, 3).map((h) => h.slice(0, 180)),
+      highlights: (job.highlights || []).slice(0, 4).map((h) => h.slice(0, 180)),
       stack: (job.stack || []).slice(0, 8)
     })),
     relevantProjects: relevant.map(projectDetail),

@@ -33,7 +33,8 @@ export function suggestFollowUps({ path = '/', messages = [], lang = 'en' }) {
   }
   const page = pageDefaults[path];
   if (page) list = [...list, ...(t(lang, `chat.sugg.${page}`) || [])];
-  list = [...list, t(lang, 'chat.sugg.hire')];
+  // always keep both doors open: hiring and starting a project
+  list = [...list, t(lang, 'chat.sugg.hire'), t(lang, 'chat.sugg.client')];
 
   return [...new Set(list.filter(Boolean))].filter((q) => !asked.has(q.toLowerCase())).slice(0, 3);
 }
