@@ -14,7 +14,9 @@ export function PreferencesProvider({ children, hydrating = false }) {
 
   useLayoutEffect(() => {
     if (synced) return;
-    setPrefs(readPrefs());
+    const saved = readPrefs();
+    // only re-render when the visitor's prefs differ from the prerendered ones
+    setPrefs((prev) => (prev.lang === saved.lang && prev.theme === saved.theme ? prev : saved));
     setSynced(true);
   }, [synced]);
 
