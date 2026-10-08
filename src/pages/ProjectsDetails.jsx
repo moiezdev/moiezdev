@@ -191,7 +191,7 @@ export default function ProjectDetail() {
             <Chevron dir="back" />
             {t('projects.back')}
           </TransitionLink>
-          <h1 className="mt-5 max-w-4xl text-[clamp(2rem,4.6vw,3.25rem)] font-semibold leading-[1.1] tracking-[-0.03em] text-label [html[lang=ar]_&]:tracking-normal [html[lang=ar]_&]:leading-[1.3]">
+          <h1 className="mt-5 max-w-4xl text-[clamp(2rem,4.6vw,3.25rem)] font-semibold leading-[1.1] tracking-[-0.03em] text-label [html[lang=ar]_&]:tracking-normal [html[lang=ar]_&]:leading-[1.3] [html[lang=ar]_&]:text-[clamp(1.625rem,3.6vw,2.5rem)]">
             {project.title}
           </h1>
           <p className="mt-4 max-w-3xl text-[19px] md:text-[21px] leading-[1.45] text-label-2">{cs.summary || project.subtitle}</p>

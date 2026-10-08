@@ -68,7 +68,7 @@ const Hero = () => {
             <span className="mt-1 text-[13px] md:text-[14px] font-medium text-label-2">{t('hero.eyebrow')}</span>
           </p>
 
-          <h1 className="headline-hero !text-[clamp(2.125rem,5.2vw,4.25rem)] mt-6 max-w-3xl text-label text-balance">
+          <h1 className="headline-hero is-compact mt-6 max-w-3xl text-label text-balance">
             {t('hero.title')}
           </h1>
 

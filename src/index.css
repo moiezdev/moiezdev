@@ -192,6 +192,10 @@ html:not([lang='ar']) [lang='ar'] {
   font-weight: 700;
   letter-spacing: -0.025em;
 }
+/* the home hero runs a little smaller than other page heroes */
+.headline-hero.is-compact {
+  font-size: clamp(2.125rem, 5.2vw, 4.25rem);
+}
 .lead {
   font-size: clamp(1.1875rem, 2vw, 1.5rem);
   line-height: 1.38;
@@ -228,14 +232,28 @@ html[lang='ar'] :is(p, li, dd, blockquote, figcaption):not([class*='leading-none
 html[lang='ar'] :is(h1, h2, h3, h4):not([class*='leading-none'], .cv-page *) {
   line-height: 1.4;
 }
+/* Arabic glyphs are taller and heavier than Latin at the same size: run headings
+   ~20% smaller and one weight lighter so they carry the same visual weight */
 html[lang='ar'] .headline-hero {
-  line-height: 1.25;
-}
-html[lang='ar'] .headline-1,
-html[lang='ar'] .headline-2 {
+  font-size: clamp(2.25rem, 5.6vw, 4.25rem);
+  font-weight: 600;
   line-height: 1.3;
 }
+html[lang='ar'] .headline-hero.is-compact {
+  font-size: clamp(1.75rem, 4vw, 3.25rem);
+}
+html[lang='ar'] .headline-1 {
+  font-size: clamp(1.875rem, 4vw, 2.75rem);
+  font-weight: 600;
+  line-height: 1.35;
+}
+html[lang='ar'] .headline-2 {
+  font-size: clamp(1.5rem, 2.8vw, 2rem);
+  font-weight: 600;
+  line-height: 1.35;
+}
 html[lang='ar'] .lead {
+  font-size: clamp(1.0625rem, 1.7vw, 1.3125rem);
   line-height: 1.65;
 }
 /* small caps-style labels: no uppercase tracking, and a touch larger */
