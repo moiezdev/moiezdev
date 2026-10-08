@@ -30,8 +30,8 @@
       "statLatency": "Lower API latency",
       "name": "Moieez ur Rehman",
       "eyebrow": "Senior Full Stack Engineer · Riyadh",
-      "title": "I build POS, payments & AI features for Gulf retail.",
-      "subtitle": "Node.js/NestJS, React/Next.js, PostgreSQL and LLM integrations — from architecture to production.",
+      "title": "I design and build full-stack products — from architecture to AI.",
+      "subtitle": "{{years}} years across retail, travel and SaaS — POS & payments, booking engines, e-commerce, dashboards and LLM integrations.",
       "viewWork": "View my work",
       "bookCall": "Book a 15-min call",
       "viewResume": "View résumé",
@@ -39,7 +39,8 @@
       "statTickets": "Fewer support tickets",
       "statYearsLabel": "Years shipping software",
       "resumeShort": "Résumé",
-      "portraitAlt": "Moieez ur Rehman"
+      "portraitAlt": "Moieez ur Rehman",
+      "stack": "Node.js/NestJS · React/Next.js · PostgreSQL"
     },
     "about": {
       "section": "about me",
@@ -542,8 +543,8 @@
       "statLatency": "زمن استجابة أقل للواجهات",
       "name": "معيز الرحمن",
       "eyebrow": "مهندس برمجيات متكامل أول · الرياض",
-      "title": "أبني أنظمة نقاط البيع والمدفوعات وميزات الذكاء الاصطناعي لقطاع التجزئة في الخليج.",
-      "subtitle": "Node.js/NestJS وReact/Next.js وPostgreSQL وتكامل النماذج اللغوية — من التصميم المعماري حتى الإنتاج.",
+      "title": "أصمّم وأبني منتجات متكاملة — من المعمارية حتى الذكاء الاصطناعي.",
+      "subtitle": "{{years}} سنوات في التجزئة والسفر والبرمجيات كخدمة — نقاط البيع والمدفوعات، ومحركات الحجز، والتجارة الإلكترونية، ولوحات التحكم، وتكامل النماذج اللغوية.",
       "viewWork": "شاهد أعمالي",
       "bookCall": "احجز مكالمة لمدة 15 دقيقة",
       "viewResume": "عرض السيرة الذاتية",
@@ -551,7 +552,8 @@
       "statTickets": "طلبات دعم أقل",
       "statYearsLabel": "سنوات في بناء البرمجيات",
       "resumeShort": "السيرة الذاتية",
-      "portraitAlt": "معيز الرحمن"
+      "portraitAlt": "معيز الرحمن",
+      "stack": "Node.js/NestJS · React/Next.js · PostgreSQL"
     },
     "about": {
       "section": "نبذتي",

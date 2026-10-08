@@ -72,7 +72,10 @@ const Hero = () => {
             {t('hero.title')}
           </h1>
 
-          <p className="lead mt-6 max-w-2xl text-balance">{t('hero.subtitle')}</p>
+          <p className="lead mt-6 max-w-2xl text-balance">{t('hero.subtitle', { years })}</p>
+          <p className="mt-3 font-mono text-[13px] md:text-[14px] text-label-3" dir="ltr">
+            {t('hero.stack')}
+          </p>
 
           <div className="mt-9 flex flex-wrap items-center justify-center lg:justify-start gap-3">
             <Button to="/works" primary size="lg">
