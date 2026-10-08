@@ -23,5 +23,27 @@
     "main.webp"
   ],
   "screenshot": false,
-  "status": "in-progress"
+  "status": "in-progress",
+  "caseStudy": {
+    "summary": "An AI-powered learning management system in progress, with a .NET backend that recommends courses.",
+    "problem": [
+      "Students struggle to pick the right courses for their interests and goals."
+    ],
+    "role": [
+      "Designing and building the system and its recommendation logic."
+    ],
+    "architecture": [
+      "ASP.NET and Entity Framework on PostgreSQL.",
+      "AI-driven recommendations to personalise each learning path."
+    ],
+    "challenges": [],
+    "results": [
+      "In progress."
+    ],
+    "next": [],
+    "measured": ""
+  },
+  "diagrams": [
+    "stackFlow"
+  ]
 }

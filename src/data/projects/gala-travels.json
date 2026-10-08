@@ -29,5 +29,36 @@
     "main-framed.webp",
     "img1-framed.webp"
   ],
-  "group": "client"
+  "group": "client",
+  "caseStudy": {
+    "summary": "A travel-agency platform for booking flights, hotels, vacations and cruises — Vue/Nuxt on a Laravel backend.",
+    "problem": [
+      "Agents and travellers needed one place to book four kinds of travel without the interface getting complicated."
+    ],
+    "role": [
+      "Built the Vue/Nuxt front end: booking forms, listings and itinerary views.",
+      "Connected the booking flows to the Laravel backend."
+    ],
+    "architecture": [
+      "Nuxt (Vue) front end with Buefy and Bootstrap on SCSS.",
+      "Laravel backend powering the booking flows."
+    ],
+    "challenges": [
+      "Four booking types with different data, in one consistent and approachable UI."
+    ],
+    "results": [
+      "Responsive booking flows for flights, hotels, vacations and cruises."
+    ],
+    "next": [],
+    "measured": ""
+  },
+  "metrics": [
+    {
+      "value": "4",
+      "label": "booking types: flights, hotels, vacations, cruises"
+    }
+  ],
+  "diagrams": [
+    "stackFlow"
+  ]
 }

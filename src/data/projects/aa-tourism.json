@@ -34,5 +34,46 @@
     "img3-framed.webp",
     "img4-framed.webp"
   ],
-  "group": "client"
+  "group": "client",
+  "caseStudy": {
+    "summary": "A flight booking and tour-planning platform for a Canadian travel agency, wired to Sabre and Amadeus for real-time flight data.",
+    "problem": [
+      "Travellers needed to search, compare and book real flights and tours without getting lost in a complex booking journey.",
+      "Flight data had to come live from global distribution systems (Sabre, Amadeus) using IATA codes, on desktop and mobile."
+    ],
+    "role": [
+      "Frontend lead at Creative Inter Tech for the B2B travel platforms (AA Tourism, City Arrivals).",
+      "Built the booking journey in Nuxt: search forms, flight lists, filters and step-by-step booking.",
+      "Worked with the backend team so live GDS data reached the UI reliably and consistently."
+    ],
+    "architecture": [
+      "Nuxt (Vue) frontend with Vuex for search and booking state.",
+      "Buefy and Bootstrap components on a custom SCSS theme in the brand's colours.",
+      "Flight search and availability through Sabre and Amadeus, mapped by IATA codes."
+    ],
+    "challenges": [
+      "Keeping a multi-step booking flow simple while showing a lot of live flight data.",
+      "Consistent behaviour across mobile and desktop with real-time results."
+    ],
+    "results": [
+      "Live platform at aatourism.ca with real-time flight search and booking.",
+      "Part of the B2B travel platforms serving 10K+ monthly users."
+    ],
+    "next": [],
+    "measured": ""
+  },
+  "metrics": [
+    {
+      "value": "10K+",
+      "label": "monthly users across the B2B travel platforms"
+    },
+    {
+      "value": "2",
+      "label": "live GDS integrations (Sabre, Amadeus)"
+    }
+  ],
+  "experienceId": "creative-inter-tech",
+  "diagrams": [
+    "stackFlow"
+  ]
 }

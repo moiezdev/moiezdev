@@ -24,5 +24,34 @@
     "main-framed.webp"
   ],
   "repoPublic": false,
-  "group": "earlier"
+  "group": "earlier",
+  "caseStudy": {
+    "summary": "A responsive website for a Bahrain seafood supplier, with product categories and quote forms.",
+    "problem": [
+      "Customers needed to explore live, frozen and fillet products and send inquiries easily."
+    ],
+    "role": [
+      "Designed and built the front end, product sections, quick links and quote/contact forms."
+    ],
+    "architecture": [
+      "Hand-built HTML5, CSS3 and JavaScript — no framework needed for a fast, simple site."
+    ],
+    "challenges": [
+      "A professional look that stays clear and uncluttered."
+    ],
+    "results": [
+      "Live at doceanfisheries.com, responsive on desktop and mobile."
+    ],
+    "next": [],
+    "measured": ""
+  },
+  "metrics": [
+    {
+      "value": "3",
+      "label": "seafood categories: live, frozen and fillets"
+    }
+  ],
+  "diagrams": [
+    "stackFlow"
+  ]
 }

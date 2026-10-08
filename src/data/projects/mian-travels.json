@@ -29,5 +29,32 @@
     "main-framed.webp",
     "img1-framed.webp"
   ],
-  "group": "client"
+  "group": "client",
+  "caseStudy": {
+    "summary": "A flight booking platform on the Sabre API, built at Creative Inter Tech to feel simple and intuitive.",
+    "problem": [
+      "Travellers needed a straightforward way to search flights and book, with data coming live from Sabre."
+    ],
+    "role": [
+      "Built the Nuxt 2 front end: flight search, listings and booking forms.",
+      "Connected the UI to Sabre API data and kept it reliable on mobile and desktop."
+    ],
+    "architecture": [
+      "Nuxt 2 (Vue) with Buefy and Bootstrap components on SCSS.",
+      "Live flight data from the Sabre API.",
+      "Small, purposeful animations to guide users through booking."
+    ],
+    "challenges": [
+      "Turning raw GDS data into clean, readable flight results."
+    ],
+    "results": [
+      "A clean, brand-consistent booking flow backed by live Sabre data."
+    ],
+    "next": [],
+    "measured": ""
+  },
+  "experienceId": "creative-inter-tech",
+  "diagrams": [
+    "stackFlow"
+  ]
 }

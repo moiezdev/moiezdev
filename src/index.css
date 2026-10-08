@@ -1178,3 +1178,63 @@ html[dir='rtl'] .scroll-progress {
 .menu-line-2[data-open] {
   transform: translateY(-3px) rotate(-45deg);
 }
+
+/* ---------- Case study: stack flow (components/project/StackFlow.jsx) ---------- */
+.stack-link {
+  position: relative;
+  flex: none;
+  align-self: center;
+  width: 2px;
+  height: 22px;
+  margin: 4px 0;
+  background: color-mix(in srgb, var(--color-label) 22%, transparent);
+  border-radius: 2px;
+}
+@media (min-width: 768px) {
+  .stack-link {
+    width: 28px;
+    height: 2px;
+    margin: 0 6px;
+  }
+}
+.stack-dot {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 6px;
+  height: 6px;
+  margin: -2px 0 0 -3px;
+  border-radius: 999px;
+  background: var(--color-label);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-label) 15%, transparent);
+  opacity: 0;
+  animation: stack-dot-v 1.6s var(--ease-in-out) infinite;
+  animation-play-state: paused;
+}
+@media (min-width: 768px) {
+  .stack-dot {
+    left: 0;
+    top: 50%;
+    margin: -3px 0 0 -3px;
+    animation-name: stack-dot-h;
+  }
+  html[dir='rtl'] .stack-dot {
+    animation-direction: reverse;
+  }
+}
+[data-running='true'] .stack-dot {
+  animation-play-state: running;
+}
+@keyframes stack-dot-v {
+  0% { transform: translateY(0); opacity: 0; }
+  20%, 80% { opacity: 1; }
+  100% { transform: translateY(22px); opacity: 0; }
+}
+@keyframes stack-dot-h {
+  0% { transform: translateX(0); opacity: 0; }
+  20%, 80% { opacity: 1; }
+  100% { transform: translateX(28px); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stack-dot { display: none; }
+}

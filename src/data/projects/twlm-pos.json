@@ -63,6 +63,7 @@
   "teamSize": "",
   "diagrams": [
     "architecture",
+    "stackFlow",
     "walletSequence",
     "queue",
     "walletPass"

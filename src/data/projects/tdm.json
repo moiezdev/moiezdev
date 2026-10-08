@@ -28,5 +28,28 @@
     "img3-framed.webp",
     "img4-framed.webp"
   ],
-  "group": "earlier"
+  "group": "earlier",
+  "caseStudy": {
+    "summary": "The corporate website of TDM, a Portuguese civil-engineering and project-management company.",
+    "problem": [
+      "Visitors needed to understand TDM's services and projects quickly and get in touch."
+    ],
+    "role": [
+      "Developed the front end with clear sections for services, projects and contact."
+    ],
+    "architecture": [
+      "HTML5, CSS3 and JavaScript with a responsive layout."
+    ],
+    "challenges": [
+      "Conveying technical reliability through a clean, simple design."
+    ],
+    "results": [
+      "A professional, responsive site aligned with TDM's brand."
+    ],
+    "next": [],
+    "measured": ""
+  },
+  "diagrams": [
+    "stackFlow"
+  ]
 }
