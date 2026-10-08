@@ -91,7 +91,7 @@ const Navbar = () => {
     }`;
 
   return (
-    <header
+    <header data-site-header
       className={`fixed top-0 inset-x-0 z-40 transition-[background-color,border-color] duration-500 border-b ${
         scrolled || open ? 'glass border-separator' : 'bg-transparent border-transparent'
       }`}

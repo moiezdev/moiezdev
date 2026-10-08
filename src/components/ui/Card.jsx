@@ -5,6 +5,7 @@ import ExternalIcon from './ExternalIcon';
 import { Chevron } from './SectionTitle';
 import { useContent } from '../../i18n/content';
 import { topTech } from '../../utils/techRank';
+import TransitionLink from './TransitionLink';
 
 /**
  * Project card. The whole card links to the project page (stretched link);
@@ -22,11 +23,13 @@ const Card = ({ project, featured = false, eyebrow, maxTech = 3, className = '' 
 
   return (
     <article
+      data-vt-project={project.id}
       className={`group relative flex h-full overflow-hidden surface surface-hover ${
         featured ? 'flex-col lg:flex-row' : 'flex-col'
       } ${className}`}
     >
       <div
+        data-vt-image
         className={`relative overflow-hidden bg-surface-2 ${
           featured ? 'aspect-[16/10] lg:aspect-auto lg:w-[58%] lg:min-h-[420px]' : 'aspect-[16/10]'
         }`}
@@ -54,12 +57,13 @@ const Card = ({ project, featured = false, eyebrow, maxTech = 3, className = '' 
             featured ? 'text-[28px] md:text-[34px]' : 'text-[21px]'
           }`}
         >
-          <Link
+          <TransitionLink
             to={`/works/${project.id}`}
+            shared={{ from: (link) => link.closest('[data-vt-project]')?.querySelector('[data-vt-image]'), to: '[data-vt-hero]' }}
             data-cursor-label={t('cursor.view')}
             className="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none">
             {project.title}
-          </Link>
+          </TransitionLink>
         </h3>
         <p className={`text-label-2 ${featured ? 'text-[17px]' : 'text-[15px] line-clamp-2'}`}>
           {project.subtitle}

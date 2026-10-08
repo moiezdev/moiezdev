@@ -5,6 +5,7 @@ import ExternalIcon from './ExternalIcon';
 import TechChip from './TechChip';
 import { useContent } from '../../i18n/content';
 import { topTech } from '../../utils/techRank';
+import TransitionLink from './TransitionLink';
 
 /**
  * Full-width hero card for the featured project: screenshot, one pulled-out
@@ -16,15 +17,20 @@ const FeaturedCard = ({ project, className = '' }) => {
   const metric = project.metrics?.[project.featuredMetric ?? 0];
   const live = project.productUrl || project.projectUrl;
   const to = `/works/${project.id}`;
+  // the screenshot morphs into the case-study hero
+  const shared = { from: (link) => link.closest('[data-vt-project]')?.querySelector('[data-vt-image]'), to: '[data-vt-hero]' };
 
   return (
     <article
+      data-vt-project={project.id}
       className={`group relative grid overflow-hidden surface lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] ${className}`}
     >
-      <Link
+      <TransitionLink
         to={to}
         tabIndex={-1}
         aria-hidden
+        shared={shared}
+        data-vt-image
         data-cursor-label={t('cursor.view')}
         className="relative block overflow-hidden bg-surface-2 aspect-[16/10] lg:aspect-auto lg:min-h-[440px]"
       >
@@ -34,14 +40,14 @@ const FeaturedCard = ({ project, className = '' }) => {
           sizes="(min-width: 1024px) 720px, 100vw"
           className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 ease-[var(--ease-apple)] group-hover:scale-[1.03]"
         />
-      </Link>
+      </TransitionLink>
 
       <div className="flex flex-col p-7 md:p-10 lg:justify-center">
         <p className="eyebrow">{t('projects.featuredCaseStudy')}</p>
         <h3 className="mt-3 text-[28px] md:text-[34px] font-semibold tracking-[-0.025em] leading-tight text-label">
-          <Link to={to} className="hover:underline underline-offset-4 decoration-2">
+          <TransitionLink to={to} shared={shared} className="hover:underline underline-offset-4 decoration-2">
             {project.title}
-          </Link>
+          </TransitionLink>
         </h3>
         <p className="mt-2 text-[17px] text-label-2">{project.subtitle}</p>
 

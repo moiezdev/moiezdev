@@ -35,14 +35,8 @@ const useIdle = (timeout = 4000) => {
   return idle;
 };
 
-const Home = lazy(() => import('./pages/Index'));
-const Projects = lazy(() => import('./pages/Projects'));
-const Experience = lazy(() => import('./pages/Experience'));
-const About = lazy(() => import('./pages/About'));
-const Contact = lazy(() => import('./pages/Contact'));
-const NotFound = lazy(() => import('./pages/NotFound'));
-const ProjectDetail = lazy(() => import('./pages/ProjectsDetails'));
-const Cv = lazy(() => import('./pages/Cv'));
+// pages load on demand; each can be preloaded (view transitions do, see routes/pages.js)
+import { About, Contact, Cv, Experience, Home, NotFound, ProjectDetail, Projects } from './routes/pages';
 
 function AppShell() {
   const { pathname } = useLocation();
@@ -67,7 +61,7 @@ function AppShell() {
         {t('a11y.skip')}
       </a>
       <Navbar />
-      <main id="main" tabIndex={-1} className="relative overflow-x-clip outline-none">
+      <main id="main" tabIndex={-1} data-path={pathname} className="relative overflow-x-clip outline-none">
         <Suspense fallback={<Loading />}>
           <ScrollToTop />
           <Routes>

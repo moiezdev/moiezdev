@@ -691,3 +691,27 @@ html[dir='rtl'] .seg-thumb {
     animation: none;
   }
 }
+
+/* ---------- View transitions (motion/viewTransition.js) ---------- */
+/* page changes: a short crossfade; the header stays put */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--dur-base);
+  animation-timing-function: var(--ease-out);
+}
+header[data-site-header] {
+  view-transition-name: site-header;
+}
+/* a project card's screenshot morphs into the case-study gallery (and back) */
+::view-transition-group(shared-hero) {
+  animation-duration: var(--dur-slow);
+  animation-timing-function: var(--ease-spring);
+  border-radius: 28px;
+  overflow: hidden;
+}
+::view-transition-old(shared-hero),
+::view-transition-new(shared-hero) {
+  height: 100%;
+  object-fit: cover;
+  animation-duration: var(--dur-slow);
+}

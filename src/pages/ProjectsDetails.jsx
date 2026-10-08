@@ -15,6 +15,7 @@ import { useContent } from '../i18n/content';
 import NotFound from './NotFound';
 import { sortTech, topTech } from '../utils/techRank';
 import { scrollToTarget } from '../utils/smoothScroll';
+import TransitionLink from '../components/ui/TransitionLink';
 
 /** Diagrams a project can list in its `diagrams` field. */
 const DIAGRAMS = {
@@ -149,10 +150,14 @@ export default function ProjectDetail() {
           style={{ background: 'radial-gradient(45% 55% at 40% 45%, var(--glow-a), transparent 70%), radial-gradient(35% 45% at 65% 50%, var(--glow-b), transparent 70%)' }}
         />
         <div className="relative app-container">
-          <Link to="/works" className="inline-flex items-center gap-1 text-[15px] font-medium text-accent hover:underline underline-offset-4">
+          <TransitionLink
+            to="/works"
+            shared={{ from: '[data-vt-hero]', to: `[data-vt-project="${project.id}"] [data-vt-image]` }}
+            className="inline-flex items-center gap-1 text-[15px] font-medium text-accent hover:underline underline-offset-4"
+          >
             <Chevron dir="back" />
             {t('projects.back')}
-          </Link>
+          </TransitionLink>
           <h1 className="mt-5 max-w-4xl text-[clamp(2rem,4.6vw,3.25rem)] font-semibold leading-[1.1] tracking-[-0.03em] text-label [html[lang=ar]_&]:tracking-normal [html[lang=ar]_&]:leading-[1.3]">
             {project.title}
           </h1>
@@ -182,7 +187,10 @@ export default function ProjectDetail() {
 
       <section className="px-5">
         <Reveal className="app-container">
-          <ImageSlider images={images} title={project.title} />
+          {/* shared element: project cards morph into this gallery (view transitions) */}
+          <div data-vt-hero className="rounded-[28px]">
+            <ImageSlider images={images} title={project.title} />
+          </div>
         </Reveal>
 
         {project.metrics?.length > 0 && (
@@ -279,12 +287,13 @@ export default function ProjectDetail() {
               { p: next, label: t('projects.next'), dir: 'forward' },
             ].map(({ p, label, dir }, i) => (
               <Reveal key={dir} delay={i * 80} className="min-w-0">
-                <Link
+                <TransitionLink
                   to={`/works/${p.id}`}
+                  shared={{ from: (link) => link.querySelector('[data-vt-image]'), to: '[data-vt-hero]' }}
                   data-cursor-label={t('cursor.view')}
                   className={`group surface surface-hover flex items-center gap-4 p-4 md:p-5 h-full ${dir === 'forward' ? 'sm:flex-row-reverse sm:text-end' : ''}`}
                 >
-                  <span className="relative size-16 md:size-20 shrink-0 overflow-hidden rounded-[14px] bg-surface-2 ring-1 ring-separator">
+                  <span data-vt-image className="relative size-16 md:size-20 shrink-0 overflow-hidden rounded-[14px] bg-surface-2 ring-1 ring-separator">
                     {p.screenshot === false ? (
                       <span className="blueprint absolute inset-0 flex items-center justify-center text-[15px] font-bold text-label">{p.title}</span>
                     ) : (
@@ -300,7 +309,7 @@ export default function ProjectDetail() {
                     <span className="block mt-1 text-[19px] font-semibold tracking-[-0.02em] text-label truncate">{p.title}</span>
                     <span className="block text-[14px] text-label-2 truncate">{p.subtitle}</span>
                   </span>
-                </Link>
+                </TransitionLink>
               </Reveal>
             ))}
           </nav>
