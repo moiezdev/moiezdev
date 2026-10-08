@@ -35,7 +35,7 @@ const Button = forwardRef(function Button(
   ref,
 ) {
   const tone = VARIANTS[variant || (primary ? 'primary' : 'secondary')];
-  const classes = `inline-flex items-center justify-center gap-1.5 rounded-full font-medium tracking-[-0.01em] whitespace-nowrap select-none transition-all duration-300 ease-[var(--ease-apple)] disabled:opacity-40 disabled:pointer-events-none cursor-pointer ${SIZES[size]} ${tone} ${className}`;
+  const classes = `inline-flex items-center justify-center gap-1.5 rounded-full font-medium tracking-[-0.01em] whitespace-nowrap select-none btn-press disabled:opacity-40 disabled:pointer-events-none cursor-pointer ${SIZES[size]} ${tone} ${className}`;
 
   if (to) {
     return (

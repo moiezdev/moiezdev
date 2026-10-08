@@ -251,7 +251,7 @@ const ContactSection = () => {
       <Reveal delay={100} className="surface self-start p-6 md:p-8 relative">
         {status === 'sent' ? (
           <div className="flex min-h-[360px] flex-col items-center justify-center gap-4 py-8 text-center">
-            <span className="inline-flex size-12 items-center justify-center rounded-full bg-[color-mix(in_srgb,var(--color-green)_16%,transparent)] text-green">
+            <span className="success-check inline-flex size-12 items-center justify-center rounded-full bg-[color-mix(in_srgb,var(--color-green)_16%,transparent)] text-green">
               <CheckIcon />
             </span>
             <h3 ref={sentRef} tabIndex={-1} className="text-[21px] font-semibold tracking-[-0.01em] text-label outline-none">

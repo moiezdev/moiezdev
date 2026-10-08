@@ -967,3 +967,29 @@ html[dir='rtl'] .scroll-progress {
     transform var(--dur-base) var(--ease-spring),
     opacity var(--dur-fast) var(--ease-out);
 }
+
+/* ---------- Buttons: press state ---------- */
+.btn-press {
+  transition:
+    transform var(--dur-fast) var(--ease-spring),
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    opacity var(--dur-fast) var(--ease-out);
+}
+.btn-press:active {
+  transform: scale(0.98);
+}
+
+/* contact form: the success check settles in (scale + opacity only) */
+.success-check {
+  animation: check-pop var(--dur-slow) var(--ease-spring) both;
+}
+.success-check svg {
+  animation: check-pop var(--dur-slow) var(--ease-spring) 80ms both;
+}
+@keyframes check-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
