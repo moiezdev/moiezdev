@@ -406,6 +406,16 @@
         "after": "After",
         "relative": "Relative to before (100%)",
         "measured": "Measured"
+      },
+      "queue": {
+        "title": "Background jobs with BullMQ",
+        "illustrative": "Illustrative",
+        "waiting": "Waiting",
+        "active": "Active",
+        "completed": "Completed",
+        "failed": "failed",
+        "alt": "Jobs moving from waiting to active to completed in a BullMQ queue; one job fails and is retried.",
+        "caption": "Notification and wallet-update jobs run in Redis-backed BullMQ workers, outside the request path. A failed job is retried instead of being lost."
       }
     },
     "ai": {
@@ -897,6 +907,16 @@
         "after": "بعد",
         "relative": "نسبةً إلى ما قبل (100٪)",
         "measured": "قياس فعلي"
+      },
+      "queue": {
+        "title": "مهام في الخلفية مع BullMQ",
+        "illustrative": "توضيحي",
+        "waiting": "بالانتظار",
+        "active": "قيد التنفيذ",
+        "completed": "مكتملة",
+        "failed": "فشلت",
+        "alt": "مهام تنتقل من الانتظار إلى التنفيذ ثم الاكتمال في طابور BullMQ، وتفشل مهمة مرة ثم يُعاد تنفيذها.",
+        "caption": "تعمل مهام الإشعارات وتحديث المحافظ في عمّال BullMQ مدعومين بـ Redis، خارج مسار الطلب. وتُعاد المهمة الفاشلة بدلاً من أن تضيع."
       }
     },
     "ai": {

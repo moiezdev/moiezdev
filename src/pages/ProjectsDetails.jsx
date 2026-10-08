@@ -12,6 +12,7 @@ import ArchitectureFigure from '../components/home/ArchitectureFigure';
 import WalletSequence from '../components/project/WalletSequence';
 import WalletPass from '../components/project/WalletPass';
 import LatencyBar from '../components/project/LatencyBar';
+import QueueVisual from '../components/project/QueueVisual';
 import { getProjectById } from '../data';
 import { useContent } from '../i18n/content';
 import NotFound from './NotFound';
@@ -24,6 +25,7 @@ const DIAGRAMS = {
   architecture: ArchitectureFigure,
   walletSequence: WalletSequence,
   walletPass: WalletPass,
+  queue: QueueVisual,
 };
 
 const nonEmpty = (v) => (Array.isArray(v) ? v.filter(Boolean).length > 0 : typeof v === 'string' && v.trim() !== '');

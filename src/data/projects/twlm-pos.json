@@ -64,6 +64,7 @@
   "diagrams": [
     "architecture",
     "walletSequence",
+    "queue",
     "walletPass"
   ],
   "caseStudy": {

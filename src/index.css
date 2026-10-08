@@ -785,3 +785,25 @@ html[dir='rtl'] .latency-bar {
     transform: translateY(4px);
   }
 }
+
+/* ---------- BullMQ queue visual (case study) ---------- */
+.queue-job {
+  background: var(--color-surface-2);
+  color: var(--color-label-2);
+  --tw-ring-color: var(--color-separator);
+  transition:
+    transform var(--dur-slow) var(--ease-spring),
+    opacity var(--dur-base) var(--ease-out);
+}
+.queue-job[data-state='a'] {
+  color: var(--color-label);
+  --tw-ring-color: var(--color-label);
+}
+.queue-job[data-state='c'] {
+  opacity: 0.7;
+}
+.queue-job[data-state='f'] {
+  color: var(--color-label);
+  --tw-ring-color: var(--color-label-3);
+  border-style: dashed;
+}
