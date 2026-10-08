@@ -33,7 +33,7 @@ const FeaturedCard = ({ project, className = '' }) => {
         shared={shared}
         data-vt-image
         data-cursor-label={t('cursor.view')}
-        className="relative block overflow-hidden bg-surface-2 aspect-[16/10] lg:aspect-auto lg:min-h-[440px] rounded-t-[var(--radius-card)] lg:rounded-t-none lg:rounded-s-[var(--radius-card)]"
+        className="relative block isolate overflow-hidden bg-surface-2 aspect-[16/10] lg:aspect-auto lg:min-h-[440px] rounded-ss-[var(--radius-card)] rounded-se-[var(--radius-card)] lg:rounded-se-none lg:rounded-es-[var(--radius-card)]"
       >
         <Img
           src={project.imageUrl}
