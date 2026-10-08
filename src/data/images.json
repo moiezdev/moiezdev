@@ -645,10 +645,21 @@
     "blur": "data:image/webp;base64,UklGRooAAABXRUJQVlA4IH4AAABQAgCdASoQABAAA4BaJbACdAEPCaj7pc3wIkAA/r/DTsIHxn+sS3p7L+32H4SGXb/yK/Es6pFgtlCkka0WFqt0u6C3DZYfImZM4EnX/NWk1wkJTbn7l5d5kw41ZmbZAGIVFvbgrohLQ/uTSEhcDHyVytEx0sl0FxgzOXNAAAA=",
     "hash": "9d4e7b880d98"
   },
-  "/projects-media/twlm-pos/pass-front.webp": {
+  "/projects-media/twlm-pos/pass-apple.webp": {
+    "w": 1075,
+    "h": 1497,
+    "base": "/img/projects-media/twlm-pos/pass-apple",
+    "widths": [
+      480,
+      960,
+      1075
+    ],
+    "hash": "dd1b45760f6b"
+  },
+  "/projects-media/twlm-pos/pass-google.webp": {
     "w": 337,
     "h": 432,
-    "base": "/img/projects-media/twlm-pos/pass-front",
+    "base": "/img/projects-media/twlm-pos/pass-google",
     "widths": [
       337
     ],

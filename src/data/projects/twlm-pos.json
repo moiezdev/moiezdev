@@ -113,9 +113,8 @@
   },
   "_todo": "TODO(moiez): fill teamSize (e.g. \"4 engineers\"), caseStudy.measured (how ~64% latency and ~70% support requests were measured, e.g. p95 before/after and over which period), caseStudy.next (what you'd do next), and confirm the _draft notes. Empty fields stay hidden on the site; add the same fields in Arabic under twlm-pos.caseStudy in src/i18n/projects-ar.json.",
   "walletPass": {
-    "front": "/projects-media/twlm-pos/pass-front.webp",
-    "back": null,
-    "_todo": "TODO(moiez): replace with proper Apple Wallet screenshots (front and back, ~2x size) — set \"front\"/\"back\" to the new public paths and run npm run images. Today the front is cropped from img2 and the back is drawn from the facts in the case study."
+    "front": "/projects-media/twlm-pos/pass-apple.webp",
+    "back": "/projects-media/twlm-pos/pass-google.webp"
   },
   "latency": {
     "reduction": 64,

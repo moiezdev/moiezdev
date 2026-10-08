@@ -386,12 +386,12 @@
         }
       },
       "pass": {
-        "title": "A TWLM loyalty pass",
-        "caption": "A stamp pass from the platform, as customers see it in their wallet. Flip it to see what keeps it up to date.",
-        "showBack": "Flip pass",
-        "showFront": "Show front",
-        "frontAlt": "Loyalty stamp pass in a mobile wallet, with a QR code and stamp progress",
-        "backAlt": "Back of the loyalty pass",
+        "title": "TWLM loyalty passes in Apple & Google Wallet",
+        "caption": "Real stamp passes from the platform, as customers see them on their phones — the same pass issued to Apple Wallet and Google Wallet, kept up to date by webhooks and BullMQ jobs. Flip to compare.",
+        "showBack": "Show Google Wallet",
+        "showFront": "Show Apple Wallet",
+        "frontAlt": "Loyalty stamp pass in Apple Wallet: salon logo, five stamps, 0/5 progress and a QR code",
+        "backAlt": "The same loyalty pass in Google Wallet",
         "backTitle": "What powers it",
         "rows": [
           {
@@ -917,12 +917,12 @@
         }
       },
       "pass": {
-        "title": "بطاقة ولاء من TWLM",
-        "caption": "بطاقة أختام من المنصة كما يراها العملاء في محافظهم. اقلبها لترى ما يبقيها محدّثة.",
-        "showBack": "اقلب البطاقة",
-        "showFront": "اعرض الواجهة",
-        "frontAlt": "بطاقة أختام ولاء في محفظة الهاتف مع رمز QR وتقدّم الأختام",
-        "backAlt": "الوجه الخلفي لبطاقة الولاء",
+        "title": "بطاقات ولاء TWLM في محفظتي Apple وGoogle",
+        "caption": "بطاقات أختام حقيقية من المنصة كما يراها العملاء على هواتفهم — البطاقة نفسها في Apple Wallet وGoogle Wallet، وتُحدَّث عبر Webhooks ومهام BullMQ. اقلبها للمقارنة.",
+        "showBack": "عرض Google Wallet",
+        "showFront": "عرض Apple Wallet",
+        "frontAlt": "بطاقة أختام في Apple Wallet: شعار الصالون وخمسة أختام وتقدم 0/5 ورمز QR",
+        "backAlt": "بطاقة الولاء نفسها في Google Wallet",
         "backTitle": "ما الذي يشغّلها",
         "rows": [
           {
