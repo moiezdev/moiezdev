@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { HiMicrophone, HiStop, HiVolumeOff, HiVolumeUp, HiX } from 'react-icons/hi';
 import RobotAvatar from './RobotAvatar';
-import TypewriterText from './TypewriterText';
+import MessageText from './MessageText';
 import { askBot } from '../../utils/askBot';
 import { BOT_HANDLE, BOT_NAME } from '../../utils/buildPortfolioContext';
 import { prepareBotReply } from '../../utils/chatNav';
@@ -511,7 +511,7 @@ const ChatBot = () => {
                     }`}
                   >
                     {msg.role === 'bot' ? (
-                      <TypewriterText
+                      <MessageText
                         text={msg.text}
                         spans={msg.spans || []}
                         onNavigate={goTo}

@@ -403,6 +403,11 @@ textarea:-webkit-autofill {
   transition-delay: var(--reveal-delay, 0ms);
 }
 
+/* a chat reply arriving: one short settle, never character-by-character */
+.msg-in {
+  animation: page-in var(--dur-base) var(--ease-out) both;
+}
+
 @keyframes page-in {
   from {
     opacity: 0;
@@ -452,6 +457,7 @@ textarea:-webkit-autofill {
     transition: none;
   }
   .page-in,
+  .msg-in,
   .status-dot {
     animation: none;
   }
@@ -603,25 +609,9 @@ html[data-theme='dark'] .code-window {
 .tok-t { color: var(--tok-t); }
 .tok-c { color: var(--tok-c); font-style: italic; }
 .tok-ln { color: var(--tok-ln); }
-.code-caret {
-  display: inline-block;
-  width: 2px;
-  height: 1.1em;
-  margin-inline-start: 2px;
-  vertical-align: text-bottom;
-  background: var(--color-accent);
-  animation: caret 1s steps(1) infinite;
-}
-@keyframes caret {
-  50% { opacity: 0; }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .wire-pulse,
-  .code-caret {
-    animation: none;
-  }
   .wire-pulse {
+    animation: none;
     display: none;
   }
 }
