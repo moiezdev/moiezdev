@@ -19,11 +19,13 @@
   ],
   "imageUrl": "/projects-media/tdm/main.webp",
   "githubUrl": "https://github.com/moiezdev/tdm",
+  "repoPublic": true,
   "media": [
     "main.webp",
     "img1.webp",
     "img2.webp",
     "img3.webp",
     "img4.webp"
-  ]
+  ],
+  "group": "earlier"
 }

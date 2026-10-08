@@ -1,10 +1,10 @@
 [
   {
-    "platform": "GitHub",
-    "handle": "@moiezdev",
-    "categories": ["media", "portfolio"],
-    "url": "https://github.com/moiezdev",
-    "icon": "/socialMediaIcons/Github.svg"
+    "platform": "WhatsApp",
+    "handle": "+966 573240913",
+    "categories": ["contact"],
+    "url": "https://wa.me/qr/CCKSULC4NRAZI1",
+    "icon": "/socialMediaIcons/Whatsapp.svg"
   },
   {
     "platform": "LinkedIn",
@@ -21,17 +21,17 @@
     "icon": "/socialMediaIcons/Email.svg"
   },
   {
+    "platform": "GitHub",
+    "handle": "@moiezdev",
+    "categories": ["media", "portfolio"],
+    "url": "https://github.com/moiezdev",
+    "icon": "/socialMediaIcons/Github.svg"
+  },
+  {
     "platform": "Phone",
     "handle": "+966 573240913",
     "categories": ["contact"],
     "url": "tel:+966573240913",
     "icon": "/socialMediaIcons/Phone.svg"
-  },
-  {
-    "platform": "WhatsApp",
-    "handle": "+966 573240913",
-    "categories": ["contact"],
-    "url": "https://wa.me/qr/CCKSULC4NRAZI1",
-    "icon": "/socialMediaIcons/Whatsapp.svg"
   }
 ]

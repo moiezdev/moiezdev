@@ -1,59 +1,34 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-
-const STORAGE_KEY = 'moiz-prefs';
-
-function systemTheme() {
-  try {
-    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-  } catch {
-    return 'dark';
-  }
-}
-
-function readPrefs() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      return {
-        lang: parsed.lang === 'ar' ? 'ar' : 'en',
-        theme: parsed.theme === 'light' || parsed.theme === 'dark' ? parsed.theme : systemTheme(),
-      };
-    }
-  } catch {
-    /* ignore */
-  }
-
-  const nav = typeof navigator !== 'undefined' ? navigator.language : '';
-  return {
-    lang: nav.toLowerCase().startsWith('ar') ? 'ar' : 'en',
-    theme: systemTheme(),
-  };
-}
-
-function applyDom({ lang, theme }) {
-  const root = document.documentElement;
-  root.lang = lang;
-  root.dir = lang === 'ar' ? 'rtl' : 'ltr';
-  root.setAttribute('data-theme', theme);
-  document
-    .querySelector('meta[name="theme-color"]')
-    ?.setAttribute('content', theme === 'dark' ? '#000000' : '#fbfbfd');
-}
+import { createContext, useCallback, useContext, useLayoutEffect, useMemo, useState } from 'react';
+import { STORAGE_KEY, applyDom, readPrefs } from './prefs';
 
 const PreferencesContext = createContext(null);
 
-export function PreferencesProvider({ children }) {
-  const [prefs, setPrefs] = useState(readPrefs);
+// what the prerendered HTML was built with
+const SERVER_PREFS = { lang: 'en', theme: 'dark' };
+const isServer = typeof window === 'undefined';
 
-  useEffect(() => {
+export function PreferencesProvider({ children, hydrating = false }) {
+  // hydration must start from the server's state; the real prefs follow right after
+  const [prefs, setPrefs] = useState(() => (isServer || hydrating ? SERVER_PREFS : readPrefs()));
+  const [synced, setSynced] = useState(!hydrating);
+
+  useLayoutEffect(() => {
+    if (synced) return;
+    setPrefs(readPrefs());
+    setSynced(true);
+  }, [synced]);
+
+  // layout effect: lang/dir/theme change in the same frame as the re-render
+  useLayoutEffect(() => {
+    if (!synced) return;
+    document.documentElement.classList.remove('prerender-hide');
     applyDom(prefs);
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
     } catch {
       /* ignore */
     }
-  }, [prefs]);
+  }, [prefs, synced]);
 
   const setLang = useCallback((lang) => {
     setPrefs((prev) => ({ ...prev, lang: lang === 'ar' ? 'ar' : 'en' }));

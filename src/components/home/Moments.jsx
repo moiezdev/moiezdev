@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import SectionTitle from '../ui/SectionTitle';
-import Reveal from '../ui/Reveal';
-import LazyImage from '../ui/LazyImage';
+import Reveal from '../../motion/Reveal';
+import Img from '../ui/Img';
 import { events } from '../../data';
 import { useContent } from '../../i18n/content';
 
 /** Full-screen photo viewer with keyboard and swipe navigation. */
 const Lightbox = ({ photos, index, onClose, onGo, lang }) => {
+  const { t } = useContent();
   const [touchX, setTouchX] = useState(null);
 
   useEffect(() => {
@@ -33,7 +34,7 @@ const Lightbox = ({ photos, index, onClose, onGo, lang }) => {
         e.stopPropagation();
         onGo(index + (dir === 'next' ? 1 : -1));
       }}
-      aria-label={dir === 'next' ? 'Next photo' : 'Previous photo'}
+      aria-label={dir === 'next' ? t('a11y.nextPhoto') : t('a11y.prevPhoto')}
       className={`absolute top-1/2 -translate-y-1/2 ${dir === 'next' ? 'end-4 md:end-8' : 'start-4 md:start-8'} size-11 rounded-full bg-[rgba(255,255,255,0.12)] hover:bg-[rgba(255,255,255,0.22)] text-[#fff] inline-flex items-center justify-center backdrop-blur-md transition-colors`}
     >
       <svg className={`w-4 h-4 ${dir === 'prev' ? 'ltr:rotate-180' : 'rtl:rotate-180'}`} viewBox="0 0 16 16" fill="none" aria-hidden>
@@ -58,10 +59,12 @@ const Lightbox = ({ photos, index, onClose, onGo, lang }) => {
         setTouchX(null);
       }}
     >
-      <img
+      <Img
         key={photo.src}
         src={photo.src}
         alt={photo.caption[lang]}
+        sizes="92vw"
+        priority
         className="max-h-[80vh] max-w-[92vw] rounded-2xl object-contain shadow-2xl page-in"
         onClick={(e) => e.stopPropagation()}
       />
@@ -74,7 +77,7 @@ const Lightbox = ({ photos, index, onClose, onGo, lang }) => {
       <button
         type="button"
         onClick={onClose}
-        aria-label="Close"
+        aria-label={t('a11y.close')}
         className="absolute top-4 end-4 md:top-6 md:end-6 size-10 rounded-full bg-[rgba(255,255,255,0.12)] hover:bg-[rgba(255,255,255,0.22)] text-[#fff] inline-flex items-center justify-center backdrop-blur-md"
       >
         <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden>
@@ -85,8 +88,8 @@ const Lightbox = ({ photos, index, onClose, onGo, lang }) => {
   );
 };
 
-/** Bento gallery of industry events, e.g. LEAP. */
-const Moments = () => {
+/** Gallery of industry events, e.g. LEAP: a bento grid, or a compact strip. */
+const Moments = ({ compact = false }) => {
   const { t, lang } = useContent();
   const event = events[0];
   const [open, setOpen] = useState(null);
@@ -104,11 +107,11 @@ const Moments = () => {
       data-cursor-label={t('moments.view')}
       className={`group relative block w-full h-full overflow-hidden rounded-[24px] md:rounded-[28px] bg-surface-2 text-start ${className}`}
     >
-      <LazyImage
+      <Img
         src={photo.src}
-        alt={photo.caption[lang]}
-        wrapperClass="absolute inset-0 w-full h-full"
-        className="w-full h-full object-cover object-[50%_25%] transition-transform duration-700 ease-[var(--ease-apple)] group-hover:scale-[1.05]"
+        alt=""
+        sizes={big ? '(min-width: 768px) 640px, 100vw' : '(min-width: 768px) 320px, 50vw'}
+        className="absolute inset-0 w-full h-full object-cover object-[50%_25%] card-img"
       />
       <span className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[rgba(0,0,0,0.6)] to-transparent" aria-hidden />
       <span className={`absolute bottom-0 inset-x-0 p-4 md:p-5 text-[#fff] ${big ? 'md:p-7' : ''}`}>
@@ -123,18 +126,41 @@ const Moments = () => {
   return (
     <section className="w-full px-5 pt-28 md:pt-40" id="moments">
       <div className="app-container">
-        <SectionTitle eyebrow={t('moments.eyebrow')} title={t('moments.headline')} subtitle={event.summary[lang]} />
-
-        <div className="grid gap-3 md:gap-4 grid-cols-2 lg:grid-cols-4 lg:grid-rows-2 lg:h-[640px]">
-          <Reveal className="col-span-2 row-span-2 aspect-[4/5] sm:aspect-[4/3] lg:aspect-auto">
-            <Tile photo={cover} index={0} big />
-          </Reveal>
-          {rest.map((photo, i) => (
-            <Reveal key={photo.src} delay={(i + 1) * 70} className="aspect-[3/4] lg:aspect-auto">
-              <Tile photo={photo} index={i + 1} />
+        {compact ? (
+          <>
+            <Reveal className="mb-6 md:mb-8 flex flex-col gap-2 md:flex-row md:items-end md:justify-between md:gap-10">
+              <div>
+                <p className="eyebrow mb-2">{t('moments.eyebrow')}</p>
+                <h2 className="headline-2 text-label">
+                  {event.name} <span className="text-label-3">· {event.place[lang]}</span>
+                </h2>
+              </div>
+              <p className="text-[15px] leading-relaxed text-label-2 max-w-xl">{event.summary[lang]}</p>
             </Reveal>
-          ))}
-        </div>
+            <Reveal className="grid gap-2 md:gap-3 grid-cols-2 sm:grid-cols-5">
+              {event.photos.map((photo, i) => (
+                <div key={photo.src} className={`aspect-[4/5] ${i === 0 ? 'col-span-2 aspect-[16/10] sm:col-span-1 sm:aspect-[4/5]' : ''}`}>
+                  <Tile photo={photo} index={i} />
+                </div>
+              ))}
+            </Reveal>
+          </>
+        ) : (
+          <>
+            <SectionTitle eyebrow={t('moments.eyebrow')} title={t('moments.headline')} subtitle={event.summary[lang]} />
+
+            <Reveal className="grid gap-3 md:gap-4 grid-cols-2 lg:grid-cols-4 lg:grid-rows-2 lg:h-[640px]">
+              <div className="col-span-2 row-span-2 aspect-[4/5] sm:aspect-[4/3] lg:aspect-auto">
+                <Tile photo={cover} index={0} big />
+              </div>
+              {rest.map((photo, i) => (
+                <div key={photo.src} className="aspect-[3/4] lg:aspect-auto">
+                  <Tile photo={photo} index={i + 1} />
+                </div>
+              ))}
+            </Reveal>
+          </>
+        )}
       </div>
 
       {open !== null &&

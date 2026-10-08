@@ -15,8 +15,9 @@ const Footer = () => {
   const media = contacts.filter((c) => c.categories.includes('media') || c.categories.includes('contact'));
 
   return (
-    <footer className="bg-surface-2 text-[12px] leading-[1.5] text-label-2 mt-24 px-5">
-      <div className="app-container py-12">
+    // bottom padding keeps the last line clear of the floating chat launcher
+    <footer className="bg-surface-2 text-[12px] leading-[1.5] text-label-2 mt-24 px-5 pb-[calc(4rem+env(safe-area-inset-bottom))] sm:pb-[calc(5.5rem+env(safe-area-inset-bottom))]">
+      <div className="app-container pt-12 pb-6">
         <div className="grid gap-10 sm:grid-cols-3 pb-8 border-b border-separator">
           <div>
             <p className="text-label text-[15px] font-semibold mb-1">Moieez ur Rehman</p>
@@ -45,8 +46,8 @@ const Footer = () => {
                   <a
                     className="hover:text-label hover:underline"
                     href={contact.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    // mail and phone links hand off to an app; only web links get a new tab
+                    {...(/^https?:/.test(contact.url) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                   >
                     {contact.platform}
                   </a>

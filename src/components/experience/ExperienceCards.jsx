@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { Link } from 'react-router-dom';
-import Reveal from '../ui/Reveal';
+import Reveal from '../../motion/Reveal';
 import TechChip from '../ui/TechChip';
 import { Chevron } from '../ui/SectionTitle';
 import { getProjectById } from '../../data';
@@ -14,7 +14,7 @@ const CompanyLogo = ({ job }) => (
     }`}
   >
     {job.logo ? (
-      <img src={job.logo} alt="" className="max-h-9 max-w-9 object-contain" />
+      <img src={job.logo} alt="" loading="lazy" decoding="async" className="max-h-9 max-w-9 object-contain" />
     ) : (
       <span className="text-[18px] font-semibold text-label-2">{job.company?.[0]}</span>
     )}
@@ -39,7 +39,7 @@ const ExperienceCard = ({ job, highlightLimit }) => {
               {job.title}
             </h3>
             {job.current && (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[color-mix(in_srgb,var(--color-green)_14%,transparent)] px-2.5 py-0.5 text-[12px] font-semibold text-green">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[color-mix(in_srgb,var(--color-green)_14%,transparent)] px-2.5 py-0.5 text-[12px] font-semibold text-[color-mix(in_srgb,var(--color-green)_55%,var(--color-label))]">
                 <span className="size-1.5 rounded-full bg-green" aria-hidden />
                 {t('experience.present')}
               </span>
@@ -127,11 +127,10 @@ const ExperienceCards = ({ jobs, highlightLimit = 0 }) => {
           style={{ transform: 'scaleY(0)' }}
         />
       </span>
-      {jobs.map((job, i) => (
+      {jobs.map((job) => (
         <Reveal
           as="li"
           key={job.id || `${job.company}-${job.period}`}
-          delay={i * 60}
           className="relative md:ps-16"
         >
           <span

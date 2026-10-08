@@ -19,19 +19,28 @@
       "quote": "Great products feel simple — the complexity stays under the hood.",
       "quoteBy": "--- Mr Unknown",
       "available": "Available for new opportunities",
-      "intro": "Moiz — Senior Full Stack Engineer & Software Architect",
+      "intro": "Moieez ur Rehman — Senior Full Stack Engineer & Software Architect",
       "seeWork": "See the work",
       "yearsShort": "years shipping production software",
       "statYears": "Years of experience",
       "statProjects": "Projects delivered",
       "statCompanies": "Companies",
-      "statement": "I own features end to end — from understanding the business to the last deploy."
+      "statement": "I own features end to end — from understanding the business to the last deploy.",
+      "statLatencyValue": "~64%",
+      "statLatency": "Lower API latency",
+      "name": "Moieez ur Rehman",
+      "eyebrow": "Senior Full Stack Engineer · Riyadh",
+      "title": "I build POS, payments & AI features for Gulf retail.",
+      "subtitle": "Node.js/NestJS, React/Next.js, PostgreSQL and LLM integrations — from architecture to production.",
+      "viewWork": "View my work",
+      "bookCall": "Book a 15-min call",
+      "viewResume": "View résumé"
     },
     "about": {
       "section": "about me",
       "page": "about-me",
       "blurb": "Get to know the person behind the work.",
-      "title": "Hello, I'm Moiz!",
+      "title": "Hello, I'm Moieez ur Rehman.",
       "viewExperience": "View experience",
       "paragraphs": [
         "Product-focused Full Stack Engineer and Software Architect with {{experienceYears}} years of experience building scalable systems across retail and SaaS — from POS platforms to loyalty systems and customer engagement tools, ecommerce, payment integrations, booking systems, search-engine integrations, and dashboards. I work across the stack using React, Vue, Next.js, Node.js, and NestJS, delivering reliable, high-quality solutions with a strong focus on real-world usability.",
@@ -75,7 +84,9 @@
           "label": "less downtime from digitized operations"
         }
       ],
-      "impactTitle": "Impact at a glance"
+      "impactTitle": "Impact at a glance",
+      "relatedWork": "See the work",
+      "viewResume": "View résumé"
     },
     "projects": {
       "section": "projects",
@@ -96,7 +107,10 @@
       "more": "More projects",
       "view": "View",
       "all": "All",
-      "count": "{{count}} projects",
+      "countForms": {
+        "one": "{{count}} project",
+        "other": "{{count}} projects"
+      },
       "status": "Status",
       "statusLive": "Live",
       "statusPrivate": "Private / internal",
@@ -104,7 +118,18 @@
       "techCount": "{{count}} technologies",
       "index": "Project",
       "previous": "Previous",
-      "next": "Next"
+      "next": "Next",
+      "statusOpen": "Open source",
+      "inProgress": "In progress",
+      "inProgressBlurb": "Projects I’m building right now.",
+      "featuredCaseStudy": "Featured case study",
+      "caseStudy": "Read case study",
+      "liveProduct": "Live product",
+      "groupFeatured": "Featured",
+      "groupClient": "Client work",
+      "groupClientBlurb": "Platforms and products built for companies and their customers.",
+      "groupEarlier": "Earlier work",
+      "groupEarlierBlurb": "Brochure sites and a personal project from earlier in my career."
     },
     "skills": {
       "section": "skills",
@@ -130,7 +155,7 @@
       "message": "Message",
       "send": "Send Message",
       "sending": "Sending...",
-      "fail": "Something went wrong! Please try again.",
+      "fail": "Your message couldn’t be sent. Please try again in a moment, or email me directly at",
       "eyebrow": "Contact",
       "headline": "Let’s build something great.",
       "sent": "Thanks — your message is on its way. I’ll reply soon.",
@@ -138,14 +163,27 @@
       "available": "Available",
       "localTime": "Riyadh time",
       "replies": "Replies",
-      "replyTime": "Within 24h"
+      "replyTime": "Within 24h",
+      "sentTitle": "Message sent",
+      "sendAnother": "Send another message",
+      "honeypot": "Leave this field empty",
+      "errors": {
+        "name": "Please enter your name.",
+        "email": "Please enter your email address.",
+        "emailInvalid": "Please enter a valid email address, like name@company.com.",
+        "subject": "Please add a subject.",
+        "message": "Please write a short message."
+      },
+      "bookCall": "Book a 15-min call",
+      "copy": "Copy",
+      "copied": "Copied to clipboard"
     },
     "footer": {
       "role": "Senior Full Stack Engineer & Software Architect",
       "media": "Connect",
       "rights": "All rights reserved.",
       "explore": "Explore",
-      "crafted": "Designed & engineered by Moiz · React · Vite · Tailwind CSS"
+      "crafted": "Designed & engineered by Moieez ur Rehman · React · Vite · Tailwind CSS"
     },
     "notFound": {
       "title": "Page Not Found",
@@ -172,11 +210,11 @@
       ]
     },
     "chat": {
-      "welcome": "Hey — I'm BotFolio. I'll walk you through Moiz's work as a Full Stack Engineer and Software Architect. You can explore [[nav:/works|All works]], [[nav:/experience|Experience]], or [[nav:/about|About Moiz]].",
+      "welcome": "Hey — I'm BotFolio. I'll walk you through Moieez's work as a Full Stack Engineer and Software Architect. You can explore [[nav:/works|All works]], [[nav:/experience|Experience]], or [[nav:/about|About Moieez]].",
       "thinking": "thinking…",
       "listening": "listening…",
       "speaking": "speaking…",
-      "placeholder": "Ask about Moiz…",
+      "placeholder": "Ask about Moieez…",
       "placeholderListen": "Keep talking — tap done when finished…",
       "tryAsking": "Try asking",
       "send": "Send",
@@ -185,9 +223,9 @@
         "Experience",
         "Tech stack"
       ],
-      "fallback": "Sorry about that — something didn't go through. Try again, or open [[nav:/contact|Contact page]] to reach Moiz directly.",
-      "fail": "I stay focused on Moiz's work — explore [[nav:/works|All works]] or reach him via [[nav:/contact|Contact page]].",
-      "rateLimited": "You're asking faster than I can keep up — give it a minute, or reach Moiz directly on the [[nav:/contact|Contact page]].",
+      "fallback": "Sorry about that — something didn't go through. Try again, or open [[nav:/contact|Contact page]] to reach Moieez directly.",
+      "fail": "I stay focused on Moieez's work — explore [[nav:/works|All works]] or reach him via [[nav:/contact|Contact page]].",
+      "rateLimited": "You're asking faster than I can keep up — give it a minute, or reach Moieez directly on the [[nav:/contact|Contact page]].",
       "newChat": "New chat",
       "sugg": {
         "moreAbout": "More about {{name}}",
@@ -220,7 +258,7 @@
           "Fastest way to reach him?",
           "Where's his CV?"
         ],
-        "hire": "Why should we hire Moiz?"
+        "hire": "Why should we hire Moieez?"
       }
     },
     "common": {
@@ -235,13 +273,15 @@
       "links": "Links",
       "light": "Switch to light appearance",
       "dark": "Switch to dark appearance",
-      "lang": "التبديل إلى العربية",
+      "lang": "Switch to Arabic · عربي",
       "copyEmail": "Copy email address",
       "copied": "Copied to clipboard ✓",
       "empty": "No results. Try “React” or “POS”.",
       "footer": "Built like a product — try it anywhere with ⌘K",
       "navigate": "navigate",
-      "open": "open"
+      "open": "open",
+      "twlm": "Open TWLM case study",
+      "whatsapp": "Contact via WhatsApp"
     },
     "process": {
       "eyebrow": "How I build",
@@ -279,6 +319,189 @@
       "eyebrow": "Beyond the code",
       "headline": "Out in the industry.",
       "view": "View"
+    },
+    "testimonials": {
+      "eyebrow": "Recommendations",
+      "title": "What colleagues say.",
+      "separator": " · ",
+      "linkedin": "{{name}} on LinkedIn"
+    },
+    "logos": {
+      "title": "Worked with"
+    },
+    "arch": {
+      "eyebrow": "Architecture",
+      "headline": "How the platform fits together.",
+      "subtitle": "The system behind TWLM: clients, a NestJS API, domain services, and the data and integrations underneath.",
+      "caseStudy": "Read the TWLM case study"
+    },
+    "caseStudy": {
+      "contents": "On this page",
+      "role": "Role",
+      "company": "Company",
+      "timeline": "Timeline",
+      "team": "Team",
+      "stack": "Stack",
+      "links": "Links",
+      "overview": "Overview",
+      "problem": "Problem",
+      "myRole": "My role",
+      "architecture": "Architecture & key decisions",
+      "challenges": "Challenges",
+      "results": "Results",
+      "next": "What I’d do next",
+      "builtWith": "Stack",
+      "measured": "How these were measured",
+      "seq": {
+        "title": "Wallet pass update flow (simplified)",
+        "actor": {
+          "source": "Webhook source",
+          "api": "NestJS API",
+          "queue": "BullMQ · Redis",
+          "worker": "Worker",
+          "wallet": "Apple / Google",
+          "device": "Customer phone"
+        },
+        "webhook": "webhook event",
+        "enqueue": "add job",
+        "process": "run job",
+        "update": "update pass",
+        "push": "push",
+        "refresh": "pass refreshes",
+        "steps": {
+          "webhook": "A webhook event reaches the NestJS API.",
+          "enqueue": "The API adds a wallet-update job to a Redis-backed BullMQ queue.",
+          "process": "A BullMQ worker picks up the job asynchronously.",
+          "update": "The worker updates the Apple Wallet or Google Wallet pass.",
+          "push": "Apple or Google sends a push to the customer’s phone.",
+          "refresh": "The pass on the phone refreshes with the new data."
+        }
+      },
+      "pass": {
+        "title": "A TWLM loyalty pass",
+        "caption": "A stamp pass from the platform, as customers see it in their wallet. Flip it to see what keeps it up to date.",
+        "showBack": "Flip pass",
+        "showFront": "Show front",
+        "frontAlt": "Loyalty stamp pass in a mobile wallet, with a QR code and stamp progress",
+        "backAlt": "Back of the loyalty pass",
+        "backTitle": "What powers it",
+        "rows": [
+          {
+            "k": "Pass types",
+            "v": "Points, loyalty passes, gift cards and discount coupons"
+          },
+          {
+            "k": "Wallets",
+            "v": "Apple Wallet and Google Wallet"
+          },
+          {
+            "k": "Updates",
+            "v": "Webhook → BullMQ job → pass update → push"
+          },
+          {
+            "k": "Campaigns",
+            "v": "Geo-targeted promotional messages with branch-level tracking"
+          }
+        ]
+      },
+      "latency": {
+        "title": "API response time",
+        "before": "Before",
+        "after": "After",
+        "relative": "Relative to before (100%)",
+        "measured": "Measured"
+      },
+      "queue": {
+        "title": "Background jobs with BullMQ",
+        "illustrative": "Illustrative",
+        "waiting": "Waiting",
+        "active": "Active",
+        "completed": "Completed",
+        "failed": "failed",
+        "alt": "Jobs moving from waiting to active to completed in a BullMQ queue; one job fails and is retried.",
+        "caption": "Notification and wallet-update jobs run in Redis-backed BullMQ workers, outside the request path. A failed job is retried instead of being lost."
+      }
+    },
+    "ai": {
+      "eyebrow": "AI integration",
+      "headline": "LLMs, wired into real products.",
+      "subtitle": "Where I’ve integrated large language models — and one you can try right now.",
+      "twlmTitle": "Smart menu search · TWLM-POS",
+      "twlmBody": "Led the OpenRouter AI (DeepSeek) integration that powers smart menu search and AI-based analysis of restaurant data.",
+      "botTitle": "{{name}} · this site",
+      "botBody": "{{name}}, the assistant on this site, answers questions about my work through a server-side OpenRouter (DeepSeek) endpoint.",
+      "botCta": "Ask {{name}}"
+    },
+    "a11y": {
+      "langLabel": "عربي",
+      "switchLang": "Switch to Arabic",
+      "themeToLight": "Switch to light theme",
+      "themeToDark": "Switch to dark theme",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu",
+      "home": "MoizDev home",
+      "skip": "Skip to content",
+      "mainNav": "Main",
+      "prevImage": "Previous image",
+      "nextImage": "Next image",
+      "goToImage": "Go to image {{n}}",
+      "screenshot": "{{title}} — screenshot {{n}} of {{count}}",
+      "gallery": "{{title}} screenshots",
+      "prevPhoto": "Previous photo",
+      "nextPhoto": "Next photo",
+      "close": "Close",
+      "scrollCode": "Code sample (scrolls sideways)",
+      "scrollDiagram": "Diagram (scrolls sideways)",
+      "openChat": "Open {{name}}",
+      "closeChat": "Close chat",
+      "mute": "Mute voice",
+      "unmute": "Unmute voice",
+      "speak": "Speak a question",
+      "doneSpeaking": "Done speaking — send",
+      "chatInput": "Ask {{name}} a question",
+      "pageLinks": "Other pages"
+    },
+    "cursor": {
+      "view": "View ↗",
+      "flip": "Flip pass"
+    },
+    "explainer": {
+      "label": "Scenario",
+      "simplified": "Simplified flow",
+      "replay": "Replay",
+      "step": "Step {{n}} of {{total}}",
+      "why": "Why"
+    },
+    "aiConsole": {
+      "label": "Example requests",
+      "tabs": {
+        "order": "Create order",
+        "search": "AI menu search"
+      },
+      "replay": "Replay",
+      "illustrative": "Illustrative example — shows the shape of the API, not live data.",
+      "query": "spicy chicken under 30 SAR",
+      "results": [
+        {
+          "name": "Spicy chicken burger",
+          "price": 27,
+          "score": 0.94
+        },
+        {
+          "name": "Hot chicken shawarma wrap",
+          "price": 22,
+          "score": 0.89
+        },
+        {
+          "name": "Nashville chicken bites",
+          "price": 29,
+          "score": 0.83
+        }
+      ]
+    },
+    "tech": {
+      "usedFor": "Used for",
+      "usedIn": "Used in"
     }
   },
   "ar": {
@@ -301,19 +524,28 @@
       "quote": "المنتجات العظيمة تبدو بسيطة — والتعقيد يبقى تحت السطح.",
       "quoteBy": "--- مجهول",
       "available": "متاح لفرص جديدة",
-      "intro": "معيز — مهندس برمجيات متكامل أول ومعماري برمجيات",
+      "intro": "معيز الرحمن — مهندس برمجيات متكامل أول ومعماري برمجيات",
       "seeWork": "شاهد الأعمال",
       "yearsShort": "سنوات في بناء برمجيات إنتاجية",
       "statYears": "سنوات الخبرة",
       "statProjects": "مشاريع منجزة",
       "statCompanies": "شركات",
-      "statement": "أتولى الميزات من البداية للنهاية — من فهم احتياج العمل حتى آخر عملية نشر."
+      "statement": "أتولى الميزات من البداية للنهاية — من فهم احتياج العمل حتى آخر عملية نشر.",
+      "statLatencyValue": "~64٪",
+      "statLatency": "زمن استجابة أقل للواجهات",
+      "name": "معيز الرحمن",
+      "eyebrow": "مهندس برمجيات متكامل أول · الرياض",
+      "title": "أبني أنظمة نقاط البيع والمدفوعات وميزات الذكاء الاصطناعي لقطاع التجزئة في الخليج.",
+      "subtitle": "Node.js/NestJS وReact/Next.js وPostgreSQL وتكامل النماذج اللغوية — من التصميم المعماري حتى الإنتاج.",
+      "viewWork": "شاهد أعمالي",
+      "bookCall": "احجز مكالمة لمدة 15 دقيقة",
+      "viewResume": "عرض السيرة الذاتية"
     },
     "about": {
       "section": "نبذتي",
       "page": "نبذتي",
       "blurb": "تعرّف على الشخص خلف العمل.",
-      "title": "مرحباً، أنا معيز!",
+      "title": "مرحباً، أنا معيز الرحمن.",
       "viewExperience": "عرض الخبرة",
       "paragraphs": [
         "مهندس برمجيات متكامل ومعماري برمجيات يركّز على المنتج، بخبرة {{experienceYears}} سنوات في بناء أنظمة قابلة للتوسع في قطاعَي التجزئة والبرمجيات كخدمة — من منصات نقاط البيع إلى أنظمة الولاء وأدوات تفاعل العملاء، والتجارة الإلكترونية، وبوابات الدفع، وأنظمة الحجز، وتكامل محركات البحث، ولوحات التقارير. أعمل عبر المكدس باستخدام React وVue وNext.js وNode.js وNestJS، وأقدّم حلولاً موثوقة عالية الجودة تركز على الاستخدام الحقيقي.",
@@ -349,7 +581,7 @@
           "label": "زمن استجابة أقل لواجهات نظام نقاط البيع"
         },
         {
-          "value": "+10K",
+          "value": "10K+",
           "label": "مستخدم شهرياً على منصات السفر التي قدتها"
         },
         {
@@ -357,7 +589,9 @@
           "label": "توقف أقل بعد رقمنة العمليات"
         }
       ],
-      "impactTitle": "الأثر باختصار"
+      "impactTitle": "الأثر باختصار",
+      "relatedWork": "شاهد العمل",
+      "viewResume": "عرض السيرة الذاتية"
     },
     "projects": {
       "section": "المشاريع",
@@ -378,7 +612,14 @@
       "more": "مشاريع أخرى",
       "view": "عرض",
       "all": "الكل",
-      "count": "{{count}} مشاريع",
+      "countForms": {
+        "zero": "لا توجد مشاريع",
+        "one": "مشروع واحد",
+        "two": "مشروعان",
+        "few": "{{count}} مشاريع",
+        "many": "{{count}} مشروعًا",
+        "other": "{{count}} مشروع"
+      },
       "status": "الحالة",
       "statusLive": "مباشر",
       "statusPrivate": "خاص / داخلي",
@@ -386,7 +627,18 @@
       "techCount": "{{count}} تقنية",
       "index": "المشروع",
       "previous": "السابق",
-      "next": "التالي"
+      "next": "التالي",
+      "statusOpen": "مفتوح المصدر",
+      "inProgress": "قيد التطوير",
+      "inProgressBlurb": "مشاريع أعمل على بنائها حالياً.",
+      "featuredCaseStudy": "دراسة حالة مميزة",
+      "caseStudy": "اقرأ دراسة الحالة",
+      "liveProduct": "المنتج المباشر",
+      "groupFeatured": "مميز",
+      "groupClient": "أعمال للعملاء",
+      "groupClientBlurb": "منصات ومنتجات بُنيت لشركات ولعملائها.",
+      "groupEarlier": "أعمال سابقة",
+      "groupEarlierBlurb": "مواقع تعريفية ومشروع شخصي من بدايات مسيرتي."
     },
     "skills": {
       "section": "المهارات",
@@ -412,7 +664,7 @@
       "message": "الرسالة",
       "send": "إرسال",
       "sending": "جارٍ الإرسال...",
-      "fail": "حدث خطأ! حاول مرة أخرى.",
+      "fail": "تعذّر إرسال رسالتك. يرجى المحاولة مرة أخرى بعد قليل، أو مراسلتي مباشرة على",
       "eyebrow": "التواصل",
       "headline": "لنبنِ شيئاً رائعاً.",
       "sent": "شكراً — رسالتك في الطريق. سأرد قريباً.",
@@ -420,14 +672,27 @@
       "available": "متاح",
       "localTime": "توقيت الرياض",
       "replies": "الرد",
-      "replyTime": "خلال يوم"
+      "replyTime": "خلال يوم",
+      "sentTitle": "تم إرسال الرسالة",
+      "sendAnother": "إرسال رسالة أخرى",
+      "honeypot": "اترك هذا الحقل فارغاً",
+      "errors": {
+        "name": "يرجى إدخال اسمك.",
+        "email": "يرجى إدخال بريدك الإلكتروني.",
+        "emailInvalid": "يرجى إدخال بريد إلكتروني صحيح، مثل name@company.com.",
+        "subject": "يرجى إضافة موضوع.",
+        "message": "يرجى كتابة رسالة قصيرة."
+      },
+      "bookCall": "احجز مكالمة لمدة 15 دقيقة",
+      "copy": "نسخ",
+      "copied": "تم النسخ"
     },
     "footer": {
       "role": "مهندس برمجيات متكامل أول ومعماري برمجيات",
       "media": "تواصل",
       "rights": "جميع الحقوق محفوظة.",
       "explore": "استكشف",
-      "crafted": "صمّمه وهندسه معيز · React · Vite · Tailwind CSS"
+      "crafted": "صمّمه وهندسه معيز الرحمن · React · Vite · Tailwind CSS"
     },
     "notFound": {
       "title": "الصفحة غير موجودة",
@@ -517,13 +782,15 @@
       "links": "روابط",
       "light": "التبديل للمظهر الفاتح",
       "dark": "التبديل للمظهر الداكن",
-      "lang": "Switch to English",
+      "lang": "التبديل إلى الإنجليزية · English",
       "copyEmail": "نسخ البريد الإلكتروني",
       "copied": "تم النسخ ✓",
       "empty": "لا نتائج. جرّب «React» أو «POS».",
       "footer": "مبني كمنتج — افتحه من أي مكان بـ ⌘K",
       "navigate": "تنقل",
-      "open": "فتح"
+      "open": "فتح",
+      "twlm": "افتح دراسة حالة TWLM",
+      "whatsapp": "تواصل عبر واتساب"
     },
     "process": {
       "eyebrow": "كيف أبني",
@@ -561,6 +828,189 @@
       "eyebrow": "ما وراء الكود",
       "headline": "في قلب الصناعة.",
       "view": "عرض"
+    },
+    "testimonials": {
+      "eyebrow": "توصيات",
+      "title": "ماذا يقول الزملاء.",
+      "separator": " · ",
+      "linkedin": "{{name}} على LinkedIn"
+    },
+    "logos": {
+      "title": "عملتُ مع"
+    },
+    "arch": {
+      "eyebrow": "المعمارية",
+      "headline": "كيف تترابط أجزاء المنصة.",
+      "subtitle": "النظام خلف TWLM: التطبيقات، وواجهة NestJS، والخدمات، والبيانات والتكاملات تحتها.",
+      "caseStudy": "اقرأ دراسة حالة TWLM"
+    },
+    "caseStudy": {
+      "contents": "في هذه الصفحة",
+      "role": "الدور",
+      "company": "الشركة",
+      "timeline": "المدة",
+      "team": "الفريق",
+      "stack": "التقنيات",
+      "links": "روابط",
+      "overview": "نظرة عامة",
+      "problem": "المشكلة",
+      "myRole": "دوري",
+      "architecture": "المعمارية والقرارات الأساسية",
+      "challenges": "التحديات",
+      "results": "النتائج",
+      "next": "ما سأفعله لاحقاً",
+      "builtWith": "التقنيات",
+      "measured": "كيف قيست هذه الأرقام",
+      "seq": {
+        "title": "تدفق تحديث بطاقة المحفظة (مبسّط)",
+        "actor": {
+          "source": "مصدر الويب هوك",
+          "api": "NestJS API",
+          "queue": "BullMQ · Redis",
+          "worker": "العامل",
+          "wallet": "Apple / Google",
+          "device": "هاتف العميل"
+        },
+        "webhook": "حدث ويب هوك",
+        "enqueue": "إضافة مهمة",
+        "process": "تنفيذ المهمة",
+        "update": "تحديث البطاقة",
+        "push": "إشعار",
+        "refresh": "تتحدّث البطاقة",
+        "steps": {
+          "webhook": "يصل حدث ويب هوك إلى واجهة NestJS.",
+          "enqueue": "تضيف الواجهة مهمة تحديث محفظة إلى طابور BullMQ على Redis.",
+          "process": "يلتقط عامل BullMQ المهمة بشكل غير متزامن.",
+          "update": "يحدّث العامل بطاقة Apple Wallet أو Google Wallet.",
+          "push": "ترسل Apple أو Google إشعاراً إلى هاتف العميل.",
+          "refresh": "تتحدّث البطاقة على الهاتف بالبيانات الجديدة."
+        }
+      },
+      "pass": {
+        "title": "بطاقة ولاء من TWLM",
+        "caption": "بطاقة أختام من المنصة كما يراها العملاء في محافظهم. اقلبها لترى ما يبقيها محدّثة.",
+        "showBack": "اقلب البطاقة",
+        "showFront": "اعرض الواجهة",
+        "frontAlt": "بطاقة أختام ولاء في محفظة الهاتف مع رمز QR وتقدّم الأختام",
+        "backAlt": "الوجه الخلفي لبطاقة الولاء",
+        "backTitle": "ما الذي يشغّلها",
+        "rows": [
+          {
+            "k": "أنواع البطاقات",
+            "v": "النقاط وبطاقات الولاء وبطاقات الهدايا وقسائم الخصم"
+          },
+          {
+            "k": "المحافظ",
+            "v": "Apple Wallet وGoogle Wallet"
+          },
+          {
+            "k": "التحديثات",
+            "v": "ويب هوك ← مهمة BullMQ ← تحديث البطاقة ← إشعار"
+          },
+          {
+            "k": "الحملات",
+            "v": "رسائل ترويجية مستهدفة جغرافياً مع تتبع على مستوى الفروع"
+          }
+        ]
+      },
+      "latency": {
+        "title": "زمن استجابة الواجهات",
+        "before": "قبل",
+        "after": "بعد",
+        "relative": "نسبةً إلى ما قبل (100٪)",
+        "measured": "قياس فعلي"
+      },
+      "queue": {
+        "title": "مهام في الخلفية مع BullMQ",
+        "illustrative": "توضيحي",
+        "waiting": "بالانتظار",
+        "active": "قيد التنفيذ",
+        "completed": "مكتملة",
+        "failed": "فشلت",
+        "alt": "مهام تنتقل من الانتظار إلى التنفيذ ثم الاكتمال في طابور BullMQ، وتفشل مهمة مرة ثم يُعاد تنفيذها.",
+        "caption": "تعمل مهام الإشعارات وتحديث المحافظ في عمّال BullMQ مدعومين بـ Redis، خارج مسار الطلب. وتُعاد المهمة الفاشلة بدلاً من أن تضيع."
+      }
+    },
+    "ai": {
+      "eyebrow": "تكامل الذكاء الاصطناعي",
+      "headline": "نماذج لغوية داخل منتجات حقيقية.",
+      "subtitle": "أين دمجت النماذج اللغوية الكبيرة — وواحد يمكنك تجربته الآن.",
+      "twlmTitle": "البحث الذكي في القوائم · TWLM",
+      "twlmBody": "قدت دمج OpenRouter AI (DeepSeek) الذي يشغّل البحث الذكي في القوائم وتحليل بيانات المطاعم بالذكاء الاصطناعي.",
+      "botTitle": "{{name}} · هذا الموقع",
+      "botBody": "{{name}} هو المساعد في هذا الموقع، يجيب عن الأسئلة حول عملي عبر خادم يتصل بـ OpenRouter (DeepSeek).",
+      "botCta": "اسأل {{name}}"
+    },
+    "a11y": {
+      "langLabel": "EN",
+      "switchLang": "التبديل إلى الإنجليزية",
+      "themeToLight": "التبديل إلى المظهر الفاتح",
+      "themeToDark": "التبديل إلى المظهر الداكن",
+      "openMenu": "فتح القائمة",
+      "closeMenu": "إغلاق القائمة",
+      "home": "الصفحة الرئيسية لـ MoizDev",
+      "skip": "انتقل إلى المحتوى",
+      "mainNav": "القائمة الرئيسية",
+      "prevImage": "الصورة السابقة",
+      "nextImage": "الصورة التالية",
+      "goToImage": "انتقل إلى الصورة {{n}}",
+      "screenshot": "{{title}} — لقطة شاشة {{n}} من {{count}}",
+      "gallery": "لقطات شاشة {{title}}",
+      "prevPhoto": "الصورة السابقة",
+      "nextPhoto": "الصورة التالية",
+      "close": "إغلاق",
+      "scrollCode": "مثال برمجي (يُمرَّر أفقيًا)",
+      "scrollDiagram": "مخطط (يُمرَّر أفقيًا)",
+      "openChat": "افتح {{name}}",
+      "closeChat": "إغلاق المحادثة",
+      "mute": "كتم الصوت",
+      "unmute": "تشغيل الصوت",
+      "speak": "اطرح سؤالًا بصوتك",
+      "doneSpeaking": "انتهيت من الكلام — إرسال",
+      "chatInput": "اسأل {{name}} سؤالًا",
+      "pageLinks": "صفحات أخرى"
+    },
+    "cursor": {
+      "view": "عرض ↖",
+      "flip": "اقلب البطاقة"
+    },
+    "explainer": {
+      "label": "السيناريو",
+      "simplified": "تدفق مبسّط",
+      "replay": "إعادة",
+      "step": "الخطوة {{n}} من {{total}}",
+      "why": "لماذا"
+    },
+    "aiConsole": {
+      "label": "أمثلة على الطلبات",
+      "tabs": {
+        "order": "إنشاء طلب",
+        "search": "بحث ذكي في القائمة"
+      },
+      "replay": "إعادة",
+      "illustrative": "مثال توضيحي — يوضّح شكل الواجهة البرمجية وليس بيانات حقيقية.",
+      "query": "دجاج حار بأقل من 30 ريال",
+      "results": [
+        {
+          "name": "برجر دجاج حار",
+          "price": 27,
+          "score": 0.94
+        },
+        {
+          "name": "شاورما دجاج حارة",
+          "price": 22,
+          "score": 0.89
+        },
+        {
+          "name": "قطع دجاج ناشفيل",
+          "price": 29,
+          "score": 0.83
+        }
+      ]
+    },
+    "tech": {
+      "usedFor": "الاستخدام",
+      "usedIn": "مستخدم في"
     }
   }
 }

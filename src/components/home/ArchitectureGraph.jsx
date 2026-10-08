@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import arch from '../../data/architecture.json';
+import { useContent } from '../../i18n/content';
+import { usePrefersReducedMotion } from '../../motion/reducedMotion';
+import { usePauseWhenHidden } from '../../motion/usePauseWhenHidden';
+import { useInView } from '../../motion/useInView';
+import { DUR, EASE } from '../../motion/tokens';
 import { SiApple, SiFlutter, SiNestjs, SiNextdotjs, SiPostgresql, SiReact, SiRedis } from 'react-icons/si';
 import {
   MdOutlineBolt,
@@ -70,58 +76,112 @@ const EDGES = [
   ['loyalty', 'wallet'],
   ['cms', 'pg'],
   ['ai', 'llm'],
+  ['redis', 'wallet'],
 ];
 
-const Node = ({ node, state, onEnter, onLeave, registerRef }) => {
+const edgeKey = (a, b) => [a, b].sort().join('|');
+const DWELL = 900; // ms a step's caption stays before the next hop
+
+const Node = ({ node, state, onEnter, onLeave, registerRef, describedBy }) => {
   const { Icon, label, sub, hub } = node;
   return (
     <div
       ref={registerRef}
       tabIndex={0}
+      aria-describedby={describedBy}
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
       onFocus={onEnter}
       onBlur={onLeave}
-      className={`relative z-10 flex items-center gap-3 rounded-2xl bg-surface px-3 py-2.5 outline-none transition-all duration-300 ${hub ? 'order-first lg:order-none sm:col-span-2 lg:col-span-1' : ''} ${
-        hub
-          ? 'ring-1 ring-label/25 shadow-[0_10px_30px_rgba(0,0,0,0.10)] py-3.5'
-          : 'ring-1 ring-separator shadow-[0_1px_2px_rgba(0,0,0,0.04)]'
-      } ${state === 'dim' ? 'opacity-35' : ''} ${state === 'on' ? 'ring-label/40 -translate-y-0.5 shadow-[0_12px_28px_rgba(0,0,0,0.12)]' : ''}`}
+      data-state={state}
+      className={`arch-node relative z-10 flex items-center gap-3 rounded-2xl bg-surface px-3 py-2.5 ${hub ? 'order-first @3xl:order-none @lg:col-span-2 @3xl:col-span-1 py-3.5 ring-1 ring-label/25 shadow-[0_10px_30px_rgba(0,0,0,0.10)]' : 'ring-1 ring-separator shadow-[0_1px_2px_rgba(0,0,0,0.04)]'}`}
     >
-      <span
-        className={`inline-flex shrink-0 items-center justify-center rounded-xl ${
-          hub ? 'size-10 bg-label text-bg' : 'size-8 bg-fill text-label'
-        }`}
-      >
+      <span className={`inline-flex shrink-0 items-center justify-center rounded-xl ${hub ? 'size-10 bg-label text-bg' : 'size-8 bg-fill text-label'}`}>
         <Icon className={hub ? 'text-[20px]' : 'text-[16px]'} aria-hidden />
       </span>
       <span className="min-w-0">
-        <span className={`block leading-tight text-label ${hub ? 'text-[15px] font-semibold' : 'text-[14px] font-medium'}`}>
-          {label}
-        </span>
+        <span className={`block leading-tight text-label ${hub ? 'text-[15px] font-semibold' : 'text-[14px] font-medium'}`}>{label}</span>
         <span className="block truncate text-[12px] leading-tight text-label-3 mt-0.5">{sub}</span>
       </span>
     </div>
   );
 };
 
+/** Apple-style segmented control; arrow keys move between segments (mirrored in RTL). */
+function Segmented({ options, value, onChange, label }) {
+  const idx = Math.max(0, options.findIndex((o) => o.id === value));
+  const refs = useRef([]);
+  const onKeyDown = (e) => {
+    const keys = { ArrowRight: 1, ArrowLeft: -1, Home: 'first', End: 'last' };
+    if (!(e.key in keys)) return;
+    e.preventDefault();
+    const rtl = document.documentElement.dir === 'rtl';
+    let n = keys[e.key] === 'first' ? 0 : keys[e.key] === 'last' ? options.length - 1 : idx + keys[e.key] * (rtl ? -1 : 1);
+    n = (n + options.length) % options.length;
+    onChange(options[n].id);
+    refs.current[n]?.focus();
+  };
+  return (
+    <div
+      role="radiogroup"
+      aria-label={label}
+      onKeyDown={onKeyDown}
+      className="seg relative grid rounded-full bg-fill p-1"
+      style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))`, '--seg-i': idx, '--seg-n': options.length }}
+    >
+      <span className="seg-thumb" aria-hidden />
+      {options.map((o, i) => (
+        <button
+          key={o.id}
+          ref={(el) => (refs.current[i] = el)}
+          type="button"
+          role="radio"
+          aria-checked={i === idx}
+          tabIndex={i === idx ? 0 : -1}
+          onClick={() => onChange(o.id)}
+          className={`relative z-10 min-h-9 rounded-full px-3 py-1.5 text-[13px] font-medium leading-tight transition-colors duration-(--dur-fast) ${i === idx ? 'text-label' : 'text-label-2 hover:text-label'}`}
+        >
+          {o.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 /**
- * Interactive system diagram. Edges are measured from the rendered nodes, so
- * they follow any layout (widths, RTL). Hover or focus a node to trace its
- * connections; pulses show data moving along each edge.
+ * "How it works" explainer for the TWLM platform.
+ * - Pick a scenario; it plays once, hop by hop: the hop's edge draws in, a
+ *   packet travels it, the node lights and a caption explains the step. The
+ *   final state stays (no loop); playback pauses off-screen or in a hidden tab.
+ * - Hover or focus a node: its connections highlight and a frosted tooltip
+ *   shows what it does (and why it was chosen, once that's written).
+ * - Edges are measured from the rendered nodes, so they follow any layout and
+ *   RTL; in the stacked (narrow) layout nodes light in order instead.
+ * - Reduced motion: the chosen scenario's whole path is shown lit, statically.
  */
 export default function ArchitectureGraph({ titles }) {
+  const { t, lang } = useContent();
+  const reduced = usePrefersReducedMotion();
   const wrapRef = useRef(null);
+  const packetRef = useRef(null);
   const nodeRefs = useRef({});
   const [paths, setPaths] = useState([]);
   const [size, setSize] = useState({ w: 0, h: 0 });
-  const [active, setActive] = useState(null);
-  const [drawn, setDrawn] = useState(false);
-  const [motion, setMotion] = useState(true);
+  const [hovered, setHovered] = useState(null);
+  const [tip, setTip] = useState(null);
+  const [scenarioId, setScenarioId] = useState(arch.scenarios[0].id);
+  const [step, setStep] = useState(-1);
+  const [playing, setPlaying] = useState(false);
+
+  const scenario = arch.scenarios.find((s) => s.id === scenarioId);
+  const total = scenario.steps.length;
+  const seen = useInView(wrapRef, { once: true, rootMargin: '0px 0px -20% 0px' });
+  const canRun = usePauseWhenHidden(wrapRef);
 
   const measure = useCallback(() => {
     const wrap = wrapRef.current;
-    if (!wrap || window.innerWidth < 1024) return setPaths([]);
+    // edges only in the four-column layout (container ≥ 48rem, see the classes below)
+    if (!wrap || wrap.clientWidth < 768) return setPaths([]);
     const box = wrap.getBoundingClientRect();
     const rect = (id) => {
       const r = nodeRefs.current[id]?.getBoundingClientRect();
@@ -133,7 +193,6 @@ export default function ArchitectureGraph({ titles }) {
       if (!a || !b) return null;
       let d;
       if (Math.abs(a.cx - b.cx) < 8) {
-        // same column: short vertical link
         const down = b.cy > a.cy;
         d = `M ${a.cx} ${down ? a.b : a.t} L ${b.cx} ${down ? b.t : b.b}`;
       } else {
@@ -143,7 +202,7 @@ export default function ArchitectureGraph({ titles }) {
         const k = (tx - sx) * 0.5;
         d = `M ${sx} ${a.cy} C ${sx + k} ${a.cy}, ${tx - k} ${b.cy}, ${tx} ${b.cy}`;
       }
-      return { id: `${from}-${to}`, from, to, d };
+      return { id: `${from}-${to}`, key: edgeKey(from, to), from, to, d };
     }).filter(Boolean);
     setSize({ w: box.width, h: box.height });
     setPaths(next);
@@ -154,100 +213,214 @@ export default function ArchitectureGraph({ titles }) {
     const ro = new ResizeObserver(measure);
     if (wrapRef.current) ro.observe(wrapRef.current);
     document.fonts?.ready.then(measure);
-    window.addEventListener('resize', measure);
-    return () => {
-      ro.disconnect();
-      window.removeEventListener('resize', measure);
-    };
-  }, [measure]);
+    return () => ro.disconnect();
+  }, [measure, lang]);
 
+  const play = useCallback(
+    (id) => {
+      setScenarioId(id);
+      setHovered(null);
+      if (reduced) {
+        setStep(arch.scenarios.find((s) => s.id === id).steps.length - 1);
+        setPlaying(false);
+      } else {
+        setStep(0);
+        setPlaying(true);
+      }
+    },
+    [reduced],
+  );
+
+  // first time the diagram is in view: play the first scenario (or show it whole)
   useEffect(() => {
-    setMotion(!window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-    const el = wrapRef.current;
-    if (!el) return undefined;
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setDrawn(true);
-          measure();
-          io.disconnect();
-        }
-      },
-      { threshold: 0.25 },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [measure]);
+    if (seen && step === -1) play(scenarioId);
+  }, [seen, step, play, scenarioId]);
 
-  const linked = (id) => active && (id === active || EDGES.some(([a, b]) => (a === active && b === id) || (b === active && a === id)));
-  const edgeOn = (p) => active && (p.from === active || p.to === active);
+  // one hop: packet travels the edge, then the caption dwells, then the next hop
+  useEffect(() => {
+    if (!playing || !canRun || step < 0) return undefined;
+    const s = scenario.steps[step];
+    const packet = packetRef.current;
+    let anim;
+    if (s.from && packet) {
+      const path = paths.find((p) => p.key === edgeKey(s.from, s.to));
+      if (path) {
+        const reversed = path.from !== s.from;
+        packet.style.offsetPath = `path('${path.d}')`;
+        anim = packet.animate(
+          [
+            { offsetDistance: reversed ? '100%' : '0%', opacity: 0 },
+            { opacity: 1, offset: 0.15 },
+            { opacity: 1, offset: 0.85 },
+            { offsetDistance: reversed ? '0%' : '100%', opacity: 0 },
+          ],
+          { duration: DUR.slow, easing: EASE.inOut, fill: 'forwards' },
+        );
+      }
+    }
+    const id = setTimeout(() => {
+      if (step < total - 1) setStep(step + 1);
+      else setPlaying(false);
+    }, DUR.slow + DWELL);
+    return () => {
+      clearTimeout(id);
+      anim?.cancel();
+    };
+  }, [playing, canRun, step, scenario, paths, total]);
+
+  // what the current scenario has lit so far
+  const lit = useMemo(() => {
+    const nodes = new Set();
+    const edges = new Map(); // key -> drawn from `from`
+    scenario.steps.slice(0, step + 1).forEach((s) => {
+      if (s.at) nodes.add(s.at);
+      if (s.from) {
+        nodes.add(s.from);
+        nodes.add(s.to);
+        edges.set(edgeKey(s.from, s.to), s.from);
+      }
+    });
+    const cur = scenario.steps[step];
+    return { nodes, edges, current: cur ? cur.at || cur.to : null };
+  }, [scenario, step]);
+  // which end each of this scenario's edges is travelled from (so it draws in that way)
+  const startsAt = useMemo(() => new Map(scenario.steps.filter((s) => s.from).map((s) => [edgeKey(s.from, s.to), s.from])), [scenario]);
+  const involved = useMemo(() => new Set(scenario.steps.flatMap((s) => (s.at ? [s.at] : [s.from, s.to]))), [scenario]);
+
+  const linkedToHover = (id) => hovered && (id === hovered || EDGES.some(([a, b]) => (a === hovered && b === id) || (b === hovered && a === id)));
+  const nodeState = (id) => {
+    if (hovered) return id === hovered ? 'on' : linkedToHover(id) ? 'linked' : 'dim';
+    if (step < 0) return 'idle';
+    if (id === lit.current) return 'current';
+    if (lit.nodes.has(id)) return 'lit';
+    return involved.has(id) ? 'idle' : 'dim';
+  };
+
+  const showTip = (id) => {
+    setHovered(id);
+    const wrap = wrapRef.current;
+    const el = nodeRefs.current[id];
+    if (!wrap || !el) return;
+    const box = wrap.getBoundingClientRect();
+    const r = el.getBoundingClientRect();
+    const width = Math.min(280, box.width - 16);
+    const left = Math.min(Math.max(r.left - box.left + r.width / 2 - width / 2, 8), box.width - width - 8);
+    setTip({ id, left, top: r.bottom - box.top + 8, width });
+  };
+  const hideTip = () => {
+    setHovered(null);
+    setTip(null);
+  };
+
+  const node = (id) => LAYERS.flatMap((l) => l.nodes).find((n) => n.id === id);
+  const info = tip && arch.nodes[tip.id];
+  const why = info?.why?.[lang] || info?.why?.en;
+  const current = step >= 0 ? scenario.steps[step] : null;
 
   return (
-    <div ref={wrapRef} className="relative" onMouseLeave={() => setActive(null)}>
-      {/* edges (desktop) */}
-      {paths.length > 0 && (
-        <svg className="absolute inset-0 pointer-events-none hidden lg:block" width={size.w} height={size.h} aria-hidden>
-          {paths.map((p, i) => (
-            <path
-              key={p.id}
-              id={`edge-${p.id}`}
-              d={p.d}
-              pathLength="1"
-              fill="none"
-              strokeLinecap="round"
-              className="transition-[stroke,stroke-width,opacity] duration-300"
-              style={{
-                stroke: edgeOn(p) ? 'var(--color-label)' : 'color-mix(in srgb, var(--color-label) 22%, transparent)',
-                strokeWidth: edgeOn(p) ? 2 : 1.25,
-                opacity: active && !edgeOn(p) ? 0.25 : 1,
-                strokeDasharray: 1,
-                strokeDashoffset: drawn ? 0 : 1,
-                transition: `stroke-dashoffset 1.1s cubic-bezier(0.28,0.11,0.32,1) ${i * 45}ms, stroke 0.3s, stroke-width 0.3s, opacity 0.3s`,
-              }}
-            />
-          ))}
-          {drawn &&
-            motion &&
-            paths.map((p, i) => (
-              <circle
-                key={`dot-${p.id}`}
-                r={edgeOn(p) ? 3.5 : 2.5}
-                fill="var(--color-label)"
-                opacity={active && !edgeOn(p) ? 0.15 : 0.8}
-              >
-                <animateMotion dur={`${2.4 + (i % 4) * 0.35}s`} repeatCount="indefinite" begin={`${(i * 0.37) % 2.4}s`}>
-                  <mpath xlinkHref={`#edge-${p.id}`} />
-                </animateMotion>
-              </circle>
-            ))}
-        </svg>
-      )}
+    <div>
+      <div className="mb-6 flex flex-col gap-3 @container/ctl">
+        <Segmented
+          options={arch.scenarios.map((s) => ({ id: s.id, label: s.label[lang] || s.label.en }))}
+          value={scenarioId}
+          onChange={play}
+          label={t('explainer.label')}
+        />
+      </div>
 
-      <div className="relative grid gap-4 lg:gap-x-20 lg:grid-cols-4">
-        {LAYERS.map((layer, li) => (
-          <div key={layer.key} className="flex flex-col">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-label-3 mb-3">{titles[layer.key]}</p>
-            <div className={`grid gap-2.5 sm:grid-cols-2 lg:flex lg:flex-col lg:flex-1 lg:justify-center ${layer.key === 'api' ? 'lg:gap-6' : 'lg:gap-3'}`}>
-              {layer.nodes.map((node) => (
-                <Node
-                  key={node.id}
-                  node={node}
-                  state={!active ? 'idle' : node.id === active ? 'on' : linked(node.id) ? 'linked' : 'dim'}
-                  onEnter={() => setActive(node.id)}
-                  onLeave={() => setActive(null)}
-                  registerRef={(el) => (nodeRefs.current[node.id] = el)}
-                />
-              ))}
-            </div>
-            {/* phone/tablet: vertical flow between stacked layers */}
-            {li < LAYERS.length - 1 && (
-              <div className="relative lg:hidden h-10 mt-4 flex justify-center" aria-hidden>
-                <span className="absolute inset-y-0 w-px bg-separator" />
-                <span className="wire-pulse" style={{ animationDelay: `${li * 0.5}s` }} />
+      <div ref={wrapRef} className="@container relative" onMouseLeave={hideTip}>
+        {paths.length > 0 && (
+          <svg className="absolute inset-0 pointer-events-none hidden @3xl:block" width={size.w} height={size.h} aria-hidden>
+            {paths.map((p) => {
+              const hoverOn = hovered && (p.from === hovered || p.to === hovered);
+              const drawnFrom = lit.edges.get(p.key);
+              return (
+                <g key={p.id} opacity={hovered && !hoverOn ? 0.25 : 1} className="transition-opacity duration-(--dur-base)">
+                  <path d={p.d} fill="none" strokeLinecap="round" stroke="color-mix(in srgb, var(--color-label) 22%, transparent)" strokeWidth={1.25} />
+                  <path
+                    d={p.d}
+                    pathLength="1"
+                    fill="none"
+                    strokeLinecap="round"
+                    stroke="var(--color-label)"
+                    strokeWidth={2}
+                    strokeDasharray="1 1"
+                    className="arch-edge-lit"
+                    // hidden: dash shifted off the end it will draw in from
+                    style={{ strokeDashoffset: drawnFrom || hoverOn ? 0 : startsAt.get(p.key) && startsAt.get(p.key) !== p.from ? -1 : 1 }}
+                  />
+                </g>
+              );
+            })}
+          </svg>
+        )}
+        <span ref={packetRef} className="arch-packet" aria-hidden />
+
+        <div className="relative grid gap-4 @3xl:gap-x-12 @5xl:gap-x-20 @3xl:grid-cols-4">
+          {LAYERS.map((layer, li) => (
+            <div key={layer.key} className="flex flex-col">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-label-3 mb-3">{titles[layer.key]}</p>
+              <div className={`grid gap-2.5 @lg:grid-cols-2 @3xl:flex @3xl:flex-col @3xl:flex-1 @3xl:justify-center ${layer.key === 'api' ? '@3xl:gap-6' : '@3xl:gap-3'}`}>
+                {layer.nodes.map((n) => (
+                  <Node
+                    key={n.id}
+                    node={n}
+                    state={nodeState(n.id)}
+                    describedBy={tip?.id === n.id ? 'arch-tip' : undefined}
+                    onEnter={() => showTip(n.id)}
+                    onLeave={hideTip}
+                    registerRef={(el) => (nodeRefs.current[n.id] = el)}
+                  />
+                ))}
               </div>
+              {/* narrow layout: a plain connector between stacked layers */}
+              {li < LAYERS.length - 1 && <div className="@3xl:hidden mx-auto mt-4 h-8 w-px bg-separator" aria-hidden />}
+            </div>
+          ))}
+        </div>
+
+        {tip && info && (
+          <div id="arch-tip" role="tooltip" className="arch-tip glass absolute z-20 rounded-2xl ring-1 ring-separator px-4 py-3 shadow-xl" style={{ left: tip.left, top: tip.top, width: tip.width }}>
+            <p className="text-[14px] font-semibold text-label">{node(tip.id)?.label}</p>
+            <p className="mt-0.5 font-mono text-[11px] text-label-3" dir="ltr">{node(tip.id)?.sub}</p>
+            <p className="mt-2 text-[13px] leading-snug text-label-2">{info.role[lang] || info.role.en}</p>
+            {why && (
+              <p className="mt-2 text-[13px] leading-snug text-label-2">
+                <span className="font-semibold text-label">{t('explainer.why')}: </span>
+                {why}
+              </p>
             )}
           </div>
-        ))}
+        )}
+      </div>
+
+      {/* captions: the current step is announced; the full list doubles as the static (reduced-motion) view */}
+      <div className="mt-8 grid gap-4 @container/cap">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <span className="chip text-[12px]">{t('explainer.simplified')}</span>
+          {current && (
+            <span className="text-[12px] font-mono text-label-3">{t('explainer.step', { n: step + 1, total })}</span>
+          )}
+          <button type="button" onClick={() => play(scenarioId)} className="link-arrow text-[13px] ms-auto">
+            {t('explainer.replay')}
+          </button>
+        </div>
+        <p className="sr-only" aria-live="polite">
+          {current ? current.caption[lang] || current.caption.en : ''}
+        </p>
+        <ol className="grid gap-x-6 gap-y-2 sm:grid-cols-2">
+          {scenario.steps.map((s, i) => (
+            <li
+              key={i}
+              className={`flex gap-3 text-[14px] leading-snug transition-opacity duration-(--dur-base) ${i === step ? 'text-label font-medium' : i < step ? 'text-label-2' : 'text-label-3 opacity-60'}`}
+            >
+              <span className={`mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold ${i <= step ? 'bg-label text-bg' : 'bg-fill text-label-2'}`}>
+                {i + 1}
+              </span>
+              <span>{s.caption[lang] || s.caption.en}</span>
+            </li>
+          ))}
+        </ol>
       </div>
     </div>
   );

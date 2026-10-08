@@ -18,8 +18,10 @@
   ],
   "imageUrl": "/projects-media/eims/main.webp",
   "githubUrl": "https://github.com/moiezdev/EIMS.WebAPI",
+  "repoPublic": true,
   "media": [
     "main.webp"
   ],
-  "screenshot": false
+  "screenshot": false,
+  "status": "in-progress"
 }

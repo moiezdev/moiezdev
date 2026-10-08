@@ -1,8 +1,9 @@
+import Img from '../ui/Img';
 import Button from '../ui/Button';
-import Reveal from '../ui/Reveal';
+import Reveal from '../../motion/Reveal';
 import { useContent } from '../../i18n/content';
 
-/** Portrait + story block, shared by the home page and the About page. */
+/** Portrait + story block on the About page (`full`), or a two-paragraph teaser. */
 export const AboutStory = ({ full = false }) => {
   const { t } = useContent();
   const paragraphs = t('about.paragraphs');
@@ -20,24 +21,24 @@ export const AboutStory = ({ full = false }) => {
                 'radial-gradient(70% 60% at 50% 100%, var(--glow-b), transparent 70%), radial-gradient(50% 50% at 20% 15%, var(--glow-a), transparent 70%)',
             }}
           />
-          <img
+          <Img
             src="/aboutSection/about-img.webp"
             alt="Moieez ur Rehman"
-            loading="lazy"
+            sizes="(min-width: 768px) 520px, 90vw"
             className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[94%] w-auto max-w-none object-contain rtl:-scale-x-100"
           />
         </div>
       </Reveal>
       <div className="min-w-0">
-        <Reveal as="h3" className="headline-2 text-label">
+        <Reveal as="h2" className="headline-2 text-label">
           {t('about.title')}
         </Reveal>
         {shown.map((p, idx) => (
-          <Reveal as="p" delay={80 + idx * 60} key={idx} className="mt-5 text-[17px] leading-[1.6] text-label-2">
+          <p key={idx} className="mt-5 text-[17px] leading-[1.6] text-label-2">
             {p}
-          </Reveal>
+          </p>
         ))}
-        <Reveal delay={240} className="mt-8 flex flex-wrap gap-3">
+        <div className="mt-8 flex flex-wrap gap-3">
           {full ? (
             <Button to="/experience" primary>
               {t('about.viewExperience')}
@@ -50,24 +51,8 @@ export const AboutStory = ({ full = false }) => {
           <Button to="/contact" variant="outline">
             {t('hero.contact')}
           </Button>
-        </Reveal>
+        </div>
       </div>
     </div>
   );
 };
-
-const About = () => {
-  const { t } = useContent();
-  return (
-    <section className="w-full px-5 pt-28 md:pt-40" id="about">
-      <div className="app-container">
-        <Reveal as="p" className="eyebrow mb-6">
-          {t('about.eyebrow')}
-        </Reveal>
-        <AboutStory />
-      </div>
-    </section>
-  );
-};
-
-export default About;

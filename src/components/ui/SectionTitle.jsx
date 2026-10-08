@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import Reveal from './Reveal';
+import Reveal from '../../motion/Reveal';
 
 const CHEVRON_DIR = { forward: 'rtl:-scale-x-100', back: 'ltr:-scale-x-100', down: 'rotate-90' };
 

@@ -1,4 +1,6 @@
 import ContactSection from '../components/home/Contact/ContactSection';
+import LogoStrip from '../components/credibility/LogoStrip';
+import Testimonials from '../components/credibility/Testimonials';
 import Transition from '../components/functions/Transition';
 import PageHeader from '../components/ui/PageHeader';
 import { useContent } from '../i18n/content';
@@ -13,6 +15,10 @@ const Contact = () => {
           <ContactSection />
         </div>
       </section>
+      {/* both render nothing until they have content: quotes in src/data/testimonials.json,
+          and site.logoStrip enabled with at least one permitted logo */}
+      <LogoStrip />
+      <Testimonials />
     </Transition>
   );
 };

@@ -1,30 +1,32 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { projects } from '../../data';
-import { SITE_URL, metaFor } from '../../seo/meta';
+import { allProjects as projects } from '../../data';
+import { headTags, metaFor } from '../../seo/meta';
 
-const setMeta = (selector, attr, value) => {
-  const el = document.head.querySelector(selector);
-  if (el) el.setAttribute(attr, value);
-};
-
-/** Keeps the tab title, description and share tags in sync while navigating. */
+/**
+ * Keeps the tab title, description, canonical, share tags and JSON-LD in sync
+ * while navigating. Every static page already ships the right tags (crawlers
+ * read those); this swaps the `data-seo` set for the new route's, so a page
+ * reached in the app ends up with the same <head> as its static HTML.
+ */
 export default function RouteMeta() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    const meta = metaFor(pathname, projects);
-    const image = `${SITE_URL}${meta.image}`;
-    document.title = meta.title;
-    setMeta('meta[name="description"]', 'content', meta.description);
-    setMeta('link[rel="canonical"]', 'href', meta.url);
-    setMeta('meta[property="og:url"]', 'content', meta.url);
-    setMeta('meta[property="og:title"]', 'content', meta.title);
-    setMeta('meta[property="og:description"]', 'content', meta.description);
-    setMeta('meta[property="og:image"]', 'content', image);
-    setMeta('meta[name="twitter:title"]', 'content', meta.title);
-    setMeta('meta[name="twitter:description"]', 'content', meta.description);
-    setMeta('meta[name="twitter:image"]', 'content', image);
+    const tags = headTags(metaFor(pathname, projects));
+    const head = document.head;
+    head.querySelectorAll('[data-seo]').forEach((el) => el.remove());
+    for (const [tag, attrs, text] of tags) {
+      if (tag === 'title') {
+        document.title = text;
+        continue;
+      }
+      const el = document.createElement(tag);
+      el.setAttribute('data-seo', '');
+      Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+      if (text) el.textContent = text;
+      head.appendChild(el);
+    }
   }, [pathname]);
 
   return null;

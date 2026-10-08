@@ -23,8 +23,10 @@
   ],
   "imageUrl": "/projects-media/gala-travels/main.webp",
   "githubUrl": "https://github.com/moiezdev/gala-saber",
+  "repoPublic": true,
   "media": [
     "main.webp",
     "img1.webp"
-  ]
+  ],
+  "group": "client"
 }

@@ -1,0 +1,73 @@
+{
+  "_todo": "TODO(moiez): add or correct a short \"Used for\" note for any technology (en/ar). Chips always also list the projects that use the tech, computed from the project data.",
+  "notes": {
+    "NestJs": {
+      "en": "The TWLM API layer, on Fastify",
+      "ar": "طبقة واجهات TWLM البرمجية، على Fastify"
+    },
+    "Fastify": {
+      "en": "HTTP server under NestJS at TWLM",
+      "ar": "خادم HTTP تحت NestJS في TWLM"
+    },
+    "Node": {
+      "en": "Backends and REST APIs",
+      "ar": "الخوادم وواجهات REST"
+    },
+    "Prisma": {
+      "en": "Data layer and schema migrations at TWLM",
+      "ar": "طبقة البيانات وترحيل المخططات في TWLM"
+    },
+    "PostGreSQL": {
+      "en": "TWLM's main database, via Prisma",
+      "ar": "قاعدة بيانات TWLM الرئيسية عبر Prisma"
+    },
+    "Redis": {
+      "en": "Backing the BullMQ job queues at TWLM",
+      "ar": "دعم طوابير مهام BullMQ في TWLM"
+    },
+    "BullMQ": {
+      "en": "Job queues at TWLM: notification and wallet-update workers",
+      "ar": "طوابير المهام في TWLM: عمّال الإشعارات وتحديث المحافظ"
+    },
+    "React": {
+      "en": "TWLM web apps and dashboards",
+      "ar": "تطبيقات الويب ولوحات التحكم في TWLM"
+    },
+    "Flutter": {
+      "en": "TWLM mobile app for storefronts and online ordering",
+      "ar": "تطبيق TWLM للجوال لواجهات المتاجر والطلب عبر الإنترنت"
+    },
+    "Apple Wallet": {
+      "en": "Loyalty passes and gift cards at TWLM",
+      "ar": "بطاقات الولاء والهدايا في TWLM"
+    },
+    "Google Wallet": {
+      "en": "Loyalty passes and gift cards at TWLM",
+      "ar": "بطاقات الولاء والهدايا في TWLM"
+    },
+    "OpenRouter": {
+      "en": "Smart menu search at TWLM and this site's BotFolio",
+      "ar": "البحث الذكي في القوائم في TWLM ومساعد BotFolio في هذا الموقع"
+    },
+    "DeepSeek": {
+      "en": "The model behind TWLM's menu search and BotFolio",
+      "ar": "النموذج وراء البحث في قوائم TWLM ومساعد BotFolio"
+    },
+    "MyFatoorah": {
+      "en": "Gulf payment gateway at TWLM",
+      "ar": "بوابة دفع خليجية في TWLM"
+    },
+    "Moyasar": {
+      "en": "Gulf payment gateway at TWLM",
+      "ar": "بوابة دفع خليجية في TWLM"
+    },
+    "Sabre": {
+      "en": "Flight booking engine integration",
+      "ar": "تكامل محرك حجز الطيران"
+    },
+    "Amadeus": {
+      "en": "Flight booking engine integration",
+      "ar": "تكامل محرك حجز الطيران"
+    }
+  }
+}

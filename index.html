@@ -24,6 +24,11 @@
           document.documentElement.lang = lang;
           document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
           document.documentElement.setAttribute('data-theme', theme);
+          // pages are prerendered in English: keep them hidden until the app renders
+          // Arabic (or the page an old #/ link points to)
+          if (lang === 'ar' || location.hash.indexOf('#/') === 0) {
+            document.documentElement.classList.add('prerender-hide');
+          }
         } catch (e) {
           document.documentElement.setAttribute('data-theme', 'dark');
         }
@@ -32,19 +37,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <!-- seo:start (regenerated per route at build time, see src/seo/meta.js) -->
     <!-- seo:end -->
-    <meta
-      name="keywords"
-      content="Moiez, MoiezDev, Senior Full Stack Engineer, Software Architect, Portfolio, React, Vue, Next.js, Node.js, NestJS, UI/UX Design"
-    />
+    <!-- pages are served (and prerendered) in English; Arabic is an in-page toggle on
+         the same URLs, so there are no hreflang alternates or og:locale:alternate -->
+    <meta property="og:locale" content="en_US" />
+    <meta name="author" content="Moieez ur Rehman" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="192x192" href="/logo.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#000000" />
   </head>

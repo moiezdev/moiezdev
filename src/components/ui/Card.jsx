@@ -1,22 +1,20 @@
 import { Link } from 'react-router-dom';
-import LazyImage from './LazyImage';
+import Img from './Img';
 import TechChip from './TechChip';
+import ExternalIcon from './ExternalIcon';
 import { Chevron } from './SectionTitle';
 import { useContent } from '../../i18n/content';
-
-const ExternalIcon = () => (
-  <svg className="w-3 h-3 rtl:-scale-x-100" viewBox="0 0 12 12" fill="none" aria-hidden>
-    <path d="M4 2.5h5.5V8M9.5 2.5 2.5 9.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
+import { topTech } from '../../utils/techRank';
+import TransitionLink from './TransitionLink';
 
 /**
  * Project card. The whole card links to the project page (stretched link);
  * external links sit above it so they stay independently clickable.
  */
-const Card = ({ project, featured = false, eyebrow, maxTech = 4, className = '' }) => {
+const Card = ({ project, featured = false, eyebrow, maxTech = 3, className = '' }) => {
   const { t } = useContent();
-  const tech = project.technologies || [];
+  // at most a few tags, the most relevant first
+  const tech = topTech(project.technologies, maxTech);
   const links = [
     project.projectUrl && { href: project.projectUrl, label: t('projects.live') },
     project.githubUrl && { href: project.githubUrl, label: t('projects.github') },
@@ -25,27 +23,29 @@ const Card = ({ project, featured = false, eyebrow, maxTech = 4, className = '' 
 
   return (
     <article
-      className={`group relative flex h-full overflow-hidden surface surface-hover ${
+      data-vt-project={project.id}
+      className={`group relative flex h-full surface surface-hover ${
         featured ? 'flex-col lg:flex-row' : 'flex-col'
       } ${className}`}
     >
       <div
-        className={`relative overflow-hidden bg-surface-2 ${
-          featured ? 'aspect-[16/10] lg:aspect-auto lg:w-[58%] lg:min-h-[420px]' : 'aspect-[16/10]'
+        data-vt-image
+        className={`relative overflow-hidden bg-surface-2 rounded-t-[var(--radius-card)] ${
+          featured ? 'aspect-[16/10] lg:aspect-auto lg:w-[58%] lg:min-h-[420px] lg:rounded-t-none lg:rounded-s-[var(--radius-card)]' : 'aspect-[16/10]'
         }`}
       >
         {project.screenshot === false ? (
           // no real screenshot (e.g. only a logo): a calm typographic placeholder
-          <div className="blueprint absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center transition-transform duration-700 ease-[var(--ease-apple)] group-hover:scale-[1.04]">
+          <div className="blueprint absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center card-img">
             <span className="text-[44px] md:text-[52px] font-bold tracking-[-0.04em] text-label leading-none">{project.title}</span>
-            <span className="font-mono text-[12px] text-label-3">{tech.slice(0, 4).join(' · ')}</span>
+            <span className="font-mono text-[12px] text-label-3">{tech.join(' · ')}</span>
           </div>
         ) : (
-          <LazyImage
+          <Img
             src={project.imageUrl}
-            alt={`${project.title} preview`}
-            wrapperClass="absolute inset-0 w-full h-full"
-            className="w-full h-full object-cover transition-transform duration-700 ease-[var(--ease-apple)] group-hover:scale-[1.04]"
+            alt={`${project.title} — ${project.subtitle}`}
+            sizes={featured ? '(min-width: 1024px) 700px, 100vw' : '(min-width: 1024px) 400px, (min-width: 768px) 50vw, 100vw'}
+            className="absolute inset-0 w-full h-full object-cover card-img"
           />
         )}
       </div>
@@ -57,12 +57,13 @@ const Card = ({ project, featured = false, eyebrow, maxTech = 4, className = '' 
             featured ? 'text-[28px] md:text-[34px]' : 'text-[21px]'
           }`}
         >
-          <Link
+          <TransitionLink
             to={`/works/${project.id}`}
-            data-cursor-label={t('projects.view')}
+            shared={{ from: (link) => link.closest('[data-vt-project]')?.querySelector('[data-vt-image]'), to: '[data-vt-hero]' }}
+            data-cursor-label={t('cursor.view')}
             className="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none">
             {project.title}
-          </Link>
+          </TransitionLink>
         </h3>
         <p className={`text-label-2 ${featured ? 'text-[17px]' : 'text-[15px] line-clamp-2'}`}>
           {project.subtitle}
@@ -70,14 +71,9 @@ const Card = ({ project, featured = false, eyebrow, maxTech = 4, className = '' 
 
         {tech.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mt-1">
-            {tech.slice(0, featured ? 6 : maxTech).map((item) => (
+            {tech.map((item) => (
               <TechChip key={item} name={item} />
             ))}
-            {tech.length > (featured ? 6 : maxTech) && (
-              <span className="chip text-label-2" title={tech.join(', ')}>
-                +{tech.length - (featured ? 6 : maxTech)}
-              </span>
-            )}
           </div>
         )}
 

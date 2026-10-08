@@ -1,4 +1,3 @@
-import Reveal from './Reveal';
 
 /** Large centered page header used at the top of every inner page. */
 const PageHeader = ({ eyebrow, title, subtitle, children }) => (
@@ -13,22 +12,22 @@ const PageHeader = ({ eyebrow, title, subtitle, children }) => (
     />
     <div className="relative app-container flex flex-col items-center">
       {eyebrow && (
-        <Reveal as="p" className="eyebrow mb-4">
+        <p className="eyebrow mb-4">
           {eyebrow}
-        </Reveal>
+        </p>
       )}
-      <Reveal as="h1" delay={60} className="headline-hero text-label max-w-4xl">
+      <h1 className="headline-hero text-label max-w-4xl">
         {title}
-      </Reveal>
+      </h1>
       {subtitle && (
-        <Reveal as="p" delay={120} className="lead mt-5 max-w-2xl">
+        <p className="lead mt-5 max-w-2xl">
           {subtitle}
-        </Reveal>
+        </p>
       )}
       {children && (
-        <Reveal delay={180} className="mt-8">
+        <div className="mt-8">
           {children}
-        </Reveal>
+        </div>
       )}
     </div>
   </header>

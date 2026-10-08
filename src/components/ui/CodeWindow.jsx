@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
 import WindowChrome from './WindowChrome';
 import { getExperienceYears } from '../../utils/experience';
+import { useContent } from '../../i18n/content';
 
 // token helpers — k: keyword, s: string, n: number, p: property, t: type, c: comment
 const k = (v) => ['k', v];
@@ -28,47 +28,17 @@ const buildLines = (years) => [
   [x('};')],
 ];
 
-/** Xcode-styled code window that "types" itself in when scrolled into view. */
+/** Xcode-styled code window (static: no typing effect). */
 const CodeWindow = () => {
+  const { t } = useContent();
   const lines = buildLines(getExperienceYears());
-  const ref = useRef(null);
-  const [shown, setShown] = useState(0);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return undefined;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setShown(lines.length);
-      return undefined;
-    }
-    let timer;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        observer.disconnect();
-        let n = 0;
-        timer = setInterval(() => {
-          n += 1;
-          setShown(n);
-          if (n >= lines.length) clearInterval(timer);
-        }, 110);
-      },
-      { threshold: 0.3 },
-    );
-    observer.observe(el);
-    return () => {
-      observer.disconnect();
-      clearInterval(timer);
-    };
-  }, [lines.length]);
-
   return (
-    <div ref={ref}>
+    <div>
       <WindowChrome title="engineer.ts">
-        <pre className="code-window overflow-x-auto p-5 md:p-7 text-[13px] md:text-[14px] leading-[1.75] font-mono" dir="ltr">
+        <pre tabIndex={0} role="region" aria-label={t('a11y.scrollCode')} className="code-window overflow-x-auto p-5 md:p-7 text-[13px] md:text-[14px] leading-[1.75] font-mono" dir="ltr">
           <code>
             {lines.map((line, i) => (
-              <div key={i} className="flex" style={{ visibility: i < shown ? 'visible' : 'hidden' }}>
+              <div key={i} className="flex">
                 <span className="select-none w-8 shrink-0 text-end pe-4 tok-ln">{i + 1}</span>
                 <span className="whitespace-pre">
                   {line.map(([cls, text], j) => (
@@ -76,7 +46,6 @@ const CodeWindow = () => {
                       {text}
                     </span>
                   ))}
-                  {i === Math.min(shown, lines.length) - 1 && <span className="code-caret" aria-hidden />}
                 </span>
               </div>
             ))}

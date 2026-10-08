@@ -12,7 +12,6 @@ import ainSaas from './projects/ain-saas.json';
 import cityArrivals from './projects/city-arrivals.json';
 import mtlnation from './projects/mtlnation.json';
 import tdm from './projects/tdm.json';
-import joshuaPortfolio from './projects/joshua-portfolio.json';
 import eims from './projects/eims.json';
 import lms from './projects/lms.json';
 
@@ -28,14 +27,13 @@ const projectsById = {
   'city-arrivals': cityArrivals,
   mtlnation,
   tdm,
-  'joshua-portfolio': joshuaPortfolio,
   eims,
   lms,
 };
 
 const knownSkills = new Set(skills.flatMap((category) => category.items));
 
-export const projects = projectOrder.map((id) => {
+export const allProjects = projectOrder.map((id) => {
   const project = projectsById[id];
   if (!project) {
     throw new Error(`Missing project JSON for id: ${id}`);
@@ -49,7 +47,15 @@ export const projects = projectOrder.map((id) => {
     );
   }
 
+  // repo links only ever reach the UI (and the chatbot) for public repos
+  if (project.repoPublic !== true) {
+    const { githubUrl: _g, githubBackendUrl: _b, ...rest } = project;
+    return rest;
+  }
   return project;
 });
 
-export const getProjectById = (id) => projects.find((project) => project.id === id);
+/** Projects shown in lists. Unlisted ones (e.g. waiting on new images) keep their own page. */
+export const projects = allProjects.filter((project) => project.listed !== false);
+
+export const getProjectById = (id) => allProjects.find((project) => project.id === id);

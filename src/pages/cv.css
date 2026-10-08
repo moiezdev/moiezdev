@@ -14,9 +14,18 @@
   background: var(--cv-bg);
   color: var(--cv-text);
   font-family: 'Segoe UI', Tahoma, 'Noto Naskh Arabic', sans-serif;
+  /* fixed, so the site's Arabic leading doesn't reflow the printable pages */
+  line-height: 1.47;
+}
+/* the site's Arabic face (loaded in main.jsx), without tracking */
+.cv-page[lang='ar'] {
+  font-family: 'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, sans-serif;
+}
+.cv-page[lang='ar'] * {
+  letter-spacing: 0 !important;
 }
 
-.cv-page[data-cv-theme='dark'] {
+html[data-theme='dark'] .cv-page {
   --cv-bg: #282c33;
   --cv-text: #e6e8eb;
   --cv-muted: #abb2bf;

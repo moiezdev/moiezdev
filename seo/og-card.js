@@ -68,10 +68,10 @@ const chip = (text, dark = false) =>
 const titleSize = (t) => (t.length <= 12 ? 66 : t.length <= 18 ? 58 : t.length <= 26 ? 50 : 44);
 
 /** Left text column shared by every card. */
-const textColumn = ({ eyebrow, title, sub, chips = [], url }) =>
+const textColumn = ({ eyebrow, title, sub, chips = [], url, width = 470, size }) =>
   h(
     'div',
-    { flexDirection: 'column', width: 470, height: '100%', padding: '68px 0 64px 72px' },
+    { flexDirection: 'column', width, height: '100%', padding: '68px 0 64px 72px' },
     h(
       'div',
       { alignItems: 'center', fontSize: 21, fontWeight: 700, color: INK },
@@ -82,7 +82,7 @@ const textColumn = ({ eyebrow, title, sub, chips = [], url }) =>
     h('div', { fontSize: 15, fontWeight: 600, color: MUTED, letterSpacing: 1.2, textTransform: 'uppercase' }, eyebrow),
     h(
       'div',
-      { marginTop: 12, fontSize: titleSize(title.replace(/\n/g, '')), fontWeight: 700, lineHeight: 1.04, letterSpacing: -2, color: INK, flexDirection: 'column' },
+      { marginTop: 12, fontSize: size || titleSize(title.replace(/\n/g, '')), fontWeight: 700, lineHeight: 1.04, letterSpacing: -2, color: INK, flexDirection: 'column' },
       ...title.split('\n').map((line) => h('div', {}, line)),
     ),
     sub ? h('div', { marginTop: 16, fontSize: 23, lineHeight: 1.32, color: MUTED, fontWeight: 400 }, sub) : null,
@@ -147,11 +147,70 @@ const card = (right, left) =>
 
 const years = () => Math.floor((Date.now() - new Date(2019, 4, 1)) / (365.25 * 24 * 3600 * 1000));
 
+/**
+ * The hero portrait as a PNG data URI. It's only kept as WebP (with
+ * transparency), which Satori can't read, so sharp converts it at build time.
+ */
+async function portrait() {
+  try {
+    const { default: sharp } = await import('sharp');
+    const png = await sharp(join(ROOT, 'public/heroSection/hero-img.webp')).resize({ width: 800 }).png().toBuffer();
+    return `data:image/png;base64,${png.toString('base64')}`;
+  } catch {
+    return null; // card still renders, just without the photo
+  }
+}
+
+/** Home card: name, role and city, with the portrait on the right. */
+async function homeCard() {
+  const photo = await portrait();
+  const BG = '#eef0f4';
+  return card(
+    h(
+      'div',
+      {
+        position: 'absolute',
+        right: 72,
+        top: 64,
+        width: 400,
+        height: 502,
+        borderRadius: 28,
+        overflow: 'hidden',
+        background: `linear-gradient(180deg, #ffffff 0%, ${BG} 100%)`,
+        boxShadow: '0 18px 36px rgba(30,35,50,0.12), 0 0 0 1px rgba(0,0,0,0.05)',
+        alignItems: 'flex-end',
+        justifyContent: 'center',
+      },
+      photo ? img(photo, { width: 400, height: 449 }) : null,
+      h('div', {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        bottom: 0,
+        height: 130,
+        background: `linear-gradient(180deg, rgba(238,240,244,0) 0%, ${BG} 100%)`,
+      }),
+    ),
+    textColumn({
+      eyebrow: 'Senior Full Stack Engineer · Riyadh',
+      title: 'Moieez\nur Rehman',
+      size: 78,
+      sub: 'Software architect building POS, payments, loyalty and AI products end to end.',
+      chips: ['Node.js · React · PostgreSQL'],
+      url: 'moiez.dev',
+      width: 640,
+    }),
+  );
+}
+
 async function buildCard(path) {
+  if (path === '/') return homeCard();
+
   const ids = json('src/data/projects/index.json');
-  const projects = ids.map((id) => json(`src/data/projects/${id}.json`));
+  const all = ids.map((id) => json(`src/data/projects/${id}.json`));
+  const projects = all.filter((p) => p.listed !== false);
   const id = path.match(/^\/works\/([^/]+)$/)?.[1];
-  const project = projects.find((p) => p.id === id);
+  const project = all.find((p) => p.id === id);
 
   if (project) {
     // `"screenshot": false` in a project's JSON means its image is a logo, not a screenshot

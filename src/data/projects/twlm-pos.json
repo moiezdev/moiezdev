@@ -50,9 +50,77 @@
   "projectUrl": "https://twlm.solutions",
   "githubUrl": "https://github.com/Twlm-App/twlm-solutions",
   "githubBackendUrl": "https://github.com/Twlm-App/twlm-solutions-backend",
+  "repoPublic": false,
   "media": [
     "main.webp",
     "img1.webp",
     "img2.webp"
-  ]
+  ],
+  "featured": true,
+  "featuredMetric": 1,
+  "productUrl": "https://twlm.solutions/pos",
+  "experienceId": "twlm",
+  "teamSize": "",
+  "diagrams": [
+    "architecture",
+    "walletSequence",
+    "queue",
+    "walletPass"
+  ],
+  "caseStudy": {
+    "summary": "Restaurant POS, loyalty, wallet passes and AI menu search for Gulf retail — a B2B2C platform I designed and built from architecture to production.",
+    "problem": [
+      "Businesses needed one B2B2C platform for POS and CMS: Gulf tax integrations, inventory, loyalty, gift cards, customizable e-menu storefronts and 30+ CMS features.",
+      "Loyalty cards, gift cards and promotions had to live in customers' Apple Wallet and Google Wallet and stay up to date in real time."
+    ],
+    "role": [
+      "Senior Software Engineer (full stack): designed and built the restaurant POS platform with integrated loyalty, promotions and wallet features, from architecture through production delivery.",
+      "Designed and developed the loyalty features: a loyalty points system, loyalty cards, and a gift card system with Apple Wallet and Google Wallet integration and real-time notification support.",
+      "Built a centralized promotional messaging system with Apple Wallet loyalty passes, smart geo-location targeting, and branch-based tracking and visibility.",
+      "Developed a dynamic, block-based page builder and a Flutter mobile app, so businesses create their own menus and storefront pages without developer help and customers can place orders online.",
+      "Spearheaded the OpenRouter AI (DeepSeek) integration for smart menu search and AI-based analysis of restaurant data.",
+      "Improved the overall UI/UX, making features more intuitive and user-friendly."
+    ],
+    "architecture": [
+      "API: NestJS on Fastify, serving REST APIs to the React web apps, the storefronts and the Flutter mobile app.",
+      "Data: Prisma ORM on PostgreSQL, with schema migrations and query optimization for faster data access.",
+      "Background work: webhook-driven, event-based workflows; Redis-backed BullMQ workers process notification and wallet-update jobs asynchronously.",
+      "Access: RBAC with OAuth2/JWT authentication and SSO for multi-role access across the platform.",
+      "Integrations: Apple Wallet and Google Wallet passes, Gulf payment gateways (MyFatoorah, Moyasar), and CRM and leasing platforms to keep customer and business data in sync.",
+      "Frontend: React with Zustand and TanStack Query.",
+      "AI: OpenRouter (DeepSeek) for smart menu search and AI-based analysis of restaurant data."
+    ],
+    "challenges": [
+      "Stability after rapid development: refactored a large portion of the codebase to improve structure and maintainability, eliminate side effects caused by rapid development, and make the application more stable.",
+      "API performance: optimized the backend APIs, reducing latency by ~64%.",
+      "Real-time wallet passes and notifications: triggered by webhook flows and processed asynchronously as jobs by Redis-backed BullMQ workers.",
+      "Support load: reworked core user flows based on support data."
+    ],
+    "results": [
+      "~70% fewer customer support requests after reworking core flows and the overall UI/UX.",
+      "~64% lower API latency and better overall system performance.",
+      "30+ CMS features shipped on one B2B2C platform.",
+      "Four loyalty features — points, loyalty passes, gift cards and discount coupons — with Apple Wallet and Google Wallet passes and real-time updates.",
+      "A more maintainable and stable codebase."
+    ],
+    "next": [],
+    "measured": ""
+  },
+  "_draft": {
+    "architectureWhy": "TODO(moiez): confirm or rewrite before this is shown anywhere. Draft rationale: NestJS for a modular, typed structure across many domains (POS, loyalty, CMS, AI); Fastify as its HTTP adapter for lower overhead; Prisma for typed queries and versioned migrations on PostgreSQL; BullMQ on Redis to take wallet-pass updates and push notifications off the request path, with retries when Apple/Google calls fail; webhooks so external events (payments, CRM, wallet) drive updates instead of polling.",
+    "walletSequence": "TODO(moiez): confirm the wallet pass update sequence diagram (webhook → API → BullMQ job → worker → Apple/Google Wallet pass update → push to the customer's device) matches the real flow."
+  },
+  "_todo": "TODO(moiez): fill teamSize (e.g. \"4 engineers\"), caseStudy.measured (how ~64% latency and ~70% support requests were measured, e.g. p95 before/after and over which period), caseStudy.next (what you'd do next), and confirm the _draft notes. Empty fields stay hidden on the site; add the same fields in Arabic under twlm-pos.caseStudy in src/i18n/projects-ar.json.",
+  "walletPass": {
+    "front": "/projects-media/twlm-pos/pass-front.webp",
+    "back": null,
+    "_todo": "TODO(moiez): replace with proper Apple Wallet screenshots (front and back, ~2x size) — set \"front\"/\"back\" to the new public paths and run npm run images. Today the front is cropped from img2 and the back is drawn from the facts in the case study."
+  },
+  "latency": {
+    "reduction": 64,
+    "percentile": "p95",
+    "beforeMs": null,
+    "afterMs": null,
+    "_todo": "TODO(moiez): set beforeMs/afterMs to the measured p95 API response times (ms) behind the ~64% figure; the bar then shows them instead of relative values"
+  }
 }

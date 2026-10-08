@@ -5,7 +5,7 @@ import { useContent } from '../../i18n/content';
 const Contact = () => {
   const { t } = useContent();
   return (
-    <section className="w-full px-5 pt-28 md:pt-40" id="contact">
+    <section className="w-full px-5 pt-20 md:pt-28" id="contact">
       <div className="app-container">
         <SectionTitle eyebrow={t('contact.eyebrow')} title={t('contact.headline')} />
         <ContactSection />
