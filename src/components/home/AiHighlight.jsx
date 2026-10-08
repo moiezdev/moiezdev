@@ -47,7 +47,7 @@ const AiHighlight = () => {
   const demo = projects.find((p) => p.aiDemo);
 
   return (
-    <section className="w-full px-5 py-20 md:py-28" id="ai">
+    <section className="band-tint w-full px-5 py-20 md:py-28" id="ai">
       <div className="app-container grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
         <Reveal className="min-w-0">
           <p className="eyebrow mb-3">{t('ai.eyebrow')}</p>

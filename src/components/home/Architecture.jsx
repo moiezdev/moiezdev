@@ -8,7 +8,7 @@ import { useContent } from '../../i18n/content';
 const Architecture = () => {
   const { t } = useContent();
   return (
-    <section data-theme="dark" className="band-dark w-full px-5 py-20 md:py-28" id="architecture">
+    <section className="w-full px-5 py-20 md:py-28" id="architecture">
       <div className="app-container">
         <SectionTitle eyebrow={t('arch.eyebrow')} title={t('arch.headline')} subtitle={t('arch.subtitle')} />
         <Reveal>
