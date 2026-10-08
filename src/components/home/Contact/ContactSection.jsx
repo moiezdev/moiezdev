@@ -194,7 +194,7 @@ const ContactSection = () => {
             <dt className="text-[12px] text-label-3">{t('contact.status')}</dt>
             <dd className="mt-1 flex items-center gap-1.5 text-[14px] font-medium text-label">
               <span className="relative flex size-2 shrink-0" aria-hidden>
-                <span className="absolute inset-0 rounded-full bg-green opacity-60 animate-ping motion-reduce:hidden" />
+                <span className="absolute inset-0 rounded-full bg-green opacity-60 animate-ping [animation-iteration-count:3] motion-reduce:hidden" />
                 <span className="relative size-2 rounded-full bg-green" />
               </span>
               {t('contact.available')}

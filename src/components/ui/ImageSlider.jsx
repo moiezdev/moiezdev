@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Img from './Img';
 import { useContent } from '../../i18n/content';
+import { usePauseWhenHidden } from '../../motion/usePauseWhenHidden';
 
 const Arrow = ({ dir, onClick, label }) => (
   <button
@@ -20,20 +21,24 @@ export default function ImageSlider({ images = [], title = '' }) {
   const { t } = useContent();
   const [idx, setIdx] = useState(0);
   const touchX = useRef(null);
+  const rootRef = useRef(null);
   const count = images.length;
 
   const go = useCallback((n) => setIdx(((n % count) + count) % count), [count]);
 
+  // autoplay only while the gallery is on screen and the tab is visible
+  const playing = usePauseWhenHidden(rootRef);
   useEffect(() => {
-    if (count <= 1) return undefined;
+    if (count <= 1 || !playing) return undefined;
     const id = setTimeout(() => go(idx + 1), 6000);
     return () => clearTimeout(id);
-  }, [idx, count, go]);
+  }, [idx, count, go, playing]);
 
   const rtl = typeof document !== 'undefined' && document.documentElement.dir === 'rtl';
 
   return (
     <div
+      ref={rootRef}
       className="group relative w-full overflow-hidden rounded-[28px] bg-surface-2 aspect-[16/10] select-none"
       tabIndex={0}
       onKeyDown={(e) => {
