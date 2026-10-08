@@ -22,17 +22,17 @@ const About = () => {
       <Process />
       <section className="w-full px-5 pt-28 md:pt-40">
         <div className="app-container grid grid-cols-[minmax(0,1fr)] gap-10 lg:gap-16 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] items-center">
-          <div>
-            <Reveal as="p" className="eyebrow mb-3">
+          <Reveal>
+            <p className="eyebrow mb-3">
               {t('about.codeEyebrow')}
-            </Reveal>
-            <Reveal as="h2" delay={60} className="headline-1 text-label">
+            </p>
+            <h2 className="headline-1 text-label">
               {t('about.codeTitle')}
-            </Reveal>
-            <Reveal as="p" delay={120} className="lead mt-5">
+            </h2>
+            <p className="lead mt-5">
               {t('about.codeBody')}
-            </Reveal>
-          </div>
+            </p>
+          </Reveal>
           <Reveal delay={120} className="min-w-0">
             <CodeWindow />
           </Reveal>

@@ -14,12 +14,12 @@ const Architecture = () => {
         <Reveal>
           <ArchitectureFigure />
         </Reveal>
-        <Reveal className="mt-6">
+        <div className="mt-6">
           <Link to="/works/twlm-pos" className="link-arrow text-[15px]">
             {t('arch.caseStudy')}
             <Chevron />
           </Link>
-        </Reveal>
+        </div>
       </div>
     </section>
   );

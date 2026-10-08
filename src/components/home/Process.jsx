@@ -1,5 +1,5 @@
-import SectionTitle from '../ui/SectionTitle';
 import Reveal from '../../motion/Reveal';
+import SectionTitle from '../ui/SectionTitle';
 import { useContent } from '../../i18n/content';
 
 const STEP_ICONS = [
@@ -18,9 +18,9 @@ const Process = () => {
       <div className="app-container">
         <SectionTitle eyebrow={t('process.eyebrow')} title={t('process.headline')} subtitle={t('process.subtitle')} />
 
-        <ol className="grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+        <Reveal as="ol" className="grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
           {steps.map((step, i) => (
-            <Reveal as="li" key={step.title} delay={i * 80} className="relative">
+            <li key={step.title} className="relative">
               <div className="flex items-center gap-3 mb-4">
                 <span className="inline-flex size-10 items-center justify-center rounded-[12px] bg-[color-mix(in_srgb,var(--color-accent)_12%,transparent)] text-accent">
                   <svg className="w-5 h-5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -32,9 +32,9 @@ const Process = () => {
               </div>
               <h3 className="text-[19px] font-semibold tracking-[-0.02em] text-label">{step.title}</h3>
               <p className="mt-2 text-[15px] leading-relaxed text-label-2">{step.body}</p>
-            </Reveal>
+            </li>
           ))}
-        </ol>
+        </Reveal>
       </div>
     </section>
   );

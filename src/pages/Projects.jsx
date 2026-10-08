@@ -22,13 +22,13 @@ const Group = ({ title, blurb, children }) => (
 );
 
 const CardGrid = ({ list }) => (
-  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-    {list.map((project, i) => (
-      <Reveal key={project.id} delay={(i % 3) * 80}>
+  <Reveal className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    {list.map((project) => (
+      <div key={project.id}>
         <Card project={project} />
-      </Reveal>
+      </div>
     ))}
-  </div>
+  </Reveal>
 );
 
 const Projects = () => {
@@ -76,13 +76,13 @@ const Projects = () => {
       <PageHeader eyebrow={t('projects.eyebrow')} title={t('projects.pageTitle')} subtitle={t('projects.list')} />
       <section className="w-full px-5">
         <div className="app-container">
-          <Reveal className="flex flex-wrap items-center justify-center gap-2 mb-4">
+          <div className="flex flex-wrap items-center justify-center gap-2 mb-4">
             {chip(ALL, t('projects.all'))}
             {filters.map((tech) => {
               const icon = getSkillIcon(tech);
               return chip(tech, tech, icon?.Icon, icon?.color);
             })}
-          </Reveal>
+          </div>
           <p className="text-center text-[13px] text-label-3 mb-10 font-mono" aria-live="polite">
             {countLabel(shown.length)}
           </p>

@@ -127,11 +127,10 @@ const ExperienceCards = ({ jobs, highlightLimit = 0 }) => {
           style={{ transform: 'scaleY(0)' }}
         />
       </span>
-      {jobs.map((job, i) => (
+      {jobs.map((job) => (
         <Reveal
           as="li"
           key={job.id || `${job.company}-${job.period}`}
-          delay={i * 60}
           className="relative md:ps-16"
         >
           <span

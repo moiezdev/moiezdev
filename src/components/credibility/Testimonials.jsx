@@ -76,9 +76,9 @@ const Testimonials = ({ items = testimonialsData.items, className = 'pt-24 md:pt
             {t('testimonials.title')}
           </h2>
         </Reveal>
-        <ul className={`grid grid-cols-[minmax(0,1fr)] gap-4 md:gap-5 ${cols}`}>
-          {quotes.map((q, i) => (
-            <Reveal as="li" key={q.id} delay={i * 80} className="flex">
+        <Reveal as="ul" className={`grid grid-cols-[minmax(0,1fr)] gap-4 md:gap-5 ${cols}`}>
+          {quotes.map((q) => (
+            <li key={q.id} className="flex">
               <figure className="surface !rounded-[22px] p-6 md:p-7 flex flex-1 flex-col gap-5">
                 <QuoteMark />
                 <blockquote className="flex-1 text-[16px] md:text-[17px] leading-[1.6] text-label">
@@ -113,9 +113,9 @@ const Testimonials = ({ items = testimonialsData.items, className = 'pt-24 md:pt
                   )}
                 </figcaption>
               </figure>
-            </Reveal>
+            </li>
           ))}
-        </ul>
+        </Reveal>
       </div>
     </section>
   );

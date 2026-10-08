@@ -34,11 +34,11 @@ export const AboutStory = ({ full = false }) => {
           {t('about.title')}
         </Reveal>
         {shown.map((p, idx) => (
-          <Reveal as="p" delay={80 + idx * 60} key={idx} className="mt-5 text-[17px] leading-[1.6] text-label-2">
+          <p key={idx} className="mt-5 text-[17px] leading-[1.6] text-label-2">
             {p}
-          </Reveal>
+          </p>
         ))}
-        <Reveal delay={240} className="mt-8 flex flex-wrap gap-3">
+        <div className="mt-8 flex flex-wrap gap-3">
           {full ? (
             <Button to="/experience" primary>
               {t('about.viewExperience')}
@@ -51,7 +51,7 @@ export const AboutStory = ({ full = false }) => {
           <Button to="/contact" variant="outline">
             {t('hero.contact')}
           </Button>
-        </Reveal>
+        </div>
       </div>
     </div>
   );

@@ -213,16 +213,16 @@ export default function ProjectDetail() {
 
         {project.metrics?.length > 0 && (
           <div className="app-container mt-8 md:mt-10">
-            <div className="grid grid-cols-3 gap-2 sm:gap-3">
-              {project.metrics.map((m, i) => (
-                <Reveal key={m.label} delay={i * 80} className="surface min-w-0 p-4 sm:p-6 md:p-7">
+            <Reveal className="grid grid-cols-3 gap-2 sm:gap-3">
+              {project.metrics.map((m) => (
+                <div key={m.label} className="surface min-w-0 p-4 sm:p-6 md:p-7">
                   <p className="text-[26px] sm:text-[40px] md:text-[48px] font-bold tracking-[-0.04em] leading-none text-label">
                     <span dir="ltr" className="inline-block">{m.value}</span>
                   </p>
                   <p className="mt-2 sm:mt-3 text-[12px] sm:text-[15px] leading-snug text-label-2">{m.label}</p>
-                </Reveal>
+                </div>
               ))}
-            </div>
+            </Reveal>
             <LatencyBar latency={project.latency} />
             {/* TODO(moiez): caseStudy.measured — how the numbers were measured; hidden until filled */}
             {nonEmpty(cs.measured) && (
@@ -273,9 +273,9 @@ export default function ProjectDetail() {
                 </Reveal>
                 {s.lead && <p className="mb-5 text-[19px] md:text-[21px] font-medium leading-snug text-label">{s.lead}</p>}
                 {nonEmpty(s.items) && (
-                  <Reveal>
+                  <div>
                     <Points items={s.items.filter(Boolean)} />
-                  </Reveal>
+                  </div>
                 )}
                 {s.diagrams && diagrams.length > 0 && (
                   <div className="mt-8 flex flex-col gap-6">
@@ -290,11 +290,11 @@ export default function ProjectDetail() {
                   </div>
                 )}
                 {s.stack && (
-                  <Reveal className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2">
                     {sortTech(project.technologies).map((tech) => (
                       <TechChip key={tech} name={tech} />
                     ))}
-                  </Reveal>
+                  </div>
                 )}
               </section>
             ))}
@@ -302,12 +302,12 @@ export default function ProjectDetail() {
         </div>
 
         {projects.length > 1 && (
-          <nav aria-label={t('projects.more')} className="app-container mt-24 md:mt-32 grid grid-cols-[minmax(0,1fr)] gap-3 sm:grid-cols-[repeat(2,minmax(0,1fr))]">
+          <Reveal as="nav" aria-label={t('projects.more')} className="app-container mt-24 md:mt-32 grid grid-cols-[minmax(0,1fr)] gap-3 sm:grid-cols-[repeat(2,minmax(0,1fr))]">
             {[
               { p: prev, label: t('projects.previous'), dir: 'back' },
               { p: next, label: t('projects.next'), dir: 'forward' },
-            ].map(({ p, label, dir }, i) => (
-              <Reveal key={dir} delay={i * 80} className="min-w-0">
+            ].map(({ p, label, dir }) => (
+              <div key={dir} className="min-w-0">
                 <TransitionLink
                   to={`/works/${p.id}`}
                   shared={{ from: (link) => link.querySelector('[data-vt-image]'), to: '[data-vt-hero]' }}
@@ -331,9 +331,9 @@ export default function ProjectDetail() {
                     <span className="block text-[14px] text-label-2 truncate">{p.subtitle}</span>
                   </span>
                 </TransitionLink>
-              </Reveal>
+              </div>
             ))}
-          </nav>
+          </Reveal>
         )}
       </section>
     </Transition>

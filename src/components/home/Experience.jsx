@@ -1,6 +1,6 @@
+import Reveal from '../../motion/Reveal';
 import { Link } from 'react-router-dom';
 import SectionTitle, { Chevron } from '../ui/SectionTitle';
-import Reveal from '../../motion/Reveal';
 import { useContent } from '../../i18n/content';
 
 /** Home: the current and previous role in two short rows; the full timeline lives on /experience. */
@@ -16,12 +16,10 @@ const Experience = () => {
           buttonText={t('experience.viewAll')}
           link="/experience"
         />
-        <ol className="border-t border-separator">
-          {jobs.slice(0, 2).map((job, i) => (
-            <Reveal
-              as="li"
+        <Reveal as="ol" className="border-t border-separator">
+          {jobs.slice(0, 2).map((job) => (
+            <li
               key={job.id}
-              delay={i * 60}
               className="grid gap-x-10 gap-y-2 border-b border-separator py-7 md:py-8 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]"
             >
               <div className="flex items-start gap-4 min-w-0">
@@ -54,9 +52,9 @@ const Experience = () => {
                   </Link>
                 )}
               </div>
-            </Reveal>
+            </li>
           ))}
-        </ol>
+        </Reveal>
       </div>
     </section>
   );

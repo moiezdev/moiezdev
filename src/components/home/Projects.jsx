@@ -25,13 +25,13 @@ const Projects = () => {
           </Reveal>
         )}
         {/* two columns on tablets (the third card waits for the three-column layout) */}
-        <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <Reveal className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {more.map((project, i) => (
-            <Reveal key={project.id} delay={i * 80} className={i === 2 ? 'sm:max-lg:hidden' : ''}>
+            <div key={project.id} className={i === 2 ? 'sm:max-lg:hidden' : ''}>
               <Card project={project} />
-            </Reveal>
+            </div>
           ))}
-        </div>
+        </Reveal>
       </div>
     </section>
   );
