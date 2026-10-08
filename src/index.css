@@ -597,8 +597,9 @@ textarea:-webkit-autofill {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
   backdrop-filter: none;
 }
-/* text fields: a slim caret in the label colour */
+/* text fields: a slim caret in the label colour, shown instantly (no colour fade) */
 .cursor-ring[data-mode='text'] {
+  transition: opacity 0.15s;
   border-radius: 2px;
   background: var(--color-label);
   box-shadow: none;

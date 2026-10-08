@@ -156,11 +156,19 @@ const Cursor = () => {
         th *= 0.9;
       }
 
-      const k = ring.dataset.mode === 'text' ? 0.6 : target?.mode === 'shape' ? 0.28 : 0.2;
-      pos.x = lerp(pos.x, tx, k);
-      pos.y = lerp(pos.y, ty, k);
-      pos.w = lerp(pos.w, tw, 0.25);
-      pos.h = lerp(pos.h, th, 0.25);
+      if (ring.dataset.mode === 'text') {
+        // a caret is a precise tool: snap to it and sit exactly on the pointer
+        pos.x = tx;
+        pos.y = ty;
+        pos.w = tw;
+        pos.h = th;
+      } else {
+        const k = target?.mode === 'shape' ? 0.28 : 0.2;
+        pos.x = lerp(pos.x, tx, k);
+        pos.y = lerp(pos.y, ty, k);
+        pos.w = lerp(pos.w, tw, 0.25);
+        pos.h = lerp(pos.h, th, 0.25);
+      }
 
       ring.style.width = `${pos.w}px`;
       ring.style.height = `${pos.h}px`;
