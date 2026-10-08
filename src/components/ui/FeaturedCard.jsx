@@ -6,6 +6,7 @@ import TechChip from './TechChip';
 import { useContent } from '../../i18n/content';
 import { topTech } from '../../utils/techRank';
 import TransitionLink from './TransitionLink';
+import { Chevron } from './SectionTitle';
 
 /**
  * Full-width hero card for the featured project: screenshot, one pulled-out
@@ -23,7 +24,7 @@ const FeaturedCard = ({ project, className = '' }) => {
   return (
     <article
       data-vt-project={project.id}
-      className={`group relative grid overflow-hidden surface lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] ${className}`}
+      className={`group relative grid surface surface-hover lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] ${className}`}
     >
       <TransitionLink
         to={to}
@@ -32,13 +33,13 @@ const FeaturedCard = ({ project, className = '' }) => {
         shared={shared}
         data-vt-image
         data-cursor-label={t('cursor.view')}
-        className="relative block overflow-hidden bg-surface-2 aspect-[16/10] lg:aspect-auto lg:min-h-[440px]"
+        className="relative block overflow-hidden bg-surface-2 aspect-[16/10] lg:aspect-auto lg:min-h-[440px] rounded-t-[var(--radius-card)] lg:rounded-t-none lg:rounded-s-[var(--radius-card)]"
       >
         <Img
           src={project.imageUrl}
           alt={`${project.title} — ${project.subtitle}`}
           sizes="(min-width: 1024px) 720px, 100vw"
-          className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 ease-[var(--ease-apple)] group-hover:scale-[1.03]"
+          className="absolute inset-0 w-full h-full object-cover object-top card-img"
         />
       </TransitionLink>
 
@@ -67,8 +68,9 @@ const FeaturedCard = ({ project, className = '' }) => {
         </div>
 
         <div className="mt-8 flex flex-wrap items-center gap-3">
-          <Button to={to} primary>
+          <Button to={to} primary className="arrow-nudge">
             {t('projects.caseStudy')}
+            <Chevron />
           </Button>
           {live && (
             <Button href={live} variant="outline">

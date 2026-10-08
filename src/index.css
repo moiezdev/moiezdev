@@ -261,15 +261,45 @@ html[data-theme='dark'] .text-gradient {
   box-shadow: var(--shadow-card);
 }
 .surface-hover {
-  transition:
-    transform 0.5s var(--ease-apple),
-    box-shadow 0.5s var(--ease-apple);
+  position: relative;
+  isolation: isolate;
+  transition: transform var(--dur-base) var(--ease-spring);
 }
+/* the hover shadow is a layer that only fades (opacity), never a box-shadow transition */
+.surface-hover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  box-shadow: var(--shadow-card-hover);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+/* lift + image scale + arrow nudge: on hover (fine pointers) and keyboard focus */
 @media (hover: hover) {
   .surface-hover:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-3px);
   }
+  .surface-hover:hover::before {
+    opacity: 1;
+  }
+  .surface-hover:hover .card-img {
+    transform: scale(1.03);
+  }
+}
+.surface-hover:has(:focus-visible) {
+  transform: translateY(-3px);
+}
+.surface-hover:has(:focus-visible)::before {
+  opacity: 1;
+}
+.surface-hover:has(:focus-visible) .card-img {
+  transform: scale(1.03);
+}
+.card-img {
+  transition: transform var(--dur-slow) var(--ease-spring);
 }
 
 .glass {
@@ -304,6 +334,24 @@ html[data-theme='dark'] .text-gradient {
 .link-arrow:hover {
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+/* arrows nudge toward where they point (mirrored in RTL); \`translate\` keeps the
+   chevron's own RTL flip (scale) intact */
+.link-arrow svg,
+.arrow-nudge svg {
+  transition: translate var(--dur-fast) var(--ease-spring);
+}
+.link-arrow:hover svg,
+.link-arrow:focus-visible svg,
+.arrow-nudge:hover svg,
+.arrow-nudge:focus-visible svg,
+.surface-hover:hover .link-arrow svg,
+.surface-hover:has(:focus-visible) .link-arrow svg {
+  translate: 3px 0;
+}
+html[dir='rtl'] :is(.link-arrow, .arrow-nudge):is(:hover, :focus-visible) svg,
+html[dir='rtl'] .surface-hover:is(:hover, :has(:focus-visible)) .link-arrow svg {
+  translate: -3px 0;
 }
 
 /* ---------- Form fields ---------- */
@@ -474,8 +522,12 @@ textarea:-webkit-autofill {
   .status-dot::after {
     animation: none;
   }
-  .surface-hover:hover {
+  .surface-hover:hover,
+  .surface-hover:has(:focus-visible) {
     transform: none;
+  }
+  .card-img {
+    transform: none !important;
   }
 }
 

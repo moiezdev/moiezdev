@@ -24,19 +24,19 @@ const Card = ({ project, featured = false, eyebrow, maxTech = 3, className = '' 
   return (
     <article
       data-vt-project={project.id}
-      className={`group relative flex h-full overflow-hidden surface surface-hover ${
+      className={`group relative flex h-full surface surface-hover ${
         featured ? 'flex-col lg:flex-row' : 'flex-col'
       } ${className}`}
     >
       <div
         data-vt-image
-        className={`relative overflow-hidden bg-surface-2 ${
-          featured ? 'aspect-[16/10] lg:aspect-auto lg:w-[58%] lg:min-h-[420px]' : 'aspect-[16/10]'
+        className={`relative overflow-hidden bg-surface-2 rounded-t-[var(--radius-card)] ${
+          featured ? 'aspect-[16/10] lg:aspect-auto lg:w-[58%] lg:min-h-[420px] lg:rounded-t-none lg:rounded-s-[var(--radius-card)]' : 'aspect-[16/10]'
         }`}
       >
         {project.screenshot === false ? (
           // no real screenshot (e.g. only a logo): a calm typographic placeholder
-          <div className="blueprint absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center transition-transform duration-700 ease-[var(--ease-apple)] group-hover:scale-[1.04]">
+          <div className="blueprint absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center card-img">
             <span className="text-[44px] md:text-[52px] font-bold tracking-[-0.04em] text-label leading-none">{project.title}</span>
             <span className="font-mono text-[12px] text-label-3">{tech.join(' · ')}</span>
           </div>
@@ -45,7 +45,7 @@ const Card = ({ project, featured = false, eyebrow, maxTech = 3, className = '' 
             src={project.imageUrl}
             alt={`${project.title} — ${project.subtitle}`}
             sizes={featured ? '(min-width: 1024px) 700px, 100vw' : '(min-width: 1024px) 400px, (min-width: 768px) 50vw, 100vw'}
-            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-[var(--ease-apple)] group-hover:scale-[1.04]"
+            className="absolute inset-0 w-full h-full object-cover card-img"
           />
         )}
       </div>

@@ -318,7 +318,7 @@ export default function ProjectDetail() {
                     {p.screenshot === false ? (
                       <span className="blueprint absolute inset-0 flex items-center justify-center text-[15px] font-bold text-label">{p.title}</span>
                     ) : (
-                      <Img src={p.imageUrl} sizes="80px" className="size-full object-cover transition-transform duration-700 ease-[var(--ease-apple)] group-hover:scale-[1.08]" />
+                      <Img src={p.imageUrl} sizes="80px" className="size-full object-cover card-img" />
                     )}
                   </span>
                   <span className="min-w-0 flex-1">
