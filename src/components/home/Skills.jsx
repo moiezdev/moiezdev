@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import SectionTitle from '../ui/SectionTitle';
 import Reveal from '../../motion/Reveal';
 import { getSkillIcon, readableIconColor } from '../../utils/skillIcons';
@@ -16,7 +17,7 @@ const TECHNICAL_CATEGORIES = new Set([
 ]);
 
 /** Popover listing the projects that used this skill. */
-const SkillTip = ({ name }) => {
+const SkillTip = ({ name, id }) => {
   const { lang } = useContent();
   const message = skillPracticeMessage(lang, name);
   const related = getProjectsForSkill(name);
@@ -24,11 +25,12 @@ const SkillTip = ({ name }) => {
 
   return (
     <span
+      id={id}
       role="tooltip"
       className="pointer-events-none absolute left-1/2 bottom-full z-30 mb-2.5 w-max max-w-[260px] -translate-x-1/2 translate-y-1 opacity-0 scale-95 group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100 group-focus-visible:opacity-100 group-focus-visible:scale-100 transition-[opacity,transform,translate,scale] duration-(--dur-fast) ease-(--ease-spring) origin-bottom"
     >
+      {/* the chip already shows the name: repeating it here read as "Vuex Vuex" to screen readers and text tools */}
       <span className="block glass ring-1 ring-separator rounded-2xl px-3.5 py-3 text-start shadow-xl">
-        <span className="block text-[13px] font-semibold text-label mb-1">{name}</span>
         <span className="block text-[12px] leading-relaxed text-label-2 whitespace-normal">{message}</span>
         {related.length > 0 && (
           <span className="block text-[11px] text-accent font-medium mt-2">
@@ -41,32 +43,32 @@ const SkillTip = ({ name }) => {
 };
 
 const SkillChip = ({ name }) => {
-  const { lang } = useContent();
+  const tipId = useId();
   const skillIcon = getSkillIcon(name);
   const Icon = skillIcon?.Icon;
   const hasProjects = getProjectsForSkill(name).length > 0;
 
   return (
-    <span
+    <li
       className={`group relative chip py-1.5 transition-colors ${hasProjects ? 'cursor-help hover:bg-[color-mix(in_srgb,var(--color-accent)_14%,transparent)]' : ''}`}
       tabIndex={hasProjects ? 0 : undefined}
-      aria-label={hasProjects ? `${name}. ${skillPracticeMessage(lang, name)}` : undefined}
+      aria-describedby={hasProjects ? tipId : undefined}
     >
       {Icon && <Icon className="text-[15px] shrink-0" style={{ color: readableIconColor(skillIcon.color) }} aria-hidden />}
       {name}
-      {hasProjects && <SkillTip name={name} />}
-    </span>
+      {hasProjects && <SkillTip name={name} id={tipId} />}
+    </li>
   );
 };
 
 const SkillCard = ({ skill }) => (
   <div className="surface p-6 md:p-7 h-full">
     <h3 className="text-[17px] font-semibold tracking-[-0.015em] text-label mb-4">{skill.category}</h3>
-    <div className="flex flex-wrap gap-2">
+    <ul className="flex flex-wrap gap-2">
       {skill.items.map((item) => (
         <SkillChip key={item} name={item} />
       ))}
-    </div>
+    </ul>
   </div>
 );
 

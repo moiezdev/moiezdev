@@ -26,13 +26,21 @@ function withExperienceYears(text) {
 // src/data/skills.json
 var skills_default = [
   {
+    category: "AI & Automation",
+    items: [
+      "OpenRouter",
+      "DeepSeek",
+      "Claude Code",
+      "Cursor",
+      "GitHub Copilot",
+      "LLM features"
+    ]
+  },
+  {
     category: "Core Skills",
     items: [
       "Product Ownership",
       "Feature Ownership",
-      "Product Management",
-      "Feature Management",
-      "UI/UX Management",
       "End-to-End Delivery"
     ]
   },
@@ -40,14 +48,8 @@ var skills_default = [
     category: "Architectures",
     items: [
       "System Design",
-      "MVC",
-      "HMVC",
-      "MVP",
-      "MVVM",
       "Component Based",
-      "Microservices",
-      "Event-driven architecture",
-      "Monorepo"
+      "Event-driven architecture"
     ]
   },
   {
@@ -60,15 +62,13 @@ var skills_default = [
       "Zustand",
       "Redux Toolkit",
       "TanStack Query",
-      "Context API",
-      "Pinia",
       "Vuex",
       "TailwindCSS",
-      "MaterialUI",
       "Bootstrap",
       "Buefy",
       "Jquery",
-      "Flutter"
+      "Flutter",
+      "React Native"
     ]
   },
   {
@@ -83,8 +83,7 @@ var skills_default = [
       "DotNET",
       "Laravel",
       "PHP",
-      "Entity Framework",
-      "LINQ"
+      "Entity Framework"
     ]
   },
   {
@@ -92,7 +91,6 @@ var skills_default = [
     items: [
       "PostgreSQL",
       "MySQL",
-      "SQL Server",
       "MongoDB",
       "Prisma",
       "Redis",
@@ -108,8 +106,7 @@ var skills_default = [
       "HTML5",
       "CSS3",
       "SCSS",
-      "C# (C Sharp)",
-      "Python"
+      "C# (C Sharp)"
     ]
   },
   {
@@ -117,11 +114,8 @@ var skills_default = [
     items: [
       "Code Splitting",
       "Lazy Loading",
-      "Caching",
-      "Database Indexing",
       "RBAC",
       "OAuth2",
-      "OIDC",
       "JWT",
       "SSO",
       "Authentication & Authorization"
@@ -137,7 +131,8 @@ var skills_default = [
       "Apple Wallet",
       "Google Wallet",
       "Sabre",
-      "Amadeus"
+      "Amadeus",
+      "EmailJS"
     ]
   },
   {
@@ -146,40 +141,21 @@ var skills_default = [
       "Git",
       "GitHub",
       "GitLab",
-      "Jira",
-      "Trello",
-      "Vite",
       "Vercel",
-      "Netlify",
-      "CI/CD",
-      "Docker"
-    ]
-  },
-  {
-    category: "AI & Automation",
-    items: [
-      "OpenRouter",
-      "DeepSeek",
-      "Claude Code",
-      "Cursor",
-      "GitHub Copilot",
-      "Agentic AI"
+      "CI/CD"
     ]
   },
   {
     category: "Collaboration",
     items: [
-      "Agile Methodologies",
-      "Scrum",
-      "Test-Driven Development"
+      "Agile Methodologies"
     ]
   },
   {
     category: "Design & Prototyping",
     items: [
       "Figma",
-      "Adobe XD",
-      "Sketch"
+      "Adobe XD"
     ]
   }
 ];

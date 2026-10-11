@@ -1,12 +1,20 @@
 [
   {
+    "category": "AI & Automation",
+    "items": [
+      "OpenRouter",
+      "DeepSeek",
+      "Claude Code",
+      "Cursor",
+      "GitHub Copilot",
+      "LLM features"
+    ]
+  },
+  {
     "category": "Core Skills",
     "items": [
       "Product Ownership",
       "Feature Ownership",
-      "Product Management",
-      "Feature Management",
-      "UI/UX Management",
       "End-to-End Delivery"
     ]
   },
@@ -14,14 +22,8 @@
     "category": "Architectures",
     "items": [
       "System Design",
-      "MVC",
-      "HMVC",
-      "MVP",
-      "MVVM",
       "Component Based",
-      "Microservices",
-      "Event-driven architecture",
-      "Monorepo"
+      "Event-driven architecture"
     ]
   },
   {
@@ -34,15 +36,13 @@
       "Zustand",
       "Redux Toolkit",
       "TanStack Query",
-      "Context API",
-      "Pinia",
       "Vuex",
       "TailwindCSS",
-      "MaterialUI",
       "Bootstrap",
       "Buefy",
       "Jquery",
-      "Flutter"
+      "Flutter",
+      "React Native"
     ]
   },
   {
@@ -57,8 +57,7 @@
       "DotNET",
       "Laravel",
       "PHP",
-      "Entity Framework",
-      "LINQ"
+      "Entity Framework"
     ]
   },
   {
@@ -66,7 +65,6 @@
     "items": [
       "PostgreSQL",
       "MySQL",
-      "SQL Server",
       "MongoDB",
       "Prisma",
       "Redis",
@@ -82,8 +80,7 @@
       "HTML5",
       "CSS3",
       "SCSS",
-      "C# (C Sharp)",
-      "Python"
+      "C# (C Sharp)"
     ]
   },
   {
@@ -91,11 +88,8 @@
     "items": [
       "Code Splitting",
       "Lazy Loading",
-      "Caching",
-      "Database Indexing",
       "RBAC",
       "OAuth2",
-      "OIDC",
       "JWT",
       "SSO",
       "Authentication & Authorization"
@@ -111,7 +105,8 @@
       "Apple Wallet",
       "Google Wallet",
       "Sabre",
-      "Amadeus"
+      "Amadeus",
+      "EmailJS"
     ]
   },
   {
@@ -120,40 +115,21 @@
       "Git",
       "GitHub",
       "GitLab",
-      "Jira",
-      "Trello",
-      "Vite",
       "Vercel",
-      "Netlify",
-      "CI/CD",
-      "Docker"
-    ]
-  },
-  {
-    "category": "AI & Automation",
-    "items": [
-      "OpenRouter",
-      "DeepSeek",
-      "Claude Code",
-      "Cursor",
-      "GitHub Copilot",
-      "Agentic AI"
+      "CI/CD"
     ]
   },
   {
     "category": "Collaboration",
     "items": [
-      "Agile Methodologies",
-      "Scrum",
-      "Test-Driven Development"
+      "Agile Methodologies"
     ]
   },
   {
     "category": "Design & Prototyping",
     "items": [
       "Figma",
-      "Adobe XD",
-      "Sketch"
+      "Adobe XD"
     ]
   }
 ]
