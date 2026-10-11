@@ -958,7 +958,7 @@ var my_portfolio_default = {
   subtitle: "My Personal Portfolio",
   period: "TODO(moiez): year or date range (e.g. 2021, or 2021 \u2013 2022)",
   description: [
-    "MoezDev \u2013 Personal Portfolio Website",
+    "MoizDev \u2013 Personal Portfolio Website",
     [
       "Built my personal portfolio from scratch to showcase my projects, skills, and experience as a frontend developer.",
       "Focused on creating a clean, responsive, and intuitive design that works smoothly on both desktop and mobile devices.",
