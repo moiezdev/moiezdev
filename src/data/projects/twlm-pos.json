@@ -8,7 +8,7 @@
     [
       "A comprehensive POS and CMS platform for businesses — Gulf tax integrations, inventory, loyalty, gift cards, customizable e-menu storefronts, and 30+ CMS features. B2B2C.",
       "Improved the overall UI/UX, making features more intuitive and user-friendly, which reduced support center requests by approximately 70%.",
-      "Designed and developed loyalty program features including a Loyalty Points System, Loyalty Cards, a Gift Card System with Apple Wallet and Google Wallet integration, and real-time notification support.",
+      "Designed and developed four loyalty features — points, loyalty passes, gift cards and discount coupons — with Apple Wallet and Google Wallet integration and real-time notification support.",
       "Built a centralized promotional messaging system with Apple Wallet loyalty passes, smart geo-location targeting, and branch-based tracking and visibility.",
       "Developed a dynamic Page Builder and a Flutter-based mobile application that allows businesses to create customizable storefront pages and enables customers to place orders online easily.",
       "Optimized backend APIs, reducing latency by approximately 64% and improving system performance.",
@@ -21,11 +21,13 @@
   "metrics": [
     {
       "value": "~70%",
-      "label": "fewer support requests"
+      "label": "fewer support requests",
+      "measured": "TODO(moiez): how this was measured — the baseline (support requests per month before the rework), the period compared, and the source (e.g. helpdesk tickets)"
     },
     {
       "value": "~64%",
-      "label": "lower API latency"
+      "label": "lower API latency",
+      "measured": "TODO(moiez): how this was measured — the baseline and result (e.g. p95 in ms, before and after), which endpoints, and the tool (e.g. APM or load test)"
     },
     {
       "value": "30+",
@@ -40,12 +42,19 @@
     "Node",
     "Prisma",
     "PostgreSQL",
+    "Redis",
+    "BullMQ",
     "Apple Wallet",
     "Google Wallet",
+    "MyFatoorah",
+    "Moyasar",
+    "OAuth2",
+    "JWT",
     "REST APIs",
     "Zustand",
     "TanStack Query",
-    "OpenRouter"
+    "OpenRouter",
+    "DeepSeek"
   ],
   "imageUrl": "/projects-media/twlm-pos/cover.webp",
   "projectUrl": "https://twlm.solutions",
@@ -73,7 +82,7 @@
     ],
     "role": [
       "Senior Software Engineer (full stack): designed and built the restaurant POS platform with integrated loyalty, promotions and wallet features, from architecture through production delivery.",
-      "Designed and developed the loyalty features: a loyalty points system, loyalty cards, and a gift card system with Apple Wallet and Google Wallet integration and real-time notification support.",
+      "Designed and developed four loyalty features — points, loyalty passes, gift cards and discount coupons — with Apple Wallet and Google Wallet integration and real-time notification support.",
       "Built a centralized promotional messaging system with Apple Wallet loyalty passes, smart geo-location targeting, and branch-based tracking and visibility.",
       "Developed a dynamic, block-based page builder and a Flutter mobile app, so businesses create their own menus and storefront pages without developer help and customers can place orders online.",
       "Spearheaded the OpenRouter AI (DeepSeek) integration for smart menu search and AI-based analysis of restaurant data.",
@@ -87,6 +96,12 @@
       "Integrations: Apple Wallet and Google Wallet passes, Gulf payment gateways (MyFatoorah, Moyasar), and CRM and leasing platforms to keep customer and business data in sync.",
       "Frontend: React with Zustand and TanStack Query.",
       "AI: OpenRouter (DeepSeek) for smart menu search and AI-based analysis of restaurant data."
+    ],
+    "ai": [
+      "Two LLM features run on OpenRouter (DeepSeek) inside the platform: smart menu search on the e-menu storefronts, and AI-based analysis of restaurant data.",
+      "TODO(moiez): one sentence on what smart menu search lets a customer do (e.g. type a craving or a budget in plain language and get matching dishes)",
+      "TODO(moiez): how you evaluated smart menu search (e.g. a set of real customer queries checked for relevant results, response time, fallback when the model is unavailable)",
+      "TODO(moiez): what the AI analysis of restaurant data produces, who uses it, and how you checked its accuracy"
     ],
     "challenges": [
       "Stability after rapid development: refactored a large portion of the codebase to improve structure and maintainability, eliminate side effects caused by rapid development, and make the application more stable.",
