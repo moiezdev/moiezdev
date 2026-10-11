@@ -4,7 +4,7 @@
     "headline": "AI Engineer | Senior Full-Stack Engineer (TypeScript, Node.js/NestJS, React/Next.js)",
     "location": "Riyadh, Saudi Arabia",
     "iqama": "Transferable Iqama · Available Immediately",
-    "summary": "AI Engineer and Senior Full-Stack Engineer with {{experienceYears}} years of experience building production systems in TypeScript, Node.js/NestJS and React/Next.js, specialised in retail and SaaS: POS platforms, loyalty programs, payment integrations and e-commerce. Designed and built a restaurant POS and loyalty platform end-to-end, including Apple/Google Wallet passes, event-driven background processing, and a ~64% reduction in API response times. Experienced with payment gateways (MyFatoorah, Moyasar), authentication (OAuth2, JWT, SSO, RBAC) and CRM integrations. Uses AI coding tools (Claude Code, Cursor, GitHub Copilot) to ship faster, while owning the design, review and testing of everything that reaches production.",
+    "summary": "AI Engineer and Senior Full-Stack Engineer with {{experienceYears}} years of experience building production systems in TypeScript, Node.js/NestJS and React/Next.js, specialised in retail and SaaS: POS platforms, loyalty programs, payment integrations and e-commerce. Builds LLM-powered features with OpenRouter (DeepSeek), including smart menu search, AI-based analysis of restaurant data and a client-facing support chatbot. Designed and built a restaurant POS and loyalty platform end-to-end, including Apple/Google Wallet passes, event-driven background processing, and a ~64% reduction in API response times. Experienced with payment gateways (MyFatoorah, Moyasar), authentication (OAuth2, JWT, SSO, RBAC) and CRM integrations. Uses AI coding tools (Claude Code, Cursor, GitHub Copilot) to ship faster, while owning the design, review and testing of everything that reaches production.",
     "labels": {
       "summary": "Professional Summary",
       "experience": "Professional Experience",
@@ -39,7 +39,7 @@
     "headline": "مهندس ذكاء اصطناعي | مهندس برمجيات متكامل أول ⁦(TypeScript, Node.js/NestJS, React/Next.js)⁩",
     "location": "الرياض، المملكة العربية السعودية",
     "iqama": "إقامة قابلة للنقل · متاح فوراً",
-    "summary": "مهندس ذكاء اصطناعي ومهندس برمجيات متكامل أول بخبرة {{experienceYears}} سنوات في بناء أنظمة إنتاجية باستخدام TypeScript وNode.js/NestJS وReact/Next.js، متخصص في قطاعي التجزئة والبرمجيات كخدمة: أنظمة نقاط البيع، وبرامج الولاء، وتكامل الدفع، والتجارة الإلكترونية. صممت وبنيت منصة نقاط بيع وولاء للمطاعم من البداية إلى النهاية، تشمل بطاقات Apple/Google Wallet، والمعالجة الخلفية القائمة على الأحداث، وخفض زمن استجابة الواجهات بنحو 64٪. خبرة في بوابات الدفع (MyFatoorah وMoyasar)، والمصادقة (OAuth2 وJWT وSSO وRBAC)، وتكامل أنظمة CRM. أستخدم أدوات البرمجة بالذكاء الاصطناعي (Claude Code وCursor وGitHub Copilot) لتسريع التسليم، مع تحمّل مسؤولية التصميم والمراجعة والاختبار لكل ما يصل إلى الإنتاج.",
+    "summary": "مهندس ذكاء اصطناعي ومهندس برمجيات متكامل أول بخبرة {{experienceYears}} سنوات في بناء أنظمة إنتاجية باستخدام TypeScript وNode.js/NestJS وReact/Next.js، متخصص في قطاعي التجزئة والبرمجيات كخدمة: أنظمة نقاط البيع، وبرامج الولاء، وتكامل الدفع، والتجارة الإلكترونية. أبني ميزات مدعومة بالنماذج اللغوية الكبيرة عبر OpenRouter (DeepSeek)، منها البحث الذكي في القوائم، وتحليل بيانات المطاعم بالذكاء الاصطناعي، وروبوت محادثة لدعم العملاء. صممت وبنيت منصة نقاط بيع وولاء للمطاعم من البداية إلى النهاية، تشمل بطاقات Apple/Google Wallet، والمعالجة الخلفية القائمة على الأحداث، وخفض زمن استجابة الواجهات بنحو 64٪. خبرة في بوابات الدفع (MyFatoorah وMoyasar)، والمصادقة (OAuth2 وJWT وSSO وRBAC)، وتكامل أنظمة CRM. أستخدم أدوات البرمجة بالذكاء الاصطناعي (Claude Code وCursor وGitHub Copilot) لتسريع التسليم، مع تحمّل مسؤولية التصميم والمراجعة والاختبار لكل ما يصل إلى الإنتاج.",
     "labels": {
       "summary": "الملخص المهني",
       "experience": "الخبرة المهنية",
@@ -95,19 +95,20 @@
           "نفّذت RBAC ومصادقة OAuth2/JWT مع SSO للوصول متعدد الأدوار عبر المنصة.",
           "بنيت تدفقات عمل قائمة على الأحداث وويب هوك مع عمّال BullMQ مدعومين بـ Redis لمعالجة مهام الإشعارات وتحديث المحافظ بشكل غير متزامن.",
           "دمجت أنظمة CRM ومنصات التأجير لإبقاء بيانات العملاء والأعمال متزامنة.",
+          "دمجت الفوترة الإلكترونية لهيئة الزكاة والضريبة والجمارك (ZATCA / فاتورة) للامتثال الضريبي في السعودية، بإنشاء الفواتير المتوافقة وإرسالها من منصة نقاط البيع.",
           "دمجت OpenRouter AI (DeepSeek) لإضافة بحث ذكي في القوائم وتحليل بيانات المطاعم بالذكاء الاصطناعي."
         ]
       },
       "accoina": {
-        "title": "مهندس برمجيات أول",
+        "title": "مهندس برمجيات أول · خلفية .NET",
         "location": "المملكة العربية السعودية",
         "period": "يناير 2024 – فبراير 2025",
-        "summary": "أدوات ولوحات داخلية رقمنت العمليات وخفّضت توقف الأنظمة بنحو 25٪.",
+        "summary": "خدمات خلفية بـ .NET وأدوات ولوحات داخلية رقمنت العمليات وخفّضت توقف الأنظمة بنحو 25٪.",
         "highlights": [
           "تحسين العمليات الداخلية برقمنة المسارات وتخفيض توقف الأنظمة بنحو 25٪.",
-          "بناء لوحات تقارير وتحليلات داخلية باستخدام React وSQL.",
-          "صيانة وتوسيع خدمات الخلفية وواجهات البرمجة للأدوات الداخلية.",
-          "تطبيق RBAC ومصادقة OAuth2/JWT للوحات والأدوات الداخلية.",
+          "بناء لوحات تقارير وتحليلات داخلية بـ React مدعومة بواجهات .NET وSQL Server.",
+          "بناء وصيانة وتوسيع خدمات خلفية وواجهات REST بـ .NET (ASP.NET Core / C#) للأدوات الداخلية، مع SQL Server كطبقة بيانات.",
+          "تطبيق RBAC ومصادقة OAuth2/JWT عبر واجهات .NET واللوحات الداخلية.",
           "تحديد اختناقات النظام وحلّها لتحسين الأداء وسلاسة العمل اليومي.",
           "أتمتة المهام والتقارير الروتينية لرفع الكفاءة وتقليل العمل اليدوي."
         ]

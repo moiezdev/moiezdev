@@ -1,11 +1,10 @@
 {
-  "_todo": "TODO(moiez): these skills were taken off the About page because neither the Experience data (src/data/experience.json, src/data/cv-i18n.json) nor any project in src/data/projects mentions them. To show one again, add it to a role's highlights or a project's technologies, then move it back into src/data/skills.json. Several are still on the CV PDF and the /cv page (SQL Server, OIDC, caching, database indexing).",
+  "_todo": "TODO(moiez): these skills were taken off the About page because neither the Experience data (src/data/experience.json, src/data/cv-i18n.json) nor any project in src/data/projects mentions them. To show one again, add it to a role's highlights or a project's technologies, then move it back into src/data/skills.json. Several are still on the CV PDF and the /cv page (OIDC, caching, database indexing).",
   "removed": {
     "Core Skills": ["Product Management", "Feature Management", "UI/UX Management"],
     "Architectures": ["MVC", "HMVC", "MVP", "MVVM", "Microservices", "Monorepo"],
     "Frontend": ["Context API", "Pinia", "MaterialUI"],
     "Backend": ["LINQ"],
-    "Databases": ["SQL Server"],
     "Programming Languages": ["Python"],
     "Performance & Security": ["Caching", "Database Indexing", "OIDC"],
     "Tools & Platforms": ["Jira", "Trello", "Vite", "Netlify", "Docker"],

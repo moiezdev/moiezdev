@@ -66,6 +66,7 @@
       "PostgreSQL",
       "MySQL",
       "MongoDB",
+      "SQL Server",
       "Prisma",
       "Redis",
       "BullMQ"
@@ -102,6 +103,7 @@
       "CRM",
       "MyFatoorah",
       "Moyasar",
+      "ZATCA e-invoicing",
       "Apple Wallet",
       "Google Wallet",
       "Sabre",

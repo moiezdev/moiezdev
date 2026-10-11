@@ -92,6 +92,7 @@ var skills_default = [
       "PostgreSQL",
       "MySQL",
       "MongoDB",
+      "SQL Server",
       "Prisma",
       "Redis",
       "BullMQ"
@@ -128,6 +129,7 @@ var skills_default = [
       "CRM",
       "MyFatoorah",
       "Moyasar",
+      "ZATCA e-invoicing",
       "Apple Wallet",
       "Google Wallet",
       "Sabre",
@@ -386,12 +388,13 @@ var experience_default = [
       "Implemented RBAC and OAuth2/JWT authentication with SSO for multi-role access across the platform.",
       "Built webhook-driven, event-based workflows with Redis-backed BullMQ workers to process notification and wallet-update jobs asynchronously.",
       "Integrated CRM and leasing platforms to keep customer and business data in sync.",
+      "Integrated ZATCA e-invoicing (Fatoora) for Saudi tax compliance, generating and submitting compliant invoices from the POS platform.",
       "Integrated OpenRouter AI (DeepSeek) to add smart menu search and AI-based analysis of restaurant data."
     ]
   },
   {
     id: "accoina",
-    title: "Senior Software Engineer",
+    title: "Senior Software Engineer \xB7 .NET Backend",
     company: "ACCIONA",
     location: "Saudi Arabia",
     period: "Jan 2024 \u2013 Feb 2025",
@@ -399,10 +402,13 @@ var experience_default = [
     companyUrl: "https://www.acciona.com/",
     logo: "/company-logos/acciona.jpg",
     logoOnLight: true,
-    summary: "Internal tools and dashboards that digitized operations and reduced system downtime by ~25%.",
+    summary: ".NET backend services, internal tools and dashboards that digitized operations and reduced system downtime by ~25%.",
     stack: [
+      ".NET",
+      "ASP.NET Core",
+      "C#",
+      "SQL Server",
       "React",
-      "SQL",
       "RBAC",
       "OAuth2",
       "JWT"
@@ -410,9 +416,9 @@ var experience_default = [
     relatedProjects: [],
     highlights: [
       "Improved internal operations by digitizing workflows and reducing system downtime by ~25%.",
-      "Built internal dashboards for reporting and analytics using React and SQL.",
-      "Maintained and extended backend services and APIs for internal tools.",
-      "Implemented RBAC and OAuth2/JWT-based authentication for internal dashboards and tools.",
+      "Built internal reporting and analytics dashboards in React, backed by .NET APIs and SQL Server.",
+      "Built, maintained and extended .NET (ASP.NET Core / C#) backend services and REST APIs for internal tools, with SQL Server as the data layer.",
+      "Implemented RBAC and OAuth2/JWT-based authentication across the .NET APIs and internal dashboards.",
       "Identified and resolved system bottlenecks, improving performance and ensuring smoother day-to-day operations.",
       "Automated routine processes and reporting tasks, increasing efficiency and reducing manual workload."
     ]
