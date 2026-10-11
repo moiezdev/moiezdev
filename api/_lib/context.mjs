@@ -488,7 +488,7 @@ var experience_default = [
       "gala-travels"
     ],
     highlights: [
-      "Led frontend for B2B travel platforms (AA Tourism, City Arrivals) serving 10K+ monthly users.",
+      "Led frontend for B2B travel platforms (AATourism, City Arrivals) serving 10K+ monthly users.",
       "Built reusable component libraries in React/Vue, cutting dev time by ~30%.",
       "Collaborated in Agile teams, improving UX and boosting user retention by 15%.",
       "Upgraded legacy projects with React/Vue, improving responsiveness by 25%.",
@@ -738,7 +738,7 @@ var aa_tourism_default = {
   title: "AATourism",
   subtitle: "Full-Stack Flight Booking & Tour Platform \u2014 Web + Mobile",
   description: [
-    "AA Travel & Tourism \u2013 Full-Stack Flight Booking Platform",
+    "AATourism \u2013 Full-Stack Flight Booking Platform",
     [
       "A full-stack flight booking and tour-planning system: a Laravel backend, a Nuxt 2 web app and a React Native mobile app, integrated with Sabre and Amadeus for real-time flight data using IATA codes.",
       "Built the booking journey \u2014 search forms, flight lists, filters and step-by-step booking \u2014 focused on UX and smooth interactions.",
@@ -779,7 +779,7 @@ var aa_tourism_default = {
       "Flight data had to come live from global distribution systems (Sabre, Amadeus) using IATA codes, through one backend serving both web and mobile."
     ],
     role: [
-      "At Creative Inter Tech, on the B2B travel platforms (AA Tourism, City Arrivals).",
+      "At Creative Inter Tech, on the B2B travel platforms (AATourism, City Arrivals).",
       "Built the booking journey in Nuxt 2: search forms, flight lists, filters and step-by-step booking.",
       "Worked across the stack so live GDS data flowed from the Laravel APIs to the web and React Native apps reliably and consistently."
     ],
@@ -818,7 +818,7 @@ var aa_tourism_default = {
 // src/data/projects/scmborba.json
 var scmborba_default = {
   id: "scmborba",
-  title: "Scmborba",
+  title: "SCM Borba",
   subtitle: "Social Services Website",
   description: [
     "Santa Casa da Miseric\xF3rdia de Borba \u2013 Institutional Website",
@@ -1186,7 +1186,7 @@ var city_arrivals_default = {
   description: [
     "City Arrivals \u2013 Luxury Car Booking (cityarrivals.ca)",
     [
-      "A luxury car booking platform based in Canada, built for B2B travel operations alongside AA Travel & Tourism.",
+      "A luxury car booking platform based in Canada, built for B2B travel operations alongside AATourism.",
       "Focused on a seamless booking experience for premium vehicle rentals.",
       "Developed responsive layouts for reliable performance across devices.",
       "Integrated booking flows so users can schedule and manage rides easily.",
@@ -1210,7 +1210,7 @@ var city_arrivals_default = {
   repoPublic: false,
   group: "client",
   caseStudy: {
-    summary: "Luxury car booking for a Canadian operator, built for B2B travel operations alongside AA Travel & Tourism.",
+    summary: "Luxury car booking for a Canadian operator, built for B2B travel operations alongside AATourism.",
     problem: [
       "Customers needed to book premium vehicles \u2014 point-to-point, hourly or airport \u2014 quickly and with confidence."
     ],

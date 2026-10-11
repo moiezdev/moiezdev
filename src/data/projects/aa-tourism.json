@@ -3,7 +3,7 @@
   "title": "AATourism",
   "subtitle": "Full-Stack Flight Booking & Tour Platform — Web + Mobile",
   "description": [
-    "AA Travel & Tourism – Full-Stack Flight Booking Platform",
+    "AATourism – Full-Stack Flight Booking Platform",
     [
       "A full-stack flight booking and tour-planning system: a Laravel backend, a Nuxt 2 web app and a React Native mobile app, integrated with Sabre and Amadeus for real-time flight data using IATA codes.",
       "Built the booking journey — search forms, flight lists, filters and step-by-step booking — focused on UX and smooth interactions.",
@@ -44,7 +44,7 @@
       "Flight data had to come live from global distribution systems (Sabre, Amadeus) using IATA codes, through one backend serving both web and mobile."
     ],
     "role": [
-      "At Creative Inter Tech, on the B2B travel platforms (AA Tourism, City Arrivals).",
+      "At Creative Inter Tech, on the B2B travel platforms (AATourism, City Arrivals).",
       "Built the booking journey in Nuxt 2: search forms, flight lists, filters and step-by-step booking.",
       "Worked across the stack so live GDS data flowed from the Laravel APIs to the web and React Native apps reliably and consistently."
     ],

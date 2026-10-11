@@ -5,7 +5,7 @@
   "description": [
     "City Arrivals – Luxury Car Booking (cityarrivals.ca)",
     [
-      "A luxury car booking platform based in Canada, built for B2B travel operations alongside AA Travel & Tourism.",
+      "A luxury car booking platform based in Canada, built for B2B travel operations alongside AATourism.",
       "Focused on a seamless booking experience for premium vehicle rentals.",
       "Developed responsive layouts for reliable performance across devices.",
       "Integrated booking flows so users can schedule and manage rides easily.",
@@ -29,7 +29,7 @@
   "repoPublic": false,
   "group": "client",
   "caseStudy": {
-    "summary": "Luxury car booking for a Canadian operator, built for B2B travel operations alongside AA Travel & Tourism.",
+    "summary": "Luxury car booking for a Canadian operator, built for B2B travel operations alongside AATourism.",
     "problem": [
       "Customers needed to book premium vehicles — point-to-point, hourly or airport — quickly and with confidence."
     ],
