@@ -3,9 +3,9 @@
 // src/data/about.json
 var about_default = {
   title: "Hello, I'm Moieez ur Rehman.",
-  subtitle: "Senior Full Stack Engineer & Software Architect",
+  subtitle: "AI Engineer | Senior Full-Stack Engineer (TypeScript, Node.js/NestJS, React/Next.js)",
   description: [
-    "Product-focused Full Stack Engineer and Software Architect with {{experienceYears}} years of experience building scalable systems across retail and SaaS \u2014 from POS platforms to loyalty systems and customer engagement tools, ecommerce, payment integrations, booking systems, search-engine integrations, and dashboards. I work across the stack using React, Vue, Next.js, Node.js, and NestJS, delivering reliable, high-quality solutions with a strong focus on real-world usability.",
+    "AI Engineer and Senior Full-Stack Engineer with {{experienceYears}} years of experience building scalable systems across retail and SaaS \u2014 from POS platforms to loyalty systems and customer engagement tools, ecommerce, payment integrations, booking systems, search-engine integrations, and dashboards. I work across the stack using React, Vue, Next.js, Node.js, and NestJS, delivering reliable, high-quality solutions with a strong focus on real-world usability.",
     "I take ownership of features end-to-end \u2014 from understanding business needs and structuring solutions to implementation and deployment \u2014 with a focus on writing maintainable code, improving system efficiency, and delivering software that creates measurable impact. Core strengths include POS retail systems, payment integrations (MyFatoorah, Moyasar), CRM, wallet integrations (Apple Wallet & Google Wallet), designing system architectures and helping teams execute on them, microservices and monorepo patterns, and leading UI/UX engineering.",
     "I've revamped and stabilized unstable applications, supported management teams, and improved products by solving real problems. Recent work includes POS platforms, loyalty systems, customer engagement tools, and OpenRouter AI (DeepSeek) for smart search and analysis \u2014 contributing to both technical architecture and product direction."
   ]
@@ -234,10 +234,10 @@ var chatbot_default = {
       "MoizDev",
       "MoiezDev"
     ],
-    headline: "Senior Full Stack Engineer & Software Architect | Node.js/NestJS, React/Next.js, PostgreSQL, LLM integrations",
+    headline: "AI Engineer | Senior Full-Stack Engineer (TypeScript, Node.js/NestJS, React/Next.js)",
     location: "Riyadh, Saudi Arabia",
     careerStart: "2019-05-01",
-    identity: "Product-focused Full Stack Engineer and Software Architect with experience across retail, travel and SaaS. Owns features end to end \u2014 from understanding the business problem to architecture, build, deploy and iteration. Designs systems (event-driven workflows, data access layers, auth/RBAC, background jobs) and ships them across web, mobile and integrations: POS and payments, loyalty and wallet passes, booking engines, e-commerce storefronts, internal dashboards, and AI features with OpenRouter/DeepSeek.",
+    identity: "AI Engineer and Senior Full-Stack Engineer with experience across retail, travel and SaaS. Owns features end to end \u2014 from understanding the business problem to architecture, build, deploy and iteration. Designs systems (event-driven workflows, data access layers, auth/RBAC, background jobs) and ships them across web, mobile and integrations: POS and payments, loyalty and wallet passes, booking engines, e-commerce storefronts, internal dashboards, and AI features with OpenRouter/DeepSeek.",
     iqama: "Transferable Iqama \xB7 Available Immediately",
     portfolioUrl: "https://www.moiez.dev"
   },
@@ -329,9 +329,9 @@ var chatbot_default = {
   },
   audiences: {
     recruiters: {
-      lookingFor: "Senior Full Stack Engineer / Software Architect roles (full-time) \u2014 Node.js/NestJS, React/Next.js, AI-integration work.",
+      lookingFor: "AI Engineer and Senior Full-Stack Engineer roles (full-time) in Riyadh, the GCC or remote \u2014 LLM features, TypeScript, Node.js/NestJS, React/Next.js.",
       pitch: [
-        "Senior full stack engineer who owns features end to end \u2014 architecture, backend, frontend and delivery.",
+        "AI Engineer and Senior Full-Stack Engineer who owns features end to end \u2014 architecture, backend, frontend and delivery.",
         "Proven impact: ~70% fewer support requests and ~64% lower API latency at TWLM; ~25% less downtime at ACCIONA; B2B travel platforms serving 10K+ monthly users.",
         "Built production integrations recruiters in the Gulf care about: MyFatoorah and Moyasar payments, Apple/Google Wallet, Sabre/Amadeus booking engines, OpenRouter/DeepSeek LLMs.",
         "Based in Riyadh and building for the Gulf market; transferable Iqama, available immediately."
@@ -593,11 +593,11 @@ var events_default = [
 // src/data/projects/index.json
 var projects_default = [
   "twlm-pos",
-  "design-dynamo",
   "aa-tourism",
   "scmborba",
   "docean-fisheries",
   "ain-saas",
+  "design-dynamo",
   "city-arrivals",
   "my-portfolio",
   "gala-travels",
@@ -657,16 +657,12 @@ var twlm_pos_default = {
     "TanStack Query",
     "OpenRouter"
   ],
-  imageUrl: "/projects-media/twlm-pos/main.webp",
+  imageUrl: "/projects-media/twlm-pos/cover.webp",
   projectUrl: "https://twlm.solutions",
   githubUrl: "https://github.com/Twlm-App/twlm-solutions",
   githubBackendUrl: "https://github.com/Twlm-App/twlm-solutions-backend",
   repoPublic: false,
-  media: [
-    "main.webp",
-    "img1.webp",
-    "img2.webp"
-  ],
+  media: ["cover.webp", "home-framed.webp", "features-framed.webp", "bundle-framed.webp", "ownapp-framed.webp", "pricing-framed.webp"],
   featured: true,
   featuredMetric: 1,
   productUrl: "https://twlm.solutions/pos",
@@ -1647,7 +1643,7 @@ function buildContext(question = "", { path = "/", previousQuestion = "" } = {})
       location: profile.location,
       experienceYears: years,
       summary: profile.identity,
-      availability: "Open to senior full stack engineering and software architect roles, and to freelance/contract projects",
+      availability: "Available for AI engineer and full-stack roles (Riyadh, GCC, remote), and open to freelance/contract projects",
       workAuthorization: profile.iqama
     },
     // what each kind of visitor needs: recruiters get the pitch, clients get scope + how to start

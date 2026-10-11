@@ -33,6 +33,7 @@ export const AboutStory = ({ full = false }) => {
         <Reveal as="h2" className="headline-2 text-label">
           {t('about.title')}
         </Reveal>
+        <p className="mt-2 text-[15px] font-medium text-label-2">{t('about.role')}</p>
         {shown.map((p, idx) => (
           <p key={idx} className="mt-5 text-[17px] leading-[1.6] text-label-2">
             {p}

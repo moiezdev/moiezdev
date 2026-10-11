@@ -109,7 +109,7 @@ export function buildContext(question = '', { path = '/', previousQuestion = '' 
       location: profile.location,
       experienceYears: years,
       summary: profile.identity,
-      availability: 'Open to senior full stack engineering and software architect roles, and to freelance/contract projects',
+      availability: 'Available for AI engineer and full-stack roles (Riyadh, GCC, remote), and open to freelance/contract projects',
       workAuthorization: profile.iqama,
     },
     // what each kind of visitor needs: recruiters get the pitch, clients get scope + how to start
