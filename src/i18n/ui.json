@@ -40,7 +40,7 @@
       "statYearsLabel": "Years shipping software",
       "resumeShort": "Résumé",
       "portraitAlt": "Moieez ur Rehman",
-      "stack": "Node.js/NestJS · React/Next.js · PostgreSQL"
+      "stack": "TypeScript · Node.js/NestJS · React/Next.js"
     },
     "about": {
       "section": "about me",
@@ -552,7 +552,7 @@
       "quote": "المنتجات العظيمة تبدو بسيطة — والتعقيد يبقى تحت السطح.",
       "quoteBy": "--- مجهول",
       "available": "متاح لأدوار هندسة الذكاء الاصطناعي والتطوير المتكامل (الرياض، الخليج، عن بُعد)",
-      "intro": "معيز الرحمن — مهندس ذكاء اصطناعي | مهندس برمجيات متكامل أول (TypeScript، Node.js/NestJS، React/Next.js)",
+      "intro": "معيز الرحمن — مهندس ذكاء اصطناعي | مهندس برمجيات متكامل أول ⁦(TypeScript, Node.js/NestJS, React/Next.js)⁩",
       "seeWork": "شاهد الأعمال",
       "yearsShort": "سنوات في بناء برمجيات إنتاجية",
       "statYears": "سنوات الخبرة",
@@ -562,7 +562,7 @@
       "statLatencyValue": "~64٪",
       "statLatency": "زمن استجابة أقل للواجهات",
       "name": "معيز الرحمن",
-      "eyebrow": "مهندس ذكاء اصطناعي | مهندس برمجيات متكامل أول (TypeScript، Node.js/NestJS، React/Next.js)",
+      "eyebrow": "مهندس ذكاء اصطناعي | مهندس برمجيات متكامل أول ⁦(TypeScript, Node.js/NestJS, React/Next.js)⁩",
       "title": "أصمّم وأبني منتجات متكاملة — من المعمارية حتى الذكاء الاصطناعي.",
       "subtitle": "{{years}} سنوات في بناء منتجات TypeScript في التجزئة والسفر والبرمجيات كخدمة — ميزات النماذج اللغوية عبر OpenRouter (DeepSeek)، ونقاط البيع والمدفوعات، ومحركات الحجز، والتجارة الإلكترونية، ولوحات التحكم.",
       "viewWork": "شاهد أعمالي",
@@ -573,7 +573,7 @@
       "statYearsLabel": "سنوات في بناء البرمجيات",
       "resumeShort": "السيرة الذاتية",
       "portraitAlt": "معيز الرحمن",
-      "stack": "Node.js/NestJS · React/Next.js · PostgreSQL"
+      "stack": "TypeScript · Node.js/NestJS · React/Next.js"
     },
     "about": {
       "section": "نبذتي",
@@ -592,7 +592,7 @@
       "codeEyebrow": "بالكود",
       "codeTitle": "النسخة المختصرة.",
       "codeBody": "إن كنت تفضّل قراءة تعريف نوع على سيرة ذاتية — إليك القصة كاملة، مُجمّعة.",
-      "role": "مهندس ذكاء اصطناعي | مهندس برمجيات متكامل أول (TypeScript، Node.js/NestJS، React/Next.js)"
+      "role": "مهندس ذكاء اصطناعي | مهندس برمجيات متكامل أول ⁦(TypeScript, Node.js/NestJS, React/Next.js)⁩"
     },
     "experience": {
       "section": "الخبرة",
@@ -725,7 +725,7 @@
       "copied": "تم النسخ"
     },
     "footer": {
-      "role": "مهندس ذكاء اصطناعي | مهندس برمجيات متكامل أول (TypeScript، Node.js/NestJS، React/Next.js)",
+      "role": "مهندس ذكاء اصطناعي | مهندس برمجيات متكامل أول ⁦(TypeScript, Node.js/NestJS, React/Next.js)⁩",
       "media": "تواصل",
       "rights": "جميع الحقوق محفوظة.",
       "explore": "استكشف",
