@@ -81,7 +81,7 @@ function routeMeta() {
 
 /** Serves the Vercel functions in /api during `vite` dev and `vite preview`. */
 function apiRoutes(env) {
-  const routes = ['chat']
+  const routes = ['chat', 'tts']
   const mount = (server, load) => {
     Object.assign(process.env, env)
     for (const name of routes) {
