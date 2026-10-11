@@ -21,11 +21,11 @@ const Group = ({ title, blurb, children }) => (
   </section>
 );
 
-const CardGrid = ({ list }) => (
+const CardGrid = ({ list, pinTech }) => (
   <Reveal className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
     {list.map((project) => (
       <div key={project.id}>
-        <Card project={project} />
+        <Card project={project} pinTech={pinTech} />
       </div>
     ))}
   </Reveal>
@@ -41,7 +41,8 @@ const Projects = () => {
     return (forms[form] ?? forms.other).replace('{{count}}', String(n));
   };
 
-  // filters: core technologies plus any shared by several projects, most relevant first
+  // filters: core technologies plus any shared by several projects, most relevant first;
+  // counted over every listed project, so a filter always matches what its cards carry
   const filters = useMemo(() => {
     const counts = new Map();
     projects.forEach((p) => (p.technologies || []).forEach((tech) => counts.set(tech, (counts.get(tech) || 0) + 1)));
@@ -52,9 +53,11 @@ const Projects = () => {
   const finished = projects.filter((p) => p.status !== 'in-progress');
   const inProgress = projects.filter((p) => p.status === 'in-progress');
   const featured = finished.filter((p) => p.featured);
-  const client = finished.filter((p) => !p.featured && p.group !== 'earlier');
+  const ai = finished.filter((p) => !p.featured && p.group === 'ai');
+  const client = finished.filter((p) => !p.featured && p.group !== 'earlier' && p.group !== 'ai');
   const earlier = finished.filter((p) => !p.featured && p.group === 'earlier');
-  const shown = filter === ALL ? finished : finished.filter((p) => p.technologies?.includes(filter));
+  // the count is computed from the same list the page renders (in-progress work included)
+  const shown = filter === ALL ? projects : projects.filter((p) => p.technologies?.includes(filter));
 
   const chip = (value, label, Icon, color) => (
     <button
@@ -100,6 +103,12 @@ const Projects = () => {
                 </Group>
               )}
 
+              {ai.length > 0 && (
+                <Group title={t('projects.groupAi')} blurb={t('projects.groupAiBlurb')}>
+                  <CardGrid list={ai} />
+                </Group>
+              )}
+
               {client.length > 0 && (
                 <Group title={t('projects.groupClient')} blurb={t('projects.groupClientBlurb')}>
                   <CardGrid list={client} />
@@ -132,7 +141,7 @@ const Projects = () => {
               )}
             </>
           ) : (
-            <CardGrid list={shown} />
+            <CardGrid list={shown} pinTech={filter} />
           )}
         </div>
       </section>

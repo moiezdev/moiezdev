@@ -5,16 +5,17 @@ import ExternalIcon from './ExternalIcon';
 import { Chevron } from './SectionTitle';
 import { useContent } from '../../i18n/content';
 import { topTech } from '../../utils/techRank';
+import { filled } from '../../utils/todo';
 import TransitionLink from './TransitionLink';
 
 /**
  * Project card. The whole card links to the project page (stretched link);
  * external links sit above it so they stay independently clickable.
  */
-const Card = ({ project, featured = false, eyebrow, maxTech = 3, className = '' }) => {
+const Card = ({ project, featured = false, eyebrow, maxTech = 3, pinTech, className = '' }) => {
   const { t } = useContent();
   // at most a few tags, the most relevant first
-  const tech = topTech(project.technologies, maxTech);
+  const tech = topTech(project.technologies, maxTech, pinTech);
   const links = [
     project.projectUrl && { href: project.projectUrl, label: t('projects.live') },
     project.githubUrl && { href: project.githubUrl, label: t('projects.github') },
@@ -68,6 +69,7 @@ const Card = ({ project, featured = false, eyebrow, maxTech = 3, className = '' 
         <p className={`text-label-2 ${featured ? 'text-[17px]' : 'text-[15px] line-clamp-2'}`}>
           {project.subtitle}
         </p>
+        {filled(project.period) && <p className="text-[13px] text-label-3 tabular-nums">{project.period}</p>}
 
         {tech.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mt-1">

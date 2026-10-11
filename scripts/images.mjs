@@ -22,6 +22,7 @@ const json = (p) => JSON.parse(readFileSync(p, 'utf8'));
 const urls = new Set(['/heroSection/hero-img.webp', '/aboutSection/about-img.webp']);
 for (const id of json('src/data/projects/index.json')) {
   const p = json(`src/data/projects/${id}.json`);
+  if (!p.imageUrl) continue; // no screenshots (e.g. the AI chatbots)
   const base = p.imageUrl.split('/').slice(0, -1).join('/');
   urls.add(p.imageUrl);
   (p.media || []).forEach((m) => urls.add(`${base}/${m}`));

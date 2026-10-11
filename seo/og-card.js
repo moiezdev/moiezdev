@@ -214,10 +214,11 @@ async function buildCard(path) {
 
   if (project) {
     // `"screenshot": false` in a project's JSON means its image is a logo, not a screenshot
-    const hasShot = project.screenshot !== false;
+    const hasShot = project.screenshot !== false && Boolean(project.imageUrl);
     const [main, back] = await Promise.all([
       hasShot ? imageData(project.imageUrl) : null,
       (async () => {
+        if (!hasShot) return null;
         const dir = project.imageUrl.split('/').slice(0, -1).join('/');
         const other = hasShot && (project.media || []).find((m) => !project.imageUrl.endsWith(m));
         return other ? imageData(`${dir}/${other}`) : null;
@@ -250,7 +251,9 @@ async function buildCard(path) {
   }
 
   if (path === '/works') {
-    const shots = await Promise.all(projects.slice(0, 4).map((p) => imageData(p.imageUrl)));
+    const shots = await Promise.all(
+      projects.filter((p) => p.imageUrl && p.screenshot !== false).slice(0, 4).map((p) => imageData(p.imageUrl)),
+    );
     return card(
       shots.map((s, i) => frame(s, { width: 290, height: 181, right: i % 2 ? 72 : 382, top: i < 2 ? 110 : 315 })),
       textColumn({

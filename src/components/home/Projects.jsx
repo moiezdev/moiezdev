@@ -8,7 +8,7 @@ import { useContent } from '../../i18n/content';
 const Projects = () => {
   const { t, projects } = useContent();
   const featured = projects.find((p) => p.featured);
-  const more = projects.filter((p) => !p.featured && p.status !== 'in-progress' && p.group !== 'earlier').slice(0, 3);
+  const more = projects.filter((p) => !p.featured && p.status !== 'in-progress' && p.group === 'client').slice(0, 3);
 
   return (
     <section className="band-tint w-full px-5 py-20 md:py-28 scroll-mt-16" id="work">

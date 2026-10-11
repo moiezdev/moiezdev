@@ -20,6 +20,7 @@ import { getProjectById } from '../data';
 import { useContent } from '../i18n/content';
 import NotFound from './NotFound';
 import { sortTech, topTech } from '../utils/techRank';
+import { filled, isTodo } from '../utils/todo';
 import { scrollToTarget } from '../utils/smoothScroll';
 import TransitionLink from '../components/ui/TransitionLink';
 
@@ -41,7 +42,9 @@ const DIAGRAMS = {
   stackFlow: StackFlow,
 };
 
-const nonEmpty = (v) => (Array.isArray(v) ? v.filter(Boolean).length > 0 : typeof v === 'string' && v.trim() !== '');
+// "TODO(moiez): …" placeholders count as empty: they stay in the JSON, never on the page
+const clean = (list) => (Array.isArray(list) ? list.filter((item) => item && !isTodo(item)) : list);
+const nonEmpty = (v) => (Array.isArray(v) ? clean(v).length > 0 : filled(v));
 
 /** A section's body: one paragraph, or a list of points. */
 const Points = ({ items }) =>
@@ -114,12 +117,13 @@ export default function ProjectDetail() {
     ? [
         ...(project.caseStudy
           ? [
-              { id: 'problem', title: t('caseStudy.problem'), items: cs.problem },
-              { id: 'role', title: t('caseStudy.myRole'), items: cs.role },
-              { id: 'architecture', title: t('caseStudy.architecture'), items: cs.architecture, diagrams: true },
-              { id: 'challenges', title: t('caseStudy.challenges'), items: cs.challenges },
-              { id: 'results', title: t('caseStudy.results'), items: cs.results },
-              { id: 'next', title: t('caseStudy.next'), items: cs.next },
+              { id: 'problem', title: t('caseStudy.problem'), items: clean(cs.problem) },
+              { id: 'role', title: t('caseStudy.myRole'), items: clean(cs.role) },
+              { id: 'architecture', title: t('caseStudy.architecture'), items: clean(cs.architecture), diagrams: true },
+              { id: 'ai', title: t('caseStudy.aiFeatures'), items: clean(cs.ai) },
+              { id: 'challenges', title: t('caseStudy.challenges'), items: clean(cs.challenges) },
+              { id: 'results', title: t('caseStudy.results'), items: clean(cs.results) },
+              { id: 'next', title: t('caseStudy.next'), items: clean(cs.next) },
             ]
           : [{ id: 'overview', title: t('caseStudy.overview'), lead: typeof headline === 'string' ? headline : null, items: overview, diagrams: true }]),
         { id: 'stack', title: t('caseStudy.builtWith'), stack: true },
@@ -140,8 +144,11 @@ export default function ProjectDetail() {
 
   if (!project) return <NotFound />;
 
-  const base = project.imageUrl.split('/').slice(0, -1).join('/');
-  const images = (project.media?.length ? project.media : [project.imageUrl.split('/').pop()]).map((img) => `${base}/${img}`);
+  // projects without screenshots (e.g. the AI chatbots) get a typographic panel instead of a gallery
+  const base = project.imageUrl?.split('/').slice(0, -1).join('/');
+  const images = project.imageUrl
+    ? (project.media?.length ? project.media : [project.imageUrl.split('/').pop()]).map((img) => `${base}/${img}`)
+    : [];
   const index = projects.findIndex((p) => p.id === project.id);
   const prev = projects[(index - 1 + projects.length) % projects.length];
   const next = projects[(index + 1) % projects.length];
@@ -153,6 +160,7 @@ export default function ProjectDetail() {
     job && { label: t('caseStudy.role'), value: job.title },
     job && { label: t('caseStudy.company'), value: job.company },
     job && project.experienceId === job.id && { label: t('caseStudy.timeline'), value: job.period },
+    !(job && project.experienceId === job.id) && filled(project.period) && { label: t('caseStudy.year'), value: project.period },
     nonEmpty(project.teamSize) && { label: t('caseStudy.team'), value: project.teamSize },
     {
       label: t('projects.status'),
@@ -231,7 +239,14 @@ export default function ProjectDetail() {
         <Reveal className="app-container">
           {/* shared element: project cards morph into this gallery (view transitions) */}
           <div data-vt-hero className="rounded-[28px]">
-            <ImageSlider images={images} title={project.title} />
+            {images.length ? (
+              <ImageSlider images={images} title={project.title} />
+            ) : (
+              <div className="blueprint relative flex aspect-[16/10] w-full flex-col items-center justify-center gap-3 overflow-hidden rounded-[28px] bg-surface-2 p-6 text-center">
+                <span className="text-[40px] md:text-[64px] font-bold tracking-[-0.04em] leading-none text-label">{project.title}</span>
+                <span className="font-mono text-[13px] text-label-3" dir="ltr">{topTech(project.technologies, 4).join(' · ')}</span>
+              </div>
+            )}
           </div>
         </Reveal>
 
@@ -247,6 +262,13 @@ export default function ProjectDetail() {
                     <span dir="ltr" className="inline-block">{m.value}</span>
                   </p>
                   <p className="mt-2 sm:mt-3 text-[12px] sm:text-[15px] leading-snug text-label-2">{m.label}</p>
+                  {/* TODO(moiez): metrics[].measured — how this number was measured; hidden until filled */}
+                  {filled(m.measured) && (
+                    <p className="mt-2 text-[12px] leading-snug text-label-3">
+                      <span className="font-semibold text-label-2">{t('caseStudy.measuredOne')}: </span>
+                      {m.measured}
+                    </p>
+                  )}
                 </div>
               ))}
             </Reveal>
