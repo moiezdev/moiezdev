@@ -48,7 +48,7 @@
     "companyUrl": "https://www.acciona.com/",
     "logo": "/company-logos/acciona.jpg",
     "logoOnLight": true,
-    "summary": "Internal tools and dashboards that digitized operations and cut downtime.",
+    "summary": "Internal tools and dashboards that digitized operations and reduced system downtime by ~25%.",
     "stack": [
       "React",
       "SQL",
