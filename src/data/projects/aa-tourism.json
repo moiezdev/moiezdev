@@ -48,7 +48,8 @@
     "role": [
       "At Creative Inter Tech, on the B2B travel platforms (AATourism, City Arrivals).",
       "Built the booking journey in Nuxt 2: search forms, flight lists, filters and step-by-step booking.",
-      "Worked across the stack so live GDS data flowed from the Laravel APIs to the web and React Native apps reliably and consistently."
+      "Worked across the stack so live GDS data flowed from the Laravel APIs to the web and React Native apps reliably and consistently.",
+      "TODO(moiez): your role in the React Native mobile app and the Laravel backend (built it, contributed to it, or integrated the web app with it) — the data only says you built the Nuxt 2 booking journey and \"worked across the stack\"."
     ],
     "architecture": [
       "Laravel backend exposing the booking APIs and integrating Sabre and Amadeus (flight search and availability, mapped by IATA codes).",
@@ -61,7 +62,7 @@
     ],
     "results": [
       "Live platform at aatourism.ca with real-time flight search and booking on web and mobile.",
-      "Part of the B2B travel platforms serving 10K+ monthly users."
+      "The B2B travel platforms — AATourism and City Arrivals together — serve 10K+ monthly users."
     ],
     "next": [],
     "measured": ""
@@ -69,7 +70,7 @@
   "metrics": [
     {
       "value": "10K+",
-      "label": "monthly users across the B2B travel platforms"
+      "label": "monthly users across the B2B travel platforms, AATourism and City Arrivals combined"
     },
     {
       "value": "2",

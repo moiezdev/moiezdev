@@ -344,7 +344,7 @@ var chatbot_default = {
       lookingFor: "AI Engineer and Senior Full-Stack Engineer roles (full-time) in Riyadh, the GCC or remote \u2014 LLM features, TypeScript, Node.js/NestJS, React/Next.js.",
       pitch: [
         "AI Engineer and Senior Full-Stack Engineer who owns features end to end \u2014 architecture, backend, frontend and delivery.",
-        "Proven impact: ~70% fewer support requests and ~64% lower API latency at TWLM; ~25% less downtime at ACCIONA; B2B travel platforms serving 10K+ monthly users.",
+        "Proven impact: ~70% fewer support requests and ~64% lower API latency at TWLM; ~25% less downtime at ACCIONA; B2B travel platforms (AATourism and City Arrivals combined) serving 10K+ monthly users.",
         "Built production integrations recruiters in the Gulf care about: MyFatoorah and Moyasar payments, Apple/Google Wallet, Sabre/Amadeus booking engines, OpenRouter/DeepSeek LLMs.",
         "Based in Riyadh and building for the Gulf market; transferable Iqama, available immediately."
       ],
@@ -813,7 +813,8 @@ var aa_tourism_default = {
     role: [
       "At Creative Inter Tech, on the B2B travel platforms (AATourism, City Arrivals).",
       "Built the booking journey in Nuxt 2: search forms, flight lists, filters and step-by-step booking.",
-      "Worked across the stack so live GDS data flowed from the Laravel APIs to the web and React Native apps reliably and consistently."
+      "Worked across the stack so live GDS data flowed from the Laravel APIs to the web and React Native apps reliably and consistently.",
+      'TODO(moiez): your role in the React Native mobile app and the Laravel backend (built it, contributed to it, or integrated the web app with it) \u2014 the data only says you built the Nuxt 2 booking journey and "worked across the stack".'
     ],
     architecture: [
       "Laravel backend exposing the booking APIs and integrating Sabre and Amadeus (flight search and availability, mapped by IATA codes).",
@@ -826,7 +827,7 @@ var aa_tourism_default = {
     ],
     results: [
       "Live platform at aatourism.ca with real-time flight search and booking on web and mobile.",
-      "Part of the B2B travel platforms serving 10K+ monthly users."
+      "The B2B travel platforms \u2014 AATourism and City Arrivals together \u2014 serve 10K+ monthly users."
     ],
     next: [],
     measured: ""
@@ -834,7 +835,7 @@ var aa_tourism_default = {
   metrics: [
     {
       value: "10K+",
-      label: "monthly users across the B2B travel platforms"
+      label: "monthly users across the B2B travel platforms, AATourism and City Arrivals combined"
     },
     {
       value: "2",
@@ -1266,7 +1267,7 @@ var city_arrivals_default = {
     ],
     results: [
       "Live at cityarrivals.ca.",
-      "Part of the B2B travel platforms serving 10K+ monthly users."
+      "The B2B travel platforms \u2014 AATourism and City Arrivals together \u2014 serve 10K+ monthly users."
     ],
     next: [],
     measured: ""
@@ -1274,7 +1275,7 @@ var city_arrivals_default = {
   metrics: [
     {
       value: "10K+",
-      label: "monthly users across the B2B travel platforms"
+      label: "monthly users across the B2B travel platforms, AATourism and City Arrivals combined"
     }
   ],
   experienceId: "creative-inter-tech",
