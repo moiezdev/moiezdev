@@ -75,7 +75,8 @@ const RiyadhTime = ({ lang }) => {
     const id = setInterval(() => setNow(new Date()), 15000);
     return () => clearInterval(id);
   }, []);
-  if (!now) return '—';
+  // the static HTML can't know the visitor's time: show the zone (Riyadh has no DST) until hydration
+  if (!now) return 'UTC+3';
   return new Intl.DateTimeFormat(lang === 'ar' ? 'ar-SA-u-nu-latn' : 'en-US', {
     timeZone: 'Asia/Riyadh',
     hour: 'numeric',
@@ -190,7 +191,8 @@ const ContactSection = () => {
           </Button>
         )}
 
-        <dl className="grid grid-cols-3 surface !rounded-[20px] divide-x divide-separator">
+        {/* TODO(moiez): a "Replies within 24h" cell was removed; add it back (contact.replies / contact.replyTime) only if you can keep that promise */}
+        <dl className="grid grid-cols-2 surface !rounded-[20px] divide-x divide-separator">
           <div className="p-4">
             <dt className="text-[12px] text-label-3">{t('contact.status')}</dt>
             <dd className="mt-1 flex items-center gap-1.5 text-[14px] font-medium text-label">
@@ -206,10 +208,6 @@ const ContactSection = () => {
             <dd className="mt-1 text-[14px] font-medium text-label tabular-nums">
               <RiyadhTime lang={lang} />
             </dd>
-          </div>
-          <div className="p-4">
-            <dt className="text-[12px] text-label-3">{t('contact.replies')}</dt>
-            <dd className="mt-1 text-[14px] font-medium text-label">{t('contact.replyTime')}</dd>
           </div>
         </dl>
 

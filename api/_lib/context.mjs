@@ -343,7 +343,7 @@ var chatbot_default = {
         "Build: typed, tested, maintainable code across frontend, backend and integrations.",
         "Ship & measure: deploy, monitor and iterate on real usage."
       ],
-      toStart: "Share what you're building, who it's for, the must-have features and your timeline via the Contact page, email or WhatsApp \u2014 he replies within 24 hours. Pricing and timelines are discussed directly with him."
+      toStart: "Share what you're building, who it's for, the must-have features and your timeline via the Contact page, email or WhatsApp. Pricing and timelines are discussed directly with him."
     }
   }
 };
