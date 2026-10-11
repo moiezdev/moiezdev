@@ -15,9 +15,13 @@ import tdm from './projects/tdm.json';
 import eims from './projects/eims.json';
 import lms from './projects/lms.json';
 import designDynamo from './projects/design-dynamo.json';
+import botfolio from './projects/botfolio.json';
+import companySupportChatbot from './projects/company-support-chatbot.json';
 
 const projectsById = {
   'twlm-pos': twlmPos,
+  'company-support-chatbot': companySupportChatbot,
+  botfolio,
   'design-dynamo': designDynamo,
   'aa-tourism': aaTourism,
   scmborba,

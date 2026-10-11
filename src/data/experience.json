@@ -48,7 +48,7 @@
     "companyUrl": "https://www.acciona.com/",
     "logo": "/company-logos/acciona.jpg",
     "logoOnLight": true,
-    "summary": "Internal tools and dashboards that digitized operations and cut downtime.",
+    "summary": "Internal tools and dashboards that digitized operations and reduced system downtime by ~25%.",
     "stack": [
       "React",
       "SQL",
@@ -125,7 +125,7 @@
       "gala-travels"
     ],
     "highlights": [
-      "Led frontend for B2B travel platforms (AA Tourism, City Arrivals) serving 10K+ monthly users.",
+      "Led frontend for B2B travel platforms (AATourism, City Arrivals) serving 10K+ monthly users.",
       "Built reusable component libraries in React/Vue, cutting dev time by ~30%.",
       "Collaborated in Agile teams, improving UX and boosting user retention by 15%.",
       "Upgraded legacy projects with React/Vue, improving responsiveness by 25%.",

@@ -3,9 +3,9 @@
 // src/data/about.json
 var about_default = {
   title: "Hello, I'm Moieez ur Rehman.",
-  subtitle: "Senior Full Stack Engineer & Software Architect",
+  subtitle: "AI Engineer | Senior Full-Stack Engineer (TypeScript, Node.js/NestJS, React/Next.js)",
   description: [
-    "Product-focused Full Stack Engineer and Software Architect with {{experienceYears}} years of experience building scalable systems across retail and SaaS \u2014 from POS platforms to loyalty systems and customer engagement tools, ecommerce, payment integrations, booking systems, search-engine integrations, and dashboards. I work across the stack using React, Vue, Next.js, Node.js, and NestJS, delivering reliable, high-quality solutions with a strong focus on real-world usability.",
+    "AI Engineer and Senior Full-Stack Engineer with {{experienceYears}} years of experience building scalable systems across retail and SaaS \u2014 from POS platforms to loyalty systems and customer engagement tools, ecommerce, payment integrations, booking systems, search-engine integrations, and dashboards. I work across the stack using React, Vue, Next.js, Node.js, and NestJS, delivering reliable, high-quality solutions with a strong focus on real-world usability.",
     "I take ownership of features end-to-end \u2014 from understanding business needs and structuring solutions to implementation and deployment \u2014 with a focus on writing maintainable code, improving system efficiency, and delivering software that creates measurable impact. Core strengths include POS retail systems, payment integrations (MyFatoorah, Moyasar), CRM, wallet integrations (Apple Wallet & Google Wallet), designing system architectures and helping teams execute on them, microservices and monorepo patterns, and leading UI/UX engineering.",
     "I've revamped and stabilized unstable applications, supported management teams, and improved products by solving real problems. Recent work includes POS platforms, loyalty systems, customer engagement tools, and OpenRouter AI (DeepSeek) for smart search and analysis \u2014 contributing to both technical architecture and product direction."
   ]
@@ -26,13 +26,21 @@ function withExperienceYears(text) {
 // src/data/skills.json
 var skills_default = [
   {
+    category: "AI & Automation",
+    items: [
+      "OpenRouter",
+      "DeepSeek",
+      "Claude Code",
+      "Cursor",
+      "GitHub Copilot",
+      "LLM features"
+    ]
+  },
+  {
     category: "Core Skills",
     items: [
       "Product Ownership",
       "Feature Ownership",
-      "Product Management",
-      "Feature Management",
-      "UI/UX Management",
       "End-to-End Delivery"
     ]
   },
@@ -40,14 +48,8 @@ var skills_default = [
     category: "Architectures",
     items: [
       "System Design",
-      "MVC",
-      "HMVC",
-      "MVP",
-      "MVVM",
       "Component Based",
-      "Microservices",
-      "Event-driven architecture",
-      "Monorepo"
+      "Event-driven architecture"
     ]
   },
   {
@@ -60,15 +62,13 @@ var skills_default = [
       "Zustand",
       "Redux Toolkit",
       "TanStack Query",
-      "Context API",
-      "Pinia",
       "Vuex",
       "TailwindCSS",
-      "MaterialUI",
       "Bootstrap",
       "Buefy",
       "Jquery",
-      "Flutter"
+      "Flutter",
+      "React Native"
     ]
   },
   {
@@ -83,8 +83,7 @@ var skills_default = [
       "DotNET",
       "Laravel",
       "PHP",
-      "Entity Framework",
-      "LINQ"
+      "Entity Framework"
     ]
   },
   {
@@ -92,7 +91,6 @@ var skills_default = [
     items: [
       "PostgreSQL",
       "MySQL",
-      "SQL Server",
       "MongoDB",
       "Prisma",
       "Redis",
@@ -108,8 +106,7 @@ var skills_default = [
       "HTML5",
       "CSS3",
       "SCSS",
-      "C# (C Sharp)",
-      "Python"
+      "C# (C Sharp)"
     ]
   },
   {
@@ -117,11 +114,8 @@ var skills_default = [
     items: [
       "Code Splitting",
       "Lazy Loading",
-      "Caching",
-      "Database Indexing",
       "RBAC",
       "OAuth2",
-      "OIDC",
       "JWT",
       "SSO",
       "Authentication & Authorization"
@@ -137,7 +131,8 @@ var skills_default = [
       "Apple Wallet",
       "Google Wallet",
       "Sabre",
-      "Amadeus"
+      "Amadeus",
+      "EmailJS"
     ]
   },
   {
@@ -146,40 +141,21 @@ var skills_default = [
       "Git",
       "GitHub",
       "GitLab",
-      "Jira",
-      "Trello",
-      "Vite",
       "Vercel",
-      "Netlify",
-      "CI/CD",
-      "Docker"
-    ]
-  },
-  {
-    category: "AI & Automation",
-    items: [
-      "OpenRouter",
-      "DeepSeek",
-      "Claude Code",
-      "Cursor",
-      "GitHub Copilot",
-      "Agentic AI"
+      "CI/CD"
     ]
   },
   {
     category: "Collaboration",
     items: [
-      "Agile Methodologies",
-      "Scrum",
-      "Test-Driven Development"
+      "Agile Methodologies"
     ]
   },
   {
     category: "Design & Prototyping",
     items: [
       "Figma",
-      "Adobe XD",
-      "Sketch"
+      "Adobe XD"
     ]
   }
 ];
@@ -234,10 +210,10 @@ var chatbot_default = {
       "MoizDev",
       "MoiezDev"
     ],
-    headline: "Senior Full Stack Engineer & Software Architect | Node.js/NestJS, React/Next.js, PostgreSQL, LLM integrations",
+    headline: "AI Engineer | Senior Full-Stack Engineer (TypeScript, Node.js/NestJS, React/Next.js)",
     location: "Riyadh, Saudi Arabia",
     careerStart: "2019-05-01",
-    identity: "Product-focused Full Stack Engineer and Software Architect with experience across retail, travel and SaaS. Owns features end to end \u2014 from understanding the business problem to architecture, build, deploy and iteration. Designs systems (event-driven workflows, data access layers, auth/RBAC, background jobs) and ships them across web, mobile and integrations: POS and payments, loyalty and wallet passes, booking engines, e-commerce storefronts, internal dashboards, and AI features with OpenRouter/DeepSeek.",
+    identity: "AI Engineer and Senior Full-Stack Engineer with experience across retail, travel and SaaS. Owns features end to end \u2014 from understanding the business problem to architecture, build, deploy and iteration. Designs systems (event-driven workflows, data access layers, auth/RBAC, background jobs) and ships them across web, mobile and integrations: POS and payments, loyalty and wallet passes, booking engines, e-commerce storefronts, internal dashboards, and AI features with OpenRouter/DeepSeek.",
     iqama: "Transferable Iqama \xB7 Available Immediately",
     portfolioUrl: "https://www.moiez.dev"
   },
@@ -325,14 +301,26 @@ var chatbot_default = {
     lms: [
       "lms",
       "learning management"
+    ],
+    botfolio: [
+      "botfolio",
+      "portfolio assistant",
+      "this chatbot",
+      "portfolio bot"
+    ],
+    "company-support-chatbot": [
+      "support chatbot",
+      "company chatbot",
+      "customer support bot",
+      "ai chatbot"
     ]
   },
   audiences: {
     recruiters: {
-      lookingFor: "Senior Full Stack Engineer / Software Architect roles (full-time) \u2014 Node.js/NestJS, React/Next.js, AI-integration work.",
+      lookingFor: "AI Engineer and Senior Full-Stack Engineer roles (full-time) in Riyadh, the GCC or remote \u2014 LLM features, TypeScript, Node.js/NestJS, React/Next.js.",
       pitch: [
-        "Senior full stack engineer who owns features end to end \u2014 architecture, backend, frontend and delivery.",
-        "Proven impact: ~70% fewer support requests and ~64% lower API latency at TWLM; ~25% less downtime at ACCIONA; B2B travel platforms serving 10K+ monthly users.",
+        "AI Engineer and Senior Full-Stack Engineer who owns features end to end \u2014 architecture, backend, frontend and delivery.",
+        "Proven impact: ~70% fewer support requests and ~64% lower API latency at TWLM; ~25% less downtime at ACCIONA; B2B travel platforms (AATourism and City Arrivals combined) serving 10K+ monthly users.",
         "Built production integrations recruiters in the Gulf care about: MyFatoorah and Moyasar payments, Apple/Google Wallet, Sabre/Amadeus booking engines, OpenRouter/DeepSeek LLMs.",
         "Based in Riyadh and building for the Gulf market; transferable Iqama, available immediately."
       ],
@@ -355,7 +343,7 @@ var chatbot_default = {
         "Build: typed, tested, maintainable code across frontend, backend and integrations.",
         "Ship & measure: deploy, monitor and iterate on real usage."
       ],
-      toStart: "Share what you're building, who it's for, the must-have features and your timeline via the Contact page, email or WhatsApp \u2014 he replies within 24 hours. Pricing and timelines are discussed directly with him."
+      toStart: "Share what you're building, who it's for, the must-have features and your timeline via the Contact page, email or WhatsApp. Pricing and timelines are discussed directly with him."
     }
   }
 };
@@ -411,7 +399,7 @@ var experience_default = [
     companyUrl: "https://www.acciona.com/",
     logo: "/company-logos/acciona.jpg",
     logoOnLight: true,
-    summary: "Internal tools and dashboards that digitized operations and cut downtime.",
+    summary: "Internal tools and dashboards that digitized operations and reduced system downtime by ~25%.",
     stack: [
       "React",
       "SQL",
@@ -488,7 +476,7 @@ var experience_default = [
       "gala-travels"
     ],
     highlights: [
-      "Led frontend for B2B travel platforms (AA Tourism, City Arrivals) serving 10K+ monthly users.",
+      "Led frontend for B2B travel platforms (AATourism, City Arrivals) serving 10K+ monthly users.",
       "Built reusable component libraries in React/Vue, cutting dev time by ~30%.",
       "Collaborated in Agile teams, improving UX and boosting user retention by 15%.",
       "Upgraded legacy projects with React/Vue, improving responsiveness by 25%.",
@@ -593,11 +581,12 @@ var events_default = [
 // src/data/projects/index.json
 var projects_default = [
   "twlm-pos",
-  "design-dynamo",
+  "company-support-chatbot",
+  "botfolio",
   "aa-tourism",
   "scmborba",
-  "docean-fisheries",
   "ain-saas",
+  "design-dynamo",
   "city-arrivals",
   "my-portfolio",
   "gala-travels",
@@ -605,7 +594,8 @@ var projects_default = [
   "mtlnation",
   "tdm",
   "eims",
-  "lms"
+  "lms",
+  "docean-fisheries"
 ];
 
 // src/data/projects/twlm-pos.json
@@ -613,12 +603,13 @@ var twlm_pos_default = {
   id: "twlm-pos",
   title: "TWLM - POS",
   subtitle: "Point of Sale System with Loyalty & Wallet Integrations",
+  period: "2025 \u2013 present",
   description: [
     "TWLM - POS \u2013 Comprehensive Point of Sale System",
     [
       "A comprehensive POS and CMS platform for businesses \u2014 Gulf tax integrations, inventory, loyalty, gift cards, customizable e-menu storefronts, and 30+ CMS features. B2B2C.",
       "Improved the overall UI/UX, making features more intuitive and user-friendly, which reduced support center requests by approximately 70%.",
-      "Designed and developed loyalty program features including a Loyalty Points System, Loyalty Cards, a Gift Card System with Apple Wallet and Google Wallet integration, and real-time notification support.",
+      "Designed and developed four loyalty features \u2014 points, loyalty passes, gift cards and discount coupons \u2014 with Apple Wallet and Google Wallet integration and real-time notification support.",
       "Built a centralized promotional messaging system with Apple Wallet loyalty passes, smart geo-location targeting, and branch-based tracking and visibility.",
       "Developed a dynamic Page Builder and a Flutter-based mobile application that allows businesses to create customizable storefront pages and enables customers to place orders online easily.",
       "Optimized backend APIs, reducing latency by approximately 64% and improving system performance.",
@@ -631,11 +622,13 @@ var twlm_pos_default = {
   metrics: [
     {
       value: "~70%",
-      label: "fewer support requests"
+      label: "fewer support requests",
+      measured: "TODO(moiez): how this was measured \u2014 the baseline (support requests per month before the rework), the period compared, and the source (e.g. helpdesk tickets)"
     },
     {
       value: "~64%",
-      label: "lower API latency"
+      label: "lower API latency",
+      measured: "TODO(moiez): how this was measured \u2014 the baseline and result (e.g. p95 in ms, before and after), which endpoints, and the tool (e.g. APM or load test)"
     },
     {
       value: "30+",
@@ -650,23 +643,26 @@ var twlm_pos_default = {
     "Node",
     "Prisma",
     "PostgreSQL",
+    "Redis",
+    "BullMQ",
     "Apple Wallet",
     "Google Wallet",
+    "MyFatoorah",
+    "Moyasar",
+    "OAuth2",
+    "JWT",
     "REST APIs",
     "Zustand",
     "TanStack Query",
-    "OpenRouter"
+    "OpenRouter",
+    "DeepSeek"
   ],
-  imageUrl: "/projects-media/twlm-pos/main.webp",
+  imageUrl: "/projects-media/twlm-pos/cover.webp",
   projectUrl: "https://twlm.solutions",
   githubUrl: "https://github.com/Twlm-App/twlm-solutions",
   githubBackendUrl: "https://github.com/Twlm-App/twlm-solutions-backend",
   repoPublic: false,
-  media: [
-    "main.webp",
-    "img1.webp",
-    "img2.webp"
-  ],
+  media: ["cover.webp", "home-framed.webp", "features-framed.webp", "bundle-framed.webp", "ownapp-framed.webp", "pricing-framed.webp"],
   featured: true,
   featuredMetric: 1,
   productUrl: "https://twlm.solutions/pos",
@@ -687,7 +683,7 @@ var twlm_pos_default = {
     ],
     role: [
       "Senior Software Engineer (full stack): designed and built the restaurant POS platform with integrated loyalty, promotions and wallet features, from architecture through production delivery.",
-      "Designed and developed the loyalty features: a loyalty points system, loyalty cards, and a gift card system with Apple Wallet and Google Wallet integration and real-time notification support.",
+      "Designed and developed four loyalty features \u2014 points, loyalty passes, gift cards and discount coupons \u2014 with Apple Wallet and Google Wallet integration and real-time notification support.",
       "Built a centralized promotional messaging system with Apple Wallet loyalty passes, smart geo-location targeting, and branch-based tracking and visibility.",
       "Developed a dynamic, block-based page builder and a Flutter mobile app, so businesses create their own menus and storefront pages without developer help and customers can place orders online.",
       "Spearheaded the OpenRouter AI (DeepSeek) integration for smart menu search and AI-based analysis of restaurant data.",
@@ -701,6 +697,12 @@ var twlm_pos_default = {
       "Integrations: Apple Wallet and Google Wallet passes, Gulf payment gateways (MyFatoorah, Moyasar), and CRM and leasing platforms to keep customer and business data in sync.",
       "Frontend: React with Zustand and TanStack Query.",
       "AI: OpenRouter (DeepSeek) for smart menu search and AI-based analysis of restaurant data."
+    ],
+    ai: [
+      "Two LLM features run on OpenRouter (DeepSeek) inside the platform: smart menu search on the e-menu storefronts, and AI-based analysis of restaurant data.",
+      "TODO(moiez): one sentence on what smart menu search lets a customer do (e.g. type a craving or a budget in plain language and get matching dishes)",
+      "TODO(moiez): how you evaluated smart menu search (e.g. a set of real customer queries checked for relevant results, response time, fallback when the model is unavailable)",
+      "TODO(moiez): what the AI analysis of restaurant data produces, who uses it, and how you checked its accuracy"
     ],
     challenges: [
       "Stability after rapid development: refactored a large portion of the codebase to improve structure and maintainability, eliminate side effects caused by rapid development, and make the application more stable.",
@@ -741,8 +743,9 @@ var aa_tourism_default = {
   id: "aa-tourism",
   title: "AATourism",
   subtitle: "Full-Stack Flight Booking & Tour Platform \u2014 Web + Mobile",
+  period: "2020 \u2013 2022",
   description: [
-    "AA Travel & Tourism \u2013 Full-Stack Flight Booking Platform",
+    "AATourism \u2013 Full-Stack Flight Booking Platform",
     [
       "A full-stack flight booking and tour-planning system: a Laravel backend, a Nuxt 2 web app and a React Native mobile app, integrated with Sabre and Amadeus for real-time flight data using IATA codes.",
       "Built the booking journey \u2014 search forms, flight lists, filters and step-by-step booking \u2014 focused on UX and smooth interactions.",
@@ -753,6 +756,7 @@ var aa_tourism_default = {
   ],
   technologies: [
     "NuxtJs",
+    "Vue",
     "Laravel",
     "React Native",
     "Sabre",
@@ -783,9 +787,10 @@ var aa_tourism_default = {
       "Flight data had to come live from global distribution systems (Sabre, Amadeus) using IATA codes, through one backend serving both web and mobile."
     ],
     role: [
-      "At Creative Inter Tech, on the B2B travel platforms (AA Tourism, City Arrivals).",
+      "At Creative Inter Tech, on the B2B travel platforms (AATourism, City Arrivals).",
       "Built the booking journey in Nuxt 2: search forms, flight lists, filters and step-by-step booking.",
-      "Worked across the stack so live GDS data flowed from the Laravel APIs to the web and React Native apps reliably and consistently."
+      "Worked across the stack so live GDS data flowed from the Laravel APIs to the web and React Native apps reliably and consistently.",
+      'TODO(moiez): your role in the React Native mobile app and the Laravel backend (built it, contributed to it, or integrated the web app with it) \u2014 the data only says you built the Nuxt 2 booking journey and "worked across the stack".'
     ],
     architecture: [
       "Laravel backend exposing the booking APIs and integrating Sabre and Amadeus (flight search and availability, mapped by IATA codes).",
@@ -798,7 +803,7 @@ var aa_tourism_default = {
     ],
     results: [
       "Live platform at aatourism.ca with real-time flight search and booking on web and mobile.",
-      "Part of the B2B travel platforms serving 10K+ monthly users."
+      "The B2B travel platforms \u2014 AATourism and City Arrivals together \u2014 serve 10K+ monthly users."
     ],
     next: [],
     measured: ""
@@ -806,7 +811,7 @@ var aa_tourism_default = {
   metrics: [
     {
       value: "10K+",
-      label: "monthly users across the B2B travel platforms"
+      label: "monthly users across the B2B travel platforms, AATourism and City Arrivals combined"
     },
     {
       value: "2",
@@ -822,8 +827,9 @@ var aa_tourism_default = {
 // src/data/projects/scmborba.json
 var scmborba_default = {
   id: "scmborba",
-  title: "Scmborba",
+  title: "SCM Borba",
   subtitle: "Social Services Website",
+  period: "2022 \u2013 2024",
   description: [
     "Santa Casa da Miseric\xF3rdia de Borba \u2013 Institutional Website",
     [
@@ -890,6 +896,7 @@ var docean_fisheries_default = {
   id: "docean-fisheries",
   title: "D\u2019Ocean Fisheries",
   subtitle: "Seafood Supplier Website",
+  period: "TODO(moiez): year or date range (e.g. 2021, or 2021 \u2013 2022)",
   description: [
     "D\u2019Ocean Fisheries \u2013 Seafood Supplier Website",
     [
@@ -912,7 +919,7 @@ var docean_fisheries_default = {
     "main-framed.webp"
   ],
   repoPublic: false,
-  group: "client",
+  group: "earlier",
   caseStudy: {
     summary: "A responsive website for a Bahrain seafood supplier, with product categories and quote forms.",
     problem: [
@@ -949,8 +956,9 @@ var my_portfolio_default = {
   id: "my-portfolio",
   title: "Portfolio Website",
   subtitle: "My Personal Portfolio",
+  period: "TODO(moiez): year or date range (e.g. 2021, or 2021 \u2013 2022)",
   description: [
-    "MoezDev \u2013 Personal Portfolio Website",
+    "MoizDev \u2013 Personal Portfolio Website",
     [
       "Built my personal portfolio from scratch to showcase my projects, skills, and experience as a frontend developer.",
       "Focused on creating a clean, responsive, and intuitive design that works smoothly on both desktop and mobile devices.",
@@ -1003,6 +1011,7 @@ var gala_travels_default = {
   id: "gala-travels",
   title: "Gala Travels",
   subtitle: "Flight, Hotel, Vacation & Cruise Booking",
+  period: "TODO(moiez): year or date range (e.g. 2021, or 2021 \u2013 2022)",
   description: [
     "Gala Travels \u2013 Travel Agency Booking Platform",
     [
@@ -1069,6 +1078,7 @@ var mian_travels_default = {
   id: "mian-travels",
   title: "Mian's Travels",
   subtitle: "Flight Booking Platform",
+  period: "2020 \u2013 2022",
   description: [
     "Mian's Travels \u2013 Flight Booking Platform",
     [
@@ -1131,6 +1141,7 @@ var ain_saas_default = {
   id: "ain-saas",
   title: "Ain Saas",
   subtitle: "Ecommerce Website",
+  period: "TODO(moiez): year or date range (e.g. 2021, or 2021 \u2013 2022)",
   description: [
     "Ain Saiss \u2013 Water Utility / Institutional Website",
     [
@@ -1187,10 +1198,11 @@ var city_arrivals_default = {
   id: "city-arrivals",
   title: "City Arrivals",
   subtitle: "Luxury Car Booking Platform",
+  period: "2020 \u2013 2022",
   description: [
     "City Arrivals \u2013 Luxury Car Booking (cityarrivals.ca)",
     [
-      "A luxury car booking platform based in Canada, built for B2B travel operations alongside AA Travel & Tourism.",
+      "A luxury car booking platform based in Canada, built for B2B travel operations alongside AATourism.",
       "Focused on a seamless booking experience for premium vehicle rentals.",
       "Developed responsive layouts for reliable performance across devices.",
       "Integrated booking flows so users can schedule and manage rides easily.",
@@ -1214,7 +1226,7 @@ var city_arrivals_default = {
   repoPublic: false,
   group: "client",
   caseStudy: {
-    summary: "Luxury car booking for a Canadian operator, built for B2B travel operations alongside AA Travel & Tourism.",
+    summary: "Luxury car booking for a Canadian operator, built for B2B travel operations alongside AATourism.",
     problem: [
       "Customers needed to book premium vehicles \u2014 point-to-point, hourly or airport \u2014 quickly and with confidence."
     ],
@@ -1231,7 +1243,7 @@ var city_arrivals_default = {
     ],
     results: [
       "Live at cityarrivals.ca.",
-      "Part of the B2B travel platforms serving 10K+ monthly users."
+      "The B2B travel platforms \u2014 AATourism and City Arrivals together \u2014 serve 10K+ monthly users."
     ],
     next: [],
     measured: ""
@@ -1239,7 +1251,7 @@ var city_arrivals_default = {
   metrics: [
     {
       value: "10K+",
-      label: "monthly users across the B2B travel platforms"
+      label: "monthly users across the B2B travel platforms, AATourism and City Arrivals combined"
     }
   ],
   experienceId: "creative-inter-tech",
@@ -1253,6 +1265,7 @@ var mtlnation_default = {
   id: "mtlnation",
   title: "MTLnation",
   subtitle: "Vue.js Based Website",
+  period: "TODO(moiez): year or date range (e.g. 2021, or 2021 \u2013 2022)",
   description: [
     "MTLnation \u2013 Vue.js Web Platform",
     [
@@ -1309,6 +1322,7 @@ var tdm_default = {
   id: "tdm",
   title: "TDM",
   subtitle: "Civil Engineering & Project Management Website",
+  period: "TODO(moiez): year or date range (e.g. 2021, or 2021 \u2013 2022)",
   description: [
     "TDM \u2013 Engenharia & Gest\xE3o de Projetos",
     [
@@ -1366,6 +1380,7 @@ var eims_default = {
   id: "eims",
   title: "EIMS",
   subtitle: "AI-Powered Learning Management System (In Progress)",
+  period: "TODO(moiez): start year \u2014 still in progress (e.g. 2025 \u2013 present)",
   description: [
     "EIMS \u2013 AI-Powered Learning Management System",
     [
@@ -1417,6 +1432,7 @@ var lms_default = {
   id: "lms",
   title: "LMS",
   subtitle: "Learning Management System FullStack (Under Development)",
+  period: "TODO(moiez): year or date range (e.g. 2021, or 2021 \u2013 2022)",
   description: [
     "LMS \u2013 Learning Management System",
     [
@@ -1452,6 +1468,7 @@ var design_dynamo_default = {
   id: "design-dynamo",
   title: "Design Dynamo",
   subtitle: "Portfolio for a Graphic & Web Designer \u2014 Photoshop-style UI",
+  period: "TODO(moiez): year or date range (e.g. 2021, or 2021 \u2013 2022)",
   description: [
     "Design Dynamo \u2013 Interactive Designer Portfolio (designdynamo.art)",
     [
@@ -1519,9 +1536,105 @@ var design_dynamo_default = {
   ]
 };
 
+// src/data/projects/botfolio.json
+var botfolio_default = {
+  id: "botfolio",
+  title: "BotFolio",
+  subtitle: "AI Portfolio Assistant on moiez.dev",
+  period: "2026",
+  description: [
+    "BotFolio \u2013 AI Assistant for This Portfolio",
+    [
+      "An AI chat assistant on every page of moiez.dev that answers visitors' questions about my experience, projects and skills, and links them to the right page.",
+      "Runs on OpenRouter (DeepSeek) through a Vercel serverless function, so the API key never reaches the browser.",
+      "The server builds its own fact sheet from the site's data and owns the system prompt, model list and token limits, so answers can't be steered by a forged context.",
+      "Replies in the visitor's language, including Arabic, with per-visitor rate and size limits so the endpoint can't be used as a general-purpose LLM proxy."
+    ]
+  ],
+  technologies: [
+    "OpenRouter",
+    "DeepSeek",
+    "React",
+    "Node",
+    "JavaScript",
+    "Vercel"
+  ],
+  projectUrl: "https://www.moiez.dev",
+  screenshot: false,
+  group: "ai",
+  caseStudy: {
+    summary: "An AI assistant on every page of this portfolio that answers questions about my work from the site's own data, through OpenRouter (DeepSeek).",
+    problem: [
+      'Recruiters and clients have specific questions ("has he used NestJS in production?", "is he in Riyadh?") that a static portfolio makes them dig for.'
+    ],
+    role: [
+      "Designed and built it end to end: the chat UI, the serverless endpoint, the prompt and the fact sheet."
+    ],
+    architecture: [
+      "React chat panel in the site; questions go to a Vercel serverless function (/api/chat).",
+      "The function builds the fact sheet from the same JSON data that renders the site, so the bot and the pages never disagree.",
+      "OpenRouter with DeepSeek as the primary model and a fallback model; the system prompt, model list and token limits live only on the server.",
+      "Per-IP rate limiting and limits on question and history length."
+    ],
+    challenges: [
+      "Keeping answers factual: the bot only knows what the site's data says, and says so when it doesn't know."
+    ],
+    results: [
+      "Live on every page of moiez.dev, in English and Arabic."
+    ],
+    next: [],
+    measured: ""
+  },
+  _todo: "TODO(moiez): add usage or quality numbers only if you have them (e.g. questions answered per month, how you checked answer accuracy).",
+  diagrams: [
+    "stackFlow"
+  ]
+};
+
+// src/data/projects/company-support-chatbot.json
+var company_support_chatbot_default = {
+  id: "company-support-chatbot",
+  title: "Company Support Chatbot (AI)",
+  subtitle: "AI Assistant for a Company's Profile, Services and Support",
+  period: "TODO(moiez): year or date range (e.g. 2025)",
+  description: [
+    "Company Support Chatbot \u2013 AI Assistant for a Client",
+    [
+      "An AI chatbot that helps a client's users learn about the company's profile and services and get support in real time.",
+      "Built with OpenRouter (DeepSeek)."
+    ]
+  ],
+  technologies: [
+    "OpenRouter",
+    "DeepSeek"
+  ],
+  screenshot: false,
+  group: "ai",
+  caseStudy: {
+    summary: "An AI chatbot, built with OpenRouter (DeepSeek), that helps a client's users learn about the company's profile and services and get support in real time.",
+    problem: [
+      "The client's users needed quick answers about the company's profile, services and support, at any time."
+    ],
+    role: [],
+    architecture: [
+      "LLM answers through OpenRouter (DeepSeek)."
+    ],
+    challenges: [],
+    results: [],
+    next: [],
+    measured: ""
+  },
+  _todo: "TODO(moiez): (1) client name or industry, and whether it can be named publicly; (2) your role and the employer or freelance context; (3) the rest of the stack (frontend, backend, hosting, how company content reaches the model); (4) live URL or screenshots, if shareable; (5) the year; (6) any results you can stand behind (e.g. share of questions answered without a human).",
+  diagrams: [
+    "stackFlow"
+  ]
+};
+
 // src/data/projects.js
 var projectsById = {
   "twlm-pos": twlm_pos_default,
+  "company-support-chatbot": company_support_chatbot_default,
+  botfolio: botfolio_default,
   "design-dynamo": design_dynamo_default,
   "aa-tourism": aa_tourism_default,
   scmborba: scmborba_default,
@@ -1647,7 +1760,7 @@ function buildContext(question = "", { path = "/", previousQuestion = "" } = {})
       location: profile.location,
       experienceYears: years,
       summary: profile.identity,
-      availability: "Open to senior full stack engineering and software architect roles, and to freelance/contract projects",
+      availability: "Available for AI engineer and full-stack roles (Riyadh, GCC, remote), and open to freelance/contract projects",
       workAuthorization: profile.iqama
     },
     // what each kind of visitor needs: recruiters get the pitch, clients get scope + how to start

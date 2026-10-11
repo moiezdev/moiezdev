@@ -192,11 +192,11 @@ async function homeCard() {
       }),
     ),
     textColumn({
-      eyebrow: 'Senior Full Stack Engineer · Riyadh',
+      eyebrow: 'AI Engineer | Senior Full-Stack Engineer',
       title: 'Moieez\nur Rehman',
       size: 78,
-      sub: 'Software architect building POS, payments, loyalty and AI products end to end.',
-      chips: ['Node.js · React · PostgreSQL'],
+      sub: 'Building LLM features, POS, payments and loyalty products end to end, in Riyadh.',
+      chips: ['TypeScript · Node.js/NestJS · React/Next.js'],
       url: 'moiez.dev',
       width: 640,
     }),
@@ -214,10 +214,11 @@ async function buildCard(path) {
 
   if (project) {
     // `"screenshot": false` in a project's JSON means its image is a logo, not a screenshot
-    const hasShot = project.screenshot !== false;
+    const hasShot = project.screenshot !== false && Boolean(project.imageUrl);
     const [main, back] = await Promise.all([
       hasShot ? imageData(project.imageUrl) : null,
       (async () => {
+        if (!hasShot) return null;
         const dir = project.imageUrl.split('/').slice(0, -1).join('/');
         const other = hasShot && (project.media || []).find((m) => !project.imageUrl.endsWith(m));
         return other ? imageData(`${dir}/${other}`) : null;
@@ -250,7 +251,9 @@ async function buildCard(path) {
   }
 
   if (path === '/works') {
-    const shots = await Promise.all(projects.slice(0, 4).map((p) => imageData(p.imageUrl)));
+    const shots = await Promise.all(
+      projects.filter((p) => p.imageUrl && p.screenshot !== false).slice(0, 4).map((p) => imageData(p.imageUrl)),
+    );
     return card(
       shots.map((s, i) => frame(s, { width: 290, height: 181, right: i % 2 ? 72 : 382, top: i < 2 ? 110 : 315 })),
       textColumn({
@@ -286,11 +289,11 @@ async function buildCard(path) {
     return card(
       list,
       path === '/cv'
-        ? textColumn({ eyebrow: 'Résumé', title: 'Moieez\nur Rehman', sub: `Senior Full Stack Engineer & Software Architect · ${years()}+ years`, url: 'moiez.dev/cv' })
+        ? textColumn({ eyebrow: 'Résumé', title: 'Moieez\nur Rehman', sub: `AI Engineer | Senior Full-Stack Engineer · ${years()}+ years`, url: 'moiez.dev/cv' })
         : textColumn({
             eyebrow: 'Experience',
             title: `${years()}+ years\nof shipping.`,
-            sub: 'Engineering and architecture roles across retail and SaaS — POS, loyalty, wallets and AI.',
+            sub: 'Engineering roles across retail and SaaS — POS, loyalty, wallets and AI.',
             url: 'moiez.dev/experience',
           }),
     );
@@ -308,7 +311,7 @@ async function buildCard(path) {
           ),
         ),
       ),
-      textColumn({ eyebrow: 'Contact', title: 'Let’s build\nsomething great.', sub: 'Open to senior full stack roles and projects.', url: 'moiezdev@gmail.com' }),
+      textColumn({ eyebrow: 'Contact', title: 'Let’s build\nsomething great.', sub: 'Available for AI engineer and full-stack roles (Riyadh, GCC, remote).', url: 'moiezdev@gmail.com' }),
     );
   }
 
@@ -327,7 +330,7 @@ async function buildCard(path) {
     textColumn({
       eyebrow: 'About',
       title: 'The person\nbehind the work.',
-      sub: 'Full stack engineer and software architect in Riyadh.',
+      sub: 'AI Engineer | Senior Full-Stack Engineer in Riyadh.',
       url: 'moiez.dev/about',
     }),
   );

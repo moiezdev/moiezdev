@@ -10,12 +10,14 @@ import { getExperienceYears } from '../utils/experience.js';
 
 export const SITE_URL = 'https://www.moiez.dev';
 export const SITE_NAME = 'Moieez ur Rehman';
+/** The one role title used across the site (hero, about, footer, CV page, meta). */
+export const ROLE_TITLE = 'AI Engineer | Senior Full-Stack Engineer (TypeScript, Node.js/NestJS, React/Next.js)';
 
 const years = getExperienceYears();
 
 const HOME = {
-  title: `${SITE_NAME} · Senior Full Stack Engineer in Riyadh`,
-  description: `Senior Full Stack Engineer & Software Architect in Riyadh. ${years} years building POS, payments, loyalty and AI products with NestJS, React/Next.js and PostgreSQL.`,
+  title: `${SITE_NAME} · ${ROLE_TITLE}`,
+  description: `AI Engineer and Senior Full-Stack Engineer in Riyadh. ${years} years building LLM features, POS, payments and loyalty in TypeScript with NestJS and React/Next.js.`,
   image: '/og/home.jpg',
 };
 
@@ -35,18 +37,18 @@ const PAGES = {
   '/about': {
     title: `About · ${SITE_NAME}`,
     description:
-      'Full stack engineer and software architect in Riyadh who owns features end to end: POS, payments (MyFatoorah, Moyasar), Apple/Google Wallet, CRM and AI search.',
+      'AI Engineer and Senior Full-Stack Engineer in Riyadh who owns features end to end: LLM search, POS, payments (MyFatoorah, Moyasar), Apple/Google Wallet and CRM.',
     image: '/og/about.jpg',
   },
   '/contact': {
     title: `Contact · ${SITE_NAME}`,
     description:
-      'Get in touch with Moieez ur Rehman, Senior Full Stack Engineer in Riyadh, open to senior full stack roles and projects. Email moiezdev@gmail.com or LinkedIn.',
+      'Get in touch with Moieez ur Rehman, AI Engineer and Senior Full-Stack Engineer, available for AI engineer and full-stack roles in Riyadh, the GCC or remote.',
     image: '/og/contact.jpg',
   },
   '/cv': {
     title: `CV · ${SITE_NAME}`,
-    description: `Résumé of Moieez ur Rehman, Senior Full Stack Engineer in Riyadh: ${years} years of TypeScript, Node.js/NestJS, React/Next.js and PostgreSQL. View or download the PDF.`,
+    description: `Résumé of Moieez ur Rehman, AI Engineer and Senior Full-Stack Engineer in Riyadh: ${years} years of TypeScript, Node.js/NestJS, React/Next.js and LLM features.`,
     image: '/og/cv.jpg',
   },
 };
@@ -62,13 +64,23 @@ const PROJECTS = {
     description:
       'Restaurant POS and CMS platform for Gulf retail with Gulf tax, inventory, loyalty, gift cards and Apple/Google Wallet passes, built with NestJS and React.',
   },
+  'company-support-chatbot': {
+    title: 'Company Support Chatbot (AI)',
+    description:
+      'An AI chatbot built with OpenRouter (DeepSeek) that helps a client’s users learn about the company’s profile and services and get support in real time.',
+  },
+  botfolio: {
+    title: 'BotFolio — AI Portfolio Assistant',
+    description:
+      'The AI assistant on moiez.dev: OpenRouter (DeepSeek) behind a Vercel serverless function that answers from the site’s own data, in English and Arabic.',
+  },
   'design-dynamo': {
     title: 'Design Dynamo — Interactive Designer Portfolio',
     description:
       'A Photoshop-style portfolio for a Riyadh graphic and web designer: React with advanced scroll animations, an Express and PostgreSQL reviews API, EmailJS enquiries and a full Arabic RTL layout.',
   },
   'aa-tourism': {
-    title: 'AA Travel & Tourism — Full-Stack Flight Booking Platform',
+    title: 'AATourism — Full-Stack Flight Booking Platform',
     description:
       'Full-stack flight booking and tour-planning system: Laravel backend, Nuxt 2 web app and React Native mobile app with real-time Sabre and Amadeus flight data.',
   },
@@ -105,7 +117,7 @@ const PROJECTS = {
   'city-arrivals': {
     title: 'City Arrivals — Luxury Car Booking Platform',
     description:
-      'Luxury car booking platform in Canada (cityarrivals.ca), built for B2B travel operations alongside AA Travel & Tourism, with responsive flows to schedule rides.',
+      'Luxury car booking platform in Canada (cityarrivals.ca), built for B2B travel operations alongside AATourism, with responsive flows to schedule rides.',
   },
   mtlnation: {
     title: 'MTLnation — Vue.js Web Platform',
@@ -195,9 +207,9 @@ const PERSON = {
   '@type': 'Person',
   '@id': PERSON_ID,
   name: SITE_NAME,
-  jobTitle: 'Senior Full Stack Engineer',
+  jobTitle: ROLE_TITLE,
   description:
-    'Senior Full Stack Engineer and Software Architect in Riyadh, building POS, payments, loyalty and AI products for retail and SaaS.',
+    'AI Engineer and Senior Full-Stack Engineer in Riyadh, building LLM features, POS, payments and loyalty products for retail and SaaS.',
   url: SITE_URL,
   image: `${SITE_URL}/img/heroSection/hero-img-960.webp`,
   email: 'mailto:moiezdev@gmail.com',
@@ -207,6 +219,7 @@ const PERSON = {
   alumniOf: { '@type': 'CollegeOrUniversity', name: 'National College of Business Administration & Economics' },
   knowsLanguage: ['English', 'Urdu', 'Hindi'],
   knowsAbout: [
+    'AI engineering',
     'Full stack development',
     'Software architecture',
     'TypeScript',

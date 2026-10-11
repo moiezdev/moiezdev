@@ -2,10 +2,11 @@
   "id": "city-arrivals",
   "title": "City Arrivals",
   "subtitle": "Luxury Car Booking Platform",
+  "period": "2020 – 2022",
   "description": [
     "City Arrivals – Luxury Car Booking (cityarrivals.ca)",
     [
-      "A luxury car booking platform based in Canada, built for B2B travel operations alongside AA Travel & Tourism.",
+      "A luxury car booking platform based in Canada, built for B2B travel operations alongside AATourism.",
       "Focused on a seamless booking experience for premium vehicle rentals.",
       "Developed responsive layouts for reliable performance across devices.",
       "Integrated booking flows so users can schedule and manage rides easily.",
@@ -29,7 +30,7 @@
   "repoPublic": false,
   "group": "client",
   "caseStudy": {
-    "summary": "Luxury car booking for a Canadian operator, built for B2B travel operations alongside AA Travel & Tourism.",
+    "summary": "Luxury car booking for a Canadian operator, built for B2B travel operations alongside AATourism.",
     "problem": [
       "Customers needed to book premium vehicles — point-to-point, hourly or airport — quickly and with confidence."
     ],
@@ -46,7 +47,7 @@
     ],
     "results": [
       "Live at cityarrivals.ca.",
-      "Part of the B2B travel platforms serving 10K+ monthly users."
+      "The B2B travel platforms — AATourism and City Arrivals together — serve 10K+ monthly users."
     ],
     "next": [],
     "measured": ""
@@ -54,7 +55,7 @@
   "metrics": [
     {
       "value": "10K+",
-      "label": "monthly users across the B2B travel platforms"
+      "label": "monthly users across the B2B travel platforms, AATourism and City Arrivals combined"
     }
   ],
   "experienceId": "creative-inter-tech",

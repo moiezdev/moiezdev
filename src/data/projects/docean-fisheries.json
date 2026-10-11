@@ -2,6 +2,7 @@
   "id": "docean-fisheries",
   "title": "D’Ocean Fisheries",
   "subtitle": "Seafood Supplier Website",
+  "period": "TODO(moiez): year or date range (e.g. 2021, or 2021 – 2022)",
   "description": [
     "D’Ocean Fisheries – Seafood Supplier Website",
     [
@@ -24,7 +25,7 @@
     "main-framed.webp"
   ],
   "repoPublic": false,
-  "group": "client",
+  "group": "earlier",
   "caseStudy": {
     "summary": "A responsive website for a Bahrain seafood supplier, with product categories and quote forms.",
     "problem": [

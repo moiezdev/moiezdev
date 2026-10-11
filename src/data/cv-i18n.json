@@ -1,10 +1,10 @@
 {
   "en": {
     "name": "Moieez ur Rehman",
-    "headline": "Senior Full Stack Engineer & Software Architect | TypeScript · Node.js/NestJS · React/Next.js",
+    "headline": "AI Engineer | Senior Full-Stack Engineer (TypeScript, Node.js/NestJS, React/Next.js)",
     "location": "Riyadh, Saudi Arabia",
     "iqama": "Transferable Iqama · Available Immediately",
-    "summary": "Full Stack Engineer and Software Architect with {{experienceYears}} years of experience building production systems in TypeScript, Node.js/NestJS and React/Next.js, specialised in retail and SaaS: POS platforms, loyalty programs, payment integrations and e-commerce. Designed and built a restaurant POS and loyalty platform end-to-end, including Apple/Google Wallet passes, event-driven background processing, and a ~64% reduction in API response times. Experienced with payment gateways (MyFatoorah, Moyasar), authentication (OAuth2, JWT, SSO, RBAC) and CRM integrations. Uses AI coding tools (Claude Code, Cursor, GitHub Copilot) to ship faster, while owning the design, review and testing of everything that reaches production.",
+    "summary": "AI Engineer and Senior Full-Stack Engineer with {{experienceYears}} years of experience building production systems in TypeScript, Node.js/NestJS and React/Next.js, specialised in retail and SaaS: POS platforms, loyalty programs, payment integrations and e-commerce. Designed and built a restaurant POS and loyalty platform end-to-end, including Apple/Google Wallet passes, event-driven background processing, and a ~64% reduction in API response times. Experienced with payment gateways (MyFatoorah, Moyasar), authentication (OAuth2, JWT, SSO, RBAC) and CRM integrations. Uses AI coding tools (Claude Code, Cursor, GitHub Copilot) to ship faster, while owning the design, review and testing of everything that reaches production.",
     "labels": {
       "summary": "Professional Summary",
       "experience": "Professional Experience",
@@ -36,10 +36,10 @@
   },
   "ar": {
     "name": "معيز الرحمن",
-    "headline": "مهندس برمجيات متكامل أول ومعماري برمجيات | TypeScript · Node.js/NestJS · React/Next.js",
+    "headline": "مهندس ذكاء اصطناعي | مهندس برمجيات متكامل أول ⁦(TypeScript, Node.js/NestJS, React/Next.js)⁩",
     "location": "الرياض، المملكة العربية السعودية",
     "iqama": "إقامة قابلة للنقل · متاح فوراً",
-    "summary": "مهندس برمجيات متكامل ومعماري برمجيات بخبرة {{experienceYears}} سنوات في بناء أنظمة إنتاجية باستخدام TypeScript وNode.js/NestJS وReact/Next.js، متخصص في قطاعي التجزئة والبرمجيات كخدمة: أنظمة نقاط البيع، وبرامج الولاء، وتكامل الدفع، والتجارة الإلكترونية. صممت وبنيت منصة نقاط بيع وولاء للمطاعم من البداية إلى النهاية، تشمل بطاقات Apple/Google Wallet، والمعالجة الخلفية القائمة على الأحداث، وخفض زمن استجابة الواجهات بنحو 64٪. خبرة في بوابات الدفع (MyFatoorah وMoyasar)، والمصادقة (OAuth2 وJWT وSSO وRBAC)، وتكامل أنظمة CRM. أستخدم أدوات البرمجة بالذكاء الاصطناعي (Claude Code وCursor وGitHub Copilot) لتسريع التسليم، مع تحمّل مسؤولية التصميم والمراجعة والاختبار لكل ما يصل إلى الإنتاج.",
+    "summary": "مهندس ذكاء اصطناعي ومهندس برمجيات متكامل أول بخبرة {{experienceYears}} سنوات في بناء أنظمة إنتاجية باستخدام TypeScript وNode.js/NestJS وReact/Next.js، متخصص في قطاعي التجزئة والبرمجيات كخدمة: أنظمة نقاط البيع، وبرامج الولاء، وتكامل الدفع، والتجارة الإلكترونية. صممت وبنيت منصة نقاط بيع وولاء للمطاعم من البداية إلى النهاية، تشمل بطاقات Apple/Google Wallet، والمعالجة الخلفية القائمة على الأحداث، وخفض زمن استجابة الواجهات بنحو 64٪. خبرة في بوابات الدفع (MyFatoorah وMoyasar)، والمصادقة (OAuth2 وJWT وSSO وRBAC)، وتكامل أنظمة CRM. أستخدم أدوات البرمجة بالذكاء الاصطناعي (Claude Code وCursor وGitHub Copilot) لتسريع التسليم، مع تحمّل مسؤولية التصميم والمراجعة والاختبار لكل ما يصل إلى الإنتاج.",
     "labels": {
       "summary": "الملخص المهني",
       "experience": "الخبرة المهنية",
@@ -102,7 +102,7 @@
         "title": "مهندس برمجيات أول",
         "location": "المملكة العربية السعودية",
         "period": "يناير 2024 – فبراير 2025",
-        "summary": "أدوات ولوحات داخلية رقمنت العمليات وخفّضت التوقف.",
+        "summary": "أدوات ولوحات داخلية رقمنت العمليات وخفّضت توقف الأنظمة بنحو 25٪.",
         "highlights": [
           "تحسين العمليات الداخلية برقمنة المسارات وتخفيض توقف الأنظمة بنحو 25٪.",
           "بناء لوحات تقارير وتحليلات داخلية باستخدام React وSQL.",
@@ -136,7 +136,7 @@
         "period": "مارس 2020 – أكتوبر 2022",
         "summary": "قيادة الواجهات لمنصات سفر B2B لأكثر من 10 آلاف مستخدم شهرياً.",
         "highlights": [
-          "قيادة الواجهات لمنصات سفر B2B (AA Tourism، City Arrivals) لأكثر من 10 آلاف مستخدم شهرياً.",
+          "قيادة الواجهات لمنصات سفر B2B (AATourism، City Arrivals) لأكثر من 10 آلاف مستخدم شهرياً.",
           "بناء مكتبات مكوّنات في React/Vue وخفض وقت التطوير بنحو 30٪.",
           "العمل ضمن فرق Agile وتحسين تجربة الاستخدام ورفع الاحتفاظ بالمستخدمين 15٪.",
           "تحديث مشاريع قديمة بـ React/Vue وتحسين الاستجابة 25٪.",

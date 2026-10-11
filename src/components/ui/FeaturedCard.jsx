@@ -5,6 +5,7 @@ import ExternalIcon from './ExternalIcon';
 import TechChip from './TechChip';
 import { useContent } from '../../i18n/content';
 import { topTech } from '../../utils/techRank';
+import { filled } from '../../utils/todo';
 import TransitionLink from './TransitionLink';
 import { Chevron } from './SectionTitle';
 
@@ -13,7 +14,7 @@ import { Chevron } from './SectionTitle';
  * metric (`featuredMetric` indexes `metrics`), a link to the live product
  * (`productUrl`, else `projectUrl`) and the case study.
  */
-const FeaturedCard = ({ project, className = '' }) => {
+const FeaturedCard = ({ project, pinTech, className = '' }) => {
   const { t } = useContent();
   const metric = project.metrics?.[project.featuredMetric ?? 0];
   const live = project.productUrl || project.projectUrl;
@@ -51,6 +52,7 @@ const FeaturedCard = ({ project, className = '' }) => {
           </TransitionLink>
         </h3>
         <p className="mt-2 text-[17px] text-label-2">{project.subtitle}</p>
+        {filled(project.period) && <p className="mt-1 text-[13px] text-label-3 tabular-nums">{project.period}</p>}
 
         {metric && (
           <div className="mt-7 flex items-end gap-4 border-t border-separator pt-6">
@@ -62,7 +64,7 @@ const FeaturedCard = ({ project, className = '' }) => {
         )}
 
         <div className="mt-6 flex flex-wrap gap-1.5">
-          {topTech(project.technologies, 3).map((item) => (
+          {topTech(project.technologies, 3, pinTech).map((item) => (
             <TechChip key={item} name={item} />
           ))}
         </div>

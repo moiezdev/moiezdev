@@ -1,0 +1,37 @@
+{
+  "id": "company-support-chatbot",
+  "title": "Company Support Chatbot (AI)",
+  "subtitle": "AI Assistant for a Company's Profile, Services and Support",
+  "period": "TODO(moiez): year or date range (e.g. 2025)",
+  "description": [
+    "Company Support Chatbot – AI Assistant for a Client",
+    [
+      "An AI chatbot that helps a client's users learn about the company's profile and services and get support in real time.",
+      "Built with OpenRouter (DeepSeek)."
+    ]
+  ],
+  "technologies": [
+    "OpenRouter",
+    "DeepSeek"
+  ],
+  "screenshot": false,
+  "group": "ai",
+  "caseStudy": {
+    "summary": "An AI chatbot, built with OpenRouter (DeepSeek), that helps a client's users learn about the company's profile and services and get support in real time.",
+    "problem": [
+      "The client's users needed quick answers about the company's profile, services and support, at any time."
+    ],
+    "role": [],
+    "architecture": [
+      "LLM answers through OpenRouter (DeepSeek)."
+    ],
+    "challenges": [],
+    "results": [],
+    "next": [],
+    "measured": ""
+  },
+  "_todo": "TODO(moiez): (1) client name or industry, and whether it can be named publicly; (2) your role and the employer or freelance context; (3) the rest of the stack (frontend, backend, hosting, how company content reaches the model); (4) live URL or screenshots, if shareable; (5) the year; (6) any results you can stand behind (e.g. share of questions answered without a human).",
+  "diagrams": [
+    "stackFlow"
+  ]
+}

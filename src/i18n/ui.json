@@ -11,15 +11,15 @@
       "titleBefore": "Complex systems.",
       "titleRole": "Beautifully simple.",
       "titleAfter": "",
-      "lead": "I architect and build products end to end — from system design and APIs in Node.js and NestJS to polished interfaces in React, Vue and Next.js.",
+      "lead": "I design and build products end to end — LLM features, system design and APIs in Node.js and NestJS, and polished interfaces in React and Next.js.",
       "contact": "Get in touch",
       "resume": "Download résumé",
       "now": "Currently building",
       "nowFocus": "POS, loyalty, wallets & AI search",
       "quote": "Great products feel simple — the complexity stays under the hood.",
       "quoteBy": "--- Mr Unknown",
-      "available": "Available for new opportunities",
-      "intro": "Moieez ur Rehman — Senior Full Stack Engineer & Software Architect",
+      "available": "Available for AI engineer and full-stack roles (Riyadh, GCC, remote)",
+      "intro": "Moieez ur Rehman — AI Engineer | Senior Full-Stack Engineer (TypeScript, Node.js/NestJS, React/Next.js)",
       "seeWork": "See the work",
       "yearsShort": "years shipping production software",
       "statYears": "Years of experience",
@@ -29,9 +29,9 @@
       "statLatencyValue": "~64%",
       "statLatency": "Lower API latency",
       "name": "Moieez ur Rehman",
-      "eyebrow": "Senior Full Stack Engineer · Riyadh",
+      "eyebrow": "AI Engineer | Senior Full-Stack Engineer (TypeScript, Node.js/NestJS, React/Next.js)",
       "title": "I design and build full-stack products — from architecture to AI.",
-      "subtitle": "{{years}} years across retail, travel and SaaS — POS & payments, booking engines, e-commerce, dashboards and LLM integrations.",
+      "subtitle": "{{years}} years shipping TypeScript products across retail, travel and SaaS — LLM features with OpenRouter (DeepSeek), POS & payments, booking engines, e-commerce and dashboards.",
       "viewWork": "View my work",
       "bookCall": "Book a 15-min call",
       "viewResume": "View résumé",
@@ -40,7 +40,7 @@
       "statYearsLabel": "Years shipping software",
       "resumeShort": "Résumé",
       "portraitAlt": "Moieez ur Rehman",
-      "stack": "Node.js/NestJS · React/Next.js · PostgreSQL"
+      "stack": "TypeScript · Node.js/NestJS · React/Next.js"
     },
     "about": {
       "section": "about me",
@@ -49,7 +49,7 @@
       "title": "Hello, I'm Moieez ur Rehman.",
       "viewExperience": "View experience",
       "paragraphs": [
-        "Product-focused Full Stack Engineer and Software Architect with {{experienceYears}} years of experience building scalable systems across retail and SaaS — from POS platforms to loyalty systems and customer engagement tools, ecommerce, payment integrations, booking systems, search-engine integrations, and dashboards. I work across the stack using React, Vue, Next.js, Node.js, and NestJS, delivering reliable, high-quality solutions with a strong focus on real-world usability.",
+        "AI Engineer and Senior Full-Stack Engineer with {{experienceYears}} years of experience building scalable systems across retail and SaaS — from POS platforms to loyalty systems and customer engagement tools, ecommerce, payment integrations, booking systems, search-engine integrations, and dashboards. I work across the stack in TypeScript — Node.js and NestJS on the backend, React and Next.js (and Vue) on the frontend, and LLM features through OpenRouter (DeepSeek) — delivering reliable, high-quality solutions with a strong focus on real-world usability.",
         "I take ownership of features end-to-end — from understanding business needs and structuring solutions to implementation and deployment — with a focus on writing maintainable code, improving system efficiency, and delivering software that creates measurable impact. Core strengths include POS retail systems, payment integrations (MyFatoorah, Moyasar), CRM, wallet integrations (Apple Wallet & Google Wallet), designing system architectures and helping teams execute on them, microservices and monorepo patterns, and leading UI/UX engineering.",
         "I've revamped and stabilized unstable applications, supported management teams, and improved products by solving real problems. Recent work includes POS platforms, loyalty systems, customer engagement tools, and OpenRouter AI (DeepSeek) for smart search and analysis — contributing to both technical architecture and product direction."
       ],
@@ -58,7 +58,8 @@
       "more": "More about me",
       "codeEyebrow": "In code",
       "codeTitle": "The short version.",
-      "codeBody": "If you'd rather read a type definition than a biography — here's the whole story, compiled."
+      "codeBody": "If you'd rather read a type definition than a biography — here's the whole story, compiled.",
+      "role": "AI Engineer | Senior Full-Stack Engineer (TypeScript, Node.js/NestJS, React/Next.js)"
     },
     "experience": {
       "section": "experience",
@@ -83,11 +84,11 @@
         },
         {
           "value": "10K+",
-          "label": "monthly users on travel platforms I led"
+          "label": "monthly users across AATourism and City Arrivals"
         },
         {
           "value": "~25%",
-          "label": "less downtime from digitized operations"
+          "label": "reduced system downtime at ACCIONA"
         }
       ],
       "impactTitle": "Impact at a glance",
@@ -135,7 +136,9 @@
       "groupClient": "Client work",
       "groupClientBlurb": "Platforms and products built for companies and their customers.",
       "groupEarlier": "Earlier work",
-      "groupEarlierBlurb": "Brochure sites and a personal project from earlier in my career."
+      "groupEarlierBlurb": "Brochure sites and a personal project from earlier in my career.",
+      "groupAi": "AI projects",
+      "groupAiBlurb": "LLM features and assistants built with OpenRouter (DeepSeek)."
     },
     "skills": {
       "section": "skills",
@@ -153,7 +156,7 @@
     "contact": {
       "section": "contacts",
       "blurb": "Have a role, a project or a question? I’d love to hear from you.",
-      "intro": "Currently available for hire as a product-focused full stack engineer and software architect. I enjoy building reliable digital products — from polished interfaces to solid backend systems. Whether you have a role, a project, or a question, I’d be glad to hear from you.",
+      "intro": "Currently available for AI engineer and full-stack roles in Riyadh, across the GCC, or remote. I build reliable products end to end — LLM features, solid backend systems and polished interfaces. Whether you have a role, a project, or a question, I’d be glad to hear from you.",
       "direct": "Reach me directly",
       "name": "Name",
       "email": "Email",
@@ -185,7 +188,7 @@
       "copied": "Copied to clipboard"
     },
     "footer": {
-      "role": "Senior Full Stack Engineer & Software Architect",
+      "role": "AI Engineer | Senior Full-Stack Engineer (TypeScript, Node.js/NestJS, React/Next.js)",
       "media": "Connect",
       "rights": "All rights reserved.",
       "explore": "Explore",
@@ -430,7 +433,10 @@
         "caption": "Notification and wallet-update jobs run in Redis-backed BullMQ workers, outside the request path. A failed job is retried instead of being lost."
       },
       "askBot": "Ask BotFolio about this project",
-      "askBotQuestion": "What stack was used in {{name}}, and how was it built?"
+      "askBotQuestion": "What stack was used in {{name}}, and how was it built?",
+      "year": "Year",
+      "aiFeatures": "AI features",
+      "measuredOne": "How it was measured"
     },
     "ai": {
       "eyebrow": "AI integration",
@@ -538,15 +544,15 @@
       "titleBefore": "أنظمة معقدة.",
       "titleRole": "ببساطة أنيقة.",
       "titleAfter": "",
-      "lead": "أصمّم معمارية المنتجات وأبنيها من البداية للنهاية — من تصميم الأنظمة وواجهات البرمجة بـ Node.js وNestJS إلى واجهات مصقولة بـ React وVue وNext.js.",
+      "lead": "أصمّم المنتجات وأبنيها من البداية للنهاية — ميزات النماذج اللغوية، وتصميم الأنظمة وواجهات البرمجة بـ Node.js وNestJS، وواجهات مصقولة بـ React وNext.js.",
       "contact": "تواصل معي",
       "resume": "تحميل السيرة الذاتية",
       "now": "أعمل حالياً على",
       "nowFocus": "نقاط البيع والولاء والمحافظ والبحث الذكي",
       "quote": "المنتجات العظيمة تبدو بسيطة — والتعقيد يبقى تحت السطح.",
       "quoteBy": "--- مجهول",
-      "available": "متاح لفرص جديدة",
-      "intro": "معيز الرحمن — مهندس برمجيات متكامل أول ومعماري برمجيات",
+      "available": "متاح لأدوار هندسة الذكاء الاصطناعي والتطوير المتكامل (الرياض، الخليج، عن بُعد)",
+      "intro": "معيز الرحمن — مهندس ذكاء اصطناعي | مهندس برمجيات متكامل أول ⁦(TypeScript, Node.js/NestJS, React/Next.js)⁩",
       "seeWork": "شاهد الأعمال",
       "yearsShort": "سنوات في بناء برمجيات إنتاجية",
       "statYears": "سنوات الخبرة",
@@ -556,9 +562,9 @@
       "statLatencyValue": "~64٪",
       "statLatency": "زمن استجابة أقل للواجهات",
       "name": "معيز الرحمن",
-      "eyebrow": "مهندس برمجيات متكامل أول · الرياض",
+      "eyebrow": "مهندس ذكاء اصطناعي | مهندس برمجيات متكامل أول ⁦(TypeScript, Node.js/NestJS, React/Next.js)⁩",
       "title": "أصمّم وأبني منتجات متكاملة — من المعمارية حتى الذكاء الاصطناعي.",
-      "subtitle": "{{years}} سنوات في التجزئة والسفر والبرمجيات كخدمة — نقاط البيع والمدفوعات، ومحركات الحجز، والتجارة الإلكترونية، ولوحات التحكم، وتكامل النماذج اللغوية.",
+      "subtitle": "{{years}} سنوات في بناء منتجات TypeScript في التجزئة والسفر والبرمجيات كخدمة — ميزات النماذج اللغوية عبر OpenRouter (DeepSeek)، ونقاط البيع والمدفوعات، ومحركات الحجز، والتجارة الإلكترونية، ولوحات التحكم.",
       "viewWork": "شاهد أعمالي",
       "bookCall": "احجز مكالمة لمدة 15 دقيقة",
       "viewResume": "عرض السيرة الذاتية",
@@ -567,7 +573,7 @@
       "statYearsLabel": "سنوات في بناء البرمجيات",
       "resumeShort": "السيرة الذاتية",
       "portraitAlt": "معيز الرحمن",
-      "stack": "Node.js/NestJS · React/Next.js · PostgreSQL"
+      "stack": "TypeScript · Node.js/NestJS · React/Next.js"
     },
     "about": {
       "section": "نبذتي",
@@ -576,7 +582,7 @@
       "title": "مرحباً، أنا معيز الرحمن.",
       "viewExperience": "عرض الخبرة",
       "paragraphs": [
-        "مهندس برمجيات متكامل ومعماري برمجيات يركّز على المنتج، بخبرة {{experienceYears}} سنوات في بناء أنظمة قابلة للتوسع في قطاعَي التجزئة والبرمجيات كخدمة — من منصات نقاط البيع إلى أنظمة الولاء وأدوات تفاعل العملاء، والتجارة الإلكترونية، وبوابات الدفع، وأنظمة الحجز، وتكامل محركات البحث، ولوحات التقارير. أعمل عبر المكدس باستخدام React وVue وNext.js وNode.js وNestJS، وأقدّم حلولاً موثوقة عالية الجودة تركز على الاستخدام الحقيقي.",
+        "مهندس ذكاء اصطناعي ومهندس برمجيات متكامل أول بخبرة {{experienceYears}} سنوات في بناء أنظمة قابلة للتوسع في قطاعَي التجزئة والبرمجيات كخدمة — من منصات نقاط البيع إلى أنظمة الولاء وأدوات تفاعل العملاء، والتجارة الإلكترونية، وبوابات الدفع، وأنظمة الحجز، وتكامل محركات البحث، ولوحات التقارير. أعمل عبر المكدس بلغة TypeScript — Node.js وNestJS في الخوادم، وReact وNext.js (وVue) في الواجهات، وميزات النماذج اللغوية عبر OpenRouter (DeepSeek) — وأقدّم حلولاً موثوقة عالية الجودة تركز على الاستخدام الحقيقي.",
         "أتولى الميزات من البداية للنهاية: فهم احتياج العمل، وهيكلة الحل، والتنفيذ، والنشر، مع التركيز على كتابة كود قابل للصيانة وكفاءة النظام وأثر قابل للقياس. من أبرز نقاط القوة: أنظمة نقاط البيع، وبوابات الدفع (MyFatoorah وMoyasar)، وCRM، ومحافظ Apple وGoogle، وتصميم المعماريات ومساعدة الفرق على تنفيذها، والأنماط الميكروية والـ monorepo، وقيادة هندسة الواجهات.",
         "أعيد بناء التطبيقات غير المستقرة وأثبّتها، وأدعم فرق الإدارة، وأحسّن المنتجات بحل مشكلات حقيقية. يشمل عملي الأخير منصات نقاط البيع وأنظمة الولاء وأدوات التفاعل ودمج OpenRouter AI (DeepSeek) للبحث والتحليل — في العمارة التقنية واتجاه المنتج معاً."
       ],
@@ -585,7 +591,8 @@
       "more": "المزيد عني",
       "codeEyebrow": "بالكود",
       "codeTitle": "النسخة المختصرة.",
-      "codeBody": "إن كنت تفضّل قراءة تعريف نوع على سيرة ذاتية — إليك القصة كاملة، مُجمّعة."
+      "codeBody": "إن كنت تفضّل قراءة تعريف نوع على سيرة ذاتية — إليك القصة كاملة، مُجمّعة.",
+      "role": "مهندس ذكاء اصطناعي | مهندس برمجيات متكامل أول ⁦(TypeScript, Node.js/NestJS, React/Next.js)⁩"
     },
     "experience": {
       "section": "الخبرة",
@@ -610,11 +617,11 @@
         },
         {
           "value": "10K+",
-          "label": "مستخدم شهرياً على منصات السفر التي قدتها"
+          "label": "مستخدم شهرياً عبر AATourism وCity Arrivals"
         },
         {
           "value": "~25٪",
-          "label": "توقف أقل بعد رقمنة العمليات"
+          "label": "خفض توقف الأنظمة في ACCIONA"
         }
       ],
       "impactTitle": "الأثر باختصار",
@@ -666,7 +673,9 @@
       "groupClient": "أعمال للعملاء",
       "groupClientBlurb": "منصات ومنتجات بُنيت لشركات ولعملائها.",
       "groupEarlier": "أعمال سابقة",
-      "groupEarlierBlurb": "مواقع تعريفية ومشروع شخصي من بدايات مسيرتي."
+      "groupEarlierBlurb": "مواقع تعريفية ومشروع شخصي من بدايات مسيرتي.",
+      "groupAi": "مشاريع الذكاء الاصطناعي",
+      "groupAiBlurb": "ميزات ومساعدات بالنماذج اللغوية مبنية باستخدام OpenRouter (DeepSeek)."
     },
     "skills": {
       "section": "المهارات",
@@ -684,7 +693,7 @@
     "contact": {
       "section": "التواصل",
       "blurb": "لديك دور أو مشروع أو سؤال؟ يسعدني سماعك.",
-      "intro": "متاح حالياً للعمل كمهندس برمجيات متكامل ومعماري برمجيات يركّز على المنتج. أستمتع ببناء منتجات رقمية موثوقة — من واجهات مصقولة إلى أنظمة خلفية صلبة. إن كان لديك دور أو مشروع أو سؤال، يسعدني سماعك.",
+      "intro": "متاح حالياً لأدوار هندسة الذكاء الاصطناعي والتطوير المتكامل في الرياض أو في دول الخليج أو عن بُعد. أبني منتجات موثوقة من البداية للنهاية — ميزات النماذج اللغوية، وأنظمة خلفية صلبة، وواجهات مصقولة. إن كان لديك دور أو مشروع أو سؤال، يسعدني سماعك.",
       "direct": "راسلني مباشرة",
       "name": "الاسم",
       "email": "البريد",
@@ -716,7 +725,7 @@
       "copied": "تم النسخ"
     },
     "footer": {
-      "role": "مهندس برمجيات متكامل أول ومعماري برمجيات",
+      "role": "مهندس ذكاء اصطناعي | مهندس برمجيات متكامل أول ⁦(TypeScript, Node.js/NestJS, React/Next.js)⁩",
       "media": "تواصل",
       "rights": "جميع الحقوق محفوظة.",
       "explore": "استكشف",
@@ -961,7 +970,10 @@
         "caption": "تعمل مهام الإشعارات وتحديث المحافظ في عمّال BullMQ مدعومين بـ Redis، خارج مسار الطلب. وتُعاد المهمة الفاشلة بدلاً من أن تضيع."
       },
       "askBot": "اسأل BotFolio عن هذا المشروع",
-      "askBotQuestion": "ما التقنيات المستخدمة في {{name}}، وكيف بُني؟"
+      "askBotQuestion": "ما التقنيات المستخدمة في {{name}}، وكيف بُني؟",
+      "year": "السنة",
+      "aiFeatures": "ميزات الذكاء الاصطناعي",
+      "measuredOne": "طريقة القياس"
     },
     "ai": {
       "eyebrow": "تكامل الذكاء الاصطناعي",

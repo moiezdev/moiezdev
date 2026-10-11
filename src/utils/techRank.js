@@ -61,5 +61,12 @@ export const isCoreTech = (name) => techRank(name) <= ORDER.indexOf('DeepSeek');
 /** A copy of `list` ordered by relevance (stable for equal ranks). */
 export const sortTech = (list = []) => [...list].sort((a, b) => techRank(a) - techRank(b));
 
-/** The `n` most relevant technologies of a project. */
-export const topTech = (list = [], n = 3) => sortTech(list).slice(0, n);
+/**
+ * The `n` most relevant technologies of a project. `pin` (e.g. the active
+ * /works filter) is always included when the project uses it.
+ */
+export const topTech = (list = [], n = 3, pin) => {
+  const top = sortTech(list).slice(0, n);
+  if (!pin || top.includes(pin) || !list.includes(pin)) return top;
+  return sortTech([...top.slice(0, n - 1), pin]);
+};

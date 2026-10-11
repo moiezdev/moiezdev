@@ -13,7 +13,7 @@ const buildLines = (years) => [
   [['c', '// The engineer behind this portfolio']],
   [k('const'), x(' '), ['t', 'engineer'], x(': '), ['t', 'Engineer'], x(' = {')],
   [x('  '), p('name'), x(': '), s('Moieez ur Rehman'), x(',')],
-  [x('  '), p('role'), x(': '), s('Senior Full Stack Engineer & Software Architect'), x(',')],
+  [x('  '), p('role'), x(': '), s('AI Engineer | Senior Full-Stack Engineer'), x(',')],
   [x('  '), p('experience'), x(': '), ['n', String(years)], x(', '), ['c', '// years']],
   [x('  '), p('based'), x(': '), s('Saudi Arabia'), x(',')],
   [x('  '), p('stack'), x(': {')],
