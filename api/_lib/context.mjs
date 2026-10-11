@@ -325,6 +325,18 @@ var chatbot_default = {
     lms: [
       "lms",
       "learning management"
+    ],
+    botfolio: [
+      "botfolio",
+      "portfolio assistant",
+      "this chatbot",
+      "portfolio bot"
+    ],
+    "company-support-chatbot": [
+      "support chatbot",
+      "company chatbot",
+      "customer support bot",
+      "ai chatbot"
     ]
   },
   audiences: {
@@ -593,9 +605,10 @@ var events_default = [
 // src/data/projects/index.json
 var projects_default = [
   "twlm-pos",
+  "company-support-chatbot",
+  "botfolio",
   "aa-tourism",
   "scmborba",
-  "docean-fisheries",
   "ain-saas",
   "design-dynamo",
   "city-arrivals",
@@ -605,7 +618,8 @@ var projects_default = [
   "mtlnation",
   "tdm",
   "eims",
-  "lms"
+  "lms",
+  "docean-fisheries"
 ];
 
 // src/data/projects/twlm-pos.json
@@ -613,6 +627,7 @@ var twlm_pos_default = {
   id: "twlm-pos",
   title: "TWLM - POS",
   subtitle: "Point of Sale System with Loyalty & Wallet Integrations",
+  period: "2025 \u2013 present",
   description: [
     "TWLM - POS \u2013 Comprehensive Point of Sale System",
     [
@@ -737,6 +752,7 @@ var aa_tourism_default = {
   id: "aa-tourism",
   title: "AATourism",
   subtitle: "Full-Stack Flight Booking & Tour Platform \u2014 Web + Mobile",
+  period: "2020 \u2013 2022",
   description: [
     "AATourism \u2013 Full-Stack Flight Booking Platform",
     [
@@ -749,6 +765,7 @@ var aa_tourism_default = {
   ],
   technologies: [
     "NuxtJs",
+    "Vue",
     "Laravel",
     "React Native",
     "Sabre",
@@ -820,6 +837,7 @@ var scmborba_default = {
   id: "scmborba",
   title: "SCM Borba",
   subtitle: "Social Services Website",
+  period: "2022 \u2013 2024",
   description: [
     "Santa Casa da Miseric\xF3rdia de Borba \u2013 Institutional Website",
     [
@@ -886,6 +904,7 @@ var docean_fisheries_default = {
   id: "docean-fisheries",
   title: "D\u2019Ocean Fisheries",
   subtitle: "Seafood Supplier Website",
+  period: "TODO(moiez): year or date range (e.g. 2021, or 2021 \u2013 2022)",
   description: [
     "D\u2019Ocean Fisheries \u2013 Seafood Supplier Website",
     [
@@ -908,7 +927,7 @@ var docean_fisheries_default = {
     "main-framed.webp"
   ],
   repoPublic: false,
-  group: "client",
+  group: "earlier",
   caseStudy: {
     summary: "A responsive website for a Bahrain seafood supplier, with product categories and quote forms.",
     problem: [
@@ -945,6 +964,7 @@ var my_portfolio_default = {
   id: "my-portfolio",
   title: "Portfolio Website",
   subtitle: "My Personal Portfolio",
+  period: "TODO(moiez): year or date range (e.g. 2021, or 2021 \u2013 2022)",
   description: [
     "MoezDev \u2013 Personal Portfolio Website",
     [
@@ -999,6 +1019,7 @@ var gala_travels_default = {
   id: "gala-travels",
   title: "Gala Travels",
   subtitle: "Flight, Hotel, Vacation & Cruise Booking",
+  period: "TODO(moiez): year or date range (e.g. 2021, or 2021 \u2013 2022)",
   description: [
     "Gala Travels \u2013 Travel Agency Booking Platform",
     [
@@ -1065,6 +1086,7 @@ var mian_travels_default = {
   id: "mian-travels",
   title: "Mian's Travels",
   subtitle: "Flight Booking Platform",
+  period: "2020 \u2013 2022",
   description: [
     "Mian's Travels \u2013 Flight Booking Platform",
     [
@@ -1127,6 +1149,7 @@ var ain_saas_default = {
   id: "ain-saas",
   title: "Ain Saas",
   subtitle: "Ecommerce Website",
+  period: "TODO(moiez): year or date range (e.g. 2021, or 2021 \u2013 2022)",
   description: [
     "Ain Saiss \u2013 Water Utility / Institutional Website",
     [
@@ -1183,6 +1206,7 @@ var city_arrivals_default = {
   id: "city-arrivals",
   title: "City Arrivals",
   subtitle: "Luxury Car Booking Platform",
+  period: "2020 \u2013 2022",
   description: [
     "City Arrivals \u2013 Luxury Car Booking (cityarrivals.ca)",
     [
@@ -1249,6 +1273,7 @@ var mtlnation_default = {
   id: "mtlnation",
   title: "MTLnation",
   subtitle: "Vue.js Based Website",
+  period: "TODO(moiez): year or date range (e.g. 2021, or 2021 \u2013 2022)",
   description: [
     "MTLnation \u2013 Vue.js Web Platform",
     [
@@ -1305,6 +1330,7 @@ var tdm_default = {
   id: "tdm",
   title: "TDM",
   subtitle: "Civil Engineering & Project Management Website",
+  period: "TODO(moiez): year or date range (e.g. 2021, or 2021 \u2013 2022)",
   description: [
     "TDM \u2013 Engenharia & Gest\xE3o de Projetos",
     [
@@ -1362,6 +1388,7 @@ var eims_default = {
   id: "eims",
   title: "EIMS",
   subtitle: "AI-Powered Learning Management System (In Progress)",
+  period: "TODO(moiez): start year \u2014 still in progress (e.g. 2025 \u2013 present)",
   description: [
     "EIMS \u2013 AI-Powered Learning Management System",
     [
@@ -1413,6 +1440,7 @@ var lms_default = {
   id: "lms",
   title: "LMS",
   subtitle: "Learning Management System FullStack (Under Development)",
+  period: "TODO(moiez): year or date range (e.g. 2021, or 2021 \u2013 2022)",
   description: [
     "LMS \u2013 Learning Management System",
     [
@@ -1448,6 +1476,7 @@ var design_dynamo_default = {
   id: "design-dynamo",
   title: "Design Dynamo",
   subtitle: "Portfolio for a Graphic & Web Designer \u2014 Photoshop-style UI",
+  period: "TODO(moiez): year or date range (e.g. 2021, or 2021 \u2013 2022)",
   description: [
     "Design Dynamo \u2013 Interactive Designer Portfolio (designdynamo.art)",
     [
@@ -1515,9 +1544,105 @@ var design_dynamo_default = {
   ]
 };
 
+// src/data/projects/botfolio.json
+var botfolio_default = {
+  id: "botfolio",
+  title: "BotFolio",
+  subtitle: "AI Portfolio Assistant on moiez.dev",
+  period: "2026",
+  description: [
+    "BotFolio \u2013 AI Assistant for This Portfolio",
+    [
+      "An AI chat assistant on every page of moiez.dev that answers visitors' questions about my experience, projects and skills, and links them to the right page.",
+      "Runs on OpenRouter (DeepSeek) through a Vercel serverless function, so the API key never reaches the browser.",
+      "The server builds its own fact sheet from the site's data and owns the system prompt, model list and token limits, so answers can't be steered by a forged context.",
+      "Replies in the visitor's language, including Arabic, with per-visitor rate and size limits so the endpoint can't be used as a general-purpose LLM proxy."
+    ]
+  ],
+  technologies: [
+    "OpenRouter",
+    "DeepSeek",
+    "React",
+    "Node",
+    "JavaScript",
+    "Vercel"
+  ],
+  projectUrl: "https://www.moiez.dev",
+  screenshot: false,
+  group: "ai",
+  caseStudy: {
+    summary: "An AI assistant on every page of this portfolio that answers questions about my work from the site's own data, through OpenRouter (DeepSeek).",
+    problem: [
+      'Recruiters and clients have specific questions ("has he used NestJS in production?", "is he in Riyadh?") that a static portfolio makes them dig for.'
+    ],
+    role: [
+      "Designed and built it end to end: the chat UI, the serverless endpoint, the prompt and the fact sheet."
+    ],
+    architecture: [
+      "React chat panel in the site; questions go to a Vercel serverless function (/api/chat).",
+      "The function builds the fact sheet from the same JSON data that renders the site, so the bot and the pages never disagree.",
+      "OpenRouter with DeepSeek as the primary model and a fallback model; the system prompt, model list and token limits live only on the server.",
+      "Per-IP rate limiting and limits on question and history length."
+    ],
+    challenges: [
+      "Keeping answers factual: the bot only knows what the site's data says, and says so when it doesn't know."
+    ],
+    results: [
+      "Live on every page of moiez.dev, in English and Arabic."
+    ],
+    next: [],
+    measured: ""
+  },
+  _todo: "TODO(moiez): add usage or quality numbers only if you have them (e.g. questions answered per month, how you checked answer accuracy).",
+  diagrams: [
+    "stackFlow"
+  ]
+};
+
+// src/data/projects/company-support-chatbot.json
+var company_support_chatbot_default = {
+  id: "company-support-chatbot",
+  title: "Company Support Chatbot (AI)",
+  subtitle: "AI Assistant for a Company's Profile, Services and Support",
+  period: "TODO(moiez): year or date range (e.g. 2025)",
+  description: [
+    "Company Support Chatbot \u2013 AI Assistant for a Client",
+    [
+      "An AI chatbot that helps a client's users learn about the company's profile and services and get support in real time.",
+      "Built with OpenRouter (DeepSeek)."
+    ]
+  ],
+  technologies: [
+    "OpenRouter",
+    "DeepSeek"
+  ],
+  screenshot: false,
+  group: "ai",
+  caseStudy: {
+    summary: "An AI chatbot, built with OpenRouter (DeepSeek), that helps a client's users learn about the company's profile and services and get support in real time.",
+    problem: [
+      "The client's users needed quick answers about the company's profile, services and support, at any time."
+    ],
+    role: [],
+    architecture: [
+      "LLM answers through OpenRouter (DeepSeek)."
+    ],
+    challenges: [],
+    results: [],
+    next: [],
+    measured: ""
+  },
+  _todo: "TODO(moiez): (1) client name or industry, and whether it can be named publicly; (2) your role and the employer or freelance context; (3) the rest of the stack (frontend, backend, hosting, how company content reaches the model); (4) live URL or screenshots, if shareable; (5) the year; (6) any results you can stand behind (e.g. share of questions answered without a human).",
+  diagrams: [
+    "stackFlow"
+  ]
+};
+
 // src/data/projects.js
 var projectsById = {
   "twlm-pos": twlm_pos_default,
+  "company-support-chatbot": company_support_chatbot_default,
+  botfolio: botfolio_default,
   "design-dynamo": design_dynamo_default,
   "aa-tourism": aa_tourism_default,
   scmborba: scmborba_default,

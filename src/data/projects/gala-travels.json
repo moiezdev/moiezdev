@@ -2,6 +2,7 @@
   "id": "gala-travels",
   "title": "Gala Travels",
   "subtitle": "Flight, Hotel, Vacation & Cruise Booking",
+  "period": "TODO(moiez): year or date range (e.g. 2021, or 2021 – 2022)",
   "description": [
     "Gala Travels – Travel Agency Booking Platform",
     [

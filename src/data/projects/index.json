@@ -1,8 +1,9 @@
 [
   "twlm-pos",
+  "company-support-chatbot",
+  "botfolio",
   "aa-tourism",
   "scmborba",
-  "docean-fisheries",
   "ain-saas",
   "design-dynamo",
   "city-arrivals",
@@ -12,5 +13,6 @@
   "mtlnation",
   "tdm",
   "eims",
-  "lms"
+  "lms",
+  "docean-fisheries"
 ]

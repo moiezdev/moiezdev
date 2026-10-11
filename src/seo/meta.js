@@ -64,6 +64,16 @@ const PROJECTS = {
     description:
       'Restaurant POS and CMS platform for Gulf retail with Gulf tax, inventory, loyalty, gift cards and Apple/Google Wallet passes, built with NestJS and React.',
   },
+  'company-support-chatbot': {
+    title: 'Company Support Chatbot (AI)',
+    description:
+      'An AI chatbot built with OpenRouter (DeepSeek) that helps a client’s users learn about the company’s profile and services and get support in real time.',
+  },
+  botfolio: {
+    title: 'BotFolio — AI Portfolio Assistant',
+    description:
+      'The AI assistant on moiez.dev: OpenRouter (DeepSeek) behind a Vercel serverless function that answers from the site’s own data, in English and Arabic.',
+  },
   'design-dynamo': {
     title: 'Design Dynamo — Interactive Designer Portfolio',
     description:

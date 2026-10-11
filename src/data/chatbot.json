@@ -99,6 +99,18 @@
     "lms": [
       "lms",
       "learning management"
+    ],
+    "botfolio": [
+      "botfolio",
+      "portfolio assistant",
+      "this chatbot",
+      "portfolio bot"
+    ],
+    "company-support-chatbot": [
+      "support chatbot",
+      "company chatbot",
+      "customer support bot",
+      "ai chatbot"
     ]
   },
   "audiences": {

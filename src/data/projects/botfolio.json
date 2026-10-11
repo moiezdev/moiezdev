@@ -1,0 +1,53 @@
+{
+  "id": "botfolio",
+  "title": "BotFolio",
+  "subtitle": "AI Portfolio Assistant on moiez.dev",
+  "period": "2026",
+  "description": [
+    "BotFolio – AI Assistant for This Portfolio",
+    [
+      "An AI chat assistant on every page of moiez.dev that answers visitors' questions about my experience, projects and skills, and links them to the right page.",
+      "Runs on OpenRouter (DeepSeek) through a Vercel serverless function, so the API key never reaches the browser.",
+      "The server builds its own fact sheet from the site's data and owns the system prompt, model list and token limits, so answers can't be steered by a forged context.",
+      "Replies in the visitor's language, including Arabic, with per-visitor rate and size limits so the endpoint can't be used as a general-purpose LLM proxy."
+    ]
+  ],
+  "technologies": [
+    "OpenRouter",
+    "DeepSeek",
+    "React",
+    "Node",
+    "JavaScript",
+    "Vercel"
+  ],
+  "projectUrl": "https://www.moiez.dev",
+  "screenshot": false,
+  "group": "ai",
+  "caseStudy": {
+    "summary": "An AI assistant on every page of this portfolio that answers questions about my work from the site's own data, through OpenRouter (DeepSeek).",
+    "problem": [
+      "Recruiters and clients have specific questions (\"has he used NestJS in production?\", \"is he in Riyadh?\") that a static portfolio makes them dig for."
+    ],
+    "role": [
+      "Designed and built it end to end: the chat UI, the serverless endpoint, the prompt and the fact sheet."
+    ],
+    "architecture": [
+      "React chat panel in the site; questions go to a Vercel serverless function (/api/chat).",
+      "The function builds the fact sheet from the same JSON data that renders the site, so the bot and the pages never disagree.",
+      "OpenRouter with DeepSeek as the primary model and a fallback model; the system prompt, model list and token limits live only on the server.",
+      "Per-IP rate limiting and limits on question and history length."
+    ],
+    "challenges": [
+      "Keeping answers factual: the bot only knows what the site's data says, and says so when it doesn't know."
+    ],
+    "results": [
+      "Live on every page of moiez.dev, in English and Arabic."
+    ],
+    "next": [],
+    "measured": ""
+  },
+  "_todo": "TODO(moiez): add usage or quality numbers only if you have them (e.g. questions answered per month, how you checked answer accuracy).",
+  "diagrams": [
+    "stackFlow"
+  ]
+}
