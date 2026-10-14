@@ -12,7 +12,7 @@ const OFFLINE = {
     hire: "Moieez is an AI Engineer and Senior Full-Stack Engineer (TypeScript, Node.js/NestJS, React/Next.js, LLM features) who owns features end to end — ~70% fewer support requests and ~64% lower API latency at TWLM. He's in Riyadh with a transferable Iqama and available immediately. Grab his [[nav:/cv|CV]] or reach him on WhatsApp +966 573240913.",
     client: "Moieez takes on product builds and integrations — web apps and SaaS, POS and payments (MyFatoorah, Moyasar), booking engines, e-commerce, dashboards and AI features. Share what you're building, the must-haves and your timeline on the [[nav:/contact|Contact page]] or WhatsApp +966 573240913.",
     contact: 'Reach Moieez at moiezdev@gmail.com or +966 573240913 — or use [[nav:/contact|Contact page]].',
-    other: "I can tell you about Moieez's work — his best projects on [[nav:/works|All works]], his [[nav:/experience|Experience]], or how to hire him or start a project via the [[nav:/contact|Contact page]].",
+    other: "Happy to help with anything about Moieez's work! I can walk you through his best projects on [[nav:/works|All works]], his [[nav:/experience|Experience]], or how to hire him or start a project via the [[nav:/contact|Contact page]].",
   },
   ar: {
     ai: 'هذه المحادثة هي BotFolio — دليل معيز المبني على OpenRouter (DeepSeek). ودمج معيز التقنية نفسها في [[nav:/works/twlm-pos|TWLM - POS]] للبحث الذكي في القوائم وتحليل البيانات.',
@@ -28,14 +28,14 @@ const OFFLINE = {
 
 const SMALL_TALK = {
   en: {
-    greet: "Hi! Good to have you here. Ask me anything about Moieez — for example his [[nav:/works/twlm-pos|TWLM - POS]] platform, his tech stack, or whether he's open to new roles.",
-    thanks: 'Anytime. If you want to talk to Moieez directly, the [[nav:/contact|Contact page]] is the fastest way.',
-    bye: 'Thanks for stopping by. You can reach Moieez any time via the [[nav:/contact|Contact page]].',
+    greet: "Hey, nice to see you! Ask me anything about Moieez. His [[nav:/works/twlm-pos|TWLM - POS]] platform is a good place to start, or I can tell you about his stack or whether he's open to new roles.",
+    thanks: "You're welcome! If you'd like to chat with Moieez himself, the [[nav:/contact|Contact page]] is the quickest way.",
+    bye: "Thanks for stopping by, take care! Moieez is always reachable through the [[nav:/contact|Contact page]].",
   },
   ar: {
-    greet: 'أهلاً بك! اسألني أي شيء عن معيز — مثل منصة [[nav:/works/twlm-pos|TWLM - POS]]، أو التقنيات التي يستخدمها، أو إن كان متاحاً لأدوار جديدة.',
-    thanks: 'على الرحب. إن أردت التحدث مع معيز مباشرة، فـ[[nav:/contact|صفحة التواصل]] أسرع طريقة.',
-    bye: 'شكراً لزيارتك. يمكنك التواصل مع معيز في أي وقت عبر [[nav:/contact|صفحة التواصل]].',
+    greet: 'أهلاً وسهلاً! اسألني أي شيء عن معيز. منصة [[nav:/works/twlm-pos|TWLM - POS]] بداية جميلة، أو أخبرك عن التقنيات التي يستخدمها، أو إن كان متاحاً لأدوار جديدة.',
+    thanks: 'العفو، بكل سرور! وإن أردت التحدث مع معيز مباشرة، فـ[[nav:/contact|صفحة التواصل]] أسرع طريقة.',
+    bye: 'شكراً لزيارتك، ونورتنا! يمكنك التواصل مع معيز في أي وقت عبر [[nav:/contact|صفحة التواصل]].',
   },
 };
 
