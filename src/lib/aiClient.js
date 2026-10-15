@@ -3,7 +3,7 @@
  * the OpenRouter key server-side.
  */
 const AI_FAIL_FALLBACK =
-  "I couldn't put an answer together just now — try again in a moment, or reach Moieez directly on the [[nav:/contact|Contact page]].";
+  "Sorry, I got a bit stuck on that one. Mind trying again in a moment? Or you can reach Moieez directly on the [[nav:/contact|Contact page]].";
 
 export class ChatApiError extends Error {
   constructor(status, code) {

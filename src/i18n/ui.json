@@ -219,7 +219,7 @@
       ]
     },
     "chat": {
-      "welcome": "Hi — I'm BotFolio, Moieez's AI guide. Hiring for a role, or have a project in mind? I can give you the 30-second overview, match him to a job description you paste, or show his best work.",
+      "welcome": "Hey, I'm BotFolio! I know Moieez's work inside out. Hiring, or got a project in mind? I can give you the quick overview, check him against a job description you paste, or show you his best work.",
       "thinking": "thinking…",
       "listening": "listening…",
       "speaking": "speaking…",
@@ -756,7 +756,7 @@
       ]
     },
     "chat": {
-      "welcome": "مرحباً — أنا BotFolio، دليل معيز الذكي. هل توظّف لدور ما، أم لديك مشروع؟ أستطيع إعطاءك لمحة في ٣٠ ثانية، أو مطابقته مع وصف وظيفي تلصقه هنا، أو عرض أبرز أعماله.",
+      "welcome": "أهلاً! أنا BotFolio، وأعرف أعمال معيز جيداً. تبحث عن موظف، أم لديك فكرة مشروع؟ يسعدني أن أعطيك لمحة سريعة، أو أطابقه مع وصف وظيفي تلصقه هنا، أو أعرض لك أبرز أعماله.",
       "thinking": "يفكر…",
       "listening": "يستمع…",
       "speaking": "يتحدث…",
