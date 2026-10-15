@@ -595,7 +595,7 @@ const ChatBot = () => {
                 }
                 disabled={busy}
                 aria-label={t(lang, 'a11y.chatInput', { name: BOT_NAME })}
-                className="flex-1 min-w-0 bg-transparent px-2 py-1 text-base text-label placeholder:text-label-3 focus:outline-none focus-visible:outline-none disabled:opacity-50"
+                className={`flex-1 min-w-0 bg-transparent ${speechReady.listen ? 'ps-0.5' : 'ps-2'} pe-2 py-1 text-base text-label placeholder:text-label-3 focus:outline-none focus-visible:outline-none disabled:opacity-50`}
               />
               <button
                 type="submit"
