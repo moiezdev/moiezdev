@@ -573,7 +573,7 @@ const ChatBot = () => {
                   type="button"
                   onClick={toggleListen}
                   disabled={busy}
-                  className={`${ICON_BTN} ${listening ? 'text-label bg-fill' : ''}`}
+                  className={`${ICON_BTN} -me-1.5 ${listening ? 'text-label bg-fill' : ''}`}
                   aria-pressed={listening}
                   aria-label={listening ? t(lang, 'a11y.doneSpeaking') : t(lang, 'a11y.speak')}
                   title={listening ? 'Tap when finished' : 'Speak'}
