@@ -86,6 +86,18 @@ const Cv = () => {
           </section>
 
           <section className="cv-section">
+            <h2>{cv.labels.skills}</h2>
+            <div className="cv-skills">
+              {cv.skillGroups.map((group) => (
+                <p className="cv-skill-row" key={group.category}>
+                  <strong>{group.category}: </strong>
+                  {group.items.join(' · ')}
+                </p>
+              ))}
+            </div>
+          </section>
+
+          <section className="cv-section">
             <h2>{cv.labels.experience}</h2>
             {cv.jobs.map((job) => (
               <div className="cv-job" key={job.id}>
@@ -106,18 +118,6 @@ const Cv = () => {
                 </ul>
               </div>
             ))}
-          </section>
-
-          <section className="cv-section">
-            <h2>{cv.labels.skills}</h2>
-            <div className="cv-skills">
-              {cv.skillGroups.map((group) => (
-                <p className="cv-skill-row" key={group.category}>
-                  <strong>{group.category}: </strong>
-                  {group.items.join(' · ')}
-                </p>
-              ))}
-            </div>
           </section>
 
           <section className="cv-section cv-edu">
