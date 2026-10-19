@@ -3,8 +3,9 @@
  *
  * Plain ESM with no dependencies, so both the app (live tab titles) and the build
  * (static HTML per route, read by LinkedIn/WhatsApp/X/Google) use it.
- * Titles read "<page> · Moieez ur Rehman"; descriptions aim for 120–160
- * characters and only state facts from src/data and the CV.
+ * Titles read "<page> · Moieez ur Rehman" and stay within 60 characters (X,
+ * LinkedIn and Google cut longer ones); descriptions stay within 125 characters,
+ * about what a mobile share preview shows, and only state facts from src/data and the CV.
  */
 import { getExperienceYears } from '../utils/experience.js';
 
@@ -16,8 +17,8 @@ export const ROLE_TITLE = 'AI Engineer | Senior Full-Stack Engineer (TypeScript,
 const years = getExperienceYears();
 
 const HOME = {
-  title: `${SITE_NAME} · ${ROLE_TITLE}`,
-  description: `AI Engineer and Senior Full-Stack Engineer in Riyadh. ${years} years building LLM features, POS, payments and loyalty in TypeScript with NestJS and React/Next.js.`,
+  title: `${SITE_NAME} · AI Engineer & Full-Stack Engineer`,
+  description: `AI Engineer in Riyadh with ${years} years of TypeScript, NestJS and React, building LLM features, POS, payments and loyalty.`,
   image: '/og/home.jpg',
 };
 
@@ -26,29 +27,29 @@ const PAGES = {
   '/works': {
     title: `Work · ${SITE_NAME}`,
     description:
-      'Case studies of products built end to end: a restaurant POS and loyalty platform for Gulf retail, flight booking on Sabre and Amadeus, SaaS and websites.',
+      'Case studies of products built end to end: a POS and loyalty platform for Gulf retail, flight booking, AI chatbots and SaaS.',
     image: '/og/works.jpg',
   },
   '/experience': {
     title: `Experience · ${SITE_NAME}`,
-    description: `${years} years of engineering roles in Saudi Arabia, Portugal and Pakistan, from restaurant POS, loyalty and wallets at TWLM to internal dashboards at ACCIONA.`,
+    description: `${years} years of engineering in Saudi Arabia, Portugal and Pakistan, from POS, loyalty and wallets at TWLM to ACCIONA.`,
     image: '/og/experience.jpg',
   },
   '/about': {
     title: `About · ${SITE_NAME}`,
     description:
-      'AI Engineer and Senior Full-Stack Engineer in Riyadh who owns features end to end: LLM search, POS, payments (MyFatoorah, Moyasar), Apple/Google Wallet and CRM.',
+      'AI Engineer in Riyadh who owns features end to end: LLM search, POS, payments, Apple/Google Wallet passes and CRM.',
     image: '/og/about.jpg',
   },
   '/contact': {
     title: `Contact · ${SITE_NAME}`,
     description:
-      'Get in touch with Moieez ur Rehman, AI Engineer and Senior Full-Stack Engineer, available for AI engineer and full-stack roles in Riyadh, the GCC or remote.',
+      'Hiring an AI Engineer? Get in touch with Moieez ur Rehman, open to AI and full-stack roles in Riyadh, the GCC or remote.',
     image: '/og/contact.jpg',
   },
   '/cv': {
     title: `CV · ${SITE_NAME}`,
-    description: `Résumé of Moieez ur Rehman, AI Engineer and Senior Full-Stack Engineer in Riyadh: ${years} years of TypeScript, Node.js/NestJS, React/Next.js and LLM features.`,
+    description: `Résumé of Moieez ur Rehman, AI Engineer in Riyadh: ${years} years of TypeScript, NestJS, React/Next.js and LLM features.`,
     image: '/og/cv.jpg',
   },
 };
@@ -62,82 +63,82 @@ const PROJECTS = {
   'twlm-pos': {
     title: 'TWLM POS & Loyalty Platform',
     description:
-      'Restaurant POS and CMS platform for Gulf retail with Gulf tax, inventory, loyalty, gift cards and Apple/Google Wallet passes, built with NestJS and React.',
+      'Restaurant POS for Gulf retail with tax, inventory, loyalty, gift cards and Apple/Google Wallet passes, on NestJS and React.',
   },
   'company-support-chatbot': {
     title: 'Company Support Chatbot (AI)',
     description:
-      'An AI chatbot built with OpenRouter (DeepSeek) that helps a client’s users learn about the company’s profile and services and get support in real time.',
+      'An AI chatbot on OpenRouter (DeepSeek) that answers questions about a client’s company and services and gives live support.',
   },
   botfolio: {
     title: 'BotFolio — AI Portfolio Assistant',
     description:
-      'The AI assistant on moiez.dev: OpenRouter (DeepSeek) behind a Vercel serverless function that answers from the site’s own data, in English and Arabic.',
+      'The AI assistant on moiez.dev: OpenRouter (DeepSeek) in a Vercel function, answering from site data in English and Arabic.',
   },
   'design-dynamo': {
-    title: 'Design Dynamo — Interactive Designer Portfolio',
+    title: 'Design Dynamo — Designer Portfolio',
     description:
-      'A Photoshop-style portfolio for a Riyadh graphic and web designer: React with advanced scroll animations, an Express and PostgreSQL reviews API, EmailJS enquiries and a full Arabic RTL layout.',
+      'A Photoshop-style portfolio for a Riyadh designer: React scroll animations, an Express and PostgreSQL API and Arabic RTL.',
   },
   'aa-tourism': {
-    title: 'AATourism — Full-Stack Flight Booking Platform',
+    title: 'AATourism — Flight Booking Platform',
     description:
-      'Full-stack flight booking and tour-planning system: Laravel backend, Nuxt 2 web app and React Native mobile app with real-time Sabre and Amadeus flight data.',
+      'Flight booking and tour planning: Laravel backend, Nuxt web app and React Native app with live Sabre and Amadeus flight data.',
   },
   scmborba: {
     title: 'SCM Borba — Institutional Website',
     description:
-      'Full stack website for Santa Casa da Misericórdia de Borba, a Portuguese social services non-profit, built with Node.js, Express and Vue/Nuxt.',
+      'Website for Santa Casa da Misericórdia de Borba, a Portuguese social services non-profit, on Node.js, Express and Nuxt.',
   },
   'docean-fisheries': {
-    title: 'D’Ocean Fisheries — Seafood Supplier Website',
+    title: 'D’Ocean Fisheries — Seafood Website',
     description:
-      'Responsive site for a seafood supplier: live, frozen and fillet categories, product sections and quote and contact forms, built with HTML5, CSS3 and JavaScript.',
+      'Responsive site for a seafood supplier with product categories and quote and contact forms, in HTML5, CSS3 and JavaScript.',
   },
   'my-portfolio': {
     title: 'Portfolio Website — moiez.dev',
     description:
-      'The source of moiez.dev: a React and Tailwind CSS portfolio with project case studies, an AI chatbot (OpenRouter, DeepSeek) and fast, responsive pages.',
+      'The source of moiez.dev: a React and Tailwind CSS portfolio with case studies and an AI chatbot (OpenRouter, DeepSeek).',
   },
   'gala-travels': {
     title: 'Gala Travels — Travel Booking Platform',
     description:
-      'Travel agency platform for booking flights, hotels, vacations and cruises (galatravels.com), with a Vue/Nuxt frontend and a Laravel backend for bookings.',
+      'Travel agency platform for booking flights, hotels, vacations and cruises (galatravels.com), on Vue/Nuxt and Laravel.',
   },
   'mian-travels': {
     title: 'Mian’s Travels — Flight Booking Platform',
     description:
-      'Flight booking site built at Creative Inter Tech on the Sabre API, with a Nuxt 2, Vue and Buefy frontend for simple flight search, listings and booking forms.',
+      'Flight booking site on the Sabre API, built at Creative Inter Tech with Nuxt 2, Vue and Buefy.',
   },
   'ain-saas': {
     title: 'Ain Saiss — Website',
     description:
-      'Responsive website for Ain Saiss (ain-saiss.ma) that presents its services and information clearly on desktop and mobile. Built with HTML5, SCSS and JavaScript.',
+      'Responsive website for Ain Saiss (ain-saiss.ma) that presents its services on desktop and mobile, in HTML5, SCSS and JS.',
   },
   'city-arrivals': {
-    title: 'City Arrivals — Luxury Car Booking Platform',
+    title: 'City Arrivals — Luxury Car Booking',
     description:
-      'Luxury car booking platform in Canada (cityarrivals.ca), built for B2B travel operations alongside AATourism, with responsive flows to schedule rides.',
+      'Luxury car booking platform in Canada (cityarrivals.ca) for B2B travel operations, with responsive flows to schedule rides.',
   },
   mtlnation: {
     title: 'MTLnation — Vue.js Web Platform',
     description:
-      'Vue.js website for MTLnation with reusable components, dynamic news, events and media sections, and forms to subscribe and connect, built with Vue and SCSS.',
+      'Vue.js website for MTLnation with reusable components, news, events and media sections, and forms to subscribe and connect.',
   },
   tdm: {
     title: 'TDM — Civil Engineering Company Website',
     description:
-      'Responsive corporate website for TDM, a civil engineering and project management company, with clear service, project and contact sections.',
+      'Responsive corporate website for TDM, a civil engineering and project management company, with service and project sections.',
   },
   eims: {
-    title: 'EIMS — AI-Powered Learning Management System',
+    title: 'EIMS — AI Learning Management System',
     description:
-      'In progress: an AI-powered learning management system that recommends courses from students’ interests and goals, on ASP.NET, Entity Framework and PostgreSQL.',
+      'In progress: an AI learning management system that recommends courses from students’ goals, on ASP.NET and PostgreSQL.',
   },
   lms: {
     title: 'LMS — Learning Management System',
     description:
-      'Learning management system in development, with quizzes, dashboards and progress tracking. Built with React, Redux Toolkit, Node.js, Express and MongoDB.',
+      'Learning management system in development, with quizzes, dashboards and progress tracking, on React, Node.js and MongoDB.',
   },
 };
 
@@ -146,7 +147,7 @@ function projectBlurb(project) {
   for (const block of project.description || []) {
     const lines = Array.isArray(block) ? block : [block];
     const line = lines.find((l) => typeof l === 'string' && l.length > 40);
-    if (line) return line.length > 160 ? `${line.slice(0, 157).trimEnd()}…` : line;
+    if (line) return line.length > 125 ? `${line.slice(0, 122).trimEnd()}…` : line;
   }
   return project.subtitle || '';
 }

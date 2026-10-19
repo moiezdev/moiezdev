@@ -48,27 +48,29 @@ async function imageData(path) {
   return null;
 }
 
-const chip = (text, dark = false) =>
-  h(
-    'div',
-    {
-      padding: '7px 15px',
-      borderRadius: 99,
-      fontSize: 16,
-      fontWeight: 600,
-      background: dark ? GRAPHITE : '#ffffff',
-      color: dark ? '#ffffff' : GRAPHITE,
-      boxShadow: dark ? 'none' : '0 0 0 1px rgba(0,0,0,0.08)',
-      marginRight: 8,
-      marginTop: 8,
-    },
-    text,
-  );
-
 const titleSize = (t) => (t.length <= 12 ? 66 : t.length <= 18 ? 58 : t.length <= 26 ? 50 : 44);
 
+// the fonts are a Latin subset without arrows, so the arrow is drawn
+const ARROW_URI = `data:image/svg+xml;base64,${Buffer.from(
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M3 10h13M11 4.5 16.5 10 11 15.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+).toString('base64')}`;
+
+/** The call to action: a dark button saying what the link opens, then where it goes. */
+const cta = (label, url) =>
+  h(
+    'div',
+    { marginTop: 30, alignItems: 'center' },
+    h(
+      'div',
+      { alignItems: 'center', padding: '15px 26px', borderRadius: 99, background: INK, color: '#ffffff', fontSize: 22, fontWeight: 600, boxShadow: '0 10px 22px rgba(29,29,31,0.22)' },
+      label,
+      img(ARROW_URI, { width: 20, height: 20, marginLeft: 12 }),
+    ),
+    url ? h('div', { marginLeft: 18, fontSize: 19, fontWeight: 600, color: MUTED }, url) : null,
+  );
+
 /** Left text column shared by every card. */
-const textColumn = ({ eyebrow, title, sub, chips = [], url, width = 470, size }) =>
+const textColumn = ({ eyebrow, title, sub, action, url, width = 470, size }) =>
   h(
     'div',
     { flexDirection: 'column', width, height: '100%', padding: '68px 0 64px 72px' },
@@ -86,7 +88,7 @@ const textColumn = ({ eyebrow, title, sub, chips = [], url, width = 470, size })
       ...title.split('\n').map((line) => h('div', {}, line)),
     ),
     sub ? h('div', { marginTop: 16, fontSize: 23, lineHeight: 1.32, color: MUTED, fontWeight: 400 }, sub) : null,
-    h('div', { marginTop: 22, flexWrap: 'wrap' }, url ? chip(url, true) : null, ...chips.map((c) => chip(c))),
+    cta(action, url),
   );
 
 const frame = (src, style) =>
@@ -190,13 +192,19 @@ async function homeCard() {
         height: 130,
         background: `linear-gradient(180deg, rgba(238,240,244,0) 0%, ${BG} 100%)`,
       }),
+      h(
+        'div',
+        { position: 'absolute', left: 24, bottom: 24, alignItems: 'center', padding: '10px 18px', borderRadius: 99, background: '#ffffff', fontSize: 18, fontWeight: 600, color: INK, boxShadow: '0 6px 16px rgba(30,35,50,0.12), 0 0 0 1px rgba(0,0,0,0.06)' },
+        h('div', { width: 11, height: 11, borderRadius: 99, background: '#22a447', marginRight: 10 }),
+        'Open to AI Engineer roles',
+      ),
     ),
     textColumn({
-      eyebrow: 'AI Engineer | Senior Full-Stack Engineer',
+      eyebrow: 'AI Engineer · Riyadh',
       title: 'Moieez\nur Rehman',
       size: 78,
-      sub: 'Building LLM features, POS, payments and loyalty products end to end, in Riyadh.',
-      chips: ['TypeScript · Node.js/NestJS · React/Next.js'],
+      sub: 'I build LLM features and the products around them, end to end in TypeScript.',
+      action: 'See my work',
       url: 'moiez.dev',
       width: 640,
     }),
@@ -244,8 +252,8 @@ async function buildCard(path) {
         eyebrow: 'Case study',
         title: project.title,
         sub: project.subtitle,
-        chips: (project.technologies || []).slice(0, 2),
-        url: `moiez.dev/works/${project.id}`,
+        action: 'Read the case study',
+        url: 'moiez.dev',
       }),
     );
   }
@@ -260,7 +268,8 @@ async function buildCard(path) {
         eyebrow: 'Selected work',
         title: 'All work.',
         sub: `${projects.length} products, platforms and sites — POS, travel, SaaS and more.`,
-        url: 'moiez.dev/works',
+        action: 'Browse case studies',
+        url: 'moiez.dev',
       }),
     );
   }
@@ -289,12 +298,13 @@ async function buildCard(path) {
     return card(
       list,
       path === '/cv'
-        ? textColumn({ eyebrow: 'Résumé', title: 'Moieez\nur Rehman', sub: `AI Engineer | Senior Full-Stack Engineer · ${years()}+ years`, url: 'moiez.dev/cv' })
+        ? textColumn({ eyebrow: 'Résumé', title: 'Moieez\nur Rehman', sub: `AI Engineer in Riyadh · ${years()}+ years`, action: 'Download my CV', url: 'moiez.dev' })
         : textColumn({
             eyebrow: 'Experience',
             title: `${years()}+ years\nof shipping.`,
             sub: 'Engineering roles across retail and SaaS — POS, loyalty, wallets and AI.',
-            url: 'moiez.dev/experience',
+            action: 'See my experience',
+            url: 'moiez.dev',
           }),
     );
   }
@@ -311,7 +321,7 @@ async function buildCard(path) {
           ),
         ),
       ),
-      textColumn({ eyebrow: 'Contact', title: 'Let’s build\nsomething great.', sub: 'Available for AI engineer and full-stack roles (Riyadh, GCC, remote).', url: 'moiezdev@gmail.com' }),
+      textColumn({ eyebrow: 'Contact', title: 'Let’s build\nsomething great.', sub: 'Open to AI engineer and full-stack roles (Riyadh, GCC, remote).', action: 'Get in touch', url: 'moiezdev@gmail.com' }),
     );
   }
 
@@ -330,8 +340,9 @@ async function buildCard(path) {
     textColumn({
       eyebrow: 'About',
       title: 'The person\nbehind the work.',
-      sub: 'AI Engineer | Senior Full-Stack Engineer in Riyadh.',
-      url: 'moiez.dev/about',
+      sub: 'AI Engineer in Riyadh who owns features from idea to deploy.',
+      action: 'Meet Moieez',
+      url: 'moiez.dev',
     }),
   );
 }
