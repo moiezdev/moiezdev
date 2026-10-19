@@ -16,10 +16,18 @@ export const ROLE_TITLE = 'AI Engineer | Senior Full-Stack Engineer (TypeScript,
 
 const years = getExperienceYears();
 
+/**
+ * Bumped whenever the card design changes: share previews and audit tools cache
+ * og:image by URL, so a new query string makes them fetch the new card.
+ */
+const OG_VERSION = '2';
+
 const HOME = {
   title: `${SITE_NAME} · AI Engineer & Full-Stack Engineer`,
   description: `AI Engineer in Riyadh with ${years} years of TypeScript, NestJS and React, building LLM features, POS, payments and loyalty.`,
   image: '/og/home.jpg',
+  // describes the card, including the call to action printed on it
+  imageAlt: 'Moieez ur Rehman, AI Engineer in Riyadh. Hire me at moiez.dev',
 };
 
 const PAGES = {
@@ -286,7 +294,8 @@ export function jsonLdFor(meta) {
  * marked `data-seo` so they can be found again.
  */
 export function headTags(meta) {
-  const image = `${SITE_URL}${meta.image}`;
+  const image = `${SITE_URL}${meta.image}?v=${OG_VERSION}`;
+  const imageAlt = meta.imageAlt || meta.title;
   const ld = jsonLdFor(meta);
   const m = (key, name, content) => ['meta', { [key]: name, content }];
   return [
@@ -302,12 +311,12 @@ export function headTags(meta) {
     m('property', 'og:image:type', 'image/jpeg'),
     m('property', 'og:image:width', '1200'),
     m('property', 'og:image:height', '630'),
-    m('property', 'og:image:alt', meta.title),
+    m('property', 'og:image:alt', imageAlt),
     m('name', 'twitter:card', 'summary_large_image'),
     m('name', 'twitter:title', meta.title),
     m('name', 'twitter:description', meta.description),
     m('name', 'twitter:image', image),
-    m('name', 'twitter:image:alt', meta.title),
+    m('name', 'twitter:image:alt', imageAlt),
     ...(ld ? [['script', { type: 'application/ld+json' }, JSON.stringify(ld)]] : []),
   ];
 }
