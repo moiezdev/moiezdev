@@ -91,7 +91,7 @@ const textColumn = ({ eyebrow, title, sub, chips = [], action, url, width = 470,
       { marginTop: 12, fontSize: size || titleSize(title.replace(/\n/g, '')), fontWeight: 700, lineHeight: 1.04, letterSpacing: -2, color: INK, flexDirection: 'column' },
       ...title.split('\n').map((line) => h('div', {}, line)),
     ),
-    sub ? h('div', { marginTop: 16, fontSize: 23, lineHeight: 1.32, color: MUTED, fontWeight: 400 }, sub) : null,
+    sub ? h('div', { marginTop: 16, maxWidth: 568, fontSize: 23, lineHeight: 1.32, color: MUTED, fontWeight: 400 }, sub) : null,
     h('div', { marginTop: 22, flexWrap: 'wrap' }, url ? chip(action ? [`${action} · ${url}`, img(ARROW_URI, { width: 15, height: 15, marginLeft: 8 })] : url, true) : null, ...chips.map((c) => chip(c))),
   );
 
@@ -203,8 +203,9 @@ async function homeCard() {
       size: 78,
       sub: 'Building LLM features, POS, payments and loyalty products end to end, in Riyadh.',
       chips: ['TypeScript · Node.js/NestJS · .NET · React/Next.js'],
+      action: 'Hire me',
       url: 'moiez.dev',
-      width: 640,
+      width: 720,
     }),
   );
 }
