@@ -1250,3 +1250,23 @@ html[dir='rtl'] .scroll-progress {
 @media (prefers-reduced-motion: reduce) {
   .stack-dot { display: none; }
 }
+
+/* nano swarm behind the hero (components/home/HeroSwarm.jsx) */
+.hero-swarm {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  animation: hero-swarm-in var(--dur-slow) var(--ease-out) both;
+}
+@keyframes hero-swarm-in {
+  from {
+    opacity: 0;
+  }
+}
+@media print {
+  .hero-swarm {
+    display: none;
+  }
+}
