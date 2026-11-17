@@ -41,11 +41,9 @@ export default function HeroSwarm() {
         const lag = Math.max(0, -h.top) * 0.3; // the formation trails the page a little
         if (!p || !p.width) return { x: h.left + h.width * 0.75, y: h.top + h.height * 0.45 + lag, size: 260 };
         if (window.innerWidth >= 1024) {
-          // a large cloud in the middle of the hero, nudged toward the copy so its dense
-          // core isn't against the card; cubes behind the text are dimmed (see textRects)
-          // and fade out before the card (see fadeRects). Mirrored in RTL.
-          const rtl = root.dir === 'rtl';
-          return { x: h.left + h.width * (rtl ? 0.55 : 0.45), y: h.top + h.height * 0.47 + lag, size: Math.min(350, h.height * 0.38) };
+          // a large cloud on the hero's exact centre; it dims behind the text (see
+          // textRects) and shows through the portrait's see-through panel (see veilRects)
+          return { x: h.left + h.width / 2, y: h.top + h.height / 2 + lag, size: Math.min(360, h.height * 0.4) };
         }
         // phones: a wide halo around the round avatar
         return { x: p.left + p.width / 2, y: p.top + p.height / 2 + lag, size: Math.min(window.innerWidth * 0.44, 180) };
@@ -70,9 +68,9 @@ export default function HeroSwarm() {
         if (header) out.push(header.getBoundingClientRect());
         return out;
       };
-      // the portrait card is opaque: on desktop the swarm fades out before its edge
+      // the portrait sits on a see-through panel: on desktop the swarm shows through it, dimmed
       // (on phones the halo wraps the round avatar instead)
-      const fadeRects = () => {
+      const veilRects = () => {
         if (window.innerWidth < 1024) return [];
         const r = portrait()?.getBoundingClientRect();
         return r && r.width && r.bottom > 0 ? [r] : [];
@@ -114,7 +112,7 @@ export default function HeroSwarm() {
         document.removeEventListener('pointerout', onLeave);
       };
 
-      const swarm = createNanoSwarm(canvas, { anchor, textRects, fadeRects, theme, scroll: () => sc, pointer: () => ptr });
+      const swarm = createNanoSwarm(canvas, { anchor, textRects, veilRects, theme, scroll: () => sc, pointer: () => ptr });
       const onResize = () => {
         swarm.resize();
         if (reduced) swarm.still();
