@@ -69,16 +69,6 @@
     "blur": "data:image/webp;base64,UklGRrwAAABXRUJQVlA4ILAAAACQBACdASoQABUAPu1iqU2ppaOiMAgBMB2JYgC7IExgtxff5UrmwFq1n+6iIAAA+W1L5oOgmlVb5FZdkh1Hdyd4O9tNJg+mKdp0XaU5OV6vGjsHEcUra89kR+gXRFaosvvip5I6payVHFwGfkpdqnoy8P6Sf4Kp9OQF/epS+6z8wIAU2UyRA/T3zTYEB0uUeKRPSrNVh/Ez47N6LNj5LkU75H+uGfEH9B2nMoUNKugAAA==",
     "hash": "01b8fab8e180"
   },
-  "/heroSection/hero-cartoon.webp": {
-    "w": 960,
-    "h": 1079,
-    "base": "/img/heroSection/hero-cartoon",
-    "widths": [
-      480,
-      960
-    ],
-    "hash": "9a20f857dc44"
-  },
   "/heroSection/hero-cutout.webp": {
     "w": 960,
     "h": 1079,

@@ -106,7 +106,6 @@ In Tailwind classes, use them as `duration-(--dur-base) ease-(--ease-spring)`. I
 | Piece | Where | What it shows about the work |
 | --- | --- | --- |
 | Live architecture explainer | Home, `home/ArchitectureGraph.jsx` | The real TWLM POS topology (Next.js → NestJS → PostgreSQL/Redis/BullMQ → Wallet/AI). Pick a scenario (order, wallet pass update, AI query) and a packet hops along the actual path, with a caption for each step. Shows system design, not just a list of tools. Data: `src/data/architecture.json`. |
-| Portrait ⇄ cartoon | Home hero, `home/Hero.jsx` | A transparent cut-out (so the swarm shows around it) that crossfades to a cartoon version on hover, focus or tap, at 400ms with no movement. The cursor shows "Toon me". A bit of personality. |
 | Card → case study view transition | Works, home, `ui/TransitionLink.jsx` | The card image morphs into the case-study hero, so you keep your place. Shows attention to navigation. |
 | Wallet pass flip | TWLM case study, `project/WalletPass.jsx` | The Apple/Google Wallet pass integration, front and back. |
 | Latency bar | TWLM case study, `project/LatencyBar.jsx` | The ~64% p95 API latency reduction, drawn to scale once. |

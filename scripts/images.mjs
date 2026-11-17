@@ -22,7 +22,6 @@ const json = (p) => JSON.parse(readFileSync(p, 'utf8'));
 const urls = new Set([
   '/heroSection/hero-img.webp',
   '/heroSection/hero-cutout.webp',
-  '/heroSection/hero-cartoon.webp',
   '/aboutSection/about-img.webp',
 ]);
 for (const id of json('src/data/projects/index.json')) {
