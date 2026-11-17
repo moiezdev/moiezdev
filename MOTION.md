@@ -92,13 +92,13 @@ In Tailwind classes, use them as `duration-(--dur-base) ease-(--ease-spring)`. I
 
 ## The nano swarm
 
-`components/home/HeroSwarm.jsx` mounts the engine from the home page. It doesn't touch the hero's markup. It adds one fixed canvas behind the page (the body goes transparent while it's there) and anchors the formation to the portrait.
+`components/home/HeroSwarm.jsx` mounts the engine from the home page. It doesn't touch the hero's markup. It adds one fixed canvas behind the page (the body goes transparent while it's there) and centres the formation in the hero.
 
 - **Formation**: about two thirds of the cubes form a large cloud around the portrait. About every 7s they burst apart and rebuild, top to bottom, into the next shape: sphere, ring, helix, `</>`, then a hollow cube. A band of light sweeps down through its mesh, and tumbling cubes catch the light now and then.
 - **Field**: the rest drift as a loose plexus across the whole viewport, linked by fainter hairlines.
 - **Scroll**: the formation turns with scroll position and trails the page slightly. A fast scroll stirs it, and it regroups when the page comes to rest. As the hero leaves, its cubes join the field across the rest of the page, and scrolling back pulls them home.
 - **Cursor**: the swarm parts around the pointer, the formation leans toward it, and hairlines link the pointer to the cubes nearby. A finger does the same on touch screens.
-- **Where**: on desktop, it forms a cloud around the portrait, mirrored in Arabic. On phones, it forms a wide halo around the round avatar.
+- **Where**: on desktop, the cloud sits in the middle of the hero, between the copy and the portrait, and dims where it passes behind text and the stats. On phones, it forms a wide halo around the round avatar.
 - **Off**: not rendered off home, stopped in hidden tabs, and still under reduced motion.
 
 ## Each functional piece, and what it proves

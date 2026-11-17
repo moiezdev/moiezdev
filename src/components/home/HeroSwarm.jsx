@@ -5,8 +5,8 @@ import { usePrefersReducedMotion } from '../../motion/reducedMotion';
  * The nano swarm behind the home page (see src/motion/nanoSwarm.js and MOTION.md).
  *
  * Renders nothing itself: once the browser is idle it loads the engine and adds
- * one fixed canvas behind the page. The formation is anchored to the hero
- * portrait, so the hero layout stays untouched. While the hero is on screen it
+ * one fixed canvas behind the page. The formation sits in the middle of the hero
+ * (it never touches the hero markup). While the hero is on screen it
  * runs at full rate; past it, the slow field runs at half rate. It stops when
  * the tab is hidden, and with reduced motion it draws one still frame.
  */
@@ -41,8 +41,9 @@ export default function HeroSwarm() {
         const lag = Math.max(0, -h.top) * 0.3; // the formation trails the page a little
         if (!p || !p.width) return { x: h.left + h.width * 0.75, y: h.top + h.height * 0.45 + lag, size: 260 };
         if (window.innerWidth >= 1024) {
-          // a large cloud around the portrait, reaching into the space around it
-          return { x: p.left + p.width / 2, y: p.top + p.height * 0.5 + lag, size: Math.max(260, p.height * 0.68) };
+          // a large cloud in the middle of the hero, between the copy and the portrait,
+          // so it's seen in full; cubes behind the copy are dimmed (see textRects)
+          return { x: h.left + h.width / 2, y: h.top + h.height * 0.47 + lag, size: Math.min(380, h.height * 0.4) };
         }
         // phones: a wide halo around the round avatar
         return { x: p.left + p.width / 2, y: p.top + p.height / 2 + lag, size: Math.min(window.innerWidth * 0.44, 180) };
@@ -52,6 +53,8 @@ export default function HeroSwarm() {
         const out = [];
         const r = copy()?.getBoundingClientRect();
         if (r && r.bottom > 0) out.push(r);
+        const stats = hero.querySelector('.grid-cols-3')?.getBoundingClientRect();
+        if (stats && stats.bottom > 0) out.push(stats);
         if (header) out.push(header.getBoundingClientRect());
         return out;
       };
