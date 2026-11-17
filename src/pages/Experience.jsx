@@ -49,7 +49,7 @@ const Experience = () => {
               <p className="mt-2 text-[15px] text-label-2">
                 {education.school}
                 <span className="mx-2 text-label-3">·</span>
-                {education.period}
+                <span className="whitespace-nowrap">{education.period}</span>
               </p>
             </div>
 

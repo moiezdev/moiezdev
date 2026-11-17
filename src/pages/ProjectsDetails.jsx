@@ -166,7 +166,7 @@ export default function ProjectDetail() {
       label: t('projects.status'),
       value: project.projectUrl || project.productUrl ? t('projects.statusLive') : project.githubUrl ? t('projects.statusOpen') : t('projects.statusPrivate'),
     },
-    { label: t('caseStudy.stack'), value: topTech(project.technologies, 4).join(' · ') },
+    { label: t('caseStudy.stack'), value: topTech(project.technologies, 4).join(' · '), wide: true },
   ].filter(Boolean);
 
   const links = [
@@ -209,7 +209,7 @@ export default function ProjectDetail() {
 
           <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-5 border-t border-separator pt-6 sm:grid-cols-3 lg:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]">
             {facts.map((f) => (
-              <div key={f.label} className="min-w-0">
+              <div key={f.label} className={`min-w-0 ${f.wide ? 'col-span-2 sm:col-span-1' : ''}`}>
                 <dt className="text-[12px] font-semibold uppercase tracking-wider text-label-3">{f.label}</dt>
                 <dd className="mt-1 text-[15px] font-medium text-label">{f.value}</dd>
               </div>
@@ -365,7 +365,14 @@ export default function ProjectDetail() {
                 >
                   <span data-vt-image className="relative size-16 md:size-20 shrink-0 overflow-hidden rounded-[14px] bg-surface-2 ring-1 ring-separator">
                     {p.screenshot === false ? (
-                      <span className="blueprint absolute inset-0 flex items-center justify-center text-[15px] font-bold text-label">{p.title}</span>
+                      <span className="blueprint absolute inset-0 flex items-center justify-center text-[20px] font-bold text-label" aria-hidden>
+                        {/* 64px tile: initials, not the full title, which overflowed */}
+                        {p.title
+                          .split(/\s+/)
+                          .slice(0, 2)
+                          .map((w) => w[0])
+                          .join('')}
+                      </span>
                     ) : (
                       <Img src={p.imageUrl} sizes="80px" className="size-full object-cover card-img" />
                     )}

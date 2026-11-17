@@ -233,7 +233,7 @@ const ContactSection = () => {
                     }`}
                   >
                     <span className="min-w-0">
-                      <span className="block text-[15px] text-label">{contact.platform}</span>
+                      <span className="block text-[15px] text-label">{t(`platforms.${contact.platform}`) || contact.platform}</span>
                       <span className="block text-[13px] text-label-2 truncate" dir="ltr">
                         {contact.handle}
                       </span>
@@ -245,7 +245,7 @@ const ContactSection = () => {
                   <button
                     type="button"
                     onClick={() => copyWithToast(contact.handle, t('contact.copied'))}
-                    aria-label={`${t('contact.copy')} ${contact.platform} (${contact.handle})`}
+                    aria-label={`${t('contact.copy')} ${t(`platforms.${contact.platform}`) || contact.platform} (${contact.handle})`}
                     className="copy-btn absolute top-1/2 end-10 -translate-y-1/2 inline-flex size-8 items-center justify-center rounded-full text-label-2 hover:text-label hover:bg-fill"
                   >
                     <svg className="w-4 h-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>

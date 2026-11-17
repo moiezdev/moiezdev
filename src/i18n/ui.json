@@ -192,7 +192,15 @@
       "media": "Connect",
       "rights": "All rights reserved.",
       "explore": "Explore",
+      "name": "Moieez ur Rehman",
       "crafted": "Designed & engineered by Moieez ur Rehman · React · Vite · Tailwind CSS"
+    },
+    "platforms": {
+      "WhatsApp": "WhatsApp",
+      "LinkedIn": "LinkedIn",
+      "Email": "Email",
+      "GitHub": "GitHub",
+      "Phone": "Phone"
     },
     "notFound": {
       "title": "Page Not Found",
@@ -729,7 +737,15 @@
       "media": "تواصل",
       "rights": "جميع الحقوق محفوظة.",
       "explore": "استكشف",
+      "name": "معيز الرحمن",
       "crafted": "صمّمه وهندسه معيز الرحمن · React · Vite · Tailwind CSS"
+    },
+    "platforms": {
+      "WhatsApp": "واتساب",
+      "LinkedIn": "لينكدإن",
+      "Email": "البريد الإلكتروني",
+      "GitHub": "GitHub",
+      "Phone": "الهاتف"
     },
     "notFound": {
       "title": "الصفحة غير موجودة",

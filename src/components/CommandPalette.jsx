@@ -146,7 +146,7 @@ const CommandPalette = () => {
         id: `l-${c.platform}`,
         group: t('cmd.links'),
         type: 'link',
-        title: c.platform,
+        title: t(`platforms.${c.platform}`) || c.platform,
         hint: c.handle,
         run: () => window.open(c.url, '_blank', 'noopener'),
       }));
