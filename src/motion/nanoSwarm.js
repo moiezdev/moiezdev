@@ -180,7 +180,8 @@ const CELL_ROW = 4096; // grid key = column * CELL_ROW + row
 
 const TEXT_DIM = 0.1; // alpha left behind text
 const TEXT_MARGIN = 28; // px over which cubes ease back in around text
-const FADE_MARGIN = 96; // px over which cubes fade out before an opaque card
+const VEIL_DIM = 0.4; // alpha left behind a see-through panel (the portrait)
+const VEIL_MARGIN = 40; // px over which cubes ease back in around it
 
 /** 0 inside the rect, easing up to 1 at `margin` px outside it (smoothstep). */
 function clearance(x, y, r, margin) {
@@ -198,19 +199,19 @@ function clearance(x, y, r, margin) {
  * @param {{
  *   anchor: () => ({x:number,y:number,size:number}|null),
  *   textRects: () => DOMRect[],
- *   fadeRects?: () => DOMRect[],
+ *   veilRects?: () => DOMRect[],
  *   theme: () => 'dark'|'light',
  *   scroll: () => {progress:number, speed:number, y:number},
  *   pointer?: () => {x:number, y:number, active:boolean},
  * }} opts
  *   anchor: formation centre and radius in viewport px (null: no formation).
  *   textRects: the hero copy and the header, where cubes are dimmed so text stays readable.
- *   fadeRects: opaque things the swarm passes behind (the portrait card). Cubes fade out
- *     softly as they approach, so the card never cuts the swarm off with a hard edge.
+ *   veilRects: see-through panels the swarm passes behind (the portrait). Cubes there are
+ *     dimmed less than behind text, so the swarm shows through like frosted glass.
  *   scroll.progress: 0 with the hero at the top, 1 once it has scrolled away.
  *   pointer: the cursor (or a finger while it's down), in viewport px.
  */
-export function createNanoSwarm(canvas, { anchor, textRects, fadeRects = () => [], theme, scroll, pointer = () => ({ x: 0, y: 0, active: false }) }) {
+export function createNanoSwarm(canvas, { anchor, textRects, veilRects = () => [], theme, scroll, pointer = () => ({ x: 0, y: 0, active: false }) }) {
   const ctx = canvas.getContext('2d');
   let W = 0;
   let H = 0;
@@ -278,7 +279,7 @@ export function createNanoSwarm(canvas, { anchor, textRects, fadeRects = () => [
     const look = LOOK[th];
     const a = anchor();
     const dim = textRects();
-    const fade = fadeRects();
+    const veil = veilRects();
     const { progress: sp, speed, y: scrollY } = scroll();
 
     // the field sits deeper than the content, so it drifts up slower than the page
@@ -383,8 +384,8 @@ export function createNanoSwarm(canvas, { anchor, textRects, fadeRects = () => [
       // keep the hero copy readable: almost gone behind text, eased in over a short margin
       let keep = 1;
       for (let r = 0; r < dim.length; r++) keep = Math.min(keep, TEXT_DIM + (1 - TEXT_DIM) * clearance(P[j], P[j + 1], dim[r], TEXT_MARGIN));
-      // and fade out before opaque cards, instead of being clipped by their edge
-      for (let r = 0; r < fade.length; r++) keep = Math.min(keep, clearance(P[j], P[j + 1], fade[r], FADE_MARGIN));
+      // and show through, dimmed, behind the see-through portrait panel
+      for (let r = 0; r < veil.length; r++) keep = Math.min(keep, VEIL_DIM + (1 - VEIL_DIM) * clearance(P[j], P[j + 1], veil[r], VEIL_MARGIN));
       A[i] *= keep;
     }
 

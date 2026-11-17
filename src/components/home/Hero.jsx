@@ -26,7 +26,7 @@ const Portrait = ({ alt }) => (
       className="hidden lg:block absolute -inset-10 -z-10 opacity-70 blur-3xl"
       style={{ background: 'radial-gradient(50% 50% at 50% 45%, var(--glow-a), transparent 70%)' }}
     />
-    <div className="relative overflow-hidden rounded-full lg:rounded-[32px] aspect-square lg:aspect-[4/5] ring-1 ring-separator bg-[radial-gradient(75%_60%_at_50%_42%,var(--color-surface-2)_0%,var(--color-bg)_100%)]">
+    <div className="relative overflow-hidden rounded-full lg:rounded-[32px] aspect-square lg:aspect-[4/5] ring-1 ring-separator bg-[color-mix(in_srgb,var(--color-surface-2)_45%,transparent)] lg:backdrop-blur-[2px]">
       <Img
         src="/heroSection/hero-img.webp"
         alt={alt}
