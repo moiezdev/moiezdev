@@ -1251,22 +1251,32 @@ html[dir='rtl'] .scroll-progress {
   .stack-dot { display: none; }
 }
 
-/* nano swarm behind the hero (components/home/HeroSwarm.jsx) */
-.hero-swarm {
-  position: absolute;
+/* nano swarm behind the home page (components/home/HeroSwarm.jsx).
+   The canvas sits at z-index -1, under the body, so the body goes transparent
+   while it's there (html keeps the same background colour). Tinted bands let a
+   little of it through; cards stay opaque. */
+.nano-field {
+  position: fixed;
   inset: 0;
+  z-index: -1;
   width: 100%;
   height: 100%;
   pointer-events: none;
-  animation: hero-swarm-in var(--dur-slow) var(--ease-out) both;
+  animation: nano-field-in var(--dur-slow) var(--ease-out) both;
 }
-@keyframes hero-swarm-in {
+@keyframes nano-field-in {
   from {
     opacity: 0;
   }
 }
+html.has-nano-field body {
+  background-color: transparent;
+}
+html.has-nano-field .band-tint {
+  background-color: color-mix(in srgb, var(--color-surface-2) 78%, transparent);
+}
 @media print {
-  .hero-swarm {
+  .nano-field {
     display: none;
   }
 }
