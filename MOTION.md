@@ -9,7 +9,7 @@ Motion on moiez.dev has two jobs. **Most of it explains**: it shows how a system
 - Every page renders complete on first paint, in prerendered HTML, with no JavaScript. Motion only ever enhances what is already there.
 - An element is hidden for a reveal only when it is fully below the fold *and* the browser can observe it.
 - Text never moves for effect. There's no parallax, typewriter or word-by-word stagger on copy. Text is placed once and stays put.
-- Ambient motion sits behind content, never in front of it. Where it passes behind text (the hero copy, the header) it drops to a quarter of its opacity. Cards stay opaque, and tinted bands let only a little through.
+- Ambient motion sits behind content, never in front of it. Where it passes behind text (the hero's lines of copy, the stats, the header) it drops to a tenth of its opacity, eased in over a short margin so there's no visible box. Cards stay opaque. Where the swarm meets one in the hero (the portrait), it fades out over about 100px before the edge instead of being cut off by it. Tinted bands let only a little through.
 
 ### 2. Two kinds of motion
 
@@ -98,7 +98,7 @@ In Tailwind classes, use them as `duration-(--dur-base) ease-(--ease-spring)`. I
 - **Field**: the rest drift as a loose plexus across the whole viewport, linked by fainter hairlines.
 - **Scroll**: the formation turns with scroll position and trails the page slightly. A fast scroll stirs it, and it regroups when the page comes to rest. As the hero leaves, its cubes join the field across the rest of the page, and scrolling back pulls them home.
 - **Cursor**: the swarm parts around the pointer, the formation leans toward it, and hairlines link the pointer to the cubes nearby. A finger does the same on touch screens.
-- **Where**: on desktop, the cloud sits in the middle of the hero, between the copy and the portrait, and dims where it passes behind text and the stats. On phones, it forms a wide halo around the round avatar.
+- **Where**: on desktop, the cloud sits in the middle of the hero, nudged toward the copy (mirrored in RTL). It almost vanishes behind the lines of text and the stats, and fades out before the portrait card. The card's fill fades to the page colour at its edges, so it reads as part of the page rather than a grey box. On phones, it forms a wide halo around the round avatar.
 - **Off**: not rendered off home, stopped in hidden tabs, and still under reduced motion.
 
 ## Each functional piece, and what it proves
