@@ -6,7 +6,7 @@ import { usePrefersReducedMotion } from '../../motion/reducedMotion';
  *
  * Renders nothing itself: once the browser is idle it loads the engine and adds
  * one fixed canvas behind the page. The formation sits in the middle of the hero
- * portrait, so the hero layout stays untouched. While the hero is on screen it
+ * (it never touches the hero markup). While the hero is on screen it
  * runs at full rate; past it, the slow field runs at half rate. It stops when
  * the tab is hidden, and with reduced motion it draws one still frame.
  */
