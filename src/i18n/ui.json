@@ -40,6 +40,8 @@
       "statYearsLabel": "Years shipping software",
       "resumeShort": "Résumé",
       "portraitAlt": "Moieez ur Rehman",
+      "portraitToon": "Show the cartoon version",
+      "portraitToonAlt": "Cartoon illustration of Moieez ur Rehman",
       "stack": "TypeScript · Node.js/NestJS · React/Next.js"
     },
     "about": {
@@ -487,7 +489,8 @@
     },
     "cursor": {
       "view": "View ↗",
-      "flip": "Flip pass"
+      "flip": "Flip pass",
+      "toon": "Toon me"
     },
     "explainer": {
       "label": "Scenario",
@@ -581,6 +584,8 @@
       "statYearsLabel": "سنوات في بناء البرمجيات",
       "resumeShort": "السيرة الذاتية",
       "portraitAlt": "معيز الرحمن",
+      "portraitToon": "إظهار النسخة الكرتونية",
+      "portraitToonAlt": "رسم كرتوني لمعيز الرحمن",
       "stack": "TypeScript · Node.js/NestJS · React/Next.js"
     },
     "about": {
@@ -1032,7 +1037,8 @@
     },
     "cursor": {
       "view": "عرض ↖",
-      "flip": "اقلب البطاقة"
+      "flip": "اقلب البطاقة",
+      "toon": "كرتوني"
     },
     "explainer": {
       "label": "السيناريو",

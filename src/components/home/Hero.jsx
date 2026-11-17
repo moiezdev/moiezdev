@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Img from '../ui/Img';
 import Button from '../ui/Button';
 import ExternalIcon from '../ui/ExternalIcon';
@@ -15,28 +16,48 @@ const Stat = ({ value, label }) => (
 );
 
 /**
- * One portrait element for every breakpoint, so the browser downloads one image:
- * a 112px face crop on phones, a large lit panel beside the copy on desktop.
+ * The portrait: a transparent cut-out, so the nano swarm shows around it.
+ * Hovering (or focusing, or tapping on touch) crossfades to a cartoon version.
+ * One element for every breakpoint: a round face crop on phones, a frameless
+ * cut-out beside the copy on desktop.
  */
-const Portrait = ({ alt }) => (
-  <div className="relative order-first lg:order-none justify-self-center lg:justify-self-end w-full max-w-[112px] lg:max-w-[380px]">
-    {/* soft light behind the panel so a dark-shirt cut-out never melts into the page */}
-    <div
-      aria-hidden
-      className="hidden lg:block absolute -inset-10 -z-10 opacity-70 blur-3xl"
-      style={{ background: 'radial-gradient(50% 50% at 50% 45%, var(--glow-a), transparent 70%)' }}
-    />
-    <div className="relative overflow-hidden rounded-full lg:rounded-[32px] aspect-square lg:aspect-[4/5] ring-1 ring-separator bg-[linear-gradient(180deg,var(--color-surface)_0%,var(--color-surface-2)_100%)]">
-      <Img
-        src="/heroSection/hero-img.webp"
-        alt={alt}
-        sizes="(min-width: 1024px) 380px, 112px"
-        priority
-        className="absolute max-w-none w-[170%] start-[-35%] top-[-4%] h-auto lg:w-[112%] lg:start-[-6%] lg:top-auto lg:bottom-0"
+const Portrait = () => {
+  const { t } = useContent();
+  const [toon, setToon] = useState(false);
+  return (
+    <div className="relative order-first lg:order-none justify-self-center lg:justify-self-end w-full max-w-[112px] lg:max-w-[380px]">
+      {/* soft light behind the cut-out so a dark shirt never melts into the page */}
+      <div
+        aria-hidden
+        className="hidden lg:block absolute -inset-10 -z-10 opacity-70 blur-3xl"
+        style={{ background: 'radial-gradient(50% 50% at 50% 45%, var(--glow-a), transparent 70%)' }}
       />
+      <button
+        type="button"
+        aria-pressed={toon}
+        aria-label={t('hero.portraitToon')}
+        data-cursor-label={t('cursor.toon')}
+        data-toon={toon}
+        onClick={() => setToon((v) => !v)}
+        className="portrait-swap relative block w-full overflow-hidden lg:overflow-visible rounded-full lg:rounded-none aspect-square lg:aspect-[960/1079] ring-1 ring-separator lg:ring-0 bg-[linear-gradient(180deg,var(--color-surface)_0%,var(--color-surface-2)_100%)] lg:bg-none"
+      >
+        <Img
+          src="/heroSection/hero-cutout.webp"
+          alt={t('hero.portraitAlt')}
+          sizes="(min-width: 1024px) 380px, 112px"
+          priority
+          className="portrait-photo absolute max-w-none w-[190%] start-[-45%] top-[-2%] h-auto lg:w-full lg:start-0 lg:top-0"
+        />
+        <Img
+          src="/heroSection/hero-cartoon.webp"
+          alt={t('hero.portraitToonAlt')}
+          sizes="(min-width: 1024px) 380px, 112px"
+          className="portrait-toon absolute max-w-none w-[190%] start-[-45%] top-[-2%] h-auto lg:w-full lg:start-0 lg:top-0"
+        />
+      </button>
     </div>
-  </div>
-);
+  );
+};
 
 const Hero = () => {
   const { t } = useContent();
@@ -99,7 +120,7 @@ const Hero = () => {
           </div>
         </div>
 
-        <Portrait alt={t('hero.portraitAlt')} />
+        <Portrait />
       </div>
 
       {/* stats: a full-width row under copy and portrait, so the portrait centres on the copy alone */}
