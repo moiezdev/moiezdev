@@ -206,6 +206,11 @@ html:not([lang='ar']) [lang='ar'] {
   letter-spacing: -0.015em;
   color: var(--color-label-2);
 }
+/* hero subtitle: a step under the headline, so the two don't compete */
+.lead.is-hero {
+  font-size: clamp(1.125rem, 1.6vw, 1.25rem);
+  line-height: 1.5;
+}
 .eyebrow {
   font-size: 0.8125rem;
   font-weight: 600;
@@ -258,6 +263,10 @@ html[lang='ar'] .headline-2 {
 html[lang='ar'] .lead {
   font-size: clamp(1.0625rem, 1.7vw, 1.3125rem);
   line-height: 1.65;
+}
+html[lang='ar'] .lead.is-hero {
+  font-size: clamp(1.125rem, 1.5vw, 1.25rem);
+  line-height: 1.75;
 }
 /* small caps-style labels: no uppercase tracking, and a touch larger */
 html[lang='ar'] .eyebrow {
