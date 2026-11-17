@@ -30,8 +30,8 @@
       "statLatency": "Lower API latency",
       "name": "Moieez ur Rehman",
       "eyebrow": "AI Engineer | Senior Full-Stack Engineer (TypeScript, Node.js/NestJS, React/Next.js)",
-      "title": "I design and build full-stack products — from architecture to AI.",
-      "subtitle": "{{years}} years shipping TypeScript products across retail, travel and SaaS — LLM features with OpenRouter (DeepSeek), POS & payments, booking engines, e-commerce and dashboards.",
+      "title": "I build software and AI‑powered solutions.",
+      "subtitle": "{{years}} years shipping TypeScript products across retail, travel and SaaS — LLM features with OpenRouter (DeepSeek), POS & payments, booking engines, e‑commerce and dashboards.",
       "viewWork": "View my work",
       "bookCall": "Book a 15-min call",
       "viewResume": "View résumé",
@@ -192,7 +192,15 @@
       "media": "Connect",
       "rights": "All rights reserved.",
       "explore": "Explore",
+      "name": "Moieez ur Rehman",
       "crafted": "Designed & engineered by Moieez ur Rehman · React · Vite · Tailwind CSS"
+    },
+    "platforms": {
+      "WhatsApp": "WhatsApp",
+      "LinkedIn": "LinkedIn",
+      "Email": "Email",
+      "GitHub": "GitHub",
+      "Phone": "Phone"
     },
     "notFound": {
       "title": "Page Not Found",
@@ -563,7 +571,7 @@
       "statLatency": "زمن استجابة أقل للواجهات",
       "name": "معيز الرحمن",
       "eyebrow": "مهندس ذكاء اصطناعي | مهندس برمجيات متكامل أول ⁦(TypeScript, Node.js/NestJS, React/Next.js)⁩",
-      "title": "أصمّم وأبني منتجات متكاملة — من المعمارية حتى الذكاء الاصطناعي.",
+      "title": "أبني البرمجيات والحلول المدعومة بالذكاء الاصطناعي.",
       "subtitle": "{{years}} سنوات في بناء منتجات TypeScript في التجزئة والسفر والبرمجيات كخدمة — ميزات النماذج اللغوية عبر OpenRouter (DeepSeek)، ونقاط البيع والمدفوعات، ومحركات الحجز، والتجارة الإلكترونية، ولوحات التحكم.",
       "viewWork": "شاهد أعمالي",
       "bookCall": "احجز مكالمة لمدة 15 دقيقة",
@@ -729,7 +737,15 @@
       "media": "تواصل",
       "rights": "جميع الحقوق محفوظة.",
       "explore": "استكشف",
+      "name": "معيز الرحمن",
       "crafted": "صمّمه وهندسه معيز الرحمن · React · Vite · Tailwind CSS"
+    },
+    "platforms": {
+      "WhatsApp": "واتساب",
+      "LinkedIn": "لينكدإن",
+      "Email": "البريد الإلكتروني",
+      "GitHub": "GitHub",
+      "Phone": "الهاتف"
     },
     "notFound": {
       "title": "الصفحة غير موجودة",

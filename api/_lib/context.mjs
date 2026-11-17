@@ -499,8 +499,8 @@ var experience_default = [
     period: "May 2019 \u2013 Mar 2020",
     current: false,
     companyUrl: "https://www.contentarcade.com/",
-    logo: "/company-logos/content-arcade.png",
-    logoWide: true,
+    logo: "/company-logos/content-arcade-mark.png",
+    logoOnLight: true,
     summary: "First professional role \u2014 responsive layouts and PHP/Laravel APIs.",
     stack: [
       "HTML5",

@@ -22,7 +22,8 @@ const TechChip = ({ name, className = '' }) => {
   const label = (
     <>
       {Icon && <Icon className="text-[13px] shrink-0" style={{ color: readableIconColor(skillIcon.color) }} aria-hidden />}
-      {name}
+      {/* tech names are Latin: keep ".NET" and "C#" from being reordered in RTL */}
+      <bdi dir="ltr">{name}</bdi>
     </>
   );
   if (!note && !usedIn.length) return <span className={`chip ${className}`}>{label}</span>;

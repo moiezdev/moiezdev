@@ -20,7 +20,7 @@ const Footer = () => {
       <div className="app-container pt-12 pb-6">
         <div className="grid gap-10 sm:grid-cols-3 pb-8 border-b border-separator">
           <div>
-            <p className="text-label text-[15px] font-semibold mb-1">Moieez ur Rehman</p>
+            <p className="text-label text-[15px] font-semibold mb-1">{t('footer.name')}</p>
             <p>{t('footer.role')}</p>
             <a className="mt-3 inline-block text-accent hover:underline" href="mailto:moiezdev@gmail.com">
               moiezdev@gmail.com
@@ -49,7 +49,7 @@ const Footer = () => {
                     // mail and phone links hand off to an app; only web links get a new tab
                     {...(/^https?:/.test(contact.url) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                   >
-                    {contact.platform}
+                    {t(`platforms.${contact.platform}`) || contact.platform}
                   </a>
                 </li>
               ))}

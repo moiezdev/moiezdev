@@ -19,7 +19,7 @@ const Stat = ({ value, label }) => (
  * a 112px face crop on phones, a large lit panel beside the copy on desktop.
  */
 const Portrait = ({ alt }) => (
-  <div className="relative order-first lg:order-none justify-self-center lg:justify-self-end w-full max-w-[112px] lg:max-w-[440px]">
+  <div className="relative order-first lg:order-none justify-self-center lg:justify-self-end w-full max-w-[112px] lg:max-w-[380px]">
     {/* soft light behind the panel so a dark-shirt cut-out never melts into the page */}
     <div
       aria-hidden
@@ -30,7 +30,7 @@ const Portrait = ({ alt }) => (
       <Img
         src="/heroSection/hero-img.webp"
         alt={alt}
-        sizes="(min-width: 1024px) 440px, 112px"
+        sizes="(min-width: 1024px) 380px, 112px"
         priority
         className="absolute max-w-none w-[170%] start-[-35%] top-[-4%] h-auto lg:w-[112%] lg:start-[-6%] lg:top-auto lg:bottom-0"
       />
@@ -43,7 +43,7 @@ const Hero = () => {
   const years = getExperienceYears();
 
   return (
-    <section data-hero className="relative px-5 pt-[104px] md:pt-[132px] lg:pt-[148px] pb-16 md:pb-24 overflow-hidden">
+    <section data-hero className="relative px-5 pt-[104px] md:pt-[132px] lg:pt-[124px] pb-16 md:pb-24 overflow-hidden">
       {/* ambient glow */}
       <div
         aria-hidden
@@ -54,30 +54,30 @@ const Hero = () => {
         }}
       />
 
-      <div className="relative app-container grid items-center gap-8 lg:gap-14 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
+      <div className="relative app-container grid items-center gap-8 lg:gap-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,380px)]">
         <div className="flex flex-col items-center text-center lg:items-start lg:text-start">
-          <span className="inline-flex items-center gap-2 rounded-full glass ring-1 ring-separator px-3.5 py-1.5 text-[13px] text-label-2">
+          <span className="inline-flex items-center gap-2 rounded-full glass ring-1 ring-separator px-4 py-1.5 text-[13px] md:text-[14px] text-label-2">
             <span className="status-dot" aria-hidden />
             {t('hero.available')}
           </span>
 
           <p className="mt-6 lg:mt-8 flex flex-col">
-            <span className="text-[17px] md:text-[19px] font-semibold tracking-[-0.02em] text-label leading-tight">
+            <span className="text-[18px] md:text-[22px] font-semibold tracking-[-0.02em] text-label leading-tight">
               {t('hero.name')}
             </span>
-            <span className="mt-1 text-[13px] md:text-[14px] font-medium text-label-2">{t('hero.eyebrow')}</span>
+            <span className="mt-1.5 text-[14px] md:text-[16px] font-medium text-label-2">{t('hero.eyebrow')}</span>
           </p>
 
-          <h1 className="headline-hero is-compact mt-6 max-w-3xl text-label text-balance">
+          <h1 className="headline-hero is-compact mt-5 lg:mt-6 max-w-3xl text-label text-balance">
             {t('hero.title')}
           </h1>
 
-          <p className="lead mt-6 max-w-2xl text-balance">{t('hero.subtitle', { years })}</p>
+          <p className="lead is-hero mt-5 lg:mt-6 max-w-2xl lg:max-w-none text-balance lg:text-pretty">{t('hero.subtitle', { years })}</p>
           <p className="mt-3 font-mono text-[13px] md:text-[14px] text-label-3" dir="ltr">
             {t('hero.stack')}
           </p>
 
-          <div className="mt-9 flex flex-wrap items-center justify-center lg:justify-start gap-3">
+          <div className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-3">
             <Button to="/works" primary size="lg">
               {t('hero.viewWork')}
             </Button>
@@ -97,16 +97,18 @@ const Hero = () => {
               </a>
             )}
           </div>
-
-          {/* stats */}
-          <div className="mt-12 md:mt-14 w-full max-w-3xl grid grid-cols-3 [&>*+*]:border-s [&>*+*]:border-separator lg:[&>*+*]:ps-6">
-            <Stat value={t('hero.statLatencyValue')} label={t('hero.statLatency')} />
-            <Stat value={t('hero.statTicketsValue')} label={t('hero.statTickets')} />
-            <Stat value={`${years}+`} label={t('hero.statYearsLabel')} />
-          </div>
         </div>
 
         <Portrait alt={t('hero.portraitAlt')} />
+      </div>
+
+      {/* stats: a full-width row under copy and portrait, so the portrait centres on the copy alone */}
+      <div className="relative app-container flex justify-center lg:justify-start">
+        <div className="mt-12 md:mt-16 w-full max-w-3xl grid grid-cols-3 [&>*+*]:border-s [&>*+*]:border-separator lg:[&>*+*]:ps-6">
+          <Stat value={t('hero.statLatencyValue')} label={t('hero.statLatency')} />
+          <Stat value={t('hero.statTicketsValue')} label={t('hero.statTickets')} />
+          <Stat value={`${years}+`} label={t('hero.statYearsLabel')} />
+        </div>
       </div>
     </section>
   );
