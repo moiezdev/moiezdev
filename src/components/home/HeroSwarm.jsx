@@ -2,12 +2,13 @@ import { useEffect } from 'react';
 import { usePrefersReducedMotion } from '../../motion/reducedMotion';
 
 /**
- * The nano swarm behind the hero (see src/motion/nanoSwarm.js and MOTION.md).
+ * The nano swarm behind the home page (see src/motion/nanoSwarm.js and MOTION.md).
  *
- * Renders nothing itself: once the browser is idle it loads the engine and puts
- * one canvas at the back of `[data-hero]`, anchored to the portrait, so the hero
- * layout stays untouched. It runs only while the hero is on screen and the tab
- * is visible; with reduced motion it draws one still formation.
+ * Renders nothing itself: once the browser is idle it loads the engine and adds
+ * one fixed canvas behind the page. The formation is anchored to the hero
+ * portrait, so the hero layout stays untouched. While the hero is on screen it
+ * runs at full rate; past it, the slow field runs at half rate. It stops when
+ * the tab is hidden, and with reduced motion it draws one still frame.
  */
 export default function HeroSwarm() {
   const reduced = usePrefersReducedMotion();
@@ -23,31 +24,39 @@ export default function HeroSwarm() {
       const { createNanoSwarm } = await import('../../motion/nanoSwarm.js');
       if (cancelled) return;
 
+      const root = document.documentElement;
       const canvas = document.createElement('canvas');
       canvas.setAttribute('aria-hidden', 'true');
-      canvas.className = 'hero-swarm';
-      hero.prepend(canvas);
+      canvas.className = 'nano-field';
+      document.body.prepend(canvas);
+      root.classList.add('has-nano-field');
 
-      const root = document.documentElement;
-      // the portrait's frame (the <img> sits inside a <picture>)
+      // the portrait's frame (the <img> sits inside a <picture>), and the copy beside it
       const portrait = () => hero.querySelector('img')?.closest('div');
+      const copy = () => hero.querySelector('.app-container > div');
       const anchor = () => {
         const h = hero.getBoundingClientRect();
+        if (h.bottom < -h.height) return null; // far past the hero: field only
         const p = portrait()?.getBoundingClientRect();
-        const rtl = root.dir === 'rtl';
-        if (!p || !p.width) return { x: rtl ? h.width * 0.2 : h.width * 0.8, y: h.height * 0.4, size: 150 };
+        const lag = Math.max(0, -h.top) * 0.3; // the formation trails the page a little
+        if (!p || !p.width) return { x: h.left + h.width * 0.75, y: h.top + h.height * 0.45 + lag, size: 260 };
         if (window.innerWidth >= 1024) {
-          // rises from behind the portrait's lower edge into the empty space below it,
-          // clear of the copy; it lags the page a little as you scroll
-          // (parallax on the swarm only, never on text)
-          const x = p.left - h.left + p.width * (rtl ? 0.38 : 0.62);
-          return { x, y: p.bottom - h.top + 55 + Math.max(0, -h.top) * 0.35, size: p.width * 0.36 };
+          // a large cloud around the portrait, reaching into the space around it
+          return { x: p.left + p.width / 2, y: p.top + p.height * 0.5 + lag, size: Math.max(260, p.height * 0.68) };
         }
-        // phones: a halo around the round avatar
-        return { x: p.left - h.left + p.width / 2, y: p.top - h.top + p.height / 2, size: p.width * 0.78 };
+        // phones: a wide halo around the round avatar
+        return { x: p.left + p.width / 2, y: p.top + p.height / 2 + lag, size: Math.min(window.innerWidth * 0.44, 180) };
+      };
+      const header = document.querySelector('header') || document.querySelector('nav');
+      const textRects = () => {
+        const out = [];
+        const r = copy()?.getBoundingClientRect();
+        if (r && r.bottom > 0) out.push(r);
+        if (header) out.push(header.getBoundingClientRect());
+        return out;
       };
       const theme = () => (root.dataset.theme === 'light' ? 'light' : 'dark');
-      // scroll state, sampled once per frame by the loop below
+
       const sc = { progress: 0, speed: 0, y: window.scrollY };
       const readScroll = (dt) => {
         const h = hero.getBoundingClientRect();
@@ -56,13 +65,39 @@ export default function HeroSwarm() {
         if (dt) sc.speed += ((y - sc.y) / dt - sc.speed) * Math.min(1, dt * 6);
         sc.y = y;
       };
-      const swarm = createNanoSwarm(canvas, { anchor, theme, scroll: () => sc });
 
-      const ro = new ResizeObserver(() => {
+      // the cursor, or a finger while it's on the screen
+      const ptr = { x: 0, y: 0, active: false };
+      const onMove = (e) => {
+        if (e.pointerType === 'touch' && e.type === 'pointermove' && !e.isPrimary) return;
+        ptr.x = e.clientX;
+        ptr.y = e.clientY;
+        ptr.active = true;
+      };
+      const onLeave = (e) => {
+        if (e.type === 'pointerout' && e.relatedTarget) return; // still inside the window
+        if (e.type === 'pointerup' && e.pointerType !== 'touch') return;
+        ptr.active = false;
+      };
+      window.addEventListener('pointermove', onMove, { passive: true });
+      window.addEventListener('pointerdown', onMove, { passive: true });
+      window.addEventListener('pointerup', onLeave, { passive: true });
+      window.addEventListener('pointercancel', onLeave, { passive: true });
+      document.addEventListener('pointerout', onLeave, { passive: true });
+      const unbindPointer = () => {
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerdown', onMove);
+        window.removeEventListener('pointerup', onLeave);
+        window.removeEventListener('pointercancel', onLeave);
+        document.removeEventListener('pointerout', onLeave);
+      };
+
+      const swarm = createNanoSwarm(canvas, { anchor, textRects, theme, scroll: () => sc, pointer: () => ptr });
+      const onResize = () => {
         swarm.resize();
         if (reduced) swarm.still();
-      });
-      ro.observe(hero);
+      };
+      window.addEventListener('resize', onResize);
 
       if (reduced) {
         readScroll(0);
@@ -70,10 +105,12 @@ export default function HeroSwarm() {
         // repaint the still frame when the theme or language flips
         const mo = new MutationObserver(() => swarm.still());
         mo.observe(root, { attributes: true, attributeFilter: ['data-theme', 'dir'] });
+        unbindPointer();
         cleanup = () => {
-          ro.disconnect();
           mo.disconnect();
+          window.removeEventListener('resize', onResize);
           canvas.remove();
+          root.classList.remove('has-nano-field');
         };
         return;
       }
@@ -81,38 +118,36 @@ export default function HeroSwarm() {
       let raf = 0;
       let last = 0;
       let t = 0;
-      let onScreen = false;
+      let skip = false;
       const loop = (now) => {
+        raf = requestAnimationFrame(loop);
+        // past the hero only the slow field is left: half the frames are plenty
+        if (sc.progress >= 1 && (skip = !skip)) return;
         const dt = last ? Math.min(0.05, (now - last) / 1000) : 1 / 60;
         last = now;
         t += dt;
         readScroll(dt);
         swarm.step(t, dt);
-        raf = requestAnimationFrame(loop);
       };
       const sync = () => {
-        const run = onScreen && document.visibilityState === 'visible';
-        if (run && !raf) {
+        if (document.visibilityState === 'visible' && !raf) {
           last = 0;
           raf = requestAnimationFrame(loop);
-        } else if (!run && raf) {
+        } else if (document.visibilityState !== 'visible' && raf) {
           cancelAnimationFrame(raf);
           raf = 0;
         }
       };
-      const io = new IntersectionObserver(([e]) => {
-        onScreen = e.isIntersecting;
-        sync();
-      });
-      io.observe(hero);
+      sync();
       document.addEventListener('visibilitychange', sync);
 
       cleanup = () => {
+        unbindPointer();
         cancelAnimationFrame(raf);
-        io.disconnect();
-        ro.disconnect();
         document.removeEventListener('visibilitychange', sync);
+        window.removeEventListener('resize', onResize);
         canvas.remove();
+        root.classList.remove('has-nano-field');
       };
     };
 
@@ -123,7 +158,7 @@ export default function HeroSwarm() {
 
     return () => {
       cancelled = true;
-      if (window.cancelIdleCallback) window.cancelIdleCallback(idle);
+      if (window.requestIdleCallback) window.cancelIdleCallback(idle);
       else window.clearTimeout(idle);
       cleanup();
     };

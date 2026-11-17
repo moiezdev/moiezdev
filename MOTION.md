@@ -1,6 +1,6 @@
 # Motion
 
-Motion on moiez.dev has two jobs. **Most of it explains**: it shows how a system works, confirms that an action happened, or keeps you oriented when the page changes. **One piece sets the tone**: the nano swarm in the home hero, a cloud of small metallic cubes that keeps rebuilding itself. It's the site's signature, so it gets a strict budget, and nothing else on the site gets to be decoration.
+Motion on moiez.dev has two jobs. **Most of it explains**: it shows how a system works, confirms that an action happened, or keeps you oriented when the page changes. **One piece sets the tone**: the nano swarm behind the home page. It's a field of small metallic cubes linked by a mesh of hairlines that gathers into a formation around the portrait, keeps rebuilding itself, and answers the cursor and scroll. It's the site's signature, so it gets a strict budget, and nothing else on the site gets to be decoration.
 
 ## The rules
 
@@ -9,37 +9,39 @@ Motion on moiez.dev has two jobs. **Most of it explains**: it shows how a system
 - Every page renders complete on first paint, in prerendered HTML, with no JavaScript. Motion only ever enhances what is already there.
 - An element is hidden for a reveal only when it is fully below the fold *and* the browser can observe it.
 - Text never moves for effect. There's no parallax, typewriter or word-by-word stagger on copy. Text is placed once and stays put.
-- Ambient motion sits behind content, never in front of it, and stays out of the reading column. The swarm lives beside the portrait, not under the headline.
+- Ambient motion sits behind content, never in front of it. Where it passes behind text (the hero copy, the header) it drops to a quarter of its opacity. Cards stay opaque, and tinted bands let only a little through.
 
 ### 2. Two kinds of motion
 
 | | Functional | Ambient (signature) |
 | --- | --- | --- |
 | Purpose | explain, confirm, orient | set the tone |
-| Examples | reveals, view transitions, the architecture explainer, button feedback | the hero nano swarm |
+| Examples | reveals, view transitions, the architecture explainer, button feedback | the home nano swarm |
 | How many | as many as a page needs | **one per page, at most**: today only on home |
-| Triggered by | the user, or entering the viewport | time and scroll |
+| Triggered by | the user, or entering the viewport | time, scroll and the cursor |
 | May loop? | only while on screen (rule 5) | yes, while on screen (rule 5) |
 
 A new ambient piece replaces the swarm. It isn't added next to it.
 
-### 3. Scroll may drive motion. The cursor doesn't drive the background.
+### 3. The background is live: it answers scroll and the cursor
 
-- Scroll-linked motion is allowed when it reads as a response to the page moving: the swarm turns as you scroll, scatters on a fast flick and regroups at rest, and peels away upward as the hero leaves.
-- Scroll-linked effects are **scrubbed** (a function of scroll position and speed), so scrolling back reverses them. Nothing is triggered once and left half-finished.
+- **Scroll**: the swarm turns as you scroll, scatters on a fast flick and regroups at rest, and comes apart into the page-wide field as the hero leaves. The field drifts slower than the page, so it reads as depth.
+- **Cursor**: the swarm parts around the pointer, the formation leans toward it, and hairlines link the pointer into the mesh. On touch screens a finger does the same while it's down. Device tilt isn't used, because iOS would need a permission prompt for it.
+- Every response is **scrubbed or eased**: it's a function of where the scroll or pointer is now, so going back undoes it. Nothing is triggered once and left half-finished.
+- Responses are gentle. Nothing jumps, flashes, or follows the pointer across the page.
 - No scroll-jacking, no smooth-scroll libraries, no pinned sections. The page always scrolls at the speed you scroll it.
-- The background never reacts to the cursor. The custom cursor itself is the only pointer-following element.
 
 ### 4. Cheap to run
 
 - Animate `transform` and `opacity` in the DOM. Three deliberate exceptions remain: `stroke-dashoffset` and `offset-path` in the architecture explainer, and the circular `clip-path` theme reveal on the View Transition snapshot.
-- Anything heavier goes on **one** `<canvas>`, using 2D context, prerendered sprites, no WebGL and no animation library. The swarm is about 900 cubes on desktop and 380 on phones, with the device pixel ratio capped at 1.5.
+- Anything heavier goes on **one** fixed `<canvas>`, using 2D context, prerendered sprites, no WebGL and no animation library. The swarm is about 1,000 cubes on desktop and 450 on phones, with the device pixel ratio capped at 1.5. The mesh uses a spatial grid, with at most 3 links per cube, so it never compares every cube with every other.
 - Ambient code loads after first paint (`requestIdleCallback` plus a dynamic `import()`), so it never competes with the LCP image.
 - No animation library. The whole system is plain CSS, the Web Animations API, a few small hooks and one canvas engine.
 
 ### 5. Nothing runs unseen
 
-- Anything that repeats (the swarm, the queue visual, gallery autoplay, the cursor's rAF) runs only while it is on screen and the tab is visible. Gate it with `usePauseWhenHidden`, or with an IntersectionObserver plus `visibilitychange` for rAF loops.
+- Anything that repeats (the queue visual, gallery autoplay, the cursor's rAF) runs only while it is on screen and the tab is visible. Gate it with `usePauseWhenHidden`, or with an IntersectionObserver plus `visibilitychange` for rAF loops.
+- The swarm is always on screen on home, so it stops only when the tab is hidden. Once the hero has scrolled away, only the slow field is left, and it renders at half rate.
 - Status pulses stop after 3 iterations.
 
 ### 6. Reduced motion is respected
@@ -48,7 +50,7 @@ With `prefers-reduced-motion: reduce`:
 
 - every token duration becomes `0ms` and the reveal distance `0px`;
 - JS-driven pieces render their final state. The swarm draws one still, assembled formation and repaints it only when the theme or language changes;
-- scroll-linked effects are off;
+- scroll- and cursor-linked effects are off;
 - view transitions are skipped;
 - the custom cursor is off.
 
@@ -86,16 +88,18 @@ In Tailwind classes, use them as `duration-(--dur-base) ease-(--ease-spring)`. I
 | `reducedMotion.js` | `prefersReducedMotion()` and a `usePrefersReducedMotion()` hook (via `useSyncExternalStore`). |
 | `viewTransition.js` | `withViewTransition()` and `navigateWithTransition()`. Card → case study shared-element morph. Waits for the new route to commit before the snapshot is taken. |
 | `prefsTransitions.js` | Circular theme reveal from the toggle, and the EN⇄AR crossfade. |
-| `nanoSwarm.js` | The swarm engine: formations, cube sprites per theme, and a `step(t, dt)` that takes scroll progress and speed. Knows nothing about React or the DOM beyond its canvas. |
+| `nanoSwarm.js` | The swarm engine: formations, the free field, the mesh, cube sprites per theme, and a `step(t, dt)` that reads the anchor, scroll, pointer and the rects to keep clear. Knows nothing about React or the DOM beyond its canvas. |
 
 ## The nano swarm
 
-`components/home/HeroSwarm.jsx` mounts the engine from the home page. It doesn't touch the hero's markup: it puts a canvas at the back of `[data-hero]` and anchors the swarm to the portrait.
+`components/home/HeroSwarm.jsx` mounts the engine from the home page. It doesn't touch the hero's markup. It adds one fixed canvas behind the page (the body goes transparent while it's there) and anchors the formation to the portrait.
 
-- **Idle**: about every 6.6s the cubes burst apart and rebuild, top to bottom, into the next formation: sphere, ring, helix, `</>`, then a hollow cube. The formation spins slowly, and tumbling cubes catch the light now and then.
-- **Scroll**: the formation turns with scroll position and lags the page slightly. A fast scroll stirs it, and it regroups when the page comes to rest. As the hero leaves, cubes peel off upward and the rest fades. Scrolling back reassembles it.
-- **Where**: on desktop, it flows out from behind the portrait's inner edge into the gap beside the copy, mirrored in Arabic. On phones, it forms a halo around the round avatar.
-- **Off**: not rendered off home, paused once the hero is off screen or the tab is hidden, and still under reduced motion.
+- **Formation**: about two thirds of the cubes form a large cloud around the portrait. About every 7s they burst apart and rebuild, top to bottom, into the next shape: sphere, ring, helix, `</>`, then a hollow cube. A band of light sweeps down through its mesh, and tumbling cubes catch the light now and then.
+- **Field**: the rest drift as a loose plexus across the whole viewport, linked by fainter hairlines.
+- **Scroll**: the formation turns with scroll position and trails the page slightly. A fast scroll stirs it, and it regroups when the page comes to rest. As the hero leaves, its cubes join the field across the rest of the page, and scrolling back pulls them home.
+- **Cursor**: the swarm parts around the pointer, the formation leans toward it, and hairlines link the pointer to the cubes nearby. A finger does the same on touch screens.
+- **Where**: on desktop, it forms a cloud around the portrait, mirrored in Arabic. On phones, it forms a wide halo around the round avatar.
+- **Off**: not rendered off home, stopped in hidden tabs, and still under reduced motion.
 
 ## Each functional piece, and what it proves
 
@@ -120,12 +124,12 @@ The code window on About is kept static on purpose: it is read, not watched.
 
 ## Not used
 
-Loading screens, scroll-jacking, smooth-scroll libraries, pinned sections, parallax on text, typewriter effects, word-by-word staggers, cursor-reactive backgrounds, WebGL, and a second ambient piece on the same page.
+Loading screens, scroll-jacking, smooth-scroll libraries, pinned sections, parallax on text, typewriter effects, word-by-word staggers, WebGL, and a second ambient piece on the same page.
 
 ## Adding motion
 
 - Decide which kind it is (rule 2). If it's ambient, it replaces the swarm.
 - Reach for an existing token and an existing component first.
 - If it loops, gate it (rule 5). If it is driven by JS, check `prefersReducedMotion()` and render the end state.
-- If it follows scroll, scrub it: it must reverse when you scroll back.
+- If it follows scroll or the pointer, scrub or ease it: it must undo itself when you go back.
 - Check it in EN and AR, light and dark, at 390px, with reduced motion on, and with a keyboard.
