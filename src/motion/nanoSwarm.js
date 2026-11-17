@@ -181,6 +181,44 @@ const CELL_ROW = 4096; // grid key = column * CELL_ROW + row
 const TEXT_DIM = 0.1; // alpha left behind text
 const TEXT_MARGIN = 28; // px over which cubes ease back in around text
 const FADE_MARGIN = 96; // px over which cubes fade out before an opaque card
+const RING_GAP = 9; // px between a hovered button's edge and the ring of cubes
+const RING_STEP = 8; // px between cubes along that ring
+const RING_MAX = 96;
+
+/** A point `u` (0..1) of the way round a pill drawn `gap` px outside rect r, clockwise from the top left. */
+function pillPoint(r, gap, u, out) {
+  const w = r.right - r.left + gap * 2;
+  const h = r.bottom - r.top + gap * 2;
+  const rad = Math.min(h, w) / 2;
+  const straight = w - rad * 2;
+  const arc = Math.PI * rad;
+  let d = u * (straight * 2 + arc * 2);
+  const x0 = r.left - gap + rad;
+  const cy = (r.top + r.bottom) / 2;
+  if (d < straight) {
+    out[0] = x0 + d;
+    out[1] = cy - rad;
+    return out;
+  }
+  d -= straight;
+  if (d < arc) {
+    const t = -Math.PI / 2 + d / rad;
+    out[0] = x0 + straight + Math.cos(t) * rad;
+    out[1] = cy + Math.sin(t) * rad;
+    return out;
+  }
+  d -= arc;
+  if (d < straight) {
+    out[0] = x0 + straight - d;
+    out[1] = cy + rad;
+    return out;
+  }
+  d -= straight;
+  const t = Math.PI / 2 + d / rad;
+  out[0] = x0 + Math.cos(t) * rad;
+  out[1] = cy + Math.sin(t) * rad;
+  return out;
+}
 
 /** 0 inside the rect, easing up to 1 at `margin` px outside it (smoothstep). */
 function clearance(x, y, r, margin) {
@@ -199,6 +237,7 @@ function clearance(x, y, r, margin) {
  *   anchor: () => ({x:number,y:number,size:number}|null),
  *   textRects: () => DOMRect[],
  *   fadeRects?: () => DOMRect[],
+ *   gather?: () => (Element|null),
  *   theme: () => 'dark'|'light',
  *   scroll: () => {progress:number, speed:number, y:number},
  *   pointer?: () => {x:number, y:number, active:boolean},
@@ -207,10 +246,12 @@ function clearance(x, y, r, margin) {
  *   textRects: the hero copy and the header, where cubes are dimmed so text stays readable.
  *   fadeRects: opaque things the swarm passes behind (the portrait card). Cubes fade out
  *     softly as they approach, so the card never cuts the swarm off with a hard edge.
+ *   gather: a button that is hovered, focused or pressed. The nearest cubes stream in and
+ *     form a ring just outside it, and scatter back when it returns null.
  *   scroll.progress: 0 with the hero at the top, 1 once it has scrolled away.
  *   pointer: the cursor (or a finger while it's down), in viewport px.
  */
-export function createNanoSwarm(canvas, { anchor, textRects, fadeRects = () => [], theme, scroll, pointer = () => ({ x: 0, y: 0, active: false }) }) {
+export function createNanoSwarm(canvas, { anchor, textRects, fadeRects = () => [], gather = () => null, theme, scroll, pointer = () => ({ x: 0, y: 0, active: false }) }) {
   const ctx = canvas.getContext('2d');
   let W = 0;
   let H = 0;
@@ -266,6 +307,64 @@ export function createNanoSwarm(canvas, { anchor, textRects, fadeRects = () => [
   let tilt = 0;
   let near = 0; // how strongly the cursor is pulling the mesh, eased in and out
   const pointerLinks = [];
+  // a ring of cubes around a hovered button: ringPos[i] is the cube's place on it (0..1), or -1
+  let ringPos = null;
+  let ringEl = null;
+  let ringCount = 0;
+  const pt = [0, 0];
+
+  function formRing(el, rect) {
+    if (!ringPos) ringPos = new Float32Array(N);
+    ringPos.fill(-1);
+    const cx = (rect.left + rect.right) / 2;
+    const cy = (rect.top + rect.bottom) / 2;
+    const w = rect.right - rect.left + RING_GAP * 2;
+    const h = rect.bottom - rect.top + RING_GAP * 2;
+    const perim = 2 * (w - h) + Math.PI * h;
+    ringCount = Math.min(RING_MAX, Math.max(24, Math.round(perim / RING_STEP)));
+    // the nearest cubes answer the call
+    const picked = [];
+    for (let i = 0; i < N; i++) {
+      const dx = P[i * 2] - cx;
+      const dy = (P[i * 2 + 1] - cy) * 1.6; // favour cubes level with the button
+      const d2 = dx * dx + dy * dy;
+      if (picked.length < ringCount) picked.push([d2, i]);
+      else if (d2 < picked[picked.length - 1][0]) picked[picked.length - 1] = [d2, i];
+      else continue;
+      picked.sort((p, q) => p[0] - q[0]);
+    }
+    // each takes the place on the ring in its own direction, so no paths cross
+    const ang = (x, y) => Math.atan2(y - cy, x - cx);
+    const slots = [];
+    for (let n = 0; n < ringCount; n++) {
+      const u = n / ringCount;
+      pillPoint(rect, RING_GAP, u, pt);
+      slots.push([ang(pt[0], pt[1]), u]);
+    }
+    const cubes = picked.map(([, i]) => [ang(P[i * 2], P[i * 2 + 1]), i]);
+    slots.sort((p, q) => p[0] - q[0]);
+    cubes.sort((p, q) => p[0] - q[0]);
+    for (let n = 0; n < cubes.length; n++) ringPos[cubes[n][1]] = slots[n][1];
+    ringEl = el;
+  }
+
+  function releaseRing() {
+    if (!ringEl) return;
+    // a small outward kick, so the ring bursts back into the swarm rather than dissolving
+    const r = ringEl.getBoundingClientRect();
+    const cx = (r.left + r.right) / 2;
+    const cy = (r.top + r.bottom) / 2;
+    for (let i = 0; i < N; i++) {
+      if (ringPos[i] < 0) continue;
+      const dx = P[i * 2] - cx;
+      const dy = P[i * 2 + 1] - cy;
+      const d = Math.hypot(dx, dy) || 1;
+      V[i * 2] += (dx / d) * 140;
+      V[i * 2 + 1] += (dy / d) * 140;
+      ringPos[i] = -1;
+    }
+    ringEl = null;
+  }
 
   /** Advance to time `t` (seconds) by `dt`, and draw. */
   function step(t, dt) {
@@ -280,6 +379,13 @@ export function createNanoSwarm(canvas, { anchor, textRects, fadeRects = () => [
     const dim = textRects();
     const fade = fadeRects();
     const { progress: sp, speed, y: scrollY } = scroll();
+    const gEl = gather();
+    if (gEl !== ringEl) {
+      releaseRing();
+      const r = gEl?.getBoundingClientRect();
+      if (r && r.width && r.bottom > 0 && r.top < H) formRing(gEl, r);
+    }
+    const gRect = ringEl ? ringEl.getBoundingClientRect() : null;
 
     // the field sits deeper than the content, so it drifts up slower than the page
     const fieldShift = scrollY * 0.12;
@@ -294,7 +400,8 @@ export function createNanoSwarm(canvas, { anchor, textRects, fadeRects = () => [
     const ease = Math.min(1, dt * 2.5);
     lean += ((ptr.active ? (ptr.x / W - 0.5) * 0.9 : 0) - lean) * ease;
     tilt += ((ptr.active ? (ptr.y / H - 0.5) * 0.6 : 0) - tilt) * ease;
-    near += ((ptr.active ? 1 : 0) - near) * ease;
+    // over a button the ring takes over from the cursor's own effects
+    near += ((ptr.active && !gRect ? 1 : 0) - near) * ease;
     const R = small ? 110 : 150; // cursor's reach
     const ry = t * 0.2 + sp * 2.6 + lean;
     const rx = 0.3 + Math.sin(t * 0.16) * 0.12 - sp * 0.5 + tilt;
@@ -316,8 +423,19 @@ export function createNanoSwarm(canvas, { anchor, textRects, fadeRects = () => [
       let swirl;
       let assembling = false;
       const inFormation = i < NF && a && release[i] >= dissolve;
+      const onRing = gRect && ringPos[i] >= 0;
 
-      if (inFormation) {
+      if (onRing) {
+        // a slow march round the ring, so the outline reads as alive, not stuck on
+        pillPoint(gRect, RING_GAP, (ringPos[i] + t * 0.035) % 1, pt);
+        tx = pt[0];
+        ty = pt[1];
+        tz = 0;
+        pull = 9;
+        swirl = 1.5;
+        assembling = true;
+        A[i] = Math.min(1, look.cubeAlpha * 1.1);
+      } else if (inFormation) {
         const [x0, y0, z0] = shape[i];
         // built in a sweep from top to bottom, not all at once
         assembling = phase > MOVE * 0.2 + (y0 + 1) * 0.45;
@@ -380,6 +498,9 @@ export function createNanoSwarm(canvas, { anchor, textRects, fadeRects = () => [
       P[j + 1] += V[j + 1] * dt;
       Z[i] += (tz - Z[i]) * Math.min(1, dt * 4);
 
+      // once in place the ring sits outside the button, clear of its label; on the way
+      // there, cubes still dim as they pass behind text
+      if (onRing && Math.abs(tx - P[j]) + Math.abs(ty - P[j + 1]) < 24) continue;
       // keep the hero copy readable: almost gone behind text, eased in over a short margin
       let keep = 1;
       for (let r = 0; r < dim.length; r++) keep = Math.min(keep, TEXT_DIM + (1 - TEXT_DIM) * clearance(P[j], P[j + 1], dim[r], TEXT_MARGIN));

@@ -114,7 +114,31 @@ export default function HeroSwarm() {
         document.removeEventListener('pointerout', onLeave);
       };
 
-      const swarm = createNanoSwarm(canvas, { anchor, textRects, fadeRects, theme, scroll: () => sc, pointer: () => ptr });
+      // the hero's two buttons: hovered, focused from the keyboard, or pressed on touch,
+      // the nearest cubes gather into a ring around them
+      let held = null;
+      const buttons = [...(copy()?.querySelectorAll(':scope > div:first-of-type > a, :scope > div:first-of-type > button') || [])];
+      const hold = (e) => {
+        if (e.type === 'focusin' && !e.target.matches(':focus-visible')) return;
+        held = e.currentTarget;
+      };
+      const drop = (e) => {
+        if (held === e.currentTarget) held = null;
+      };
+      const btnEvents = [
+        ['pointerenter', hold],
+        ['pointerleave', drop],
+        ['pointerdown', hold],
+        ['pointercancel', drop],
+        ['focusin', hold],
+        ['focusout', drop],
+      ];
+      for (const b of buttons) for (const [type, fn] of btnEvents) b.addEventListener(type, fn, { passive: true });
+      const unbindButtons = () => {
+        for (const b of buttons) for (const [type, fn] of btnEvents) b.removeEventListener(type, fn);
+      };
+
+      const swarm = createNanoSwarm(canvas, { anchor, textRects, fadeRects, gather: () => held, theme, scroll: () => sc, pointer: () => ptr });
       const onResize = () => {
         swarm.resize();
         if (reduced) swarm.still();
@@ -128,6 +152,7 @@ export default function HeroSwarm() {
         const mo = new MutationObserver(() => swarm.still());
         mo.observe(root, { attributes: true, attributeFilter: ['data-theme', 'dir'] });
         unbindPointer();
+        unbindButtons();
         cleanup = () => {
           mo.disconnect();
           window.removeEventListener('resize', onResize);
@@ -165,6 +190,7 @@ export default function HeroSwarm() {
 
       cleanup = () => {
         unbindPointer();
+        unbindButtons();
         cancelAnimationFrame(raf);
         document.removeEventListener('visibilitychange', sync);
         window.removeEventListener('resize', onResize);
