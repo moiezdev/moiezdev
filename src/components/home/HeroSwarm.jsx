@@ -41,22 +41,41 @@ export default function HeroSwarm() {
         const lag = Math.max(0, -h.top) * 0.3; // the formation trails the page a little
         if (!p || !p.width) return { x: h.left + h.width * 0.75, y: h.top + h.height * 0.45 + lag, size: 260 };
         if (window.innerWidth >= 1024) {
-          // a large cloud in the middle of the hero, between the copy and the portrait,
-          // so it's seen in full; cubes behind the copy are dimmed (see textRects)
-          return { x: h.left + h.width / 2, y: h.top + h.height * 0.47 + lag, size: Math.min(380, h.height * 0.4) };
+          // a large cloud in the middle of the hero, nudged toward the copy so its dense
+          // core isn't against the card; cubes behind the text are dimmed (see textRects)
+          // and fade out before the card (see fadeRects). Mirrored in RTL.
+          const rtl = root.dir === 'rtl';
+          return { x: h.left + h.width * (rtl ? 0.55 : 0.45), y: h.top + h.height * 0.47 + lag, size: Math.min(350, h.height * 0.38) };
         }
         // phones: a wide halo around the round avatar
         return { x: p.left + p.width / 2, y: p.top + p.height / 2 + lag, size: Math.min(window.innerWidth * 0.44, 180) };
       };
       const header = document.querySelector('header') || document.querySelector('nav');
+      // the copy's actual lines of text (not the whole column), so cubes still show
+      // between the lines and around the copy, but almost vanish behind the words
+      const range = document.createRange();
+      const pushLines = (el, out) => {
+        range.selectNodeContents(el);
+        for (const r of range.getClientRects()) if (r.width && r.bottom > 0 && r.top < window.innerHeight) out.push(r);
+      };
       const textRects = () => {
         const out = [];
-        const r = copy()?.getBoundingClientRect();
-        if (r && r.bottom > 0) out.push(r);
+        const col = copy();
+        if (col && col.getBoundingClientRect().bottom > 0) {
+          for (const el of col.querySelectorAll('h1, p')) pushLines(el, out);
+          for (const el of col.querySelectorAll(':scope > span, a')) out.push(el.getBoundingClientRect());
+        }
         const stats = hero.querySelector('.grid-cols-3')?.getBoundingClientRect();
         if (stats && stats.bottom > 0) out.push(stats);
         if (header) out.push(header.getBoundingClientRect());
         return out;
+      };
+      // the portrait card is opaque: on desktop the swarm fades out before its edge
+      // (on phones the halo wraps the round avatar instead)
+      const fadeRects = () => {
+        if (window.innerWidth < 1024) return [];
+        const r = portrait()?.getBoundingClientRect();
+        return r && r.width && r.bottom > 0 ? [r] : [];
       };
       const theme = () => (root.dataset.theme === 'light' ? 'light' : 'dark');
 
@@ -95,7 +114,7 @@ export default function HeroSwarm() {
         document.removeEventListener('pointerout', onLeave);
       };
 
-      const swarm = createNanoSwarm(canvas, { anchor, textRects, theme, scroll: () => sc, pointer: () => ptr });
+      const swarm = createNanoSwarm(canvas, { anchor, textRects, fadeRects, theme, scroll: () => sc, pointer: () => ptr });
       const onResize = () => {
         swarm.resize();
         if (reduced) swarm.still();
