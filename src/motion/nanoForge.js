@@ -21,7 +21,7 @@ const FUSE = 1.5; // seconds for them to fuse into its solid
 const HOLD = 6.0; // seconds the solid holds
 const CYCLE = BREAK + MORPH + FUSE + HOLD;
 const FLOOR_Y = -1.12; // the floor the shadow falls on, below the shapes
-const PEEL_THR = 0.703; // chunk noise above this covers ~15% of a surface: the share a hover peels back into cubes
+const PEEL_THR = 0.706; // chunk noise above this covers ~15% of a surface: the share a hover peels back into cubes
 
 // ---------- shapes: n points, xyz in about [-1, 1], w = cube scale (0 hides a spare cube) ----------
 
@@ -421,10 +421,90 @@ const LOOK = {
   },
 };
 
+// ---------- the hover's inside: a packed matrix of small cubes under each patch that can peel ----------
+
+const pcg = (v) => {
+  const st = (Math.imul(v, 747796405) + 2891336453) >>> 0;
+  const w = Math.imul(((st >>> ((st >>> 28) + 4)) ^ st) >>> 0, 277803737) >>> 0;
+  return ((w >>> 22) ^ w) >>> 0;
+};
+const hashJS = (x, y, z) => pcg((Math.imul(x + 1000, 73856093) ^ Math.imul(y + 1000, 19349663) ^ Math.imul(z + 1000, 83492791)) >>> 0) / 4294967295;
+/** The same value as chunk() in the shaders. */
+function chunkJS(p) {
+  const q = p.map((c) => c * 3.5 + 7.3);
+  const i = q.map(Math.floor);
+  const f = q.map((c, k) => {
+    const t = c - i[k];
+    return t * t * (3 - 2 * t);
+  });
+  const h = (a, b, c) => hashJS(i[0] + a, i[1] + b, i[2] + c);
+  const m = (a, b, t) => a + (b - a) * t;
+  return m(
+    m(m(h(0, 0, 0), h(1, 0, 0), f[0]), m(h(0, 1, 0), h(1, 1, 0), f[0]), f[1]),
+    m(m(h(0, 0, 1), h(1, 0, 1), f[0]), m(h(0, 1, 1), h(1, 1, 1), f[0]), f[1]),
+    f[2],
+  );
+}
+
+/**
+ * Small cubes packed just under the solid's skin, only where a hover can peel it, so an opening shows a
+ * dense matrix instead of a hollow shell. Each is [x, y, z, chunk] in the solid's own space.
+ */
+function fillers(mesh, count, depth, { round = 0 } = {}) {
+  const { P, N, I } = mesh;
+  const tris = I.length / 3;
+  const cum = new Float64Array(tris);
+  let total = 0;
+  const at = (k) => [P[k * 3], P[k * 3 + 1], P[k * 3 + 2]];
+  for (let t = 0; t < tris; t++) {
+    const a = at(I[t * 3]);
+    const b = at(I[t * 3 + 1]);
+    const c = at(I[t * 3 + 2]);
+    total += Math.hypot(...cross(sub(b, a), sub(c, a))) / 2;
+    cum[t] = total;
+  }
+  const out = new Float32Array(count * 4);
+  let n = 0;
+  for (let tries = 0; n < count && tries < count * 60; tries++) {
+    const x = Math.random() * total;
+    let lo = 0;
+    let hi = tris - 1;
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1;
+      if (cum[mid] < x) lo = mid + 1;
+      else hi = mid;
+    }
+    const ids = [I[lo * 3], I[lo * 3 + 1], I[lo * 3 + 2]];
+    let u = Math.random();
+    let v = Math.random();
+    if (u + v > 1) {
+      u = 1 - u;
+      v = 1 - v;
+    }
+    const wts = [1 - u - v, u, v];
+    const p = [0, 1, 2].map((k) => ids.reduce((acc, id, j) => acc + P[id * 3 + k] * wts[j], 0));
+    const nn = norm([0, 1, 2].map((k) => ids.reduce((acc, id, j) => acc + N[id * 3 + k] * wts[j], 0)));
+    const ch = chunkJS(round ? norm(p) : p);
+    if (ch < PEEL_THR - 0.02) continue;
+    const d = depth * Math.random() ** 0.8;
+    const q = round ? norm(p).map((c) => c * (round - d)) : [0, 1, 2].map((k) => p[k] - nn[k] * d);
+    out.set([q[0], q[1], q[2], ch], n * 4);
+    n++;
+  }
+  return out.subarray(0, n * 4);
+}
+
 // ---------- shaders ----------
 
 const NOISE = `
-float hash(vec3 p) { return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453); }
+// an integer hash (PCG), so the JS twin in chunkJS() gives the very same patches
+float hash(vec3 p) {
+  uvec3 u = uvec3(ivec3(p) + 1000);
+  uint v = (u.x * 73856093u) ^ (u.y * 19349663u) ^ (u.z * 83492791u);
+  uint st = v * 747796405u + 2891336453u;
+  uint w = ((st >> ((st >> 28u) + 4u)) ^ st) * 277803737u;
+  return float((w >> 22u) ^ w) / 4294967295.0;
+}
 float noise(vec3 p) {
   vec3 i = floor(p);
   vec3 f = fract(p);
@@ -434,7 +514,7 @@ float noise(vec3 p) {
     mix(mix(hash(i + vec3(0, 0, 1)), hash(i + vec3(1, 0, 1)), f.x), mix(hash(i + vec3(0, 1, 1)), hash(i + vec3(1, 1, 1)), f.x), f.y),
     f.z);
 }
-// big patches that come away from the solid on hover (above 0.703 is ~15% of the surface)
+// big patches that come away from the solid on hover (above PEEL_THR is ~15% of the surface)
 float chunk(vec3 obj) { return noise(obj * 3.5 + 7.3); }
 uniform float uPeel, uPeelThr;
 float peelEdge() { return mix(1.1, uPeelThr, uPeel); }`;
@@ -551,12 +631,39 @@ void main() {
   // the ring's debris turns slowly as it orbits
   float spin = uScatter * aSeed.w * 5.0 + debris * uOrbit * (aSeed.w - 0.5) * 4.0;
   mat3 R = uRot * axisAngle(dir, spin);
-  vec3 world = c + R * (aPos * scale * vis * uSize);
+  // the cubes a hover peels loose are smaller than the ones that build the shape
+  float shrink = mix(1.0, 0.55, peel * (1.0 - uCubes));
+  vec3 world = c + R * (aPos * scale * vis * shrink * uSize);
   if (uShadow > 0.5) world = toFloor(world);
   vN = R * aNormal;
   vLocal = aPos;
   vWorld = world;
   vGlow = arc * 0.3 + near * 0.35 + (1.0 - uCubes) * 0.6 * (1.0 - max(peel, debris)) + peel * 0.25;
+  gl_Position = uProj * vec4(world - vec3(0.0, 0.0, uCamZ), 1.0);
+}`;
+
+const FILL_VS = `#version 300 es
+precision highp float;
+layout(location=0) in vec3 aPos;
+layout(location=1) in vec3 aNormal;
+layout(location=2) in vec4 aF; // position inside the solid, and the chunk value of the patch above it
+uniform mat4 uProj;
+uniform mat3 uRot;
+uniform float uCamZ, uSize;
+out vec3 vN;
+out vec3 vLocal;
+out vec3 vWorld;
+out float vGlow;
+${NOISE}
+void main() {
+  float show = uPeel > 0.001 ? smoothstep(peelEdge() - 0.01, peelEdge() + 0.02, aF.w) : 0.0;
+  // sizes vary a little, so the matrix reads as packed rather than gridded
+  float r = fract(sin(float(gl_InstanceID) * 12.9898) * 43758.5453);
+  vec3 world = uRot * (aF.xyz + aPos * uSize * (0.5 + 0.35 * r) * show);
+  vN = uRot * aNormal;
+  vLocal = aPos;
+  vWorld = world;
+  vGlow = 0.0;
   gl_Position = uProj * vec4(world - vec3(0.0, 0.0, uCamZ), 1.0);
 }`;
 
@@ -828,11 +935,13 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     return p;
   };
   let cubeProg;
+  let fillProg;
   let lineProg;
   let solidProg;
   let shadowProg;
   try {
     cubeProg = program(CUBE_VS, CUBE_FS);
+    fillProg = program(FILL_VS, CUBE_FS);
     lineProg = program(LINE_VS, LINE_FS);
     solidProg = program(SOLID_VS, SOLID_FS);
     shadowProg = program(SHADOW_VS, SHADOW_FS);
@@ -840,7 +949,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     console.warn('[nano forge]', err);
     return null;
   }
-  const progs = [cubeProg, lineProg, solidProg, shadowProg];
+  const progs = [cubeProg, lineProg, solidProg, shadowProg, fillProg];
   /** Set a uniform on every program that has it. */
   const setAll = (name, fn) => {
     for (const p of progs) {
@@ -936,6 +1045,21 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     buf(s.mesh.I, gl.ELEMENT_ARRAY_BUFFER);
     return { vao, count: s.mesh.I.length };
   });
+  // the packed inside for each solid, for hover peels (the planet's ring never peels, it's loose already)
+  const FILL_DEPTH = { cube: 0.16, 'torus knot': 0.11, 'möbius loop': 0.012, planet: 0.16, 'double helix': 0.04, 'toxic sludge': 0.16 };
+  const fillVaos = shapes.map((s) => {
+    const data = fillers(s.mesh, small ? 2000 : 4500, FILL_DEPTH[s.name] ?? 0.1, { round: s.liquid ? 0.52 : 0 });
+    const vao = gl.createVertexArray();
+    gl.bindVertexArray(vao);
+    buf(mesh.P);
+    attrib(0, 3);
+    buf(mesh.N);
+    attrib(1, 3);
+    buf(mesh.I, gl.ELEMENT_ARRAY_BUFFER);
+    buf(data);
+    attrib(2, 4, 1);
+    return { vao, count: data.length / 4 };
+  });
   gl.bindVertexArray(null);
 
   let pairKey = '';
@@ -964,6 +1088,8 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
   gl.useProgram(cubeProg);
   gl.uniform1f(cubeProg.u('uSize'), size);
+  gl.useProgram(fillProg);
+  gl.uniform1f(fillProg.u('uSize'), size);
   gl.useProgram(lineProg);
   gl.uniform1f(lineProg.u('uMaxLen'), spacing * 9);
 
@@ -1113,9 +1239,16 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     gl.bindTexture(gl.TEXTURE_2D, null);
     gl.enable(gl.DEPTH_TEST);
 
-    // 3. the shape itself
+    // 3. the shape itself, and the packed cubes a hover opens it onto
     drawSolid();
     drawCubes();
+    if (skin > 0.001 && peel * skin > 0.001 && fillVaos[solid].count) {
+      gl.useProgram(fillProg);
+      gl.enable(gl.CULL_FACE);
+      gl.bindVertexArray(fillVaos[solid].vao);
+      gl.drawElementsInstanced(gl.TRIANGLES, mesh.I.length, gl.UNSIGNED_SHORT, 0, fillVaos[solid].count);
+      gl.disable(gl.CULL_FACE);
+    }
 
     if (skin < 0.999 || peel * skin > 0.001) {
       gl.useProgram(lineProg);
