@@ -15,11 +15,13 @@
  */
 
 const TAU = Math.PI * 2;
-const BREAK = 0.8; // seconds for a solid to break back into cubes
-const MORPH = 2.6; // seconds for the cubes to fly to the next shape
-const FUSE = 1.0; // seconds for them to fuse into its solid
+const BREAK = 1.2; // seconds for a solid to break back into cubes
+const MORPH = 4.0; // seconds for the cubes to fly to the next shape
+const FUSE = 1.5; // seconds for them to fuse into its solid
 const HOLD = 3.0; // seconds the solid holds
 const CYCLE = BREAK + MORPH + FUSE + HOLD;
+const FLOOR_Y = -1.12; // the floor the shadow falls on, below the shapes
+const PEEL_THR = 0.616; // chunk noise above this covers ~30% of a surface: the share a hover peels back into cubes
 
 // ---------- shapes: n points, xyz in about [-1, 1], w = cube scale (0 hides a spare cube) ----------
 
@@ -134,7 +136,7 @@ function helix(n) {
 }
 
 const MOBIUS_R = 0.72;
-const MOBIUS_W = 0.3;
+const MOBIUS_W = 0.17;
 /** A point on the Möbius band: u around the loop (one full twist per 2π), v across it. */
 // tipped towards the viewer so the twist reads, instead of lying flat like a ring
 const MOBIUS_TILT = 0.95;
@@ -407,6 +409,7 @@ const LOOK = {
     line: [0.78, 0.86, 1.0],
     venom: [0.32, 0.95, 0.42],
     lineAlpha: 0.85,
+    shadow: 0.55,
   },
   light: {
     base: [0.4, 0.42, 0.47],
@@ -419,10 +422,40 @@ const LOOK = {
     line: [0.2, 0.23, 0.29],
     venom: [0.18, 0.72, 0.28],
     lineAlpha: 0.75,
+    shadow: 0.2,
   },
 };
 
 // ---------- shaders ----------
+
+const NOISE = `
+float hash(vec3 p) { return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453); }
+float noise(vec3 p) {
+  vec3 i = floor(p);
+  vec3 f = fract(p);
+  f = f * f * (3.0 - 2.0 * f);
+  return mix(
+    mix(mix(hash(i), hash(i + vec3(1, 0, 0)), f.x), mix(hash(i + vec3(0, 1, 0)), hash(i + vec3(1, 1, 0)), f.x), f.y),
+    mix(mix(hash(i + vec3(0, 0, 1)), hash(i + vec3(1, 0, 1)), f.x), mix(hash(i + vec3(0, 1, 1)), hash(i + vec3(1, 1, 1)), f.x), f.y),
+    f.z);
+}
+// big patches that come away from the solid on hover (above 0.616 is ~30% of the surface)
+float chunk(vec3 obj) { return noise(obj * 3.5 + 7.3); }
+uniform float uPeel, uPeelThr;
+float peelEdge() { return mix(1.1, uPeelThr, uPeel); }`;
+
+/** Flattens a point onto the floor under the shape, lit from a little above and to the left. */
+const FLOOR = `
+uniform float uShadow, uFloor;
+uniform mat3 uPitch;
+vec3 toFloor(vec3 w) {
+  vec3 u = transpose(uPitch) * w;
+  float h = u.y - uFloor;
+  u.x += h * 0.2;
+  u.z -= h * 0.1;
+  u.y = uFloor;
+  return uPitch * u;
+}`;
 
 /** Where cube `seed` is between shape A and shape B: shared by the cubes and the lines between them. */
 const CENTRE = `
@@ -430,8 +463,10 @@ uniform mat4 uProj;
 uniform mat3 uRot;
 uniform float uCamZ, uMix, uTime, uScatter, uAspect, uPointerOn;
 uniform vec2 uPointer;
+uniform float uRound; // 1 when the standing solid is the sludge, whose skin is a unit sphere
+${NOISE}
 
-vec3 centreOf(vec4 A, vec4 B, vec4 seed, out float e, out float arc, out float near, out float scale, out vec3 dir) {
+vec3 centreOf(vec4 A, vec4 B, vec4 seed, out float e, out float arc, out float near, out float scale, out vec3 dir, out float peel) {
   // built from the core outwards, each cube a little out of step
   float delay = seed.x * 0.42 + clamp(length(B.xyz), 0.0, 1.2) * 0.22;
   e = clamp((uMix - delay) / 0.3, 0.0, 1.0);
@@ -441,6 +476,10 @@ vec3 centreOf(vec4 A, vec4 B, vec4 seed, out float e, out float arc, out float n
   vec3 p = mix(A.xyz, B.xyz, e) + dir * arc * (0.3 + seed.x * 0.45);
   p += dir * 0.005 * sin(uTime * 1.6 + seed.y * 40.0);
   p += dir * uScatter * (0.7 + seed.x * 1.8);
+  // on hover, the cubes under the patches that peel away come loose and drift out a little
+  vec3 obj = mix(A.xyz, B.xyz, e);
+  peel = uPeel > 0.001 ? smoothstep(peelEdge() - 0.015, peelEdge() + 0.015, chunk(uRound > 0.5 ? normalize(obj) : obj)) : 0.0;
+  p += (normalize(obj + vec3(1e-4)) * 0.09 + dir * 0.05 + dir * 0.02 * sin(uTime * 2.0 + seed.z * 30.0)) * peel * uPeel;
   // w holds the cube's scale, plus 2 x the part it belongs to (the planet's globe and ring, each helix strand and the rungs)
   scale = mix(mod(A.w, 2.0), mod(B.w, 2.0), e) * (1.0 - 0.45 * arc) * (1.0 - 0.75 * uScatter);
   vec3 c = uRot * p;
@@ -486,6 +525,7 @@ out vec3 vLocal;
 out vec3 vWorld;
 out float vGlow;
 ${CENTRE}
+${FLOOR}
 mat3 axisAngle(vec3 a, float t) {
   float c = cos(t), s = sin(t), k = 1.0 - c;
   return mat3(
@@ -494,19 +534,20 @@ mat3 axisAngle(vec3 a, float t) {
     a.x*a.z*k + a.y*s,  a.y*a.z*k - a.x*s, c + a.z*a.z*k);
 }
 void main() {
-  float e, arc, near, scale;
+  float e, arc, near, scale, peel;
   vec3 dir;
-  vec3 c = centreOf(aA, aB, aSeed, e, arc, near, scale, dir);
-  // while the solid stands the cubes are gone
-  float vis = uCubes;
+  vec3 c = centreOf(aA, aB, aSeed, e, arc, near, scale, dir, peel);
+  // while the solid stands the cubes are gone, except the ones a hover has peeled loose
+  float vis = max(uCubes, peel);
   // whole turns only, so every cube lands square to the grid
   float spin = e * 6.2831853 * floor(1.0 + aSeed.z * 2.99) + uScatter * aSeed.w * 5.0;
   mat3 R = uRot * axisAngle(dir, spin);
   vec3 world = c + R * (aPos * scale * vis * uSize);
+  if (uShadow > 0.5) world = toFloor(world);
   vN = R * aNormal;
   vLocal = aPos;
   vWorld = world;
-  vGlow = arc * 0.7 + near * 0.35 + (1.0 - uCubes) * 0.6;
+  vGlow = arc * 0.7 + near * 0.35 + (1.0 - uCubes) * 0.6 * (1.0 - peel) + peel * 0.25;
   gl_Position = uProj * vec4(world - vec3(0.0, 0.0, uCamZ), 1.0);
 }`;
 
@@ -517,9 +558,14 @@ in vec3 vLocal;
 in vec3 vWorld;
 in float vGlow;
 uniform vec3 uEdge;
+uniform float uShadow;
 out vec4 o;
 ${SHADE}
 void main() {
+  if (uShadow > 0.5) {
+    o = vec4(1.0);
+    return;
+  }
   vec3 n = normalize(vN);
   vec3 col = shade(n, vWorld);
   // machined bevel: light catches where two faces meet
@@ -541,12 +587,13 @@ uniform float uCubes, uMaxLen;
 out float vAlpha;
 ${CENTRE}
 void main() {
-  float e1, arc1, near1, s1, e2, arc2, near2, s2;
+  float e1, arc1, near1, s1, p1, e2, arc2, near2, s2, p2;
   vec3 d1, d2;
-  vec3 c1 = centreOf(aA, aB, aSeed, e1, arc1, near1, s1, d1);
-  vec3 c2 = centreOf(aA2, aB2, aSeed2, e2, arc2, near2, s2, d2);
+  vec3 c1 = centreOf(aA, aB, aSeed, e1, arc1, near1, s1, d1, p1);
+  vec3 c2 = centreOf(aA2, aB2, aSeed2, e2, arc2, near2, s2, d2, p2);
   float len = distance(c1, c2);
-  float on = uCubes;
+  // loose cubes are strung together, and so are the ones a hover peels off
+  float on = max(uCubes, min(p1, p2));
   // never string two separate parts together (the globe and its ring)
   float sameA = float(floor(aA.w * 0.5) == floor(aA2.w * 0.5));
   float sameB = float(floor(aB.w * 0.5) == floor(aB2.w * 0.5));
@@ -579,6 +626,7 @@ out vec3 vN;
 out vec3 vWorld;
 out vec3 vObj;
 out float vReach;
+${FLOOR}
 
 // the sludge: a blob that ripples, sways and keeps pushing out tendrils that get pulled back
 float reach(vec3 n) {
@@ -621,6 +669,7 @@ void main() {
   vec3 w = uRot * pos;
   vN = uRot * nrm;
   vWorld = w;
+  if (uShadow > 0.5) w = toFloor(w);
   gl_Position = uProj * vec4(w - vec3(0.0, 0.0, uCamZ), 1.0);
 }`;
 
@@ -630,27 +679,28 @@ in vec3 vN;
 in vec3 vWorld;
 in vec3 vObj;
 in float vReach;
-uniform float uReveal, uBox, uLiquid;
+uniform float uReveal, uBox, uLiquid, uShadow;
 uniform vec3 uVenom;
 uniform vec3 uEdge;
 out vec4 o;
 ${SHADE}
-float hash(vec3 p) { return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453); }
-float noise(vec3 p) {
-  vec3 i = floor(p);
-  vec3 f = fract(p);
-  f = f * f * (3.0 - 2.0 * f);
-  return mix(
-    mix(mix(hash(i), hash(i + vec3(1, 0, 0)), f.x), mix(hash(i + vec3(0, 1, 0)), hash(i + vec3(1, 1, 0)), f.x), f.y),
-    mix(mix(hash(i + vec3(0, 0, 1)), hash(i + vec3(1, 0, 1)), f.x), mix(hash(i + vec3(0, 1, 1)), hash(i + vec3(1, 1, 1)), f.x), f.y),
-    f.z);
-}
+${NOISE}
 void main() {
   // the skin grows over the cubes in patches, with a hot edge where it's still forming
   float nz = noise(vObj * 6.0) * 0.7 + noise(vObj * 15.0) * 0.3;
   float thr = uReveal * 1.16 - 0.08;
   if (nz > thr) discard;
   float edge = 1.0 - smoothstep(0.0, 0.06, thr - nz);
+  // a hover peels big patches away, and their cubes come loose
+  if (uPeel > 0.001) {
+    float pe = peelEdge() - chunk(vObj);
+    if (pe < 0.0) discard;
+    edge = max(edge, (1.0 - smoothstep(0.0, 0.035, pe)) * min(1.0, uPeel * 3.0));
+  }
+  if (uShadow > 0.5) {
+    o = vec4(1.0);
+    return;
+  }
   // face the viewer whichever way a triangle is wound (holes show the inside)
   vec3 n = normalize(vN);
   if (dot(n, vec3(0.0, 0.0, uCamZ) - vWorld) < 0.0) n = -n;
@@ -669,10 +719,40 @@ void main() {
     float sp = pow(max(dot(r, normalize(vec3(-0.55, 0.85, 0.6))), 0.0), 90.0) + 0.5 * pow(max(dot(r, normalize(vec3(0.8, -0.25, 0.35))), 0.0), 40.0);
     vec3 env = mix(vec3(0.0), vec3(0.32, 0.36, 0.34), smoothstep(-0.2, 0.9, r.y));
     col = vec3(0.015, 0.02, 0.018) + env * 0.5 + vec3(1.0) * sp * 1.1 + uVenom * (fres * 0.9 + min(vReach * 1.6, 0.9));
-    edge *= 0.0;
-    col += uVenom * (1.0 - smoothstep(0.0, 0.06, thr - nz)) * 1.2;
+    col += uVenom * edge * 1.2;
+    edge = 0.0;
   }
   o = vec4(col + uGlow * edge * 1.3, 1.0);
+}`;
+
+/** The floor shadow: drawn small into its own texture, then laid down softly blurred. */
+const SHADOW_VS = `#version 300 es
+out vec2 vUv;
+void main() {
+  vec2 p = vec2(gl_VertexID == 1 ? 3.0 : -1.0, gl_VertexID == 2 ? 3.0 : -1.0);
+  vUv = p * 0.5 + 0.5;
+  gl_Position = vec4(p, 0.0, 1.0);
+}`;
+
+const SHADOW_FS = `#version 300 es
+precision highp float;
+in vec2 vUv;
+uniform sampler2D uTex;
+uniform vec2 uTexel;
+uniform float uDark;
+out vec4 o;
+void main() {
+  float a = 0.0;
+  float wsum = 0.0;
+  for (int i = -3; i <= 3; i++) {
+    for (int j = -3; j <= 3; j++) {
+      float w = exp(-float(i * i + j * j) / 6.0);
+      a += texture(uTex, vUv + vec2(float(i), float(j)) * uTexel * 1.4).a * w;
+      wsum += w;
+    }
+  }
+  a = a / wsum * uDark;
+  o = vec4(0.0, 0.0, 0.0, a);
 }`;
 
 function cubeMesh() {
@@ -756,15 +836,17 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   let cubeProg;
   let lineProg;
   let solidProg;
+  let shadowProg;
   try {
     cubeProg = program(CUBE_VS, CUBE_FS);
     lineProg = program(LINE_VS, LINE_FS);
     solidProg = program(SOLID_VS, SOLID_FS);
+    shadowProg = program(SHADOW_VS, SHADOW_FS);
   } catch (err) {
     console.warn('[nano forge]', err);
     return null;
   }
-  const progs = [cubeProg, lineProg, solidProg];
+  const progs = [cubeProg, lineProg, solidProg, shadowProg];
   /** Set a uniform on every program that has it. */
   const setAll = (name, fn) => {
     for (const p of progs) {
@@ -894,6 +976,13 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   let H = 0;
   let dprCap = small ? 1.5 : 2;
   const CAM = 4.2;
+  const shadowTex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, shadowTex);
+  for (const [k, v] of [[gl.TEXTURE_MIN_FILTER, gl.LINEAR], [gl.TEXTURE_MAG_FILTER, gl.LINEAR], [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE]])
+    gl.texParameteri(gl.TEXTURE_2D, k, v);
+  const shadowFbo = gl.createFramebuffer();
+  let shadowW = 1;
+  let shadowH = 1;
   const resize = () => {
     const dpr = Math.min(window.devicePixelRatio || 1, dprCap);
     W = canvas.clientWidth;
@@ -901,6 +990,13 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     canvas.width = Math.max(1, Math.round(W * dpr));
     canvas.height = Math.max(1, Math.round(H * dpr));
     gl.viewport(0, 0, canvas.width, canvas.height);
+    // the shadow is drawn at a quarter of the size: cheap, and soft once it's blurred
+    shadowW = Math.max(1, Math.round(canvas.width / 4));
+    shadowH = Math.max(1, Math.round(canvas.height / 4));
+    gl.bindTexture(gl.TEXTURE_2D, shadowTex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, shadowW, shadowH, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.useProgram(shadowProg);
+    gl.uniform2f(shadowProg.u('uTexel'), 1 / shadowW, 1 / shadowH);
     const aspect = W / Math.max(1, H);
     // fit a radius of ~1.2 inside the shorter side
     const fov = 2 * Math.atan(1.32 / CAM / Math.min(1, aspect));
@@ -909,7 +1005,12 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     setAll('uAspect', (l) => gl.uniform1f(l, aspect));
   };
   resize();
+  gl.bindFramebuffer(gl.FRAMEBUFFER, shadowFbo);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, shadowTex, 0);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
   setAll('uCamZ', (l) => gl.uniform1f(l, CAM));
+  setAll('uFloor', (l) => gl.uniform1f(l, FLOOR_Y));
+  setAll('uPeelThr', (l) => gl.uniform1f(l, PEEL_THR));
 
   let lookTheme = null;
   const applyLook = () => {
@@ -920,10 +1021,13 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     for (const [u, v] of [['uBase', L.base], ['uEnvLow', L.envLow], ['uEnvHigh', L.envHigh], ['uSpec', L.spec], ['uRim', L.rim], ['uEdge', L.edge], ['uGlow', L.glow], ['uLine', L.line], ['uVenom', L.venom]])
       setAll(u, (l) => gl.uniform3fv(l, v));
     setAll('uLineAlpha', (l) => gl.uniform1f(l, L.lineAlpha));
+    gl.useProgram(shadowProg);
+    gl.uniform1f(shadowProg.u('uDark'), L.shadow);
   };
 
   // eased interaction state
   let near = 0;
+  let peel = 0; // 0..1, eased: how far the hover peel has gone
   let px = 0;
   let py = 0;
   let scatter = 0;
@@ -940,23 +1044,24 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     bindPair(a, b);
     // the solid gives way to its cubes as the hero scrolls off
     const skin = solid >= 0 ? reveal * (1 - Math.min(1, scatter * 5)) : 0;
+    const liquid = solid >= 0 && shapes[solid].liquid;
     const rot = rotation(y, pitch, Math.sin(t * 0.13) * 0.06);
     setAll('uRot', (l) => gl.uniformMatrix3fv(l, false, rot));
+    setAll('uPitch', (l) => gl.uniformMatrix3fv(l, false, rotation(0, pitch)));
     setAll('uMix', (l) => gl.uniform1f(l, mix));
     setAll('uTime', (l) => gl.uniform1f(l, t));
     setAll('uScatter', (l) => gl.uniform1f(l, scatter));
     setAll('uPointer', (l) => gl.uniform2f(l, px, py));
     setAll('uPointerOn', (l) => gl.uniform1f(l, near));
     setAll('uCubes', (l) => gl.uniform1f(l, 1 - skin));
+    setAll('uPeel', (l) => gl.uniform1f(l, peel * skin));
+    setAll('uRound', (l) => gl.uniform1f(l, liquid ? 1 : 0));
 
-    gl.clearColor(0, 0, 0, 0);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-    if (skin > 0.001) {
+    const drawSolid = () => {
+      if (skin <= 0.001) return;
       gl.useProgram(solidProg);
       gl.uniform1f(solidProg.u('uReveal'), skin);
       gl.uniform1f(solidProg.u('uBox'), shapes[solid].name === 'cube' ? 0.62 + size / 2 : 0);
-      const liquid = shapes[solid].liquid;
       gl.uniform1f(solidProg.u('uLiquid'), liquid ? 1 : 0);
       if (liquid) {
         // the blob sways and squashes, and each tendril creeps out, then snaps back
@@ -975,15 +1080,45 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
       }
       gl.bindVertexArray(solidVaos[solid].vao);
       gl.drawElements(gl.TRIANGLES, solidVaos[solid].count, gl.UNSIGNED_INT, 0);
-    }
+    };
+    const drawCubes = () => {
+      gl.useProgram(cubeProg);
+      gl.enable(gl.CULL_FACE);
+      gl.bindVertexArray(cubeVao);
+      gl.drawElementsInstanced(gl.TRIANGLES, mesh.I.length, gl.UNSIGNED_SHORT, 0, N);
+      gl.disable(gl.CULL_FACE);
+    };
 
-    gl.useProgram(cubeProg);
-    gl.enable(gl.CULL_FACE);
-    gl.bindVertexArray(cubeVao);
-    gl.drawElementsInstanced(gl.TRIANGLES, mesh.I.length, gl.UNSIGNED_SHORT, 0, N);
-    gl.disable(gl.CULL_FACE);
+    // 1. the shape's silhouette, flattened onto the floor, into the small shadow texture
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, shadowFbo);
+    gl.viewport(0, 0, shadowW, shadowH);
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.disable(gl.DEPTH_TEST);
+    setAll('uShadow', (l) => gl.uniform1f(l, 1));
+    drawSolid();
+    drawCubes();
+    setAll('uShadow', (l) => gl.uniform1f(l, 0));
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.viewport(0, 0, canvas.width, canvas.height);
 
-    if (skin < 0.999) {
+    // 2. lay it down, blurred
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.useProgram(shadowProg);
+    gl.bindTexture(gl.TEXTURE_2D, shadowTex);
+    gl.enable(gl.BLEND);
+    gl.bindVertexArray(null);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    gl.disable(gl.BLEND);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    gl.enable(gl.DEPTH_TEST);
+
+    // 3. the shape itself
+    drawSolid();
+    drawCubes();
+
+    if (skin < 0.999 || peel * skin > 0.001) {
       gl.useProgram(lineProg);
       gl.enable(gl.BLEND);
       gl.depthMask(false);
@@ -1034,6 +1169,9 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     const inside = p.active && p.x > -W * 0.25 && p.x < W * 1.25 && p.y > -H * 0.25 && p.y < H * 1.25;
     // hover only: the pointer parts nearby cubes but never turns the shape
     near += ((inside ? 1 : 0) - near) * ease;
+    // hovering the stage itself peels about 30% of the standing solid back into cubes
+    const over = p.active && p.x >= 0 && p.x <= W && p.y >= 0 && p.y <= H;
+    peel += ((over ? 1 : 0) - peel) * Math.min(1, dt * 2.2);
     if (p.active) {
       px = (p.x / Math.max(1, W)) * 2 - 1;
       py = 1 - (p.y / Math.max(1, H)) * 2;
@@ -1061,6 +1199,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   function still(index = 1) {
     scatter = 0;
     near = 0;
+    peel = 0;
     shown = index;
     onShape(index, shapes[index].name, shapes.length);
     draw({ a: index, b: index, mix: 1, solid: index, reveal: 1, t: 2, yaw: 0.7, pitch: 0.42 });
