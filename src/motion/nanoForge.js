@@ -21,7 +21,7 @@ const FUSE = 1.5; // seconds for them to fuse into its solid
 const HOLD = 6.0; // seconds the solid holds
 const CYCLE = BREAK + MORPH + FUSE + HOLD;
 const FLOOR_Y = -1.12; // the floor the shadow falls on, below the shapes
-const PEEL_THR = 0.616; // chunk noise above this covers ~30% of a surface: the share a hover peels back into cubes
+const PEEL_THR = 0.703; // chunk noise above this covers ~15% of a surface: the share a hover peels back into cubes
 
 // ---------- shapes: n points, xyz in about [-1, 1], w = cube scale (0 hides a spare cube) ----------
 
@@ -434,7 +434,7 @@ float noise(vec3 p) {
     mix(mix(hash(i + vec3(0, 0, 1)), hash(i + vec3(1, 0, 1)), f.x), mix(hash(i + vec3(0, 1, 1)), hash(i + vec3(1, 1, 1)), f.x), f.y),
     f.z);
 }
-// big patches that come away from the solid on hover (above 0.616 is ~30% of the surface)
+// big patches that come away from the solid on hover (above 0.703 is ~15% of the surface)
 float chunk(vec3 obj) { return noise(obj * 3.5 + 7.3); }
 uniform float uPeel, uPeelThr;
 float peelEdge() { return mix(1.1, uPeelThr, uPeel); }`;
@@ -1168,7 +1168,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     const inside = p.active && p.x > -W * 0.25 && p.x < W * 1.25 && p.y > -H * 0.25 && p.y < H * 1.25;
     // hover only: the pointer parts nearby cubes but never turns the shape
     near += ((inside ? 1 : 0) - near) * ease;
-    // hovering the stage itself peels about 30% of the standing solid back into cubes
+    // hovering the stage itself peels about 15% of the standing solid back into cubes
     const mx = (W * (1 - 1 / bleed)) / 2;
     const my = (H * (1 - 1 / bleed)) / 2;
     const over = p.active && p.x >= mx && p.x <= W - mx && p.y >= my && p.y <= H - my;
