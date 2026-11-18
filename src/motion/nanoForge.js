@@ -859,12 +859,13 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   const size = spacing * 0.86;
 
   const shapes = [
+    // the forge opens on the liquid-metal blob
+    { name: 'toxic sludge', liquid: true, pts: sludge(N) },
     { name: 'cube', pts: voxelCube(N, g) },
     { name: 'torus knot', pts: pad(torusKnot(N), N) },
     { name: 'möbius loop', pts: mobius(N) },
     { name: 'planet', pts: pad(planet(N), N) },
     { name: 'double helix', pts: pad(helix(N), N) },
-    { name: 'toxic sludge', liquid: true, pts: sludge(N) },
   ];
   for (const s of shapes) if (!s.mesh) s.mesh = solidFor(s.name, size);
 
@@ -1196,7 +1197,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   }
 
   /** One finished shape, no motion (reduced motion). */
-  function still(index = 1) {
+  function still(index = shapes.findIndex((s) => s.name === 'torus knot')) {
     scatter = 0;
     near = 0;
     peel = 0;
