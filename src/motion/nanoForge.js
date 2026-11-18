@@ -1,7 +1,7 @@
 /**
  * Nano forge: a few thousand machined micro-cubes that keep tearing themselves
  * apart and re-assembling into new shapes in the hero stage (a cube, a torus
- * knot, a Möbius loop, a ringed planet, a double helix, and a living toxic sludge). Once the cubes are in
+ * knot, a Möbius loop, a ringed planet, a double helix, and a living liquid-metal blob). Once the cubes are in
  * place they fuse into the real, smooth solid of that shape; when it's time for
  * the next one the solid breaks back up into cubes. While cubes are loose they
  * are strung together by hairlines.
@@ -399,28 +399,28 @@ function solidFor(name, size) {
 
 const LOOK = {
   dark: {
-    base: [0.44, 0.47, 0.53],
-    envLow: [0.04, 0.045, 0.06],
-    envHigh: [0.62, 0.68, 0.78],
+    // white metal on the dark page
+    base: [0.66, 0.67, 0.69],
+    envLow: [0.1, 0.1, 0.11],
+    envHigh: [0.92, 0.93, 0.95],
     spec: [1.0, 1.0, 1.0],
-    rim: [0.55, 0.65, 0.85],
-    edge: [0.22, 0.24, 0.28],
-    glow: [0.62, 0.78, 1.0],
-    line: [0.78, 0.86, 1.0],
-    venom: [0.32, 0.95, 0.42],
+    rim: [0.7, 0.72, 0.75],
+    edge: [0.24, 0.24, 0.25],
+    glow: [0.8, 0.83, 0.88],
+    line: [0.86, 0.87, 0.9],
     lineAlpha: 0.85,
     shadow: 0.55,
   },
   light: {
-    base: [0.4, 0.42, 0.47],
-    envLow: [0.06, 0.065, 0.075],
-    envHigh: [0.68, 0.7, 0.74],
-    spec: [0.95, 0.95, 0.97],
-    rim: [0.3, 0.33, 0.4],
-    edge: [0.2, 0.21, 0.24],
-    glow: [0.35, 0.45, 0.62],
-    line: [0.2, 0.23, 0.29],
-    venom: [0.18, 0.72, 0.28],
+    // black metal on the light page
+    base: [0.09, 0.095, 0.1],
+    envLow: [0.01, 0.01, 0.012],
+    envHigh: [0.42, 0.43, 0.45],
+    spec: [0.85, 0.85, 0.87],
+    rim: [0.22, 0.23, 0.25],
+    edge: [0.16, 0.16, 0.17],
+    glow: [0.22, 0.23, 0.25],
+    line: [0.1, 0.105, 0.115],
     lineAlpha: 0.75,
     shadow: 0.2,
   },
@@ -625,7 +625,6 @@ uniform vec4 uTend[6]; // direction, reach
 out vec3 vN;
 out vec3 vWorld;
 out vec3 vObj;
-out float vReach;
 ${FLOOR}
 
 // the sludge: a blob that ripples, sways and keeps pushing out tendrils that get pulled back
@@ -640,9 +639,9 @@ float reach(vec3 n) {
 vec3 surf(vec3 n) {
   float t = uTime;
   float r = 0.52
-    + 0.055 * sin(n.x * 3.1 + t * 1.7) * sin(n.y * 2.7 - t * 1.3)
-    + 0.045 * sin(n.z * 4.3 + n.y * 2.0 + t * 2.1)
-    + 0.02 * sin(n.x * 9.0 + n.z * 7.0 - t * 3.2)
+    + 0.022 * sin(n.x * 3.1 + t * 1.7) * sin(n.y * 2.7 - t * 1.3)
+    + 0.018 * sin(n.z * 4.3 + n.y * 2.0 + t * 2.1)
+    + 0.007 * sin(n.x * 9.0 + n.z * 7.0 - t * 3.2)
     + reach(n);
   vec3 p = n * r;
   p.y *= uSquash;
@@ -653,7 +652,6 @@ vec3 surf(vec3 n) {
 void main() {
   vec3 pos = aPos;
   vec3 nrm = aNormal;
-  vReach = 0.0;
   if (uLiquid > 0.5) {
     vec3 n = normalize(aPos);
     vec3 t1 = normalize(cross(n, abs(n.y) < 0.9 ? vec3(0.0, 1.0, 0.0) : vec3(1.0, 0.0, 0.0)));
@@ -663,7 +661,6 @@ void main() {
     vec3 pb = surf(normalize(n + t2 * 0.012));
     nrm = normalize(cross(pa - pos, pb - pos));
     if (dot(nrm, pos - uSway) < 0.0) nrm = -nrm;
-    vReach = reach(n);
   }
   vObj = aPos;
   vec3 w = uRot * pos;
@@ -678,9 +675,7 @@ precision highp float;
 in vec3 vN;
 in vec3 vWorld;
 in vec3 vObj;
-in float vReach;
 uniform float uReveal, uBox, uLiquid, uShadow;
-uniform vec3 uVenom;
 uniform vec3 uEdge;
 out vec4 o;
 ${SHADE}
@@ -712,15 +707,10 @@ void main() {
     col += uEdge * 1.1 * smoothstep(0.982, 0.996, mid);
   }
   if (uLiquid > 0.5) {
-    // wet, near-black and glossy, with a toxic sheen at the rim and in the stretched tendrils
+    // the same metal as every other shape, just wetter: a tighter, brighter highlight
     vec3 v = normalize(vec3(0.0, 0.0, uCamZ) - vWorld);
     vec3 r = reflect(-v, n);
-    float fres = pow(1.0 - max(dot(n, v), 0.0), 2.5);
-    float sp = pow(max(dot(r, normalize(vec3(-0.55, 0.85, 0.6))), 0.0), 90.0) + 0.5 * pow(max(dot(r, normalize(vec3(0.8, -0.25, 0.35))), 0.0), 40.0);
-    vec3 env = mix(vec3(0.0), vec3(0.32, 0.36, 0.34), smoothstep(-0.2, 0.9, r.y));
-    col = vec3(0.015, 0.02, 0.018) + env * 0.5 + vec3(1.0) * sp * 1.1 + uVenom * (fres * 0.9 + min(vReach * 1.6, 0.9));
-    col += uVenom * edge * 1.2;
-    edge = 0.0;
+    col += uSpec * (pow(max(dot(r, normalize(vec3(-0.55, 0.85, 0.6))), 0.0), 120.0) * 0.6);
   }
   o = vec4(col + uGlow * edge * 1.3, 1.0);
 }`;
@@ -1018,7 +1008,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     if (th === lookTheme) return;
     lookTheme = th;
     const L = LOOK[th];
-    for (const [u, v] of [['uBase', L.base], ['uEnvLow', L.envLow], ['uEnvHigh', L.envHigh], ['uSpec', L.spec], ['uRim', L.rim], ['uEdge', L.edge], ['uGlow', L.glow], ['uLine', L.line], ['uVenom', L.venom]])
+    for (const [u, v] of [['uBase', L.base], ['uEnvLow', L.envLow], ['uEnvHigh', L.envHigh], ['uSpec', L.spec], ['uRim', L.rim], ['uEdge', L.edge], ['uGlow', L.glow], ['uLine', L.line]])
       setAll(u, (l) => gl.uniform3fv(l, v));
     setAll('uLineAlpha', (l) => gl.uniform1f(l, L.lineAlpha));
     gl.useProgram(shadowProg);
@@ -1065,8 +1055,8 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
       gl.uniform1f(solidProg.u('uLiquid'), liquid ? 1 : 0);
       if (liquid) {
         // the blob sways and squashes, and each tendril creeps out, then snaps back
-        gl.uniform3f(solidProg.u('uSway'), Math.sin(t * 1.1) * 0.07, Math.sin(t * 1.7) * 0.04, Math.cos(t * 0.9) * 0.05);
-        gl.uniform1f(solidProg.u('uSquash'), 1 + Math.sin(t * 2.3) * 0.07);
+        gl.uniform3f(solidProg.u('uSway'), Math.sin(t * 1.1) * 0.035, Math.sin(t * 1.7) * 0.02, Math.cos(t * 0.9) * 0.025);
+        gl.uniform1f(solidProg.u('uSquash'), 1 + Math.sin(t * 2.3) * 0.03);
         const tend = new Float32Array(24);
         for (let i = 0; i < 6; i++) {
           const th = i * 2.4 + t * (0.17 + i * 0.03);
@@ -1074,7 +1064,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
           const ct = Math.cos(ph);
           const ph01 = (t * (0.21 + i * 0.037) + i * 0.29) % 1;
           const out = ph01 < 0.72 ? (ph01 / 0.72) ** 1.6 : (1 - (ph01 - 0.72) / 0.28) ** 3;
-          tend.set([Math.cos(th) * ct, Math.sin(ph), Math.sin(th) * ct, out * (0.55 + (i % 3) * 0.12)], i * 4);
+          tend.set([Math.cos(th) * ct, Math.sin(ph), Math.sin(th) * ct, out * (0.07 + (i % 3) * 0.02)], i * 4);
         }
         gl.uniform4fv(solidProg.u('uTend[0]'), tend);
       }
