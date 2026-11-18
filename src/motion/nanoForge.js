@@ -625,7 +625,6 @@ layout(location=2) in vec4 aA;
 layout(location=3) in vec4 aB;
 layout(location=4) in vec4 aSeed;
 uniform float uSize, uCubes;
-uniform float uSink; // the blob: how far its cube ball has sunk into the fluid
 out vec3 vN;
 out vec3 vLocal;
 out vec3 vWorld;
@@ -1221,7 +1220,6 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
       gl.useProgram(solidProg);
       gl.uniform1f(solidProg.u('uReveal'), skin);
       gl.uniform1f(solidProg.u('uLiquid'), liquid ? 1 : 0);
-      gl.uniform1f(solidProg.u('uGrow'), grow);
       if (liquid) {
         // the blob sways and squashes, and each tendril creeps out, then snaps back
         gl.uniform3f(solidProg.u('uSway'), Math.sin(t * 1.1) * 0.035, Math.sin(t * 1.7) * 0.02, Math.cos(t * 0.9) * 0.025);
