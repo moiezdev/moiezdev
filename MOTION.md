@@ -38,6 +38,7 @@ A new ambient piece replaces the forge. It isn't added next to it.
 - Ambient code loads after first paint (`requestIdleCallback` plus a dynamic `import()`), so it never competes with the LCP image.
 - No animation library. The whole system is plain CSS, the Web Animations API, a few small hooks and one canvas engine.
 - Without WebGL2 the stage keeps its static glow. Nothing else depends on it.
+- Botfolio's avatar (`components/chatbot/RobotAvatar.jsx`) is the one other canvas: a tiny raymarched ball of the same liquid metal as the forge's blob (white on dark, black on light). It ripples slowly at rest, churns faster while thinking and swells unevenly while speaking. One full-screen triangle per frame at avatar size; only one avatar is on screen at a time. With reduced motion it draws one still frame, and without WebGL2 it shows a shaded CSS sphere.
 
 ### 5. Nothing runs unseen
 
