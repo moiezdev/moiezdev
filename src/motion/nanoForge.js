@@ -788,10 +788,11 @@ vec3 surf(vec3 n) {
     + 0.018 * sin(n.z * 4.3 + n.y * 2.0 + t * 2.1)
     + 0.007 * sin(n.x * 9.0 + n.z * 7.0 - t * 3.2)
     + reach(n);
-  // while it spreads, the coat sits just over the cubes and swells into a rolling lip at its edge
-  float coat = uFront < 0.0 ? 0.0 : 1.0 - smoothstep(0.85, 1.0, uFront);
+  // the coat always sits just over where the cubes were, so the blob never changes size; while it
+  // spreads it swells into a rolling lip at its edges
+  float coat = uFront < 0.0 || uFront > 0.999 ? 0.0 : 1.0;
   float lip = exp(-pow(leakGap(n) / 0.14, 2.0));
-  r += coat * (0.05 + 0.035 * lip);
+  r += 0.05 + coat * 0.035 * lip;
   vec3 p = n * r;
   p.y *= uSquash;
   p.xz /= sqrt(uSquash);
@@ -1089,7 +1090,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   // [how far below the skin the matrix starts, how deep it goes]
   const FILL_DEPTH = { cube: [0.08, 0.14], 'torus knot': [0.05, 0.06], 'möbius loop': [0.005, 0.008], planet: [0.08, 0.14], 'double helix': [0.015, 0.02], 'toxic sludge': [0.08, 0.14] };
   const fillVaos = shapes.map((s) => {
-    const data = fillers(s.mesh, small ? 2000 : 4500, FILL_DEPTH[s.name] ?? [0.04, 0.08], { round: s.liquid ? 0.52 : 0 });
+    const data = fillers(s.mesh, small ? 2000 : 4500, FILL_DEPTH[s.name] ?? [0.04, 0.08], { round: s.liquid ? 0.57 : 0 });
     const vao = gl.createVertexArray();
     gl.bindVertexArray(vao);
     buf(mesh.P);
@@ -1236,9 +1237,9 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
       gl.uniform1f(solidProg.u('uReveal'), skin);
       gl.uniform1f(solidProg.u('uLiquid'), liquid ? 1 : 0);
       if (liquid) {
-        // the blob sways and squashes, and each tendril creeps out, then snaps back
+        // the blob sways (it keeps its size), and each tendril creeps out, then snaps back
         gl.uniform3f(solidProg.u('uSway'), Math.sin(t * 1.1) * 0.035, Math.sin(t * 1.7) * 0.02, Math.cos(t * 0.9) * 0.025);
-        gl.uniform1f(solidProg.u('uSquash'), 1 + Math.sin(t * 2.3) * 0.03);
+        gl.uniform1f(solidProg.u('uSquash'), 1);
         const tend = new Float32Array(24);
         for (let i = 0; i < 6; i++) {
           const th = i * 2.4 + t * (0.17 + i * 0.03);
