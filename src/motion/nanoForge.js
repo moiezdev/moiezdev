@@ -1,7 +1,7 @@
 /**
  * Nano forge: a few thousand machined micro-cubes that keep tearing themselves
  * apart and re-assembling into new shapes in the hero stage (a cube, a torus
- * knot, a Möbius loop, a ringed planet, a double helix, "AI"). Once the cubes are in
+ * knot, a Möbius loop, a ringed planet, a double helix, and a living toxic sludge). Once the cubes are in
  * place they fuse into the real, smooth solid of that shape; when it's time for
  * the next one the solid breaks back up into cubes. While cubes are loose they
  * are strung together by hairlines.
@@ -103,7 +103,8 @@ function planet(n) {
     const x = Math.cos(a) * r;
     const z = Math.sin(a) * r;
     const y = rand(-0.012, 0.012);
-    pts.push([x, y * Math.cos(tilt) - z * Math.sin(tilt), y * Math.sin(tilt) + z * Math.cos(tilt)]);
+    // w = 3: scale 1, second part (the ring), so no strings run between it and the globe
+    pts.push([x, y * Math.cos(tilt) - z * Math.sin(tilt), y * Math.sin(tilt) + z * Math.cos(tilt), 3]);
   }
   return pts;
 }
@@ -118,14 +119,16 @@ function helix(n) {
     const t = (i / strand) * 2 - 1;
     const a = t * TAU * HELIX_TURNS + (i % 2 ? Math.PI : 0);
     const j = () => rand(-0.035, 0.035);
-    pts.push([Math.cos(a) * 0.4 + j(), t * 0.95, Math.sin(a) * 0.4 + j()]);
+    // each strand is its own part (w = 1 or 3), so no strings jump the gap between them
+    pts.push([Math.cos(a) * 0.4 + j(), t * 0.95, Math.sin(a) * 0.4 + j(), i % 2 ? 3 : 1]);
   }
   for (let i = 0; i < rungs; i++) {
     const k = Math.floor(rand(0, HELIX_RUNGS));
     const t = (k / (HELIX_RUNGS - 1)) * 1.8 - 0.9;
     const a = t * TAU * HELIX_TURNS;
     const s = rand(-0.4, 0.4);
-    pts.push([Math.cos(a) * s, t * 0.95, Math.sin(a) * s]);
+    // the rungs are a third part (w = 5)
+    pts.push([Math.cos(a) * s, t * 0.95, Math.sin(a) * s, 5]);
   }
   return pts;
 }
@@ -157,65 +160,16 @@ function mobius(n) {
   return pts;
 }
 
-/** Text voxelised on the same grid as the cubes, and extruded a few layers deep. */
-function glyph(n, text, weight, family, spacing) {
-  // draw large, crop to the ink, then let the browser average it down to one pixel per cube
-  const big = document.createElement('canvas');
-  big.width = 640;
-  big.height = 320;
-  const g = big.getContext('2d', { willReadFrequently: true });
-  g.font = `${weight} 200px ${family}`;
-  const fs = Math.min(200 * (600 / Math.max(1, g.measureText(text).width)), 300);
-  g.font = `${weight} ${fs}px ${family}`;
-  g.fillStyle = '#fff';
-  g.textAlign = 'center';
-  g.textBaseline = 'middle';
-  g.fillText(text, 320, 168);
-  const ink = g.getImageData(0, 0, 640, 320).data;
-  let x0 = 640, x1 = 0, y0 = 320, y1 = 0;
-  for (let y = 0; y < 320; y++)
-    for (let x = 0; x < 640; x++)
-      if (ink[(y * 640 + x) * 4 + 3] > 80) {
-        if (x < x0) x0 = x;
-        if (x > x1) x1 = x;
-        if (y < y0) y0 = y;
-        if (y > y1) y1 = y;
-      }
-  if (x1 <= x0) return { pts: voxelCube(n, 12), solid: null };
-  const bw = x1 - x0 + 1;
-  const bh = y1 - y0 + 1;
-  // as large as fits in 2.0 wide by 1.35 tall
-  const scale = Math.min(2.0 / bw, 1.35 / bh);
-  const cols = Math.max(4, Math.round((bw * scale) / spacing));
-  const rows = Math.max(4, Math.round((bh * scale) / spacing));
-  const sm = document.createElement('canvas');
-  sm.width = cols;
-  sm.height = rows;
-  const sg = sm.getContext('2d', { willReadFrequently: true });
-  sg.imageSmoothingQuality = 'high';
-  sg.drawImage(big, x0, y0, bw, bh, 0, 0, cols, rows);
-  const data = sg.getImageData(0, 0, cols, rows).data;
-  const cells = [];
-  for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) if (data[(y * cols + x) * 4 + 3] > 90) cells.push([x, y]);
-  if (!cells.length) return { pts: voxelCube(n, 12), solid: null };
-  const layers = Math.max(2, Math.min(4, Math.round(n / cells.length)));
+/** Cubes over the sludge's resting blob (a sphere; the shader makes it move). */
+function sludge(n) {
   const pts = [];
-  for (const [x, y] of cells)
-    for (let l = 0; l < layers; l++)
-      pts.push([(x - (cols - 1) / 2) * spacing, -(y - (rows - 1) / 2) * spacing, (l - (layers - 1) / 2) * spacing]);
-  // the same ink at a much finer grid becomes the solid the cubes fuse into
-  const hw = 240;
-  const hh = Math.max(8, Math.round((hw * bh) / bw));
-  const hi = document.createElement('canvas');
-  hi.width = hw;
-  hi.height = hh;
-  const hg = hi.getContext('2d', { willReadFrequently: true });
-  hg.imageSmoothingQuality = 'high';
-  hg.drawImage(big, x0, y0, bw, bh, 0, 0, hw, hh);
-  const hd = hg.getImageData(0, 0, hw, hh).data;
-  const mask = new Uint8Array(hw * hh);
-  for (let i = 0; i < mask.length; i++) mask[i] = hd[i * 4 + 3] > 127 ? 1 : 0;
-  return { pts: pad(pts, n), solid: extrude(mask, hw, hh, cols * spacing, rows * spacing, layers * spacing) };
+  const golden = Math.PI * (3 - Math.sqrt(5));
+  for (let i = 0; i < n; i++) {
+    const y = 1 - (i / (n - 1)) * 2;
+    const r = Math.sqrt(1 - y * y);
+    pts.push([Math.cos(golden * i) * r * 0.54, y * 0.54, Math.sin(golden * i) * r * 0.54]);
+  }
+  return pts;
 }
 
 function cloud(n) {
@@ -356,42 +310,6 @@ function annulus(b, r0, r1, th, tilt, segs = 120) {
   return b;
 }
 
-/** A bitmap extruded into a solid slab: front and back faces as runs, side walls at every ink edge. */
-function extrude(mask, w, h, width, height, depth) {
-  const b = builder();
-  const sx = width / w;
-  const sy = height / h;
-  const X = (c) => -width / 2 + c * sx;
-  const Y = (r) => height / 2 - r * sy;
-  const zf = depth / 2;
-  const at = (c, r) => c >= 0 && r >= 0 && c < w && r < h && mask[r * w + c];
-  for (let r = 0; r < h; r++) {
-    let c = 0;
-    while (c < w) {
-      if (!at(c, r)) {
-        c++;
-        continue;
-      }
-      const c0 = c;
-      while (at(c, r)) c++;
-      for (const z of [zf, -zf]) {
-        const nz = Math.sign(z);
-        b.quad(b.v(X(c0), Y(r + 1), z, 0, 0, nz), b.v(X(c), Y(r + 1), z, 0, 0, nz), b.v(X(c), Y(r), z, 0, 0, nz), b.v(X(c0), Y(r), z, 0, 0, nz));
-      }
-    }
-    for (let c2 = 0; c2 < w; c2++) {
-      if (!at(c2, r)) continue;
-      const wall = (x0, y0, x1, y1, nx, ny) =>
-        b.quad(b.v(x0, y0, zf, nx, ny, 0), b.v(x1, y1, zf, nx, ny, 0), b.v(x1, y1, -zf, nx, ny, 0), b.v(x0, y0, -zf, nx, ny, 0));
-      if (!at(c2 - 1, r)) wall(X(c2), Y(r), X(c2), Y(r + 1), -1, 0);
-      if (!at(c2 + 1, r)) wall(X(c2 + 1), Y(r), X(c2 + 1), Y(r + 1), 1, 0);
-      if (!at(c2, r - 1)) wall(X(c2), Y(r), X(c2 + 1), Y(r), 0, 1);
-      if (!at(c2, r + 1)) wall(X(c2), Y(r + 1), X(c2 + 1), Y(r + 1), 0, -1);
-    }
-  }
-  return b;
-}
-
 /**
  * A Möbius band with thickness 2h. Going round the loop twice with the surface pushed out along
  * its normal covers both faces in one sheet, because the normal comes back flipped after one lap.
@@ -446,6 +364,9 @@ function solidFor(name, size) {
       return tube(builder(), knotCurve, 420, 0.42 / 3.3 + half * 0.6, 18, false).done();
     case 'möbius loop':
       return mobiusSolid(half).done();
+    case 'toxic sludge':
+      // a unit sphere: the vertex shader turns it into the moving blob
+      return sphere(builder(), 1, 144, 104).done();
     case 'planet': {
       const b = sphere(builder(), 0.5 + half * 0.6);
       return annulus(b, 0.72, 1.02, Math.max(0.03, size * 0.9), 0.42).done();
@@ -484,6 +405,7 @@ const LOOK = {
     edge: [0.22, 0.24, 0.28],
     glow: [0.62, 0.78, 1.0],
     line: [0.78, 0.86, 1.0],
+    venom: [0.32, 0.95, 0.42],
     lineAlpha: 0.85,
   },
   light: {
@@ -495,6 +417,7 @@ const LOOK = {
     edge: [0.2, 0.21, 0.24],
     glow: [0.35, 0.45, 0.62],
     line: [0.2, 0.23, 0.29],
+    venom: [0.18, 0.72, 0.28],
     lineAlpha: 0.75,
   },
 };
@@ -518,7 +441,8 @@ vec3 centreOf(vec4 A, vec4 B, vec4 seed, out float e, out float arc, out float n
   vec3 p = mix(A.xyz, B.xyz, e) + dir * arc * (0.3 + seed.x * 0.45);
   p += dir * 0.005 * sin(uTime * 1.6 + seed.y * 40.0);
   p += dir * uScatter * (0.7 + seed.x * 1.8);
-  scale = mix(A.w, B.w, e) * (1.0 - 0.45 * arc) * (1.0 - 0.75 * uScatter);
+  // w holds the cube's scale, plus 2 x the part it belongs to (the planet's globe and ring, each helix strand and the rungs)
+  scale = mix(mod(A.w, 2.0), mod(B.w, 2.0), e) * (1.0 - 0.45 * arc) * (1.0 - 0.75 * uScatter);
   vec3 c = uRot * p;
   // the pointer parts the cubes around it
   vec4 c0 = uProj * vec4(c - vec3(0.0, 0.0, uCamZ), 1.0);
@@ -623,7 +547,11 @@ void main() {
   vec3 c2 = centreOf(aA2, aB2, aSeed2, e2, arc2, near2, s2, d2);
   float len = distance(c1, c2);
   float on = uCubes;
-  vAlpha = smoothstep(uMaxLen, uMaxLen * 0.3, len) * step(0.01, s1 * s2) * on * (0.5 + 0.8 * max(arc1, arc2) + 0.5 * uScatter);
+  // never string two separate parts together (the globe and its ring)
+  float sameA = float(floor(aA.w * 0.5) == floor(aA2.w * 0.5));
+  float sameB = float(floor(aB.w * 0.5) == floor(aB2.w * 0.5));
+  float same = mix(sameA, sameB, step(0.5, (e1 + e2) * 0.5));
+  vAlpha = same * smoothstep(uMaxLen, uMaxLen * 0.3, len) * step(0.01, s1 * s2) * on * (0.5 + 0.8 * max(arc1, arc2) + 0.5 * uScatter);
   gl_Position = uProj * vec4(c1 - vec3(0.0, 0.0, uCamZ), 1.0);
 }`;
 
@@ -644,14 +572,54 @@ layout(location=0) in vec3 aPos;
 layout(location=1) in vec3 aNormal;
 uniform mat4 uProj;
 uniform mat3 uRot;
-uniform float uCamZ;
+uniform float uCamZ, uTime, uLiquid, uSquash;
+uniform vec3 uSway;
+uniform vec4 uTend[6]; // direction, reach
 out vec3 vN;
 out vec3 vWorld;
 out vec3 vObj;
+out float vReach;
+
+// the sludge: a blob that ripples, sways and keeps pushing out tendrils that get pulled back
+float reach(vec3 n) {
+  float r = 0.0;
+  for (int i = 0; i < 6; i++) {
+    float a = max(dot(n, uTend[i].xyz), 0.0);
+    r += uTend[i].w * (pow(a, 44.0) + 0.18 * pow(a, 6.0));
+  }
+  return r;
+}
+vec3 surf(vec3 n) {
+  float t = uTime;
+  float r = 0.52
+    + 0.055 * sin(n.x * 3.1 + t * 1.7) * sin(n.y * 2.7 - t * 1.3)
+    + 0.045 * sin(n.z * 4.3 + n.y * 2.0 + t * 2.1)
+    + 0.02 * sin(n.x * 9.0 + n.z * 7.0 - t * 3.2)
+    + reach(n);
+  vec3 p = n * r;
+  p.y *= uSquash;
+  p.xz /= sqrt(uSquash);
+  return p + uSway;
+}
+
 void main() {
+  vec3 pos = aPos;
+  vec3 nrm = aNormal;
+  vReach = 0.0;
+  if (uLiquid > 0.5) {
+    vec3 n = normalize(aPos);
+    vec3 t1 = normalize(cross(n, abs(n.y) < 0.9 ? vec3(0.0, 1.0, 0.0) : vec3(1.0, 0.0, 0.0)));
+    vec3 t2 = cross(n, t1);
+    pos = surf(n);
+    vec3 pa = surf(normalize(n + t1 * 0.012));
+    vec3 pb = surf(normalize(n + t2 * 0.012));
+    nrm = normalize(cross(pa - pos, pb - pos));
+    if (dot(nrm, pos - uSway) < 0.0) nrm = -nrm;
+    vReach = reach(n);
+  }
   vObj = aPos;
-  vec3 w = uRot * aPos;
-  vN = uRot * aNormal;
+  vec3 w = uRot * pos;
+  vN = uRot * nrm;
   vWorld = w;
   gl_Position = uProj * vec4(w - vec3(0.0, 0.0, uCamZ), 1.0);
 }`;
@@ -661,7 +629,9 @@ precision highp float;
 in vec3 vN;
 in vec3 vWorld;
 in vec3 vObj;
-uniform float uReveal, uBox;
+in float vReach;
+uniform float uReveal, uBox, uLiquid;
+uniform vec3 uVenom;
 uniform vec3 uEdge;
 out vec4 o;
 ${SHADE}
@@ -681,13 +651,26 @@ void main() {
   float thr = uReveal * 1.16 - 0.08;
   if (nz > thr) discard;
   float edge = 1.0 - smoothstep(0.0, 0.06, thr - nz);
-  vec3 n = normalize(gl_FrontFacing ? vN : -vN);
+  // face the viewer whichever way a triangle is wound (holes show the inside)
+  vec3 n = normalize(vN);
+  if (dot(n, vec3(0.0, 0.0, uCamZ) - vWorld) < 0.0) n = -n;
   vec3 col = shade(n, vWorld);
   // the solid cube gets the same machined bevel as the little ones
   if (uBox > 0.0) {
     vec3 a = abs(vObj) / uBox;
     float mid = a.x + a.y + a.z - max(a.x, max(a.y, a.z)) - min(a.x, min(a.y, a.z));
     col += uEdge * 1.1 * smoothstep(0.982, 0.996, mid);
+  }
+  if (uLiquid > 0.5) {
+    // wet, near-black and glossy, with a toxic sheen at the rim and in the stretched tendrils
+    vec3 v = normalize(vec3(0.0, 0.0, uCamZ) - vWorld);
+    vec3 r = reflect(-v, n);
+    float fres = pow(1.0 - max(dot(n, v), 0.0), 2.5);
+    float sp = pow(max(dot(r, normalize(vec3(-0.55, 0.85, 0.6))), 0.0), 90.0) + 0.5 * pow(max(dot(r, normalize(vec3(0.8, -0.25, 0.35))), 0.0), 40.0);
+    vec3 env = mix(vec3(0.0), vec3(0.32, 0.36, 0.34), smoothstep(-0.2, 0.9, r.y));
+    col = vec3(0.015, 0.02, 0.018) + env * 0.5 + vec3(1.0) * sp * 1.1 + uVenom * (fres * 0.9 + min(vReach * 1.6, 0.9));
+    edge *= 0.0;
+    col += uVenom * (1.0 - smoothstep(0.0, 0.06, thr - nz)) * 1.2;
   }
   o = vec4(col + uGlow * edge * 1.3, 1.0);
 }`;
@@ -799,18 +782,13 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   const spacing = (2 * 0.62) / (g - 1);
   const size = spacing * 0.86;
 
-  const text = (t, weight, family) => {
-    const r = glyph(N, t, weight, family, spacing);
-    return { pts: r.pts, solid: r.solid?.done() ?? null };
-  };
-  const ai = text('AI', 900, 'Inter, system-ui, -apple-system, Helvetica, Arial, sans-serif');
   const shapes = [
     { name: 'cube', pts: voxelCube(N, g) },
     { name: 'torus knot', pts: pad(torusKnot(N), N) },
     { name: 'möbius loop', pts: mobius(N) },
     { name: 'planet', pts: pad(planet(N), N) },
     { name: 'double helix', pts: pad(helix(N), N) },
-    { name: 'AI', flat: true, pts: ai.pts, mesh: ai.solid },
+    { name: 'toxic sludge', liquid: true, pts: sludge(N) },
   ];
   for (const s of shapes) if (!s.mesh) s.mesh = solidFor(s.name, size);
 
@@ -939,7 +917,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     if (th === lookTheme) return;
     lookTheme = th;
     const L = LOOK[th];
-    for (const [u, v] of [['uBase', L.base], ['uEnvLow', L.envLow], ['uEnvHigh', L.envHigh], ['uSpec', L.spec], ['uRim', L.rim], ['uEdge', L.edge], ['uGlow', L.glow], ['uLine', L.line]])
+    for (const [u, v] of [['uBase', L.base], ['uEnvLow', L.envLow], ['uEnvHigh', L.envHigh], ['uSpec', L.spec], ['uRim', L.rim], ['uEdge', L.edge], ['uGlow', L.glow], ['uLine', L.line], ['uVenom', L.venom]])
       setAll(u, (l) => gl.uniform3fv(l, v));
     setAll('uLineAlpha', (l) => gl.uniform1f(l, L.lineAlpha));
   };
@@ -980,6 +958,23 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
       gl.useProgram(solidProg);
       gl.uniform1f(solidProg.u('uReveal'), skin);
       gl.uniform1f(solidProg.u('uBox'), shapes[solid].name === 'cube' ? 0.62 + size / 2 : 0);
+      const liquid = shapes[solid].liquid;
+      gl.uniform1f(solidProg.u('uLiquid'), liquid ? 1 : 0);
+      if (liquid) {
+        // the blob sways and squashes, and each tendril creeps out, then snaps back
+        gl.uniform3f(solidProg.u('uSway'), Math.sin(t * 1.1) * 0.07, Math.sin(t * 1.7) * 0.04, Math.cos(t * 0.9) * 0.05);
+        gl.uniform1f(solidProg.u('uSquash'), 1 + Math.sin(t * 2.3) * 0.07);
+        const tend = new Float32Array(24);
+        for (let i = 0; i < 6; i++) {
+          const th = i * 2.4 + t * (0.17 + i * 0.03);
+          const ph = Math.sin(t * (0.23 + i * 0.05) + i * 1.7) * 1.1;
+          const ct = Math.cos(ph);
+          const ph01 = (t * (0.21 + i * 0.037) + i * 0.29) % 1;
+          const out = ph01 < 0.72 ? (ph01 / 0.72) ** 1.6 : (1 - (ph01 - 0.72) / 0.28) ** 3;
+          tend.set([Math.cos(th) * ct, Math.sin(ph), Math.sin(th) * ct, out * (0.55 + (i % 3) * 0.12)], i * 4);
+        }
+        gl.uniform4fv(solidProg.u('uTend[0]'), tend);
+      }
       gl.bindVertexArray(solidVaos[solid].vao);
       gl.drawElements(gl.TRIANGLES, solidVaos[solid].count, gl.UNSIGNED_INT, 0);
     }

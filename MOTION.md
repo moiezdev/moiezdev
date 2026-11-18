@@ -89,16 +89,15 @@ In Tailwind classes, use them as `duration-(--dur-base) ease-(--ease-spring)`. I
 | `reducedMotion.js` | `prefersReducedMotion()` and a `usePrefersReducedMotion()` hook (via `useSyncExternalStore`). |
 | `viewTransition.js` | `withViewTransition()` and `navigateWithTransition()`. Card → case study shared-element morph. Waits for the new route to commit before the snapshot is taken. |
 | `prefsTransitions.js` | Circular theme reveal from the toggle, and the EN⇄AR crossfade. |
-| `nanoForge.js` | The forge engine: the shapes, their solids (box, tubes, sphere and ring, extruded text), the WebGL2 shaders and buffers, the metal look per theme, and a `step(t, dt)` that reads scroll and the pointer. Knows nothing about React or the DOM beyond its canvas. |
+| `nanoForge.js` | The forge engine: the shapes, their solids (box, tubes, Möbius band, sphere and ring, the sludge blob), the WebGL2 shaders and buffers, the metal look per theme, and a `step(t, dt)` that reads scroll and the pointer. Knows nothing about React or the DOM beyond its canvas. |
 
 ## The nano forge
 
 `components/home/HeroStage.jsx` is the stage in the hero: beside the copy on desktop (mirrored in RTL), above it on phones. The prerendered HTML is only its glow and a faint pedestal. Once the browser is idle it loads the engine and adds one WebGL canvas, which fades in.
 
-- **Shapes**: a cube, a torus knot, a Möbius loop, a ringed planet, a double helix, and `AI`. Every cube has a place in every shape.
+- **Shapes**: a cube, a torus knot, a Möbius loop, a ringed planet, a double helix (1.5 turns, 9 rungs), and a toxic sludge. Every cube has a place in every shape. The sludge is the one living solid: a glossy near-black blob with a toxic green sheen that ripples, sways and squashes, and keeps creeping tendrils out that snap back, all displaced in the vertex shader.
 - **A cycle (7.4s)**: the standing solid breaks up into its cubes in patches (0.8s). The cubes fly to the next shape, built from the core outwards (2.6s): they tumble a whole number of turns, glow in flight and lock in square to the grid. Then they fuse into that shape's smooth solid, which grows over them in patches with a glowing edge (1s), and the solid holds (3s). There's no scan line or sweep.
-- **Strings**: while cubes are loose, each is linked by hairlines to a few neighbours. Lines that stretch too far fade out, and they're gone once the solid stands.
-- **Text** shapes swing round to face you and sway; the other solids keep turning.
+- **Strings**: while cubes are loose, each is linked by hairlines to a few neighbours in the same part of the shape. Separate parts are never strung together: the planet's globe and ring, and the helix's two strands and its rungs, each keep their own strings. Lines that stretch too far fade out, and they're gone once the solid stands.
 - **Caption**: a small mono label under the stage names the shape (desktop only, `aria-hidden`).
 - **Scroll**: the shape turns with scroll position, and blows apart into shrinking debris as the hero leaves. It's scrubbed, so scrolling back rebuilds it.
 - **Cursor**: the shape leans toward the pointer, and loose cubes part around it and glow. A finger does the same while it's down.
