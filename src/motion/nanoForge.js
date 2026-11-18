@@ -450,7 +450,7 @@ function chunkJS(p) {
  * Small cubes packed just under the solid's skin, only where a hover can peel it, so an opening shows a
  * dense matrix instead of a hollow shell. Each is [x, y, z, chunk] in the solid's own space.
  */
-function fillers(mesh, count, depth, { round = 0 } = {}) {
+function fillers(mesh, count, [recess, depth], { round = 0 } = {}) {
   const { P, N, I } = mesh;
   const tris = I.length / 3;
   const cum = new Float64Array(tris);
@@ -486,7 +486,8 @@ function fillers(mesh, count, depth, { round = 0 } = {}) {
     const nn = norm([0, 1, 2].map((k) => ids.reduce((acc, id, j) => acc + N[id * 3 + k] * wts[j], 0)));
     const ch = chunkJS(round ? norm(p) : p);
     if (ch < PEEL_THR - 0.02) continue;
-    const d = depth * Math.random() ** 0.8;
+    // sunk below the skin, so an opening reads as a dent with the matrix at its floor
+    const d = recess + depth * Math.random() ** 0.8;
     const q = round ? norm(p).map((c) => c * (round - d)) : [0, 1, 2].map((k) => p[k] - nn[k] * d);
     out.set([q[0], q[1], q[2], ch], n * 4);
     n++;
@@ -814,8 +815,11 @@ void main() {
   }
   // face the viewer whichever way a triangle is wound (holes show the inside)
   vec3 n = normalize(vN);
-  if (dot(n, vec3(0.0, 0.0, uCamZ) - vWorld) < 0.0) n = -n;
+  bool inside = dot(n, vec3(0.0, 0.0, uCamZ) - vWorld) < 0.0;
+  if (inside) n = -n;
   vec3 col = shade(n, vWorld);
+  // the inner wall of an opening is in shadow, so a dent reads as a dent
+  if (inside) col *= 0.45;
   if (uLiquid > 0.5) {
     // the same metal as every other shape, just wetter: a tighter, brighter highlight
     vec3 v = normalize(vec3(0.0, 0.0, uCamZ) - vWorld);
@@ -1046,9 +1050,10 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     return { vao, count: s.mesh.I.length };
   });
   // the packed inside for each solid, for hover peels (the planet's ring never peels, it's loose already)
-  const FILL_DEPTH = { cube: 0.16, 'torus knot': 0.11, 'möbius loop': 0.012, planet: 0.16, 'double helix': 0.04, 'toxic sludge': 0.16 };
+  // [how far below the skin the matrix starts, how deep it goes]
+  const FILL_DEPTH = { cube: [0.08, 0.14], 'torus knot': [0.05, 0.06], 'möbius loop': [0.005, 0.008], planet: [0.08, 0.14], 'double helix': [0.015, 0.02], 'toxic sludge': [0.08, 0.14] };
   const fillVaos = shapes.map((s) => {
-    const data = fillers(s.mesh, small ? 2000 : 4500, FILL_DEPTH[s.name] ?? 0.1, { round: s.liquid ? 0.52 : 0 });
+    const data = fillers(s.mesh, small ? 2000 : 4500, FILL_DEPTH[s.name] ?? [0.04, 0.08], { round: s.liquid ? 0.52 : 0 });
     const vao = gl.createVertexArray();
     gl.bindVertexArray(vao);
     buf(mesh.P);
