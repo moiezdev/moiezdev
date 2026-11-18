@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr" data-theme="dark">
+<html lang="en" dir="ltr" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <script>
@@ -7,12 +7,11 @@
         try {
           var raw = localStorage.getItem('moiz-prefs');
           var prefs = raw ? JSON.parse(raw) : {};
+          // light unless the visitor picked a theme with the toggle (the OS setting is ignored)
           var theme =
-            prefs.theme === 'light' || prefs.theme === 'dark'
+            prefs.themeChosen && (prefs.theme === 'light' || prefs.theme === 'dark')
               ? prefs.theme
-              : window.matchMedia('(prefers-color-scheme: light)').matches
-                ? 'light'
-                : 'dark';
+              : 'light';
           var lang =
             prefs.lang === 'ar' || prefs.lang === 'en'
               ? prefs.lang
@@ -30,7 +29,7 @@
             document.documentElement.classList.add('prerender-hide');
           }
         } catch (e) {
-          document.documentElement.setAttribute('data-theme', 'dark');
+          document.documentElement.setAttribute('data-theme', 'light');
         }
       })();
     </script>
@@ -50,7 +49,7 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#000000" />
+    <meta name="theme-color" content="#fbfbfd" />
   </head>
   <body>
     <div id="root"></div>

@@ -2,23 +2,20 @@
 
 export const STORAGE_KEY = 'moiz-prefs';
 
-function systemTheme() {
-  try {
-    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-  } catch {
-    return 'dark';
-  }
-}
-
-/** Saved (or system) preferences. Safe to call on the server, where it returns defaults. */
+/** Saved preferences, or the defaults. Safe to call on the server, where it returns defaults.
+ * The theme is light unless the visitor picked one with the toggle (`themeChosen`); the
+ * OS colour scheme is ignored. Entries saved before `themeChosen` existed stored the OS
+ * theme on every visit, so they can't tell a choice from a default and fall back to light. */
 export function readPrefs() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
+      const chosen = parsed.themeChosen === true && (parsed.theme === 'light' || parsed.theme === 'dark');
       return {
         lang: parsed.lang === 'ar' ? 'ar' : 'en',
-        theme: parsed.theme === 'light' || parsed.theme === 'dark' ? parsed.theme : systemTheme(),
+        theme: chosen ? parsed.theme : 'light',
+        themeChosen: chosen,
       };
     }
   } catch {
@@ -28,7 +25,8 @@ export function readPrefs() {
   const nav = typeof navigator !== 'undefined' ? navigator.language || '' : '';
   return {
     lang: nav.toLowerCase().startsWith('ar') ? 'ar' : 'en',
-    theme: systemTheme(),
+    theme: 'light',
+    themeChosen: false,
   };
 }
 
