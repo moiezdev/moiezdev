@@ -101,7 +101,7 @@ In Tailwind classes, use them as `duration-(--dur-base) ease-(--ease-spring)`. I
 - **Text** shapes swing round to face you and sway; the other solids keep turning.
 - **Caption**: a small mono label under the stage names the shape (desktop only, `aria-hidden`).
 - **Scroll**: the shape turns with scroll position, and blows apart into shrinking debris as the hero leaves. It's scrubbed, so scrolling back rebuilds it.
-- **Cursor**: the shape leans toward the pointer, and cubes near it lift out of the shape and glow. A finger does the same while it's down.
+- **Cursor**: the shape leans toward the pointer, and loose cubes part around it and glow. A finger does the same while it's down.
 - **Off**: only on home, stopped when the stage is off screen or the tab is hidden, and one still shape under reduced motion.
 
 ## Each functional piece, and what it proves
