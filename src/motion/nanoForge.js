@@ -1155,6 +1155,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   // eased interaction state
   let near = 0;
   let peel = 0; // 0..1, eased: how far the hover peel has gone
+  let calm = 0; // 1 while the planet stands still
   let px = 0;
   let py = 0;
   let scatter = 0;
@@ -1172,7 +1173,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     // the solid gives way to its cubes as the hero scrolls off
     const skin = solid >= 0 ? reveal * (1 - Math.min(1, scatter * 5)) : 0;
     const liquid = solid >= 0 && shapes[solid].liquid;
-    const rot = rotation(y, pitch, Math.sin(t * 0.13) * 0.06);
+    const rot = rotation(y, pitch, Math.sin(t * 0.13) * 0.06 * (1 - calm));
     setAll('uRot', (l) => gl.uniformMatrix3fv(l, false, rot));
     setAll('uPitch', (l) => gl.uniformMatrix3fv(l, false, rotation(0, pitch)));
     setAll('uMix', (l) => gl.uniform1f(l, mix));
@@ -1186,7 +1187,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     const isPlanet = (i) => (i >= 0 && shapes[i].name === 'planet' ? 1 : 0);
     setAll('uRingA', (l) => gl.uniform1f(l, isPlanet(a)));
     setAll('uRingB', (l) => gl.uniform1f(l, isPlanet(b)));
-    setAll('uOrbit', (l) => gl.uniform1f(l, t * 0.16));
+    setAll('uOrbit', (l) => gl.uniform1f(l, t * 0.3));
 
     const drawSolid = () => {
       if (skin <= 0.001) return;
@@ -1319,7 +1320,10 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     const flat = shapes[target].flat && phase > BREAK + MORPH * 0.15;
     face += ((flat ? 1 : 0) - face) * Math.min(1, dt * 3);
     const facing = Math.round(yaw / TAU) * TAU + Math.sin(t * 0.55) * 0.35;
-    yaw += dt * 0.32 * (1 - face) + (facing - yaw) * Math.min(1, dt * 3.5) * face;
+    // while the planet stands, the globe stops turning and only its debris ring orbits
+    const planetUp = solid >= 0 && shapes[solid].name === 'planet';
+    calm += ((planetUp ? 1 : 0) - calm) * Math.min(1, dt * 1.5);
+    yaw += dt * 0.32 * (1 - face) * (1 - calm) + (facing - yaw) * Math.min(1, dt * 3.5) * face;
     const sp = Math.min(1, Math.max(0, scroll()));
     scatter += (Math.min(1, Math.max(0, (sp - 0.08) / 0.7)) - scatter) * Math.min(1, dt * 8);
     draw({
@@ -1330,7 +1334,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
       reveal,
       t,
       yaw: yaw + sp * 1.6,
-      pitch: 0.38 - face * 0.26 + Math.sin(t * 0.21) * 0.08,
+      pitch: 0.38 - face * 0.26 + Math.sin(t * 0.21) * 0.08 * (1 - calm),
     });
   }
 
