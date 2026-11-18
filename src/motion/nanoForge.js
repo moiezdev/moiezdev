@@ -473,7 +473,8 @@ vec3 centreOf(vec4 A, vec4 B, vec4 seed, out float e, out float arc, out float n
   e = e * e * e * (e * (e * 6.0 - 15.0) + 10.0);
   arc = sin(3.14159265 * e);
   dir = normalize(seed.yzw * 2.0 - 1.0 + vec3(1e-4));
-  vec3 p = mix(A.xyz, B.xyz, e) + dir * arc * (0.3 + seed.x * 0.45);
+  // a straight flight with only a slight outward give, so cubes don't pass through each other
+  vec3 p = mix(A.xyz, B.xyz, e) + dir * arc * (0.05 + seed.x * 0.05);
   p += dir * 0.005 * sin(uTime * 1.6 + seed.y * 40.0);
   p += dir * uScatter * (0.7 + seed.x * 1.8);
   // on hover, the cubes under the patches that peel away come loose and drift out a little
@@ -481,7 +482,7 @@ vec3 centreOf(vec4 A, vec4 B, vec4 seed, out float e, out float arc, out float n
   peel = uPeel > 0.001 ? smoothstep(peelEdge() - 0.015, peelEdge() + 0.015, chunk(uRound > 0.5 ? normalize(obj) : obj)) : 0.0;
   p += (normalize(obj + vec3(1e-4)) * 0.09 + dir * 0.05 + dir * 0.02 * sin(uTime * 2.0 + seed.z * 30.0)) * peel * uPeel;
   // w holds the cube's scale, plus 2 x the part it belongs to (the planet's globe and ring, each helix strand and the rungs)
-  scale = mix(mod(A.w, 2.0), mod(B.w, 2.0), e) * (1.0 - 0.45 * arc) * (1.0 - 0.75 * uScatter);
+  scale = mix(mod(A.w, 2.0), mod(B.w, 2.0), e) * (1.0 - 0.1 * arc) * (1.0 - 0.75 * uScatter);
   vec3 c = uRot * p;
   // the pointer parts the cubes around it
   vec4 c0 = uProj * vec4(c - vec3(0.0, 0.0, uCamZ), 1.0);
@@ -539,15 +540,15 @@ void main() {
   vec3 c = centreOf(aA, aB, aSeed, e, arc, near, scale, dir, peel);
   // while the solid stands the cubes are gone, except the ones a hover has peeled loose
   float vis = max(uCubes, peel);
-  // whole turns only, so every cube lands square to the grid
-  float spin = e * 6.2831853 * floor(1.0 + aSeed.z * 2.99) + uScatter * aSeed.w * 5.0;
+  // no tumbling in flight: cubes keep square to the grid and only turn when scattered by scroll
+  float spin = uScatter * aSeed.w * 5.0;
   mat3 R = uRot * axisAngle(dir, spin);
   vec3 world = c + R * (aPos * scale * vis * uSize);
   if (uShadow > 0.5) world = toFloor(world);
   vN = R * aNormal;
   vLocal = aPos;
   vWorld = world;
-  vGlow = arc * 0.7 + near * 0.35 + (1.0 - uCubes) * 0.6 * (1.0 - peel) + peel * 0.25;
+  vGlow = arc * 0.3 + near * 0.35 + (1.0 - uCubes) * 0.6 * (1.0 - peel) + peel * 0.25;
   gl_Position = uProj * vec4(world - vec3(0.0, 0.0, uCamZ), 1.0);
 }`;
 
@@ -598,7 +599,7 @@ void main() {
   float sameA = float(floor(aA.w * 0.5) == floor(aA2.w * 0.5));
   float sameB = float(floor(aB.w * 0.5) == floor(aB2.w * 0.5));
   float same = mix(sameA, sameB, step(0.5, (e1 + e2) * 0.5));
-  vAlpha = same * smoothstep(uMaxLen, uMaxLen * 0.3, len) * step(0.01, s1 * s2) * on * (0.5 + 0.8 * max(arc1, arc2) + 0.5 * uScatter);
+  vAlpha = same * smoothstep(uMaxLen, uMaxLen * 0.3, len) * step(0.01, s1 * s2) * on * (0.5 + 0.4 * max(arc1, arc2) + 0.5 * uScatter);
   gl_Position = uProj * vec4(c1 - vec3(0.0, 0.0, uCamZ), 1.0);
 }`;
 
