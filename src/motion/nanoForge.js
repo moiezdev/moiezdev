@@ -533,6 +533,26 @@ vec3 toFloor(vec3 w) {
   return uPitch * u;
 }`;
 
+const LEAK = `
+// the blob's liquid leaks out of its cube ball at scattered spots, each starting at its own moment, and the
+// puddles spread until they meet and cover the ball. uFront is how far that has got (0..1; -1: no blob forming).
+// leakGap(n) < 0 where the liquid has reached direction n.
+uniform float uFront;
+const int LEAKS = 9;
+const vec4 LEAK[9] = vec4[9](
+  vec4(-0.42, 0.52, 0.74, 0.0), vec4(0.71, -0.18, 0.68, 0.08), vec4(0.12, 0.93, -0.35, 0.16),
+  vec4(-0.8, -0.45, 0.4, 0.05), vec4(0.3, -0.85, -0.43, 0.22), vec4(-0.55, 0.1, -0.83, 0.12),
+  vec4(0.88, 0.42, -0.2, 0.28), vec4(0.05, -0.2, 0.98, 0.18), vec4(-0.2, -0.6, -0.1, 0.3));
+float leakGap(vec3 n) {
+  float g = 9.0;
+  for (int i = 0; i < LEAKS; i++) {
+    float f = clamp((uFront - LEAK[i].w) / (0.85 - LEAK[i].w), 0.0, 1.0);
+    float reach = 1.35 * f * (2.0 - f) - 0.05;
+    g = min(g, acos(clamp(dot(n, normalize(LEAK[i].xyz)), -1.0, 1.0)) - reach);
+  }
+  return g;
+}`;
+
 /** Where cube `seed` is between shape A and shape B: shared by the cubes and the lines between them. */
 const CENTRE = `
 uniform mat4 uProj;
@@ -540,14 +560,11 @@ uniform mat3 uRot;
 uniform float uCamZ, uMix, uTime, uScatter, uAspect, uPointerOn;
 uniform vec2 uPointer;
 uniform float uRound; // 1 when the standing solid is the sludge, whose skin is a unit sphere
-// the blob: the liquid seeps out at one spot and spreads over the cube ball; uFront is how far it has
-// spread (an angle from that spot, -1 when no blob is forming). Cubes (and their strings) it has covered are gone.
-uniform float uFront;
-const vec3 SEEP = normalize(vec3(-0.35, 0.55, 0.75));
+${LEAK}
+// cubes (and their strings) the liquid has covered are gone
 float uncovered(vec4 A, vec4 B) {
   if (uFront < -0.5) return 1.0;
-  float ang = acos(clamp(dot(normalize(mix(A.xyz, B.xyz, uMix) + vec3(1e-4)), SEEP), -1.0, 1.0));
-  return smoothstep(uFront - 0.22, uFront + 0.02, ang);
+  return smoothstep(-0.22, 0.02, leakGap(normalize(mix(A.xyz, B.xyz, uMix) + vec3(1e-4))));
 }
 uniform float uRingA, uRingB, uOrbit; // 1 when shape A / B is the planet, whose ring stays loose debris
 const vec3 RING_AXIS = vec3(0.0, 0.9130889, 0.4077604); // the ring's normal: (0, cos 0.42, sin 0.42)
@@ -748,8 +765,7 @@ uniform mat4 uProj;
 uniform mat3 uRot;
 uniform float uCamZ, uTime, uLiquid, uSquash;
 uniform vec3 uSway;
-uniform float uFront; // how far the blob's liquid has spread from where it seeps out (radians; > PI when whole)
-const vec3 SEEP = normalize(vec3(-0.35, 0.55, 0.75));
+${LEAK}
 uniform vec4 uTend[6]; // direction, reach
 out vec3 vN;
 out vec3 vWorld;
@@ -773,8 +789,8 @@ vec3 surf(vec3 n) {
     + 0.007 * sin(n.x * 9.0 + n.z * 7.0 - t * 3.2)
     + reach(n);
   // while it spreads, the coat sits just over the cubes and swells into a rolling lip at its edge
-  float coat = 1.0 - smoothstep(2.6, 3.4, uFront);
-  float lip = exp(-pow((acos(clamp(dot(n, SEEP), -1.0, 1.0)) - uFront) / 0.16, 2.0));
+  float coat = uFront < 0.0 ? 0.0 : 1.0 - smoothstep(0.85, 1.0, uFront);
+  float lip = exp(-pow(leakGap(n) / 0.14, 2.0));
   r += coat * (0.05 + 0.035 * lip);
   vec3 p = n * r;
   p.y *= uSquash;
@@ -808,8 +824,8 @@ precision highp float;
 in vec3 vN;
 in vec3 vWorld;
 in vec3 vObj;
-uniform float uReveal, uLiquid, uShadow, uFront, uTime;
-const vec3 SEEP = normalize(vec3(-0.35, 0.55, 0.75));
+uniform float uReveal, uLiquid, uShadow, uTime;
+${LEAK}
 uniform vec3 uEdge;
 out vec4 o;
 ${SHADE}
@@ -819,9 +835,8 @@ void main() {
   float nz = noise(vObj * 6.0) * 0.7 + noise(vObj * 15.0) * 0.3;
   float thr = uReveal * 1.16 - 0.08;
   if (uLiquid > 0.5) {
-    // the liquid covers the ball from where it seeps out, its edge wavering as it runs
-    float ang = acos(clamp(dot(normalize(vObj), SEEP), -1.0, 1.0));
-    if (ang > uFront + (noise(vObj * 4.0 + uTime * 0.6) - 0.5) * 0.35) discard;
+    // the liquid covers the ball from where it leaks out, its edges wavering as they run
+    if (leakGap(normalize(vObj)) > (noise(vObj * 4.0 + uTime * 0.6) - 0.5) * 0.3) discard;
   } else if (nz > thr) discard;
   float edge = uLiquid > 0.5 ? 0.0 : 1.0 - smoothstep(0.0, 0.06, thr - nz);
   // a hover peels big patches away, and their cubes come loose
@@ -1204,8 +1219,8 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     setAll('uPointerOn', (l) => gl.uniform1f(l, near));
     // the blob forms differently from the other shapes
     const ss = (e0, e1, x) => { const u = Math.min(1, Math.max(0, (x - e0) / (e1 - e0))); return u * u * (3 - 2 * u); };
-    // the blob: liquid seeps out at one spot and runs over its cube ball until it's covered, then settles
-    const front = liquid ? -0.15 + 3.75 * ss(0, 0.85, skin) : -1;
+    // the blob: liquid leaks out of its cube ball at scattered spots until it's covered, then settles
+    const front = liquid ? skin : -1;
     setAll('uCubes', (l) => gl.uniform1f(l, liquid ? 1 - ss(0.85, 1, skin) : 1 - skin));
     setAll('uFront', (l) => gl.uniform1f(l, front));
     setAll('uPeel', (l) => gl.uniform1f(l, peel * skin));
