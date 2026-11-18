@@ -26,7 +26,7 @@ A new ambient piece replaces the forge. It isn't added next to it.
 ### 3. The signature is live: it answers scroll and the cursor
 
 - **Scroll**: the shape turns as you scroll, breaks back into cubes, and blows apart into shrinking debris as the hero leaves. Scrolling back reassembles it.
-- **Cursor**: hover only. The pointer never turns or tilts the shape; loose cubes near it just part and glow. On touch screens a finger does the same while it's down. Device tilt isn't used, because iOS would need a permission prompt for it.
+- **Cursor**: hover only. The pointer never turns or tilts the shape. Hovering the stage peels about 30% of the standing solid back into loose cubes, in big patches, and loose cubes near the pointer part and glow. On touch screens a finger does the same while it's down. Device tilt isn't used, because iOS would need a permission prompt for it.
 - Every response is **scrubbed or eased**: it's a function of where the scroll or pointer is now, so going back undoes it. Nothing is triggered once and left half-finished.
 - Responses are gentle. Nothing jumps, flashes, or follows the pointer across the page.
 - No scroll-jacking, no smooth-scroll libraries, no pinned sections. The page always scrolls at the speed you scroll it.
@@ -34,10 +34,10 @@ A new ambient piece replaces the forge. It isn't added next to it.
 ### 4. Cheap to run
 
 - Animate `transform` and `opacity` in the DOM. Three deliberate exceptions remain: `stroke-dashoffset` and `offset-path` in the architecture explainer, and the circular `clip-path` theme reveal on the View Transition snapshot.
-- Anything heavier goes on **one** `<canvas>`. The nano forge is the one WebGL piece: WebGL2, no library, three draws per frame (the solid, one instanced cube mesh, and one pass of hairlines that reuses the cubes' maths). Every shape and solid is precomputed, and the whole morph runs in the vertex shader, so the CPU only updates a few uniforms per frame. It's 2,648 cubes on desktop and 1,178 on phones and small or low-core devices, with the device pixel ratio capped at 2 (1.5 on phones). If the first 4 seconds run slow, it drops to 1x once.
+- Anything heavier goes on **one** `<canvas>`. The nano forge is the one WebGL piece: WebGL2, no library, a handful of draws per frame (the floor shadow, drawn at quarter size and blurred, then the solid, one instanced cube mesh, and one pass of hairlines that reuses the cubes' maths). Every shape and solid is precomputed, and the whole morph runs in the vertex shader, so the CPU only updates a few uniforms per frame. It's 2,648 cubes on desktop and 1,178 on phones and small or low-core devices, with the device pixel ratio capped at 2 (1.5 on phones). If the first 4 seconds run slow, it drops to 1x once.
 - Ambient code loads after first paint (`requestIdleCallback` plus a dynamic `import()`), so it never competes with the LCP image.
 - No animation library. The whole system is plain CSS, the Web Animations API, a few small hooks and one canvas engine.
-- Without WebGL2 the stage keeps its static glow and pedestal. Nothing else depends on it.
+- Without WebGL2 the stage keeps its static glow. Nothing else depends on it.
 
 ### 5. Nothing runs unseen
 
@@ -59,7 +59,7 @@ With `prefers-reduced-motion: reduce`:
 
 - Each hover effect has a `:focus-visible` equivalent and doesn't depend on hover on touch.
 - Directional motion (arrows, sliders, the segmented thumb, the queue, the forge's stage beside the copy) is mirrored in RTL.
-- Anything drawn in JS reads the theme at draw time. The forge is brushed steel on dark and graphite on light.
+- Anything drawn in JS reads the theme at draw time. Every forge shape is one neutral metal: near-white on dark and near-black on light, with no tint.
 - Canvas is `aria-hidden` and hidden when printing. It listens to the pointer on the window, so it never takes clicks or blocks scrolling.
 
 ### 8. One vocabulary
@@ -93,14 +93,14 @@ In Tailwind classes, use them as `duration-(--dur-base) ease-(--ease-spring)`. I
 
 ## The nano forge
 
-`components/home/HeroStage.jsx` is the stage in the hero: beside the copy on desktop (mirrored in RTL), above it on phones. The prerendered HTML is only its glow and a faint pedestal. Once the browser is idle it loads the engine and adds one WebGL canvas, which fades in.
+`components/home/HeroStage.jsx` is the stage in the hero: beside the copy on desktop (mirrored in RTL), above it on phones. The prerendered HTML is only its glow. Once the browser is idle it loads the engine and adds one WebGL canvas, which fades in.
 
-- **Shapes**: a cube, a torus knot, a Möbius loop, a ringed planet, a double helix (1.5 turns, 9 rungs), and a toxic sludge. Every cube has a place in every shape. The sludge is the one living solid: a glossy near-black blob with a toxic green sheen that ripples, sways and squashes, and keeps creeping tendrils out that snap back, all displaced in the vertex shader.
-- **A cycle (7.4s)**: the standing solid breaks up into its cubes in patches (0.8s). The cubes fly to the next shape, built from the core outwards (2.6s): they tumble a whole number of turns, glow in flight and lock in square to the grid. Then they fuse into that shape's smooth solid, which grows over them in patches with a glowing edge (1s), and the solid holds (3s). There's no scan line or sweep.
+- **Shapes**: a cube, a torus knot, a Möbius loop, a ringed planet, a double helix (1.5 turns, 9 rungs), and a liquid-metal blob. Every cube has a place in every shape. The blob is the one living solid: the same metal as the rest, glossier, staying close to a sphere while it gently ripples, sways and pushes out small bulges, all displaced in the vertex shader.
+- **A cycle (9.7s)**: the standing solid breaks up into its cubes in patches (1.2s). The cubes fly to the next shape, built from the core outwards (4s): they tumble a whole number of turns, glow in flight and lock in square to the grid. Then they fuse into that shape's smooth solid, which grows over them in patches with a glowing edge (1.5s), and the solid holds (3s). There's no scan line or sweep.
 - **Strings**: while cubes are loose, each is linked by hairlines to a few neighbours in the same part of the shape. Separate parts are never strung together: the planet's globe and ring, and the helix's two strands and its rungs, each keep their own strings. Lines that stretch too far fade out, and they're gone once the solid stands.
-- **Caption**: a small mono label under the stage names the shape (desktop only, `aria-hidden`).
+- **Shadow**: the shape casts a soft shadow on an unseen floor below it, flattened from its real silhouette. There's no caption or pedestal. In dark mode the shadow is faint by nature.
 - **Scroll**: the shape turns with scroll position, and blows apart into shrinking debris as the hero leaves. It's scrubbed, so scrolling back rebuilds it.
-- **Cursor**: hover only. The pointer never turns or tilts the shape; loose cubes near it just part and glow. A finger does the same while it's down.
+- **Cursor**: hover only. The pointer never turns or tilts the shape. Hovering the stage peels about 30% of the solid back into cubes, which drift out a little and are strung together, and it closes up again when the pointer leaves. A finger does the same while it's down.
 - **Off**: only on home, stopped when the stage is off screen or the tab is hidden, and one still shape under reduced motion.
 
 ## Each functional piece, and what it proves

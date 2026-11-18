@@ -4,14 +4,13 @@ import { usePrefersReducedMotion } from '../../motion/reducedMotion';
 /**
  * The hero's 3D stage: the nano forge (src/motion/nanoForge.js, see MOTION.md).
  *
- * The prerendered HTML is just the stage's glow and pedestal. Once the browser is
+ * The prerendered HTML is just the stage's glow; the engine draws the shape's own floor shadow. Once the browser is
  * idle the engine loads and adds one WebGL canvas. It runs only while the stage is
  * on screen and the tab is visible; with reduced motion it draws one still shape.
  * Without WebGL2 the stage keeps its static glow.
  */
 export default function HeroStage() {
   const stageRef = useRef(null);
-  const captionRef = useRef(null);
   const reduced = usePrefersReducedMotion();
 
   useEffect(() => {
@@ -36,11 +35,6 @@ export default function HeroStage() {
         const h = hero?.getBoundingClientRect();
         return h ? -h.top / Math.max(1, h.height) : 0;
       };
-      const caption = (i, name, total) => {
-        const el = captionRef.current;
-        if (!el) return;
-        el.textContent = `${String(i + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')} · ${name}`;
-      };
 
       // the cursor, or a finger while it's down, in the canvas's own pixels
       const ptr = { x: 0, y: 0, active: false };
@@ -59,7 +53,7 @@ export default function HeroStage() {
 
       let forge;
       try {
-        forge = createNanoForge(canvas, { theme, scroll, pointer: () => ptr, onShape: caption });
+        forge = createNanoForge(canvas, { theme, scroll, pointer: () => ptr });
       } catch (err) {
         console.warn('[nano forge]', err);
       }
@@ -154,9 +148,7 @@ export default function HeroStage() {
     <div className="hero-stage" aria-hidden>
       <div ref={stageRef} className="hero-stage__canvas">
         <div className="hero-stage__glow" />
-        <div className="hero-stage__floor" />
       </div>
-      <p ref={captionRef} className="hero-stage__caption" dir="ltr" />
     </div>
   );
 }

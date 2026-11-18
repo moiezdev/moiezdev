@@ -1291,33 +1291,6 @@ html[dir='rtl'] .scroll-progress {
   filter: blur(24px);
   opacity: 0.9;
 }
-/* a faint elliptical pedestal, so the shapes read as standing in space */
-.hero-stage__floor {
-  position: absolute;
-  left: 18%;
-  right: 18%;
-  bottom: 4%;
-  height: 12%;
-  border-radius: 50%;
-  border: 1px solid var(--color-separator);
-  background: radial-gradient(closest-side, var(--glow-a), transparent);
-}
-.hero-stage__caption {
-  display: none;
-  min-height: 1.25rem;
-  margin-top: 0.25rem;
-  text-align: center;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--color-label-3);
-}
-@media (min-width: 1024px) {
-  .hero-stage__caption {
-    display: block;
-  }
-}
 @media print {
   .hero-stage {
     display: none;
