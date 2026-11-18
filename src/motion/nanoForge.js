@@ -18,7 +18,7 @@ const TAU = Math.PI * 2;
 const BREAK = 1.2; // seconds for a solid to break back into cubes
 const MORPH = 4.0; // seconds for the cubes to fly to the next shape
 const FUSE = 1.5; // seconds for them to fuse into its solid
-const HOLD = 3.0; // seconds the solid holds
+const HOLD = 6.0; // seconds the solid holds
 const CYCLE = BREAK + MORPH + FUSE + HOLD;
 const FLOOR_Y = -1.12; // the floor the shadow falls on, below the shapes
 const PEEL_THR = 0.616; // chunk noise above this covers ~30% of a surface: the share a hover peels back into cubes
@@ -179,7 +179,7 @@ function cloud(n) {
   for (let i = 0; i < n; i++) {
     const d = [rand(-1, 1), rand(-1, 1), rand(-1, 1)];
     const l = Math.hypot(...d) || 1;
-    const r = rand(1.2, 2.2);
+    const r = rand(0.95, 1.65);
     pts.push([(d[0] / l) * r, (d[1] / l) * r, (d[2] / l) * r, 0.4]);
   }
   return pts;
@@ -800,9 +800,10 @@ function rotation(yaw, pitch, roll = 0) {
  *   scroll?: () => number,          0 with the hero at the top, 1 once it has gone
  *   pointer?: () => {x:number, y:number, active:boolean},  in the canvas's CSS px
  *   onShape?: (index:number, name:string, total:number) => void,
+ *   bleed?: number,                 how many times bigger than the stage the canvas is (default 1)
  * }} opts
  */
-export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () => ({ x: 0, y: 0, active: false }), onShape = () => {} }) {
+export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () => ({ x: 0, y: 0, active: false }), onShape = () => {}, bleed = 1 }) {
   const gl = canvas.getContext('webgl2', { antialias: true, alpha: true, premultipliedAlpha: true, powerPreference: 'high-performance' });
   if (!gl) return null;
 
@@ -989,7 +990,8 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     gl.uniform2f(shadowProg.u('uTexel'), 1 / shadowW, 1 / shadowH);
     const aspect = W / Math.max(1, H);
     // fit a radius of ~1.2 inside the shorter side
-    const fov = 2 * Math.atan(1.32 / CAM / Math.min(1, aspect));
+    // the canvas is `bleed` times the stage, so loose cubes and the shadow aren't cut at its edge
+    const fov = 2 * Math.atan((1.32 * bleed) / CAM / Math.min(1, aspect));
     const proj = perspective(fov, aspect, 0.5, 20);
     setAll('uProj', (l) => gl.uniformMatrix4fv(l, false, proj));
     setAll('uAspect', (l) => gl.uniform1f(l, aspect));
@@ -1160,7 +1162,9 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     // hover only: the pointer parts nearby cubes but never turns the shape
     near += ((inside ? 1 : 0) - near) * ease;
     // hovering the stage itself peels about 30% of the standing solid back into cubes
-    const over = p.active && p.x >= 0 && p.x <= W && p.y >= 0 && p.y <= H;
+    const mx = (W * (1 - 1 / bleed)) / 2;
+    const my = (H * (1 - 1 / bleed)) / 2;
+    const over = p.active && p.x >= mx && p.x <= W - mx && p.y >= my && p.y <= H - my;
     peel += ((over ? 1 : 0) - peel) * Math.min(1, dt * 2.2);
     if (p.active) {
       px = (p.x / Math.max(1, W)) * 2 - 1;
