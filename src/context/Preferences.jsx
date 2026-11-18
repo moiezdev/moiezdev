@@ -4,7 +4,7 @@ import { STORAGE_KEY, applyDom, readPrefs } from './prefs';
 const PreferencesContext = createContext(null);
 
 // what the prerendered HTML was built with
-const SERVER_PREFS = { lang: 'en', theme: 'dark' };
+const SERVER_PREFS = { lang: 'en', theme: 'light', themeChosen: false };
 const isServer = typeof window === 'undefined';
 
 export function PreferencesProvider({ children, hydrating = false }) {
@@ -16,7 +16,7 @@ export function PreferencesProvider({ children, hydrating = false }) {
     if (synced) return;
     const saved = readPrefs();
     // only re-render when the visitor's prefs differ from the prerendered ones
-    setPrefs((prev) => (prev.lang === saved.lang && prev.theme === saved.theme ? prev : saved));
+    setPrefs((prev) => (prev.lang === saved.lang && prev.theme === saved.theme && prev.themeChosen === saved.themeChosen ? prev : saved));
     setSynced(true);
   }, [synced]);
 
@@ -37,7 +37,7 @@ export function PreferencesProvider({ children, hydrating = false }) {
   }, []);
 
   const setTheme = useCallback((theme) => {
-    setPrefs((prev) => ({ ...prev, theme: theme === 'light' ? 'light' : 'dark' }));
+    setPrefs((prev) => ({ ...prev, theme: theme === 'light' ? 'light' : 'dark', themeChosen: true }));
   }, []);
 
   const toggleLang = useCallback(() => {
@@ -45,7 +45,7 @@ export function PreferencesProvider({ children, hydrating = false }) {
   }, []);
 
   const toggleTheme = useCallback(() => {
-    setPrefs((prev) => ({ ...prev, theme: prev.theme === 'dark' ? 'light' : 'dark' }));
+    setPrefs((prev) => ({ ...prev, theme: prev.theme === 'dark' ? 'light' : 'dark', themeChosen: true }));
   }, []);
 
   const value = useMemo(
