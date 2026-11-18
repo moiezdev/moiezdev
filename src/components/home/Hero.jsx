@@ -4,6 +4,7 @@ import ExternalIcon from '../ui/ExternalIcon';
 import { useContent } from '../../i18n/content';
 import { getExperienceYears } from '../../utils/experience';
 import site from '../../data/site.json';
+import HeroStage from './HeroStage';
 
 const Stat = ({ value, label }) => (
   <div className="flex flex-col items-center lg:items-start text-center lg:text-start px-2 sm:px-4 lg:ps-0 lg:pe-6 min-w-0">
@@ -14,27 +15,16 @@ const Stat = ({ value, label }) => (
   </div>
 );
 
-/**
- * One portrait element for every breakpoint, so the browser downloads one image:
- * a 112px face crop on phones, a large lit panel beside the copy on desktop.
- */
-const Portrait = ({ alt }) => (
-  <div className="relative order-first lg:order-none justify-self-center lg:justify-self-end w-full max-w-[112px] lg:max-w-[380px]">
-    {/* soft light behind the panel so a dark-shirt cut-out never melts into the page */}
-    <div
-      aria-hidden
-      className="hidden lg:block absolute -inset-10 -z-10 opacity-70 blur-3xl"
-      style={{ background: 'radial-gradient(50% 50% at 50% 45%, var(--glow-a), transparent 70%)' }}
+/** A small round portrait beside the name: the hero's visual is the 3D stage. */
+const Avatar = ({ alt }) => (
+  <div className="relative shrink-0 size-14 md:size-16 overflow-hidden rounded-full ring-1 ring-separator bg-surface-2">
+    <Img
+      src="/heroSection/hero-img.webp"
+      alt={alt}
+      sizes="64px"
+      priority
+      className="absolute max-w-none w-[170%] start-[-35%] top-[-4%] h-auto"
     />
-    <div className="relative overflow-hidden rounded-full lg:rounded-[32px] aspect-square lg:aspect-[4/5] ring-1 ring-separator bg-[color-mix(in_srgb,var(--color-surface-2)_45%,transparent)] lg:backdrop-blur-[2px]">
-      <Img
-        src="/heroSection/hero-img.webp"
-        alt={alt}
-        sizes="(min-width: 1024px) 380px, 112px"
-        priority
-        className="absolute max-w-none w-[170%] start-[-35%] top-[-4%] h-auto lg:w-[112%] lg:start-[-6%] lg:top-auto lg:bottom-0"
-      />
-    </div>
   </div>
 );
 
@@ -43,7 +33,7 @@ const Hero = () => {
   const years = getExperienceYears();
 
   return (
-    <section data-hero className="relative px-5 pt-[104px] md:pt-[132px] lg:pt-[124px] pb-16 md:pb-24 overflow-hidden">
+    <section data-hero className="relative px-5 pt-[76px] md:pt-[112px] lg:pt-[124px] pb-16 md:pb-24 overflow-hidden">
       {/* ambient glow */}
       <div
         aria-hidden
@@ -54,19 +44,22 @@ const Hero = () => {
         }}
       />
 
-      <div className="relative app-container grid items-center gap-8 lg:gap-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,380px)]">
+      <div className="relative app-container grid items-center gap-4 lg:gap-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
         <div className="flex flex-col items-center text-center lg:items-start lg:text-start">
           <span className="inline-flex items-center gap-2 rounded-full glass ring-1 ring-separator px-4 py-1.5 text-[13px] md:text-[14px] text-label-2">
             <span className="status-dot" aria-hidden />
             {t('hero.available')}
           </span>
 
-          <p className="mt-6 lg:mt-8 flex flex-col">
-            <span className="text-[18px] md:text-[22px] font-semibold tracking-[-0.02em] text-label leading-tight">
-              {t('hero.name')}
-            </span>
-            <span className="mt-1.5 text-[14px] md:text-[16px] font-medium text-label-2">{t('hero.eyebrow')}</span>
-          </p>
+          <div className="mt-6 lg:mt-8 flex items-center gap-3.5 text-start">
+            <Avatar alt={t('hero.portraitAlt')} />
+            <p className="flex flex-col min-w-0">
+              <span className="text-[18px] md:text-[22px] font-semibold tracking-[-0.02em] text-label leading-tight">
+                {t('hero.name')}
+              </span>
+              <span className="mt-1 text-[13px] md:text-[15px] font-medium text-label-2 text-pretty">{t('hero.eyebrow')}</span>
+            </p>
+          </div>
 
           <h1 className="headline-hero is-compact mt-5 lg:mt-6 max-w-3xl text-label text-balance">
             {t('hero.title')}
@@ -99,7 +92,9 @@ const Hero = () => {
           </div>
         </div>
 
-        <Portrait alt={t('hero.portraitAlt')} />
+        <div className="order-first lg:order-none">
+          <HeroStage />
+        </div>
       </div>
 
       {/* stats: a full-width row under copy and portrait, so the portrait centres on the copy alone */}

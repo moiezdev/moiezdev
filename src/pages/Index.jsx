@@ -1,5 +1,4 @@
 import Hero from '../components/home/Hero.jsx';
-import HeroSwarm from '../components/home/HeroSwarm.jsx';
 import Projects from '../components/home/Projects.jsx';
 import Architecture from '../components/home/Architecture.jsx';
 import AiHighlight from '../components/home/AiHighlight.jsx';
@@ -18,7 +17,6 @@ export default function Index() {
   return (
     <Transition>
       <Hero />
-      <HeroSwarm />
       <Projects />
       <Architecture />
       <AiHighlight />

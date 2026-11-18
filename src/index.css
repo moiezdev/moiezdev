@@ -1251,32 +1251,75 @@ html[dir='rtl'] .scroll-progress {
   .stack-dot { display: none; }
 }
 
-/* nano swarm behind the home page (components/home/HeroSwarm.jsx).
-   The canvas sits at z-index -1, under the body, so the body goes transparent
-   while it's there (html keeps the same background colour). Tinted bands let a
-   little of it through; cards stay opaque. */
-.nano-field {
-  position: fixed;
+/* the hero's 3D stage (components/home/HeroStage.jsx, motion/nanoForge.js).
+   Prerendered as a soft glow and a pedestal; the WebGL canvas fades in on top. */
+.hero-stage {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin-inline: auto;
+}
+.hero-stage__canvas {
+  position: relative;
+  height: clamp(220px, 60vw, 320px);
+}
+@media (min-width: 1024px) {
+  .hero-stage__canvas {
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+}
+.hero-stage__canvas > canvas {
+  position: absolute;
   inset: 0;
-  z-index: -1;
+  z-index: 1;
   width: 100%;
   height: 100%;
-  pointer-events: none;
-  animation: nano-field-in var(--dur-slow) var(--ease-out) both;
+  touch-action: pan-y;
+  animation: hero-stage-in var(--dur-slow) var(--ease-out) both;
 }
-@keyframes nano-field-in {
+@keyframes hero-stage-in {
   from {
     opacity: 0;
   }
 }
-html.has-nano-field body {
-  background-color: transparent;
+.hero-stage__glow {
+  position: absolute;
+  inset: 12%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--glow-a), transparent);
+  filter: blur(24px);
+  opacity: 0.9;
 }
-html.has-nano-field .band-tint {
-  background-color: color-mix(in srgb, var(--color-surface-2) 78%, transparent);
+/* a faint elliptical pedestal, so the shapes read as standing in space */
+.hero-stage__floor {
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  bottom: 4%;
+  height: 12%;
+  border-radius: 50%;
+  border: 1px solid var(--color-separator);
+  background: radial-gradient(closest-side, var(--glow-a), transparent);
+}
+.hero-stage__caption {
+  display: none;
+  min-height: 1.25rem;
+  margin-top: 0.25rem;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-label-3);
+}
+@media (min-width: 1024px) {
+  .hero-stage__caption {
+    display: block;
+  }
 }
 @media print {
-  .nano-field {
+  .hero-stage {
     display: none;
   }
 }
