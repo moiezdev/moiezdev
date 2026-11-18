@@ -95,7 +95,7 @@ In Tailwind classes, use them as `duration-(--dur-base) ease-(--ease-spring)`. I
 
 `components/home/HeroStage.jsx` is the stage in the hero: beside the copy on desktop (mirrored in RTL), above it on phones. The prerendered HTML is only its glow and a faint pedestal. Once the browser is idle it loads the engine and adds one WebGL canvas, which fades in.
 
-- **Shapes**: a cube, a torus knot, `</>`, a ringed planet, a double helix, and `AI`. Every cube has a place in every shape.
+- **Shapes**: a cube, a torus knot, a Möbius loop, a ringed planet, a double helix, and `AI`. Every cube has a place in every shape.
 - **A cycle (7.4s)**: the standing solid breaks up into its cubes in patches (0.8s). The cubes fly to the next shape, built from the core outwards (2.6s): they tumble a whole number of turns, glow in flight and lock in square to the grid. Then they fuse into that shape's smooth solid, which grows over them in patches with a glowing edge (1s), and the solid holds (3s). There's no scan line or sweep.
 - **Strings**: while cubes are loose, each is linked by hairlines to a few neighbours. Lines that stretch too far fade out, and they're gone once the solid stands.
 - **Text** shapes swing round to face you and sway; the other solids keep turning.

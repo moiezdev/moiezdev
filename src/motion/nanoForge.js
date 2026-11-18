@@ -1,7 +1,7 @@
 /**
  * Nano forge: a few thousand machined micro-cubes that keep tearing themselves
  * apart and re-assembling into new shapes in the hero stage (a cube, a torus
- * knot, </>, a ringed planet, a double helix, "AI"). Once the cubes are in
+ * knot, a Möbius loop, a ringed planet, a double helix, "AI"). Once the cubes are in
  * place they fuse into the real, smooth solid of that shape; when it's time for
  * the next one the solid breaks back up into cubes. While cubes are loose they
  * are strung together by hairlines.
@@ -108,22 +108,51 @@ function planet(n) {
   return pts;
 }
 
+const HELIX_TURNS = 0.75; // per half: 1.5 turns top to bottom
+const HELIX_RUNGS = 9;
 function helix(n) {
   const pts = [];
-  const rungs = Math.round(n * 0.22);
+  const rungs = Math.round(n * 0.14);
   const strand = n - rungs;
   for (let i = 0; i < strand; i++) {
     const t = (i / strand) * 2 - 1;
-    const a = t * TAU * 1.25 + (i % 2 ? Math.PI : 0);
+    const a = t * TAU * HELIX_TURNS + (i % 2 ? Math.PI : 0);
     const j = () => rand(-0.035, 0.035);
     pts.push([Math.cos(a) * 0.4 + j(), t * 0.95, Math.sin(a) * 0.4 + j()]);
   }
   for (let i = 0; i < rungs; i++) {
-    const k = Math.floor(rand(0, 22));
-    const t = (k / 21) * 2 - 1;
-    const a = t * TAU * 1.25;
+    const k = Math.floor(rand(0, HELIX_RUNGS));
+    const t = (k / (HELIX_RUNGS - 1)) * 1.8 - 0.9;
+    const a = t * TAU * HELIX_TURNS;
     const s = rand(-0.4, 0.4);
     pts.push([Math.cos(a) * s, t * 0.95, Math.sin(a) * s]);
+  }
+  return pts;
+}
+
+const MOBIUS_R = 0.72;
+const MOBIUS_W = 0.3;
+/** A point on the Möbius band: u around the loop (one full twist per 2π), v across it. */
+// tipped towards the viewer so the twist reads, instead of lying flat like a ring
+const MOBIUS_TILT = 0.95;
+const mobiusAt = (u, v) => {
+  const r = MOBIUS_R + v * Math.cos(u / 2);
+  const y = v * Math.sin(u / 2);
+  const z = r * Math.sin(u);
+  const c = Math.cos(MOBIUS_TILT);
+  const s = Math.sin(MOBIUS_TILT);
+  return [r * Math.cos(u), y * c - z * s, y * s + z * c];
+};
+
+/** Cubes spread evenly over a Möbius band (denser where the band runs wider from the centre). */
+function mobius(n) {
+  const pts = [];
+  while (pts.length < n) {
+    const u = rand(0, TAU);
+    const v = rand(-MOBIUS_W, MOBIUS_W);
+    // area weighting: the outer edge of the loop has more surface than the inner one
+    if (Math.random() * (MOBIUS_R + MOBIUS_W) > MOBIUS_R + v * Math.cos(u / 2)) continue;
+    pts.push(mobiusAt(u, v));
   }
   return pts;
 }
@@ -363,6 +392,44 @@ function extrude(mask, w, h, width, height, depth) {
   return b;
 }
 
+/**
+ * A Möbius band with thickness 2h. Going round the loop twice with the surface pushed out along
+ * its normal covers both faces in one sheet, because the normal comes back flipped after one lap.
+ */
+function mobiusSolid(h, su = 360, sv = 14) {
+  const b = builder();
+  const e = 1e-4;
+  const normal = (u, v) => {
+    const du = sub(mobiusAt(u + e, v), mobiusAt(u - e, v));
+    const dv = sub(mobiusAt(u, v + e), mobiusAt(u, v - e));
+    return norm(cross(du, dv));
+  };
+  const grid = [];
+  for (let i = 0; i <= su; i++) {
+    const u = (i / su) * 2 * TAU;
+    const row = [];
+    for (let j = 0; j <= sv; j++) {
+      const v = -MOBIUS_W + (j / sv) * 2 * MOBIUS_W;
+      const n = normal(u, v);
+      const p = mobiusAt(u, v);
+      row.push(b.v(p[0] + n[0] * h, p[1] + n[1] * h, p[2] + n[2] * h, ...n));
+    }
+    grid.push(row);
+  }
+  for (let i = 0; i < su; i++) for (let j = 0; j < sv; j++) b.quad(grid[i][j], grid[i + 1][j], grid[i + 1][j + 1], grid[i][j + 1]);
+  // the band's single edge, also two laps long, closed off as a thin wall
+  const wall = [];
+  for (let i = 0; i <= su; i++) {
+    const u = (i / su) * 2 * TAU;
+    const n = normal(u, MOBIUS_W);
+    const p = mobiusAt(u, MOBIUS_W);
+    const out = norm(sub(mobiusAt(u, MOBIUS_W + e), mobiusAt(u, MOBIUS_W - e)));
+    wall.push([b.v(p[0] + n[0] * h, p[1] + n[1] * h, p[2] + n[2] * h, ...out), b.v(p[0] - n[0] * h, p[1] - n[1] * h, p[2] - n[2] * h, ...out)]);
+  }
+  for (let i = 0; i < su; i++) b.quad(wall[i][0], wall[i + 1][0], wall[i + 1][1], wall[i][1]);
+  return b;
+}
+
 const knotCurve = (u) => {
   const t = u * TAU;
   const r = Math.cos(3 * t) + 2.1;
@@ -377,6 +444,8 @@ function solidFor(name, size) {
       return box(0.62 + half).done();
     case 'torus knot':
       return tube(builder(), knotCurve, 420, 0.42 / 3.3 + half * 0.6, 18, false).done();
+    case 'möbius loop':
+      return mobiusSolid(half).done();
     case 'planet': {
       const b = sphere(builder(), 0.5 + half * 0.6);
       return annulus(b, 0.72, 1.02, Math.max(0.03, size * 0.9), 0.42).done();
@@ -386,13 +455,13 @@ function solidFor(name, size) {
       for (const off of [0, Math.PI]) {
         tube(b, (u) => {
           const t = u * 2 - 1;
-          const a = t * TAU * 1.25 + off;
+          const a = t * TAU * HELIX_TURNS + off;
           return [Math.cos(a) * 0.4, t * 0.95, Math.sin(a) * 0.4];
         }, 220, 0.035 + half, 12);
       }
-      for (let k = 0; k < 22; k++) {
-        const t = (k / 21) * 2 - 1;
-        const a = t * TAU * 1.25;
+      for (let k = 0; k < HELIX_RUNGS; k++) {
+        const t = (k / (HELIX_RUNGS - 1)) * 1.8 - 0.9;
+        const a = t * TAU * HELIX_TURNS;
         const p0 = [Math.cos(a) * 0.4, t * 0.95, Math.sin(a) * 0.4];
         tube(b, (u) => [p0[0] * (1 - 2 * u), p0[1], p0[2] * (1 - 2 * u)], 2, half * 0.9, 10, false);
       }
@@ -734,12 +803,11 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     const r = glyph(N, t, weight, family, spacing);
     return { pts: r.pts, solid: r.solid?.done() ?? null };
   };
-  const code = text('</>', 800, 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace');
   const ai = text('AI', 900, 'Inter, system-ui, -apple-system, Helvetica, Arial, sans-serif');
   const shapes = [
     { name: 'cube', pts: voxelCube(N, g) },
     { name: 'torus knot', pts: pad(torusKnot(N), N) },
-    { name: '</>', flat: true, pts: code.pts, mesh: code.solid },
+    { name: 'möbius loop', pts: mobius(N) },
     { name: 'planet', pts: pad(planet(N), N) },
     { name: 'double helix', pts: pad(helix(N), N) },
     { name: 'AI', flat: true, pts: ai.pts, mesh: ai.solid },
