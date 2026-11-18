@@ -616,6 +616,7 @@ layout(location=2) in vec4 aA;
 layout(location=3) in vec4 aB;
 layout(location=4) in vec4 aSeed;
 uniform float uSize, uCubes;
+uniform float uSink; // the blob: how far its cube ball has sunk into the fluid
 out vec3 vN;
 out vec3 vLocal;
 out vec3 vWorld;
@@ -634,6 +635,8 @@ void main() {
   mat3 R = uRot * axisAngle(dir, spin);
   // the cubes a hover peels loose are smaller than the ones that build the shape
   float shrink = mix(1.0, 0.55, peel * (1.0 - uCubes));
+  // the blob's cube ball shrinks inward as the fluid swallows it (cubes a hover peels loose stay out)
+  c *= 1.0 - 0.3 * uSink * (1.0 - peel);
   vec3 world = c + R * (aPos * scale * vis * shrink * uSize);
   if (uShadow > 0.5) world = toFloor(world);
   vN = R * aNormal;
@@ -738,6 +741,7 @@ uniform mat4 uProj;
 uniform mat3 uRot;
 uniform float uCamZ, uTime, uLiquid, uSquash;
 uniform vec3 uSway;
+uniform float uGrow; // the blob wells up from inside its cube ball
 uniform vec4 uTend[6]; // direction, reach
 out vec3 vN;
 out vec3 vWorld;
@@ -760,7 +764,7 @@ vec3 surf(vec3 n) {
     + 0.018 * sin(n.z * 4.3 + n.y * 2.0 + t * 2.1)
     + 0.007 * sin(n.x * 9.0 + n.z * 7.0 - t * 3.2)
     + reach(n);
-  vec3 p = n * r;
+  vec3 p = n * r * uGrow;
   p.y *= uSquash;
   p.xz /= sqrt(uSquash);
   return p + uSway;
@@ -801,8 +805,9 @@ void main() {
   // the skin grows over the cubes in patches, with a hot edge where it's still forming
   float nz = noise(vObj * 6.0) * 0.7 + noise(vObj * 15.0) * 0.3;
   float thr = uReveal * 1.16 - 0.08;
-  if (nz > thr) discard;
-  float edge = 1.0 - smoothstep(0.0, 0.06, thr - nz);
+  // the fluid doesn't form in patches: it wells up whole from inside (see uGrow)
+  if (uLiquid < 0.5 && nz > thr) discard;
+  float edge = uLiquid > 0.5 ? 0.0 : 1.0 - smoothstep(0.0, 0.06, thr - nz);
   // a hover peels big patches away, and their cubes come loose
   if (uPeel > 0.001) {
     float pe = peelEdge() - chunk(vObj);
@@ -1181,7 +1186,12 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     setAll('uScatter', (l) => gl.uniform1f(l, scatter));
     setAll('uPointer', (l) => gl.uniform2f(l, px, py));
     setAll('uPointerOn', (l) => gl.uniform1f(l, near));
-    setAll('uCubes', (l) => gl.uniform1f(l, 1 - skin));
+    // the blob forms differently: the fluid wells up through its cube ball first, then the ball sinks into it
+    const ss = (e0, e1, x) => { const u = Math.min(1, Math.max(0, (x - e0) / (e1 - e0))); return u * u * (3 - 2 * u); };
+    const sink = liquid ? ss(0.35, 1, skin) : 0;
+    const grow = liquid ? 0.25 + 0.75 * (1 - (1 - ss(0, 0.7, skin)) ** 2) : 1;
+    setAll('uCubes', (l) => gl.uniform1f(l, liquid ? 1 - sink : 1 - skin));
+    setAll('uSink', (l) => gl.uniform1f(l, sink));
     setAll('uPeel', (l) => gl.uniform1f(l, peel * skin));
     setAll('uRound', (l) => gl.uniform1f(l, liquid ? 1 : 0));
     const isPlanet = (i) => (i >= 0 && shapes[i].name === 'planet' ? 1 : 0);
@@ -1194,6 +1204,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
       gl.useProgram(solidProg);
       gl.uniform1f(solidProg.u('uReveal'), skin);
       gl.uniform1f(solidProg.u('uLiquid'), liquid ? 1 : 0);
+      gl.uniform1f(solidProg.u('uGrow'), grow);
       if (liquid) {
         // the blob sways and squashes, and each tendril creeps out, then snaps back
         gl.uniform3f(solidProg.u('uSway'), Math.sin(t * 1.1) * 0.035, Math.sin(t * 1.7) * 0.02, Math.cos(t * 0.9) * 0.025);
