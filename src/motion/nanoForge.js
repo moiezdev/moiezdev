@@ -21,7 +21,7 @@ const FUSE = 1.5; // seconds for them to fuse into its solid
 const HOLD = 6.0; // seconds the solid holds
 const CYCLE = BREAK + MORPH + FUSE + HOLD;
 const FLOOR_Y = -1.12; // the floor the shadow falls on, below the shapes
-const PEEL_THR = 0.703; // chunk noise above this covers ~15% of a surface: the share a hover peels back into cubes
+const PEEL_THR = 0.706; // chunk noise above this covers ~15% of a surface: the share a hover peels back into cubes
 
 // ---------- shapes: n points, xyz in about [-1, 1], w = cube scale (0 hides a spare cube) ----------
 
@@ -421,10 +421,91 @@ const LOOK = {
   },
 };
 
+// ---------- the hover's inside: a packed matrix of small cubes under each patch that can peel ----------
+
+const pcg = (v) => {
+  const st = (Math.imul(v, 747796405) + 2891336453) >>> 0;
+  const w = Math.imul(((st >>> ((st >>> 28) + 4)) ^ st) >>> 0, 277803737) >>> 0;
+  return ((w >>> 22) ^ w) >>> 0;
+};
+const hashJS = (x, y, z) => pcg((Math.imul(x + 1000, 73856093) ^ Math.imul(y + 1000, 19349663) ^ Math.imul(z + 1000, 83492791)) >>> 0) / 4294967295;
+/** The same value as chunk() in the shaders. */
+function chunkJS(p) {
+  const q = p.map((c) => c * 3.5 + 7.3);
+  const i = q.map(Math.floor);
+  const f = q.map((c, k) => {
+    const t = c - i[k];
+    return t * t * (3 - 2 * t);
+  });
+  const h = (a, b, c) => hashJS(i[0] + a, i[1] + b, i[2] + c);
+  const m = (a, b, t) => a + (b - a) * t;
+  return m(
+    m(m(h(0, 0, 0), h(1, 0, 0), f[0]), m(h(0, 1, 0), h(1, 1, 0), f[0]), f[1]),
+    m(m(h(0, 0, 1), h(1, 0, 1), f[0]), m(h(0, 1, 1), h(1, 1, 1), f[0]), f[1]),
+    f[2],
+  );
+}
+
+/**
+ * Small cubes packed just under the solid's skin, only where a hover can peel it, so an opening shows a
+ * dense matrix instead of a hollow shell. Each is [x, y, z, chunk] in the solid's own space.
+ */
+function fillers(mesh, count, [recess, depth], { round = 0 } = {}) {
+  const { P, N, I } = mesh;
+  const tris = I.length / 3;
+  const cum = new Float64Array(tris);
+  let total = 0;
+  const at = (k) => [P[k * 3], P[k * 3 + 1], P[k * 3 + 2]];
+  for (let t = 0; t < tris; t++) {
+    const a = at(I[t * 3]);
+    const b = at(I[t * 3 + 1]);
+    const c = at(I[t * 3 + 2]);
+    total += Math.hypot(...cross(sub(b, a), sub(c, a))) / 2;
+    cum[t] = total;
+  }
+  const out = new Float32Array(count * 4);
+  let n = 0;
+  for (let tries = 0; n < count && tries < count * 60; tries++) {
+    const x = Math.random() * total;
+    let lo = 0;
+    let hi = tris - 1;
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1;
+      if (cum[mid] < x) lo = mid + 1;
+      else hi = mid;
+    }
+    const ids = [I[lo * 3], I[lo * 3 + 1], I[lo * 3 + 2]];
+    let u = Math.random();
+    let v = Math.random();
+    if (u + v > 1) {
+      u = 1 - u;
+      v = 1 - v;
+    }
+    const wts = [1 - u - v, u, v];
+    const p = [0, 1, 2].map((k) => ids.reduce((acc, id, j) => acc + P[id * 3 + k] * wts[j], 0));
+    const nn = norm([0, 1, 2].map((k) => ids.reduce((acc, id, j) => acc + N[id * 3 + k] * wts[j], 0)));
+    const ch = chunkJS(round ? norm(p) : p);
+    if (ch < PEEL_THR - 0.02) continue;
+    // sunk below the skin, so an opening reads as a dent with the matrix at its floor
+    const d = recess + depth * Math.random() ** 0.8;
+    const q = round ? norm(p).map((c) => c * (round - d)) : [0, 1, 2].map((k) => p[k] - nn[k] * d);
+    out.set([q[0], q[1], q[2], ch], n * 4);
+    n++;
+  }
+  return out.subarray(0, n * 4);
+}
+
 // ---------- shaders ----------
 
 const NOISE = `
-float hash(vec3 p) { return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453); }
+// an integer hash (PCG), so the JS twin in chunkJS() gives the very same patches
+float hash(vec3 p) {
+  uvec3 u = uvec3(ivec3(p) + 1000);
+  uint v = (u.x * 73856093u) ^ (u.y * 19349663u) ^ (u.z * 83492791u);
+  uint st = v * 747796405u + 2891336453u;
+  uint w = ((st >> ((st >> 28u) + 4u)) ^ st) * 277803737u;
+  return float((w >> 22u) ^ w) / 4294967295.0;
+}
 float noise(vec3 p) {
   vec3 i = floor(p);
   vec3 f = fract(p);
@@ -434,7 +515,7 @@ float noise(vec3 p) {
     mix(mix(hash(i + vec3(0, 0, 1)), hash(i + vec3(1, 0, 1)), f.x), mix(hash(i + vec3(0, 1, 1)), hash(i + vec3(1, 1, 1)), f.x), f.y),
     f.z);
 }
-// big patches that come away from the solid on hover (above 0.703 is ~15% of the surface)
+// big patches that come away from the solid on hover (above PEEL_THR is ~15% of the surface)
 float chunk(vec3 obj) { return noise(obj * 3.5 + 7.3); }
 uniform float uPeel, uPeelThr;
 float peelEdge() { return mix(1.1, uPeelThr, uPeel); }`;
@@ -535,6 +616,7 @@ layout(location=2) in vec4 aA;
 layout(location=3) in vec4 aB;
 layout(location=4) in vec4 aSeed;
 uniform float uSize, uCubes;
+uniform float uSink; // the blob: how far its cube ball has sunk into the fluid
 out vec3 vN;
 out vec3 vLocal;
 out vec3 vWorld;
@@ -551,12 +633,41 @@ void main() {
   // the ring's debris turns slowly as it orbits
   float spin = uScatter * aSeed.w * 5.0 + debris * uOrbit * (aSeed.w - 0.5) * 4.0;
   mat3 R = uRot * axisAngle(dir, spin);
-  vec3 world = c + R * (aPos * scale * vis * uSize);
+  // the cubes a hover peels loose are smaller than the ones that build the shape
+  float shrink = mix(1.0, 0.55, peel * (1.0 - uCubes));
+  // the blob's cube ball shrinks inward as the fluid swallows it (cubes a hover peels loose stay out)
+  c *= 1.0 - 0.3 * uSink * (1.0 - peel);
+  vec3 world = c + R * (aPos * scale * vis * shrink * uSize);
   if (uShadow > 0.5) world = toFloor(world);
   vN = R * aNormal;
   vLocal = aPos;
   vWorld = world;
   vGlow = arc * 0.3 + near * 0.35 + (1.0 - uCubes) * 0.6 * (1.0 - max(peel, debris)) + peel * 0.25;
+  gl_Position = uProj * vec4(world - vec3(0.0, 0.0, uCamZ), 1.0);
+}`;
+
+const FILL_VS = `#version 300 es
+precision highp float;
+layout(location=0) in vec3 aPos;
+layout(location=1) in vec3 aNormal;
+layout(location=2) in vec4 aF; // position inside the solid, and the chunk value of the patch above it
+uniform mat4 uProj;
+uniform mat3 uRot;
+uniform float uCamZ, uSize;
+out vec3 vN;
+out vec3 vLocal;
+out vec3 vWorld;
+out float vGlow;
+${NOISE}
+void main() {
+  float show = uPeel > 0.001 ? smoothstep(peelEdge() - 0.01, peelEdge() + 0.02, aF.w) : 0.0;
+  // sizes vary a little, so the matrix reads as packed rather than gridded
+  float r = fract(sin(float(gl_InstanceID) * 12.9898) * 43758.5453);
+  vec3 world = uRot * (aF.xyz + aPos * uSize * (0.5 + 0.35 * r) * show);
+  vN = uRot * aNormal;
+  vLocal = aPos;
+  vWorld = world;
+  vGlow = 0.0;
   gl_Position = uProj * vec4(world - vec3(0.0, 0.0, uCamZ), 1.0);
 }`;
 
@@ -630,6 +741,7 @@ uniform mat4 uProj;
 uniform mat3 uRot;
 uniform float uCamZ, uTime, uLiquid, uSquash;
 uniform vec3 uSway;
+uniform float uGrow; // the blob wells up from inside its cube ball
 uniform vec4 uTend[6]; // direction, reach
 out vec3 vN;
 out vec3 vWorld;
@@ -652,7 +764,7 @@ vec3 surf(vec3 n) {
     + 0.018 * sin(n.z * 4.3 + n.y * 2.0 + t * 2.1)
     + 0.007 * sin(n.x * 9.0 + n.z * 7.0 - t * 3.2)
     + reach(n);
-  vec3 p = n * r;
+  vec3 p = n * r * uGrow;
   p.y *= uSquash;
   p.xz /= sqrt(uSquash);
   return p + uSway;
@@ -693,8 +805,9 @@ void main() {
   // the skin grows over the cubes in patches, with a hot edge where it's still forming
   float nz = noise(vObj * 6.0) * 0.7 + noise(vObj * 15.0) * 0.3;
   float thr = uReveal * 1.16 - 0.08;
-  if (nz > thr) discard;
-  float edge = 1.0 - smoothstep(0.0, 0.06, thr - nz);
+  // the fluid doesn't form in patches: it wells up whole from inside (see uGrow)
+  if (uLiquid < 0.5 && nz > thr) discard;
+  float edge = uLiquid > 0.5 ? 0.0 : 1.0 - smoothstep(0.0, 0.06, thr - nz);
   // a hover peels big patches away, and their cubes come loose
   if (uPeel > 0.001) {
     float pe = peelEdge() - chunk(vObj);
@@ -707,8 +820,11 @@ void main() {
   }
   // face the viewer whichever way a triangle is wound (holes show the inside)
   vec3 n = normalize(vN);
-  if (dot(n, vec3(0.0, 0.0, uCamZ) - vWorld) < 0.0) n = -n;
+  bool inside = dot(n, vec3(0.0, 0.0, uCamZ) - vWorld) < 0.0;
+  if (inside) n = -n;
   vec3 col = shade(n, vWorld);
+  // the inner wall of an opening is in shadow, so a dent reads as a dent
+  if (inside) col *= 0.45;
   if (uLiquid > 0.5) {
     // the same metal as every other shape, just wetter: a tighter, brighter highlight
     vec3 v = normalize(vec3(0.0, 0.0, uCamZ) - vWorld);
@@ -828,11 +944,13 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     return p;
   };
   let cubeProg;
+  let fillProg;
   let lineProg;
   let solidProg;
   let shadowProg;
   try {
     cubeProg = program(CUBE_VS, CUBE_FS);
+    fillProg = program(FILL_VS, CUBE_FS);
     lineProg = program(LINE_VS, LINE_FS);
     solidProg = program(SOLID_VS, SOLID_FS);
     shadowProg = program(SHADOW_VS, SHADOW_FS);
@@ -840,7 +958,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     console.warn('[nano forge]', err);
     return null;
   }
-  const progs = [cubeProg, lineProg, solidProg, shadowProg];
+  const progs = [cubeProg, lineProg, solidProg, shadowProg, fillProg];
   /** Set a uniform on every program that has it. */
   const setAll = (name, fn) => {
     for (const p of progs) {
@@ -936,6 +1054,22 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     buf(s.mesh.I, gl.ELEMENT_ARRAY_BUFFER);
     return { vao, count: s.mesh.I.length };
   });
+  // the packed inside for each solid, for hover peels (the planet's ring never peels, it's loose already)
+  // [how far below the skin the matrix starts, how deep it goes]
+  const FILL_DEPTH = { cube: [0.08, 0.14], 'torus knot': [0.05, 0.06], 'möbius loop': [0.005, 0.008], planet: [0.08, 0.14], 'double helix': [0.015, 0.02], 'toxic sludge': [0.08, 0.14] };
+  const fillVaos = shapes.map((s) => {
+    const data = fillers(s.mesh, small ? 2000 : 4500, FILL_DEPTH[s.name] ?? [0.04, 0.08], { round: s.liquid ? 0.52 : 0 });
+    const vao = gl.createVertexArray();
+    gl.bindVertexArray(vao);
+    buf(mesh.P);
+    attrib(0, 3);
+    buf(mesh.N);
+    attrib(1, 3);
+    buf(mesh.I, gl.ELEMENT_ARRAY_BUFFER);
+    buf(data);
+    attrib(2, 4, 1);
+    return { vao, count: data.length / 4 };
+  });
   gl.bindVertexArray(null);
 
   let pairKey = '';
@@ -964,6 +1098,8 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
   gl.useProgram(cubeProg);
   gl.uniform1f(cubeProg.u('uSize'), size);
+  gl.useProgram(fillProg);
+  gl.uniform1f(fillProg.u('uSize'), size);
   gl.useProgram(lineProg);
   gl.uniform1f(lineProg.u('uMaxLen'), spacing * 9);
 
@@ -1024,6 +1160,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   // eased interaction state
   let near = 0;
   let peel = 0; // 0..1, eased: how far the hover peel has gone
+  let calm = 0; // 1 while the planet stands still
   let px = 0;
   let py = 0;
   let scatter = 0;
@@ -1041,7 +1178,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     // the solid gives way to its cubes as the hero scrolls off
     const skin = solid >= 0 ? reveal * (1 - Math.min(1, scatter * 5)) : 0;
     const liquid = solid >= 0 && shapes[solid].liquid;
-    const rot = rotation(y, pitch, Math.sin(t * 0.13) * 0.06);
+    const rot = rotation(y, pitch, Math.sin(t * 0.13) * 0.06 * (1 - calm));
     setAll('uRot', (l) => gl.uniformMatrix3fv(l, false, rot));
     setAll('uPitch', (l) => gl.uniformMatrix3fv(l, false, rotation(0, pitch)));
     setAll('uMix', (l) => gl.uniform1f(l, mix));
@@ -1049,19 +1186,25 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     setAll('uScatter', (l) => gl.uniform1f(l, scatter));
     setAll('uPointer', (l) => gl.uniform2f(l, px, py));
     setAll('uPointerOn', (l) => gl.uniform1f(l, near));
-    setAll('uCubes', (l) => gl.uniform1f(l, 1 - skin));
+    // the blob forms differently: the fluid wells up through its cube ball first, then the ball sinks into it
+    const ss = (e0, e1, x) => { const u = Math.min(1, Math.max(0, (x - e0) / (e1 - e0))); return u * u * (3 - 2 * u); };
+    const sink = liquid ? ss(0.35, 1, skin) : 0;
+    const grow = liquid ? 0.25 + 0.75 * (1 - (1 - ss(0, 0.7, skin)) ** 2) : 1;
+    setAll('uCubes', (l) => gl.uniform1f(l, liquid ? 1 - sink : 1 - skin));
+    setAll('uSink', (l) => gl.uniform1f(l, sink));
     setAll('uPeel', (l) => gl.uniform1f(l, peel * skin));
     setAll('uRound', (l) => gl.uniform1f(l, liquid ? 1 : 0));
     const isPlanet = (i) => (i >= 0 && shapes[i].name === 'planet' ? 1 : 0);
     setAll('uRingA', (l) => gl.uniform1f(l, isPlanet(a)));
     setAll('uRingB', (l) => gl.uniform1f(l, isPlanet(b)));
-    setAll('uOrbit', (l) => gl.uniform1f(l, t * 0.16));
+    setAll('uOrbit', (l) => gl.uniform1f(l, t * 0.3));
 
     const drawSolid = () => {
       if (skin <= 0.001) return;
       gl.useProgram(solidProg);
       gl.uniform1f(solidProg.u('uReveal'), skin);
       gl.uniform1f(solidProg.u('uLiquid'), liquid ? 1 : 0);
+      gl.uniform1f(solidProg.u('uGrow'), grow);
       if (liquid) {
         // the blob sways and squashes, and each tendril creeps out, then snaps back
         gl.uniform3f(solidProg.u('uSway'), Math.sin(t * 1.1) * 0.035, Math.sin(t * 1.7) * 0.02, Math.cos(t * 0.9) * 0.025);
@@ -1113,9 +1256,16 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     gl.bindTexture(gl.TEXTURE_2D, null);
     gl.enable(gl.DEPTH_TEST);
 
-    // 3. the shape itself
+    // 3. the shape itself, and the packed cubes a hover opens it onto
     drawSolid();
     drawCubes();
+    if (skin > 0.001 && peel * skin > 0.001 && fillVaos[solid].count) {
+      gl.useProgram(fillProg);
+      gl.enable(gl.CULL_FACE);
+      gl.bindVertexArray(fillVaos[solid].vao);
+      gl.drawElementsInstanced(gl.TRIANGLES, mesh.I.length, gl.UNSIGNED_SHORT, 0, fillVaos[solid].count);
+      gl.disable(gl.CULL_FACE);
+    }
 
     if (skin < 0.999 || peel * skin > 0.001) {
       gl.useProgram(lineProg);
@@ -1181,7 +1331,10 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     const flat = shapes[target].flat && phase > BREAK + MORPH * 0.15;
     face += ((flat ? 1 : 0) - face) * Math.min(1, dt * 3);
     const facing = Math.round(yaw / TAU) * TAU + Math.sin(t * 0.55) * 0.35;
-    yaw += dt * 0.32 * (1 - face) + (facing - yaw) * Math.min(1, dt * 3.5) * face;
+    // while the planet stands, the globe stops turning and only its debris ring orbits
+    const planetUp = solid >= 0 && shapes[solid].name === 'planet';
+    calm += ((planetUp ? 1 : 0) - calm) * Math.min(1, dt * 1.5);
+    yaw += dt * 0.32 * (1 - face) * (1 - calm) + (facing - yaw) * Math.min(1, dt * 3.5) * face;
     const sp = Math.min(1, Math.max(0, scroll()));
     scatter += (Math.min(1, Math.max(0, (sp - 0.08) / 0.7)) - scatter) * Math.min(1, dt * 8);
     draw({
@@ -1192,7 +1345,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
       reveal,
       t,
       yaw: yaw + sp * 1.6,
-      pitch: 0.38 - face * 0.26 + Math.sin(t * 0.21) * 0.08,
+      pitch: 0.38 - face * 0.26 + Math.sin(t * 0.21) * 0.08 * (1 - calm),
     });
   }
 

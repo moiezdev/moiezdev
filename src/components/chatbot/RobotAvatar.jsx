@@ -1,297 +1,223 @@
-import { useEffect, useId, useRef } from 'react';
-import { gsap } from 'gsap';
+import { useEffect, useRef } from 'react';
+import { usePrefersReducedMotion } from '../../motion/reducedMotion';
 
 /**
- * Friendly robot mascot — one rounded head: pearl shell, dark glass visor,
- * soft white eyes (like an Apple status light), a small smile, and the antenna
- * tip in the site's "available" green — no colours outside the site palette.
+ * Botfolio's avatar: a small ball of the same liquid metal as the hero's blob — white metal on the dark
+ * page, black metal on the light one. It ripples gently at rest, churns faster while thinking, and
+ * pulses while speaking. One tiny WebGL2 canvas, raymarched; with reduced motion it holds still, and
+ * without WebGL it falls back to a shaded CSS sphere.
  * `mood`: idle | thinking | speaking
- * `faceOnly` crops to head + antenna and shows a mouth for expression / lip-sync.
+ * `faceOnly` (the panel header) drops the floor shadow.
  */
-const RobotAvatar = ({
-  size = 64,
-  isOpen = false,
-  mood = 'idle',
-  faceOnly = false,
-  className = '',
-}) => {
-  const rootRef = useRef(null);
-  const leftEyeRef = useRef(null);
-  const rightEyeRef = useRef(null);
-  const antennaRef = useRef(null);
-  const antennaDotRef = useRef(null);
-  const mouthRef = useRef(null);
-  const headRef = useRef(null);
-  const moodTweensRef = useRef([]);
-  const eyesRef = useRef(null);
-  const uid = useId().replace(/:/g, '');
 
-  const killMoodTweens = () => {
-    moodTweensRef.current.forEach((t) => t.kill());
-    moodTweensRef.current = [];
+const VS = `#version 300 es
+out vec2 vUv;
+void main() {
+  vec2 p = vec2(gl_VertexID == 1 ? 3.0 : -1.0, gl_VertexID == 2 ? 3.0 : -1.0);
+  vUv = p;
+  gl_Position = vec4(p, 0.0, 1.0);
+}`;
+
+const FS = `#version 300 es
+precision highp float;
+in vec2 vUv;
+uniform float uTime, uAmp, uPulse, uPx;
+uniform vec3 uBase, uEnvLow, uEnvHigh, uSpec, uRim;
+out vec4 o;
+
+// the same ripple as the hero's sludge, on a unit-ish ball
+float field(vec3 p) {
+  vec3 n = normalize(p);
+  float t = uTime;
+  float r = 0.58 * (1.0 + uPulse * 0.06)
+    + uAmp * (0.026 * sin(n.x * 3.1 + t * 1.7) * sin(n.y * 2.7 - t * 1.3)
+    + 0.021 * sin(n.z * 4.3 + n.y * 2.0 + t * 2.1)
+    + 0.008 * sin(n.x * 9.0 + n.z * 7.0 - t * 3.2))
+    + uPulse * 0.035 * sin(n.y * 5.0 - t * 9.0);
+  return length(p) - r;
+}
+vec3 normalAt(vec3 p) {
+  vec2 e = vec2(0.002, 0.0);
+  return normalize(vec3(
+    field(p + e.xyy) - field(p - e.xyy),
+    field(p + e.yxy) - field(p - e.yxy),
+    field(p + e.yyx) - field(p - e.yyx)));
+}
+vec3 shade(vec3 n, vec3 v) {
+  vec3 l1 = normalize(vec3(-0.55, 0.85, 0.6));
+  vec3 l2 = normalize(vec3(0.8, -0.25, 0.35));
+  float d1 = max(dot(n, l1), 0.0);
+  float d2 = max(dot(n, l2), 0.0);
+  float sp = pow(max(dot(n, normalize(l1 + v)), 0.0), 56.0) + 0.35 * pow(max(dot(n, normalize(l2 + v)), 0.0), 24.0);
+  float fres = pow(1.0 - max(dot(n, v), 0.0), 3.0);
+  vec3 r = reflect(-v, n);
+  vec3 env = mix(uEnvLow, uEnvHigh, smoothstep(-0.35, 0.75, r.y));
+  vec3 col = uBase * (0.12 + 0.78 * d1 + 0.2 * d2) + env * 0.34 + uSpec * sp * 0.8 + uRim * fres * 0.35;
+  // wetter than the rest: a tight bright highlight
+  col += uSpec * pow(max(dot(r, l1), 0.0), 120.0) * 0.6;
+  return col;
+}
+void main() {
+  vec3 ro = vec3(0.0, 0.0, 3.0);
+  vec3 rd = normalize(vec3(vUv * 0.31, -1.0));
+  float t = 1.9;
+  float best = 1e9;
+  bool hit = false;
+  for (int i = 0; i < 48; i++) {
+    float d = field(ro + rd * t);
+    best = min(best, d);
+    if (d < 0.0008) { hit = true; break; }
+    t += d * 0.8;
+    if (t > 4.2) break;
+  }
+  if (!hit) {
+    // soft silhouette edge instead of jaggies
+    float a = 1.0 - smoothstep(0.0, uPx * 1.5, best);
+    if (a <= 0.0) discard;
+    vec3 p = ro + rd * t;
+    o = vec4(shade(normalAt(p), -rd) * a, a);
+    return;
+  }
+  vec3 p = ro + rd * t;
+  o = vec4(shade(normalAt(p), -rd), 1.0);
+}`;
+
+const LOOK = {
+  dark: { base: [0.66, 0.67, 0.69], envLow: [0.1, 0.1, 0.11], envHigh: [0.92, 0.93, 0.95], spec: [1, 1, 1], rim: [0.7, 0.72, 0.75] },
+  light: { base: [0.09, 0.095, 0.1], envLow: [0.01, 0.01, 0.012], envHigh: [0.42, 0.43, 0.45], spec: [0.85, 0.85, 0.87], rim: [0.22, 0.23, 0.25] },
+};
+
+const MOODS = { idle: { amp: 1, speed: 1 }, thinking: { amp: 1.5, speed: 2.4 }, speaking: { amp: 1.15, speed: 1.4 } };
+
+const themeOf = () => (document.documentElement.dataset.theme === 'light' ? 'light' : 'dark');
+
+function createBlob(canvas) {
+  const gl = canvas.getContext('webgl2', { premultipliedAlpha: true, antialias: false, alpha: true });
+  if (!gl) return null;
+  const sh = (type, src) => {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return s;
   };
+  const prog = gl.createProgram();
+  gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS));
+  gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS));
+  gl.linkProgram(prog);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return null;
+  const u = (n) => gl.getUniformLocation(prog, n);
+  const vao = gl.createVertexArray();
+
+  return {
+    draw({ time, amp, pulse, theme }) {
+      const w = canvas.width;
+      gl.viewport(0, 0, w, canvas.height);
+      gl.clearColor(0, 0, 0, 0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.useProgram(prog);
+      const L = LOOK[theme];
+      gl.uniform3fv(u('uBase'), L.base);
+      gl.uniform3fv(u('uEnvLow'), L.envLow);
+      gl.uniform3fv(u('uEnvHigh'), L.envHigh);
+      gl.uniform3fv(u('uSpec'), L.spec);
+      gl.uniform3fv(u('uRim'), L.rim);
+      gl.uniform1f(u('uTime'), time);
+      gl.uniform1f(u('uAmp'), amp);
+      gl.uniform1f(u('uPulse'), pulse);
+      // one pixel, in the ray's world units at the ball
+      gl.uniform1f(u('uPx'), (2 * 0.31 * 2.4) / w);
+      gl.bindVertexArray(vao);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    },
+    dispose() {
+      gl.getExtension('WEBGL_lose_context')?.loseContext();
+    },
+  };
+}
+
+const RobotAvatar = ({ size = 64, mood = 'idle', faceOnly = false, className = '' }) => {
+  const canvasRef = useRef(null);
+  const fallbackRef = useRef(null);
+  const moodRef = useRef(mood);
+  const reduced = usePrefersReducedMotion();
+  moodRef.current = mood;
 
   useEffect(() => {
-    const root = rootRef.current;
-    if (!root) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return undefined;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = canvas.height = Math.round(size * dpr);
+    const blob = createBlob(canvas);
+    if (!blob) {
+      canvas.style.display = 'none';
+      if (fallbackRef.current) fallbackRef.current.style.display = 'block';
+      return undefined;
+    }
 
-    const ctx = gsap.context(() => {
-      gsap.to(root, {
-        y: -2,
-        duration: 2,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
-      });
+    let raf = 0;
+    let last = performance.now();
+    let clock = 0;
+    let amp = 1;
+    let speed = 1;
+    let pulse = 0;
+    let theme = themeOf();
+    const mo = new MutationObserver(() => {
+      theme = themeOf();
+      if (reduced) blob.draw({ time: 0.8, amp: 1, pulse: 0, theme });
+    });
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
-      const blink = () => {
-        gsap
-          .timeline()
-          .to([leftEyeRef.current, rightEyeRef.current], {
-            scaleY: 0.12,
-            duration: 0.07,
-            transformOrigin: 'center',
-          })
-          .to([leftEyeRef.current, rightEyeRef.current], {
-            scaleY: 1,
-            duration: 0.1,
-            transformOrigin: 'center',
-          });
-      };
-
-      const blinkLoop = gsap.delayedCall(2.8 + Math.random() * 2, function repeat() {
-        blink();
-        blinkLoop.restart(true);
-        blinkLoop.delay(2.8 + Math.random() * 3);
-      });
-
-      gsap.to(antennaDotRef.current, {
-        opacity: 0.3,
-        duration: 0.8,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
-      });
-
-      gsap.to(antennaRef.current, {
-        rotation: 6,
-        duration: 1.6,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
-        transformOrigin: '50% 100%',
-      });
-    }, root);
-
-    return () => ctx.revert();
-  }, []);
-
-  useEffect(() => {
-    killMoodTweens();
-
-    const left = leftEyeRef.current;
-    const right = rightEyeRef.current;
-    const mouth = mouthRef.current;
-    const head = headRef.current;
-    const antennaDot = antennaDotRef.current;
-
-    if (!left || !right) return undefined;
-
-    gsap.set([left, right], { transformOrigin: '50% 50%' });
-    if (mouth) gsap.set(mouth, { transformOrigin: '50% 50%' });
-
-    if (mood === 'thinking') {
-      // Eyes drift up / inward — “pondering”
-      moodTweensRef.current.push(
-        gsap.to(left, { x: 1.5, y: -2.5, scaleX: 0.85, duration: 0.35, ease: 'power2.out' }),
-        gsap.to(right, { x: -1.5, y: -2.5, scaleX: 0.85, duration: 0.35, ease: 'power2.out' }),
-        gsap.to(left, {
-          opacity: 0.45,
-          duration: 0.55,
-          repeat: -1,
-          yoyo: true,
-          ease: 'sine.inOut',
-        }),
-      );
-
-      if (head) {
-        moodTweensRef.current.push(
-          gsap.to(head, {
-            rotation: -4,
-            duration: 0.4,
-            ease: 'power2.out',
-            transformOrigin: '50% 80%',
-          }),
-        );
-      }
-
-      if (mouth) {
-        moodTweensRef.current.push(
-          gsap.to(mouth, {
-            scaleY: 0.22,
-            scaleX: 1.15,
-            y: 0.5,
-            duration: 0.25,
-            ease: 'power2.out',
-          }),
-        );
-      }
-
-      if (antennaDot) {
-        moodTweensRef.current.push(
-          gsap.to(antennaDot, {
-            opacity: 0.15,
-            duration: 0.35,
-            repeat: -1,
-            yoyo: true,
-            ease: 'sine.inOut',
-          }),
-        );
-      }
-
+    if (reduced) {
+      blob.draw({ time: 0.8, amp: 1, pulse: 0, theme });
       return () => {
-        killMoodTweens();
-        gsap.set([left, right], { x: 0, y: 0, scaleX: 1, opacity: 1 });
-        if (head) gsap.set(head, { rotation: 0 });
-        if (mouth) gsap.set(mouth, { scaleY: 1, scaleX: 1, y: 0 });
-        if (antennaDot) gsap.set(antennaDot, { opacity: 1 });
+        mo.disconnect();
+        blob.dispose();
       };
     }
 
-    if (mood === 'speaking' && mouth) {
-      gsap.set([left, right], { x: 0, y: 0, scaleX: 1, opacity: 1 });
-      if (head) gsap.set(head, { rotation: 0 });
-
-      const tl = gsap.timeline({ repeat: -1 });
-      tl.to(mouth, { scaleY: 1.15, scaleX: 0.9, duration: 0.09, ease: 'power1.out' })
-        .to(mouth, { scaleY: 0.28, scaleX: 1.05, duration: 0.08, ease: 'power1.in' })
-        .to(mouth, { scaleY: 0.95, scaleX: 0.92, duration: 0.07, ease: 'power1.out' })
-        .to(mouth, { scaleY: 0.22, scaleX: 1.1, duration: 0.09, ease: 'power1.in' })
-        .to(mouth, { scaleY: 0.8, scaleX: 0.95, duration: 0.06, ease: 'power1.out' })
-        .to(mouth, { scaleY: 0.32, scaleX: 1, duration: 0.1, ease: 'power1.in' })
-        .to({}, { duration: 0.08 + Math.random() * 0.12 });
-
-      moodTweensRef.current.push(tl);
-
-      // Subtle attentive eye pulse on the primary eye
-      moodTweensRef.current.push(
-        gsap.to(left, {
-          opacity: 0.7,
-          duration: 0.25,
-          repeat: -1,
-          yoyo: true,
-          ease: 'sine.inOut',
-        }),
-      );
-
-      return () => {
-        killMoodTweens();
-        gsap.set(mouth, { scaleY: 1, scaleX: 1 });
-        gsap.set(left, { opacity: 1 });
-      };
-    }
-
-    // idle
-    gsap.to([left, right], { x: 0, y: 0, scaleX: 1, opacity: 1, duration: 0.25 });
-    if (head) gsap.to(head, { rotation: 0, duration: 0.25 });
-    if (mouth) gsap.to(mouth, { scaleY: 1, scaleX: 1, y: 0, duration: 0.2 });
-
-    return () => killMoodTweens();
-  }, [mood]);
-
-  // Eyes glance toward the pointer.
-  useEffect(() => {
-    const eyes = eyesRef.current;
-    const root = rootRef.current;
-    if (!eyes || !root || !window.matchMedia('(pointer: fine)').matches) return undefined;
-    const onMove = (e) => {
-      const r = root.getBoundingClientRect();
-      const dx = e.clientX - (r.left + r.width / 2);
-      const dy = e.clientY - (r.top + r.height / 2);
-      const d = Math.hypot(dx, dy) || 1;
-      const reach = Math.min(d / 160, 1);
-      gsap.to(eyes, { x: (dx / d) * 2.6 * reach, y: (dy / d) * 1.8 * reach, duration: 0.35, ease: 'power2.out' });
+    const frame = (now) => {
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      const m = MOODS[moodRef.current] || MOODS.idle;
+      const k = Math.min(1, dt * 4);
+      amp += (m.amp - amp) * k;
+      speed += (m.speed - speed) * k;
+      // speaking: an uneven, syllable-like swell
+      const talk = moodRef.current === 'speaking'
+        ? Math.max(0, Math.sin(now * 0.017) * 0.6 + Math.sin(now * 0.029 + 1.3) * 0.5)
+        : 0;
+      pulse += (talk - pulse) * Math.min(1, dt * 12);
+      clock += dt * speed;
+      blob.draw({ time: clock, amp, pulse, theme });
+      raf = requestAnimationFrame(frame);
     };
-    window.addEventListener('mousemove', onMove, { passive: true });
-    return () => window.removeEventListener('mousemove', onMove);
-  }, []);
+    raf = requestAnimationFrame(frame);
 
-  // one head for both sizes; the panel header (faceOnly) just drops the floor shadow
-  const viewBox = '4 0 72 68';
-  const aspectH = size * (68 / 72);
-  const id = (name) => `${uid}-${name}`;
+    return () => {
+      cancelAnimationFrame(raf);
+      mo.disconnect();
+      blob.dispose();
+    };
+  }, [size, reduced]);
 
   return (
-    <div
-      ref={rootRef}
-      className={`relative select-none ${className}`}
-      data-open={isOpen || undefined}
-      style={{ width: size, height: aspectH }}
-      aria-hidden
-    >
-      <svg viewBox={viewBox} width={size} height={aspectH} fill="none">
-        <defs>
-          <radialGradient id={id('shell')} cx="0.34" cy="0.22" r="0.95">
-            <stop offset="0" stopColor="#ffffff" />
-            <stop offset="0.55" stopColor="#e8eaef" />
-            <stop offset="1" stopColor="#aeb4c0" />
-          </radialGradient>
-          <radialGradient id={id('pod')} cx="0.35" cy="0.3" r="0.9">
-            <stop offset="0" stopColor="#f4f5f8" />
-            <stop offset="1" stopColor="#9ea5b2" />
-          </radialGradient>
-          <linearGradient id={id('visor')} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#22252e" />
-            <stop offset="1" stopColor="#05060a" />
-          </linearGradient>
-          <linearGradient id={id('glow')} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#ffffff" />
-            <stop offset="1" stopColor="#d7dce4" />
-          </linearGradient>
-          <filter id={id('blur')} x="-80%" y="-80%" width="260%" height="260%">
-            <feGaussianBlur stdDeviation="2.2" />
-          </filter>
-          <filter id={id('shadow')} x="-30%" y="-30%" width="160%" height="160%">
-            <feGaussianBlur stdDeviation="2.4" />
-          </filter>
-        </defs>
-
-        {!faceOnly && <ellipse cx="40" cy="64" rx="20" ry="2.6" fill="#000" opacity="0.3" filter={`url(#${id('shadow')})`} />}
-
-        <g ref={headRef}>
-          {/* antenna with a glowing tip */}
-          <g ref={antennaRef}>
-            <line x1="40" y1="15" x2="40" y2="8" stroke="#c3c7cf" strokeWidth="2.2" strokeLinecap="round" />
-            <g ref={antennaDotRef}>
-              <circle cx="40" cy="6" r="4.5" fill="var(--color-green)" opacity="0.55" filter={`url(#${id('blur')})`} />
-              <circle cx="40" cy="6" r="3" fill="var(--color-green)" />
-            </g>
-          </g>
-
-          {/* side pods */}
-          <circle cx="11.5" cy="38" r="5.5" fill={`url(#${id('pod')})`} />
-          <circle cx="68.5" cy="38" r="5.5" fill={`url(#${id('pod')})`} />
-
-          {/* shell: soft light from the top-left, a bright rim */}
-          <rect x="12" y="14" width="56" height="48" rx="22" fill={`url(#${id('shell')})`} />
-          <rect x="12.6" y="14.6" width="54.8" height="46.8" rx="21.4" stroke="rgba(255,255,255,0.9)" strokeWidth="1.2" opacity="0.7" />
-
-          {/* glass visor with a reflection */}
-          <rect x="18" y="22" width="44" height="29" rx="14.5" fill={`url(#${id('visor')})`} />
-          <rect x="18.5" y="22.5" width="43" height="28" rx="14" stroke="rgba(255,255,255,0.08)" />
-          <path d="M24 28.5c4.5-3.4 15-4.6 24-3" stroke="rgba(255,255,255,0.22)" strokeWidth="1.6" strokeLinecap="round" />
-
-          <g ref={eyesRef}>
-            <rect x="27.5" y="29.5" width="7" height="12" rx="3.5" fill="#ffffff" opacity="0.45" filter={`url(#${id('blur')})`} />
-            <rect x="45.5" y="29.5" width="7" height="12" rx="3.5" fill="#ffffff" opacity="0.45" filter={`url(#${id('blur')})`} />
-            <rect ref={leftEyeRef} x="27.5" y="29.5" width="7" height="12" rx="3.5" fill={`url(#${id('glow')})`} />
-            <rect ref={rightEyeRef} x="45.5" y="29.5" width="7" height="12" rx="3.5" fill={`url(#${id('glow')})`} />
-          </g>
-
-          {/* smile — flattens while thinking, moves while speaking */}
-          <path ref={mouthRef} d="M36.5 45.2q3.5 2.2 7 0" stroke="#e3e7ee" strokeWidth="1.8" strokeLinecap="round" />
-        </g>
-      </svg>
+    <div className={`relative select-none ${className}`} style={{ width: size, height: size }} aria-hidden>
+      {!faceOnly && (
+        <span
+          className="absolute left-1/2 -translate-x-1/2 rounded-[50%] bg-black/30 blur-[3px]"
+          style={{ bottom: size * 0.02, width: size * 0.5, height: size * 0.07 }}
+        />
+      )}
+      <canvas ref={canvasRef} className="relative block" style={{ width: size, height: size }} />
+      <span
+        ref={fallbackRef}
+        className="absolute rounded-full"
+        style={{
+          display: 'none',
+          inset: size * 0.12,
+          background: 'radial-gradient(circle at 34% 28%, #fff 0%, #b9bdc4 38%, #4a4d53 78%, #1a1b1e 100%)',
+        }}
+      />
     </div>
   );
 };
