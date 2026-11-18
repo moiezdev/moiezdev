@@ -923,8 +923,6 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   };
 
   // eased interaction state
-  let lean = 0;
-  let tilt = 0;
   let near = 0;
   let px = 0;
   let py = 0;
@@ -1034,8 +1032,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     const ease = Math.min(1, dt * 3);
     const p = pointer();
     const inside = p.active && p.x > -W * 0.25 && p.x < W * 1.25 && p.y > -H * 0.25 && p.y < H * 1.25;
-    lean += ((p.active ? (p.x / Math.max(1, W) - 0.5) * 0.9 : 0) - lean) * ease;
-    tilt += ((p.active ? (p.y / Math.max(1, H) - 0.5) * 0.5 : 0) - tilt) * ease;
+    // hover only: the pointer parts nearby cubes but never turns the shape
     near += ((inside ? 1 : 0) - near) * ease;
     if (p.active) {
       px = (p.x / Math.max(1, W)) * 2 - 1;
@@ -1055,8 +1052,8 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
       solid,
       reveal,
       t,
-      yaw: yaw + lean * (1 - face * 0.6) + sp * 1.6,
-      pitch: 0.38 - face * 0.26 + Math.sin(t * 0.21) * 0.08 + tilt * (1 - face * 0.6),
+      yaw: yaw + sp * 1.6,
+      pitch: 0.38 - face * 0.26 + Math.sin(t * 0.21) * 0.08,
     });
   }
 

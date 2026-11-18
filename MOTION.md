@@ -26,7 +26,7 @@ A new ambient piece replaces the forge. It isn't added next to it.
 ### 3. The signature is live: it answers scroll and the cursor
 
 - **Scroll**: the shape turns as you scroll, breaks back into cubes, and blows apart into shrinking debris as the hero leaves. Scrolling back reassembles it.
-- **Cursor**: the shape leans toward the pointer, and loose cubes part around it and glow. On touch screens a finger does the same while it's down. Device tilt isn't used, because iOS would need a permission prompt for it.
+- **Cursor**: hover only. The pointer never turns or tilts the shape; loose cubes near it just part and glow. On touch screens a finger does the same while it's down. Device tilt isn't used, because iOS would need a permission prompt for it.
 - Every response is **scrubbed or eased**: it's a function of where the scroll or pointer is now, so going back undoes it. Nothing is triggered once and left half-finished.
 - Responses are gentle. Nothing jumps, flashes, or follows the pointer across the page.
 - No scroll-jacking, no smooth-scroll libraries, no pinned sections. The page always scrolls at the speed you scroll it.
@@ -100,7 +100,7 @@ In Tailwind classes, use them as `duration-(--dur-base) ease-(--ease-spring)`. I
 - **Strings**: while cubes are loose, each is linked by hairlines to a few neighbours in the same part of the shape. Separate parts are never strung together: the planet's globe and ring, and the helix's two strands and its rungs, each keep their own strings. Lines that stretch too far fade out, and they're gone once the solid stands.
 - **Caption**: a small mono label under the stage names the shape (desktop only, `aria-hidden`).
 - **Scroll**: the shape turns with scroll position, and blows apart into shrinking debris as the hero leaves. It's scrubbed, so scrolling back rebuilds it.
-- **Cursor**: the shape leans toward the pointer, and loose cubes part around it and glow. A finger does the same while it's down.
+- **Cursor**: hover only. The pointer never turns or tilts the shape; loose cubes near it just part and glow. A finger does the same while it's down.
 - **Off**: only on home, stopped when the stage is off screen or the tab is hidden, and one still shape under reduced motion.
 
 ## Each functional piece, and what it proves
