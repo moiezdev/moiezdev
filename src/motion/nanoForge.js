@@ -91,7 +91,7 @@ function torusKnot(n) {
 
 function planet(n) {
   const pts = [];
-  const ns = Math.round(n * 0.62);
+  const ns = Math.round(n * 0.7);
   const golden = Math.PI * (3 - Math.sqrt(5));
   for (let i = 0; i < ns; i++) {
     const y = 1 - (i / (ns - 1)) * 2;
@@ -101,12 +101,14 @@ function planet(n) {
   const tilt = 0.42;
   for (let i = ns; i < n; i++) {
     const a = rand(0, TAU);
-    const r = Math.sqrt(rand(0.72 * 0.72, 1.02 * 1.02));
+    const r = Math.sqrt(rand(0.7 * 0.7, 1.08 * 1.08));
     const x = Math.cos(a) * r;
     const z = Math.sin(a) * r;
-    const y = rand(-0.012, 0.012);
-    // w = 3: scale 1, second part (the ring), so no strings run between it and the globe
-    pts.push([x, y * Math.cos(tilt) - z * Math.sin(tilt), y * Math.sin(tilt) + z * Math.cos(tilt), 3]);
+    // a loose belt of debris: some thickness, and rocks of every size
+    const y = rand(-0.045, 0.045) * (0.4 + Math.random());
+    const scale = 0.3 + Math.random() ** 1.8 * 0.85;
+    // w = 2 + scale: the second part (the ring), so no strings run between it and the globe
+    pts.push([x, y * Math.cos(tilt) - z * Math.sin(tilt), y * Math.sin(tilt) + z * Math.cos(tilt), 2 + scale]);
   }
   return pts;
 }
@@ -136,7 +138,7 @@ function helix(n) {
 }
 
 const MOBIUS_R = 0.72;
-const MOBIUS_W = 0.17;
+const MOBIUS_W = 0.1;
 /** A point on the Möbius band: u around the loop (one full twist per 2π), v across it. */
 // tipped towards the viewer so the twist reads, instead of lying flat like a ring
 const MOBIUS_TILT = 0.95;
@@ -209,21 +211,35 @@ function builder() {
   };
 }
 
-function box(h) {
+/** A box of half-size h with its edges and corners rounded to radius r. */
+function roundedBox(h, r) {
   const b = builder();
+  const inner = h - r;
+  // grid lines across a face: dense over the rounded strips, sparse over the flat middle
+  const ticks = [];
+  for (let i = 0; i <= 8; i++) ticks.push(-h + (r * i) / 8);
+  for (let i = 1; i < 4; i++) ticks.push(-inner + (2 * inner * i) / 4);
+  for (let i = 0; i <= 8; i++) ticks.push(inner + (r * i) / 8);
   const faces = [
     [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
-    [[-1, 0, 0], [0, 1, 0], [0, 0, 1]],
-    [[0, 1, 0], [1, 0, 0], [0, 0, 1]],
+    [[-1, 0, 0], [0, 0, 1], [0, 1, 0]],
+    [[0, 1, 0], [0, 0, 1], [1, 0, 0]],
     [[0, -1, 0], [1, 0, 0], [0, 0, 1]],
     [[0, 0, 1], [1, 0, 0], [0, 1, 0]],
-    [[0, 0, -1], [1, 0, 0], [0, 1, 0]],
+    [[0, 0, -1], [0, 1, 0], [1, 0, 0]],
   ];
+  const m = ticks.length;
   for (const [n, u, w] of faces) {
-    const q = [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(([su, sw]) =>
-      b.v(...[0, 1, 2].map((k) => (n[k] + u[k] * su + w[k] * sw) * h), ...n),
-    );
-    b.quad(...q);
+    const idx = [];
+    for (let i = 0; i < m; i++) {
+      for (let j = 0; j < m; j++) {
+        const p = [0, 1, 2].map((k) => n[k] * h + u[k] * ticks[i] + w[k] * ticks[j]);
+        const q = p.map((c) => Math.max(-inner, Math.min(inner, c)));
+        const d = norm(sub(p, q));
+        idx.push(b.v(q[0] + d[0] * r, q[1] + d[1] * r, q[2] + d[2] * r, ...d));
+      }
+    }
+    for (let i = 0; i < m - 1; i++) for (let j = 0; j < m - 1; j++) b.quad(idx[i * m + j], idx[(i + 1) * m + j], idx[(i + 1) * m + j + 1], idx[i * m + j + 1]);
   }
   return b;
 }
@@ -291,27 +307,6 @@ function tube(b, curve, segs, r, radial = 14, caps = true) {
   return b;
 }
 
-/** A flat ring with a little thickness, tilted like the cube ring in planet(). */
-function annulus(b, r0, r1, th, tilt, segs = 120) {
-  const ct = Math.cos(tilt);
-  const st = Math.sin(tilt);
-  const tv = (x, y, z, nx, ny, nz) =>
-    b.v(x, y * ct - z * st, y * st + z * ct, nx, ny * ct - nz * st, ny * st + nz * ct);
-  const y = th / 2;
-  const rows = { top: [], bot: [], out: [], inn: [] };
-  for (let i = 0; i <= segs; i++) {
-    const a = (i / segs) * TAU;
-    const c = Math.cos(a);
-    const s = Math.sin(a);
-    rows.top.push([tv(c * r0, y, s * r0, 0, 1, 0), tv(c * r1, y, s * r1, 0, 1, 0)]);
-    rows.bot.push([tv(c * r0, -y, s * r0, 0, -1, 0), tv(c * r1, -y, s * r1, 0, -1, 0)]);
-    rows.out.push([tv(c * r1, y, s * r1, c, 0, s), tv(c * r1, -y, s * r1, c, 0, s)]);
-    rows.inn.push([tv(c * r0, y, s * r0, -c, 0, -s), tv(c * r0, -y, s * r0, -c, 0, -s)]);
-  }
-  for (const r of Object.values(rows)) for (let i = 0; i < segs; i++) b.quad(r[i][0], r[i][1], r[i + 1][1], r[i + 1][0]);
-  return b;
-}
-
 /**
  * A Möbius band with thickness 2h. Going round the loop twice with the surface pushed out along
  * its normal covers both faces in one sheet, because the normal comes back flipped after one lap.
@@ -361,7 +356,7 @@ function solidFor(name, size) {
   const half = size / 2;
   switch (name) {
     case 'cube':
-      return box(0.62 + half).done();
+      return roundedBox(0.62 + half, 0.16).done();
     case 'torus knot':
       return tube(builder(), knotCurve, 420, 0.42 / 3.3 + half * 0.6, 18, false).done();
     case 'möbius loop':
@@ -370,8 +365,8 @@ function solidFor(name, size) {
       // a unit sphere: the vertex shader turns it into the moving blob
       return sphere(builder(), 1, 144, 104).done();
     case 'planet': {
-      const b = sphere(builder(), 0.5 + half * 0.6);
-      return annulus(b, 0.72, 1.02, Math.max(0.03, size * 0.9), 0.42).done();
+      // only the globe fuses; the ring stays a belt of loose debris
+      return sphere(builder(), 0.5 + half * 0.6).done();
     }
     case 'double helix': {
       const b = builder();
@@ -464,9 +459,23 @@ uniform mat3 uRot;
 uniform float uCamZ, uMix, uTime, uScatter, uAspect, uPointerOn;
 uniform vec2 uPointer;
 uniform float uRound; // 1 when the standing solid is the sludge, whose skin is a unit sphere
+uniform float uRingA, uRingB, uOrbit; // 1 when shape A / B is the planet, whose ring stays loose debris
+const vec3 RING_AXIS = vec3(0.0, 0.9130889, 0.4077604); // the ring's normal: (0, cos 0.42, sin 0.42)
+mat3 axisAngle(vec3 a, float t) {
+  float c = cos(t), s = sin(t), k = 1.0 - c;
+  return mat3(
+    c + a.x*a.x*k,      a.y*a.x*k + a.z*s, a.z*a.x*k - a.y*s,
+    a.x*a.y*k - a.z*s,  c + a.y*a.y*k,     a.z*a.y*k + a.x*s,
+    a.x*a.z*k + a.y*s,  a.y*a.z*k - a.x*s, c + a.z*a.z*k);
+}
+// ring debris orbits the globe, the inner rocks a little faster
+vec3 orbit(vec3 p) {
+  float r = length(p - RING_AXIS * dot(p, RING_AXIS));
+  return axisAngle(RING_AXIS, uOrbit / pow(max(r, 0.5), 1.5)) * p;
+}
 ${NOISE}
 
-vec3 centreOf(vec4 A, vec4 B, vec4 seed, out float e, out float arc, out float near, out float scale, out vec3 dir, out float peel) {
+vec3 centreOf(vec4 A, vec4 B, vec4 seed, out float e, out float arc, out float near, out float scale, out vec3 dir, out float peel, out float debris) {
   // built from the core outwards, each cube a little out of step
   float delay = seed.x * 0.42 + clamp(length(B.xyz), 0.0, 1.2) * 0.22;
   e = clamp((uMix - delay) / 0.3, 0.0, 1.0);
@@ -474,7 +483,12 @@ vec3 centreOf(vec4 A, vec4 B, vec4 seed, out float e, out float arc, out float n
   arc = sin(3.14159265 * e);
   dir = normalize(seed.yzw * 2.0 - 1.0 + vec3(1e-4));
   // a straight flight with only a slight outward give, so cubes don't pass through each other
-  vec3 p = mix(A.xyz, B.xyz, e) + dir * arc * (0.05 + seed.x * 0.05);
+  float ringA = uRingA * step(0.5, floor(A.w * 0.5));
+  float ringB = uRingB * step(0.5, floor(B.w * 0.5));
+  vec3 pa = ringA > 0.5 ? orbit(A.xyz) : A.xyz;
+  vec3 pb = ringB > 0.5 ? orbit(B.xyz) : B.xyz;
+  debris = mix(ringA, ringB, step(0.5, e));
+  vec3 p = mix(pa, pb, e) + dir * arc * (0.05 + seed.x * 0.05);
   p += dir * 0.005 * sin(uTime * 1.6 + seed.y * 40.0);
   p += dir * uScatter * (0.7 + seed.x * 1.8);
   // on hover, the cubes under the patches that peel away come loose and drift out a little
@@ -527,28 +541,22 @@ out vec3 vWorld;
 out float vGlow;
 ${CENTRE}
 ${FLOOR}
-mat3 axisAngle(vec3 a, float t) {
-  float c = cos(t), s = sin(t), k = 1.0 - c;
-  return mat3(
-    c + a.x*a.x*k,      a.y*a.x*k + a.z*s, a.z*a.x*k - a.y*s,
-    a.x*a.y*k - a.z*s,  c + a.y*a.y*k,     a.z*a.y*k + a.x*s,
-    a.x*a.z*k + a.y*s,  a.y*a.z*k - a.x*s, c + a.z*a.z*k);
-}
 void main() {
-  float e, arc, near, scale, peel;
+  float e, arc, near, scale, peel, debris;
   vec3 dir;
-  vec3 c = centreOf(aA, aB, aSeed, e, arc, near, scale, dir, peel);
-  // while the solid stands the cubes are gone, except the ones a hover has peeled loose
-  float vis = max(uCubes, peel);
-  // no tumbling in flight: cubes keep square to the grid and only turn when scattered by scroll
-  float spin = uScatter * aSeed.w * 5.0;
+  vec3 c = centreOf(aA, aB, aSeed, e, arc, near, scale, dir, peel, debris);
+  // while the solid stands the cubes are gone, except the planet's debris and the ones a hover has peeled loose
+  float vis = max(max(uCubes, peel), debris);
+  // no tumbling in flight: cubes keep square to the grid and only turn when scattered by scroll;
+  // the ring's debris turns slowly as it orbits
+  float spin = uScatter * aSeed.w * 5.0 + debris * uOrbit * (aSeed.w - 0.5) * 4.0;
   mat3 R = uRot * axisAngle(dir, spin);
   vec3 world = c + R * (aPos * scale * vis * uSize);
   if (uShadow > 0.5) world = toFloor(world);
   vN = R * aNormal;
   vLocal = aPos;
   vWorld = world;
-  vGlow = arc * 0.3 + near * 0.35 + (1.0 - uCubes) * 0.6 * (1.0 - peel) + peel * 0.25;
+  vGlow = arc * 0.3 + near * 0.35 + (1.0 - uCubes) * 0.6 * (1.0 - max(peel, debris)) + peel * 0.25;
   gl_Position = uProj * vec4(world - vec3(0.0, 0.0, uCamZ), 1.0);
 }`;
 
@@ -588,10 +596,10 @@ uniform float uCubes, uMaxLen;
 out float vAlpha;
 ${CENTRE}
 void main() {
-  float e1, arc1, near1, s1, p1, e2, arc2, near2, s2, p2;
+  float e1, arc1, near1, s1, p1, k1, e2, arc2, near2, s2, p2, k2;
   vec3 d1, d2;
-  vec3 c1 = centreOf(aA, aB, aSeed, e1, arc1, near1, s1, d1, p1);
-  vec3 c2 = centreOf(aA2, aB2, aSeed2, e2, arc2, near2, s2, d2, p2);
+  vec3 c1 = centreOf(aA, aB, aSeed, e1, arc1, near1, s1, d1, p1, k1);
+  vec3 c2 = centreOf(aA2, aB2, aSeed2, e2, arc2, near2, s2, d2, p2, k2);
   float len = distance(c1, c2);
   // loose cubes are strung together, and so are the ones a hover peels off
   float on = max(uCubes, min(p1, p2));
@@ -676,7 +684,7 @@ precision highp float;
 in vec3 vN;
 in vec3 vWorld;
 in vec3 vObj;
-uniform float uReveal, uBox, uLiquid, uShadow;
+uniform float uReveal, uLiquid, uShadow;
 uniform vec3 uEdge;
 out vec4 o;
 ${SHADE}
@@ -701,12 +709,6 @@ void main() {
   vec3 n = normalize(vN);
   if (dot(n, vec3(0.0, 0.0, uCamZ) - vWorld) < 0.0) n = -n;
   vec3 col = shade(n, vWorld);
-  // the solid cube gets the same machined bevel as the little ones
-  if (uBox > 0.0) {
-    vec3 a = abs(vObj) / uBox;
-    float mid = a.x + a.y + a.z - max(a.x, max(a.y, a.z)) - min(a.x, min(a.y, a.z));
-    col += uEdge * 1.1 * smoothstep(0.982, 0.996, mid);
-  }
   if (uLiquid > 0.5) {
     // the same metal as every other shape, just wetter: a tighter, brighter highlight
     vec3 v = normalize(vec3(0.0, 0.0, uCamZ) - vWorld);
@@ -1049,12 +1051,15 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     setAll('uCubes', (l) => gl.uniform1f(l, 1 - skin));
     setAll('uPeel', (l) => gl.uniform1f(l, peel * skin));
     setAll('uRound', (l) => gl.uniform1f(l, liquid ? 1 : 0));
+    const isPlanet = (i) => (i >= 0 && shapes[i].name === 'planet' ? 1 : 0);
+    setAll('uRingA', (l) => gl.uniform1f(l, isPlanet(a)));
+    setAll('uRingB', (l) => gl.uniform1f(l, isPlanet(b)));
+    setAll('uOrbit', (l) => gl.uniform1f(l, t * 0.16));
 
     const drawSolid = () => {
       if (skin <= 0.001) return;
       gl.useProgram(solidProg);
       gl.uniform1f(solidProg.u('uReveal'), skin);
-      gl.uniform1f(solidProg.u('uBox'), shapes[solid].name === 'cube' ? 0.62 + size / 2 : 0);
       gl.uniform1f(solidProg.u('uLiquid'), liquid ? 1 : 0);
       if (liquid) {
         // the blob sways and squashes, and each tendril creeps out, then snaps back
