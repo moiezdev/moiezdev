@@ -9,6 +9,9 @@ import { usePrefersReducedMotion } from '../../motion/reducedMotion';
  * on screen and the tab is visible; with reduced motion it draws one still shape.
  * Without WebGL2 the stage keeps its static glow.
  */
+// the canvas reaches past the stage on every side (see .hero-stage__canvas > canvas), so nothing is cut off
+const BLEED = 1.5;
+
 export default function HeroStage() {
   const stageRef = useRef(null);
   const reduced = usePrefersReducedMotion();
@@ -53,7 +56,7 @@ export default function HeroStage() {
 
       let forge;
       try {
-        forge = createNanoForge(canvas, { theme, scroll, pointer: () => ptr });
+        forge = createNanoForge(canvas, { theme, scroll, pointer: () => ptr, bleed: BLEED });
       } catch (err) {
         console.warn('[nano forge]', err);
       }

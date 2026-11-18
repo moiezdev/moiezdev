@@ -45,7 +45,7 @@ const Hero = () => {
       />
 
       <div className="relative app-container grid items-center gap-4 lg:gap-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
-        <div className="flex flex-col items-center text-center lg:items-start lg:text-start">
+        <div className="relative z-[1] flex flex-col items-center text-center lg:items-start lg:text-start">
           <span className="inline-flex items-center gap-2 rounded-full glass ring-1 ring-separator px-4 py-1.5 text-[13px] md:text-[14px] text-label-2">
             <span className="status-dot" aria-hidden />
             {t('hero.available')}
