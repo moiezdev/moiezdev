@@ -106,8 +106,8 @@ float belt(vec3 q, float R, float N, float speed, float seed) {
     float h = seed + id * 7.13;
     if (hash1(h + 0.9) < 0.18) continue;
     float a = (id + 0.5 + (hash1(h) - 0.5) * 0.5) * cell;
-    float r = R + (hash1(h + 0.1) - 0.5) * 0.12;
-    vec3 c = vec3(cos(a) * r, (hash1(h + 0.2) - 0.5) * 0.12, sin(a) * r);
+    float r = R + (hash1(h + 0.1) - 0.5) * 0.06;
+    vec3 c = vec3(cos(a) * r, (hash1(h + 0.2) - 0.5) * 0.08, sin(a) * r);
     float size = 0.014 + 0.026 * pow(hash1(h + 0.3), 1.8);
     vec3 lp = o - c;
     float t1 = hash1(h + 0.4) * 6.283 + uTime * (hash1(h + 0.5) - 0.5) * 1.4;
@@ -137,8 +137,8 @@ float planet(vec3 p) {
   float ct = cos(0.42);
   float st = sin(0.42);
   vec3 q = vec3(p.x, ct * p.y - st * p.z, st * p.y + ct * p.z);
-  // two belts of debris instead of one solid ring: the inner one orbits faster
-  float debris = min(belt(q, 0.78, 46.0, 0.42, 3.0), belt(q, 0.97, 60.0, 0.26, 17.0));
+  // three rings of debris instead of one solid ring: the inner ones orbit faster
+  float debris = min(belt(q, 0.75, 44.0, 0.46, 3.0), min(belt(q, 0.89, 54.0, 0.33, 17.0), belt(q, 1.03, 64.0, 0.24, 31.0)));
   return min(globe, debris);
 }
 const float HK = 3.0 * PI / 1.64; // the strands' turn per unit of height
