@@ -31,7 +31,13 @@ const lerp = (a, b, u) => a + (b - a) * u;
  * the middle of the screen.
  */
 const place = (el, W, H) => {
-  const centre = { x: W / 2, size: Math.min(W * 0.92, H * 0.9), lift: 0 };
+  const centre = { x: W / 2, y: H / 2, size: Math.min(W * 0.92, H * 0.9), lift: 0 };
+  // the hero's blob sits dim behind the portrait, and scrolls with it
+  const stage = el.closest('.hero-stage');
+  if (stage) {
+    const r = stage.getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height * 0.45, size: Math.min(Math.max(r.width, r.height) * 1.5, H * 0.95), lift: 0 };
+  }
   const box = el.closest('.forge-side');
   if (!box || W < 1024) return centre;
   const cs = getComputedStyle(box);
@@ -44,7 +50,7 @@ const place = (el, W, H) => {
   const from = free === 0 ? 0 : cols[0] + gap;
   const mid = from + cols[free] / 2;
   const x = cs.direction === 'rtl' ? r.right - parseFloat(cs.paddingRight) - mid : r.left + parseFloat(cs.paddingLeft) + mid;
-  return { x, size: Math.min(cols[free] * 1.2, H * 0.8), lift: 1 };
+  return { x, y: H / 2, size: Math.min(cols[free] * 1.2, H * 0.8), lift: 1 };
 };
 
 const markers = () => [...document.querySelectorAll('[data-forge-spot]')].filter((el) => el.isConnected);
@@ -119,7 +125,7 @@ export default function ForgeLayer() {
         const pa = place(list[k], W, H);
         const pb = still ? pa : place(list[Math.min(names.length - 1, k + 1)], W, H);
         const e = still ? 0 : ss(0.12, 0.88, f);
-        const view = { x: lerp(pa.x, pb.x, e), y: H / 2, size: lerp(pa.size, pb.size, e) };
+        const view = { x: lerp(pa.x, pb.x, e), y: lerp(pa.y, pb.y, e), size: lerp(pa.size, pb.size, e) };
         // crossing the content from one side to the other, the cloud fades back a little
         const across = pa.lift && pb.lift && Math.abs(pa.x - pb.x) > W * 0.2 ? 0.5 * Math.sin(Math.PI * e) : 0;
         const l = lerp(pa.lift, pb.lift, e);
