@@ -6,7 +6,8 @@ import { usePrefersReducedMotion } from '../../motion/reducedMotion';
  *
  * The prerendered HTML is just the stage's glow; the engine draws the shape's own floor shadow. Once the browser is
  * idle the engine loads and adds one WebGL canvas. It runs only while the stage is
- * on screen and the tab is visible; with reduced motion it draws one still shape.
+ * on screen and the tab is visible; with reduced motion it plays a gentle version (half speed, no swarm flying in,
+ * no scroll scatter).
  * Without WebGL2 the stage keeps its static glow.
  */
 // the canvas reaches past the stage on every side (see .hero-stage__canvas > canvas), so nothing is cut off
@@ -56,7 +57,7 @@ export default function HeroStage() {
 
       let forge;
       try {
-        forge = createNanoForge(canvas, { theme, scroll, pointer: () => ptr, bleed: BLEED });
+        forge = createNanoForge(canvas, { theme, scroll, pointer: () => ptr, bleed: BLEED, gentle: reduced });
       } catch (err) {
         console.warn('[nano forge]', err);
       }
@@ -66,25 +67,8 @@ export default function HeroStage() {
       }
       stage.dataset.live = '';
 
-      const onResize = () => {
-        forge.resize();
-        if (reduced) forge.still();
-      };
+      const onResize = () => forge.resize();
       window.addEventListener('resize', onResize);
-
-      if (reduced) {
-        forge.still();
-        const mo = new MutationObserver(() => forge.still());
-        mo.observe(root, { attributes: true, attributeFilter: ['data-theme'] });
-        cleanup = () => {
-          mo.disconnect();
-          window.removeEventListener('resize', onResize);
-          forge.destroy();
-          canvas.remove();
-          delete stage.dataset.live;
-        };
-        return;
-      }
 
       window.addEventListener('pointermove', onMove, { passive: true });
       window.addEventListener('pointerdown', onMove, { passive: true });

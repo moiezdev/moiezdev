@@ -954,7 +954,7 @@ function rotation(yaw, pitch, roll = 0) {
  *   bleed?: number,                 how many times bigger than the stage the canvas is (default 1)
  * }} opts
  */
-export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () => ({ x: 0, y: 0, active: false }), onShape = () => {}, bleed = 1 }) {
+export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () => ({ x: 0, y: 0, active: false }), onShape = () => {}, bleed = 1, gentle = false }) {
   const gl = canvas.getContext('webgl2', { antialias: true, alpha: true, premultipliedAlpha: true, powerPreference: 'high-performance' });
   if (!gl) return null;
 
@@ -1324,6 +1324,11 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
         resize();
       }
     }
+    // gentle (reduced motion): no swarm flying in, half speed, no scroll scatter or scroll spin
+    if (gentle) {
+      t = t * 0.5 + BREAK + MORPH + FUSE;
+      dt *= 0.5;
+    }
     // a cycle: the last shape's skin breaks up into cubes, they fly to the next shape, and fuse into its skin
     const k = Math.floor(t / CYCLE);
     const phase = t - k * CYCLE;
@@ -1366,7 +1371,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     const planetUp = solid >= 0 && shapes[solid].name === 'planet';
     calm += ((planetUp ? 1 : 0) - calm) * Math.min(1, dt * 1.5);
     yaw += dt * 0.32 * (1 - face) * (1 - calm) + (facing - yaw) * Math.min(1, dt * 3.5) * face;
-    const sp = Math.min(1, Math.max(0, scroll()));
+    const sp = gentle ? 0 : Math.min(1, Math.max(0, scroll()));
     scatter += (Math.min(1, Math.max(0, (sp - 0.08) / 0.7)) - scatter) * Math.min(1, dt * 8);
     draw({
       a: from,
