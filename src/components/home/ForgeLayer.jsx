@@ -12,9 +12,10 @@ import { usePrefersReducedMotion } from '../../motion/reducedMotion';
  * and it never takes the pointer.
  */
 
-// each section's shape stands whole while the section crosses the middle 3% of its trip over the screen; the
-// rest of the trip it is forming (coming in) or coming apart (going out), through the cube cloud between sections
-const HOLD = 0.03;
+// each section's shape stands whole, solid, for the middle 60% of the way between its neighbours' middles (while its
+// own middle is near the middle of the screen); only the 40% around each hand-over is spent melting, floating
+// across and forming the next shape
+const HOLD = 0.6;
 // how quickly the drawn shape catches up with the scroll (per second); lower is slower and smoother
 const GLIDE = 1.4;
 // how the way from one section to the next is spent by Deto, the living liquid (src/motion/deto.js):
@@ -45,7 +46,7 @@ const place = (el, W, H) => {
   const stage = el.closest('.hero-stage');
   if (stage) {
     const r = stage.getBoundingClientRect();
-    return { x: r.left + r.width / 2, y: r.top + r.height * 0.45, size: Math.min(Math.max(r.width, r.height) * 1.5, H * 0.95), lift: 0 };
+    return { x: r.left + r.width / 2, y: r.top + r.height * 0.45, size: Math.min(Math.max(r.width, r.height) * 1.2, H * 0.76), lift: 0 };
   }
   const box = el.closest('.forge-side');
   if (!box || W < 1024) return centre;
@@ -111,17 +112,19 @@ export default function ForgeLayer() {
         const W = window.innerWidth;
         const H = window.innerHeight;
         const names = list.map((el) => el.dataset.forgeSpot);
-        // each section's hold, in scroll position: while its middle is within HOLD / 2 of its trip either side of
-        // the middle of the screen. The first holds from the top of the page, the last to the bottom, and no hold
-        // starts past the end of the page, so the last shape always completes.
+        // each section's hold, in scroll position: from HOLD / 2 of the way back to the previous section's middle
+        // to HOLD / 2 of the way on to the next one's. The first holds from the top of the page, the last to the
+        // bottom, and no hold starts past the end of the page, so the last shape always completes.
         const y = window.scrollY;
         const maxY = Math.max(0, document.documentElement.scrollHeight - H);
-        const holds = list.map((el) => {
+        const mids = list.map((el) => {
           const r = (el.closest('section') || el).getBoundingClientRect();
-          const mid = r.top + y + r.height / 2 - H / 2;
-          const half = ((H + r.height) * HOLD) / 2;
-          return [mid - half, mid + half];
+          return r.top + y + r.height / 2 - H / 2;
         });
+        const holds = mids.map((mid, i) => [
+          i > 0 ? mid - ((mid - mids[i - 1]) * HOLD) / 2 : mid,
+          i + 1 < mids.length ? mid + ((mids[i + 1] - mid) * HOLD) / 2 : mid,
+        ]);
         holds[0][0] = -Infinity;
         holds[holds.length - 1][1] = Infinity;
         for (let i = holds.length - 1; i >= 1; i--) {

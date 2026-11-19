@@ -84,13 +84,53 @@ float mobius(vec3 p) {
   w = vec2(c * w.x + s * w.y, -s * w.x + c * w.y);
   return box2(w, vec2(0.21, 0.035), 0.03);
 }
+float hash1(float n) {
+  return fract(sin(n * 127.1 + 311.7) * 43758.5453);
+}
+// one belt of debris round the planet: rocks of every size in cells round the ring, each a little off the line,
+// tumbled its own way, a few cells left empty, the whole belt orbiting at its own speed
+float belt(vec3 q, float R, float N, float speed, float seed) {
+  float rr = length(q.xz);
+  // far from the belt: a cheap bound (the rocks all lie inside this flat band)
+  float bound = max(abs(rr - R) - 0.16, abs(q.y) - 0.13);
+  if (bound > 0.08) return bound;
+  float sa = uTime * speed;
+  float cs = cos(sa);
+  float sn = sin(sa);
+  vec3 o = vec3(cs * q.x - sn * q.z, q.y, sn * q.x + cs * q.z);
+  float cell = 2.0 * PI / N;
+  float id0 = floor(atan(o.z, o.x) / cell);
+  float d = 1e9;
+  for (int k = -1; k <= 1; k++) {
+    float id = mod(id0 + float(k), N);
+    float h = seed + id * 7.13;
+    if (hash1(h + 0.9) < 0.18) continue;
+    float a = (id + 0.5 + (hash1(h) - 0.5) * 0.5) * cell;
+    float r = R + (hash1(h + 0.1) - 0.5) * 0.12;
+    vec3 c = vec3(cos(a) * r, (hash1(h + 0.2) - 0.5) * 0.12, sin(a) * r);
+    float size = 0.022 + 0.042 * pow(hash1(h + 0.3), 1.8);
+    vec3 lp = o - c;
+    float t1 = hash1(h + 0.4) * 6.283 + uTime * (hash1(h + 0.5) - 0.5) * 1.4;
+    float t2 = hash1(h + 0.6) * 6.283;
+    lp.xy = mat2(cos(t1), sin(t1), -sin(t1), cos(t1)) * lp.xy;
+    lp.yz = mat2(cos(t2), sin(t2), -sin(t2), cos(t2)) * lp.yz;
+    vec3 ext = size * vec3(1.0, 0.5 + 0.6 * hash1(h + 0.7), 0.6 + 0.5 * hash1(h + 0.8));
+    // a worn chunk of rock rather than a cube: a well-rounded box with a lump on one side
+    vec3 bq = abs(lp) - ext + size * 0.45;
+    float rock = length(max(bq, 0.0)) + min(max(bq.x, max(bq.y, bq.z)), 0.0) - size * 0.45;
+    rock = smin(rock, length(lp - ext * vec3(0.55, 0.3, -0.25)) - size * 0.6, size * 0.4);
+    d = min(d, rock);
+  }
+  return d;
+}
 float planet(vec3 p) {
   float globe = length(p) - 0.5;
   float ct = cos(0.42);
   float st = sin(0.42);
   vec3 q = vec3(p.x, ct * p.y - st * p.z, st * p.y + ct * p.z);
-  float ring = box2(vec2(length(q.xz) - 0.86, q.y), vec2(0.15, 0.016), 0.014);
-  return min(globe, ring);
+  // two belts of debris instead of one solid ring: the inner one orbits faster
+  float debris = min(belt(q, 0.72, 30.0, 0.42, 3.0), belt(q, 0.93, 42.0, 0.26, 17.0));
+  return min(globe, debris);
 }
 const float HK = 3.0 * PI / 1.64; // the strands' turn per unit of height
 // the distance to one strand: the nearest point found by a few Newton steps along the strand's height
