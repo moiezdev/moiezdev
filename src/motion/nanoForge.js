@@ -618,11 +618,6 @@ vec3 orbit(vec3 p) {
 }
 ${NOISE}
 
-// between two shapes about half the swarm melts into liquid beads (the same wet black as the hero's sludge)
-// and the rest stay cubes, so the travelling mass is a mix of both
-float wetOf(vec4 seed) {
-  return uCloud * smoothstep(0.36, 0.6, fract(seed.z * 5.17 + seed.x * 2.31));
-}
 vec3 centreOf(vec4 A, vec4 B, vec4 seed, out float e, out float arc, out float near, out float scale, out vec3 dir, out float peel, out float debris) {
   // built from the core outwards, each cube a little out of step
   float delay = seed.x * 0.42 + clamp(length(B.xyz), 0.0, 1.2) * 0.22;
@@ -661,16 +656,18 @@ vec3 centreOf(vec4 A, vec4 B, vec4 seed, out float e, out float arc, out float n
   // tail), so the tail follows the head's own path, bends with it and thins out, then catches up on arrival
   if (uTravel > 0.001) {
     float r = pow(seed.x, 1.7);
-    c *= mix(1.0, 0.5 * (1.0 - 0.75 * r), uTravel);
+    // the comet: a full-size head (as wide as the shape) tapering into its tail
+    c *= mix(1.0, 1.0 - 0.6 * r, uTravel);
     float hp = easeJ(uHead);
     float tp = easeJ(uHead - r * uTailL);
     vec2 off = (tp - hp) * uPathD + (sin(3.14159265 * tp) - sin(3.14159265 * hp)) * uPathN;
     // a slow ripple runs down the tail while it streams
     vec2 dirP = normalize(uPathD + vec2(1e-5));
     vec2 perp = vec2(-dirP.y, dirP.x);
-    off += perp * sin(r * 10.0 - uTime * 2.6 + seed.y * 2.0) * 0.06 * r * smoothstep(0.0, 0.05, hp - tp);
+    off += perp * sin(r * 10.0 - uTime * 2.6 + seed.y * 2.0) * 0.12 * r * smoothstep(0.0, 0.05, hp - tp);
     c.xy += off * uTravel;
-    scale *= 1.0 - 0.6 * r * uTravel;
+    // its cubes and drops are bigger at the head, smaller down the tail
+    scale *= mix(1.0, 1.6 - 0.9 * r, uTravel);
   }
   // the pointer parts the cubes around it
   vec4 c0 = uProj * vec4(c - vec3(0.0, 0.0, uCamZ), 1.0);
@@ -713,10 +710,6 @@ out vec3 vN;
 out vec3 vLocal;
 out vec3 vWorld;
 out float vGlow;
-out float vWetK;
-out vec3 vWet;
-out vec3 vRay;
-flat out mat3 vR;
 ${CENTRE}
 ${FLOOR}
 void main() {
@@ -735,15 +728,7 @@ void main() {
   // the swarm mixes cube sizes, from grains to chunks
   float u = fract(aSeed.w * 7.31 + aSeed.y * 3.7);
   float mixed = 0.4 + 1.25 * u * u;
-  // a liquid bead swells so the beads next to it run together
-  float wet = wetOf(aSeed);
-  float swell = 1.0 + wet * (1.1 + 0.7 * aSeed.y);
-  vec3 world = c + R * (aPos * scale * vis * shrink * uSize * mixed * swell);
-  // the fragment shader rounds a wet cube into a drop: it needs the view ray in the cube's own frame
-  vWet = normalize(c + vec3(1e-4));
-  vWetK = wet;
-  vRay = transpose(R) * (world - vec3(0.0, 0.0, uCamZ));
-  vR = R;
+  vec3 world = c + R * (aPos * scale * vis * shrink * uSize * mixed);
   if (uShadow > 0.5) world = toFloor(world);
   vN = R * aNormal;
   vLocal = aPos;
@@ -764,16 +749,8 @@ out vec3 vN;
 out vec3 vLocal;
 out vec3 vWorld;
 out float vGlow;
-out float vWetK;
-out vec3 vWet;
-out vec3 vRay;
-flat out mat3 vR;
 ${NOISE}
 void main() {
-  vWetK = 0.0;
-  vWet = vec3(0.0, 1.0, 0.0);
-  vRay = vec3(0.0, 0.0, -1.0);
-  vR = mat3(1.0);
   float show = uPeel > 0.001 ? smoothstep(peelEdge() - 0.01, peelEdge() + 0.02, aF.w) : 0.0;
   // sizes vary a little, so the matrix reads as packed rather than gridded
   float r = fract(sin(float(gl_InstanceID) * 12.9898) * 43758.5453);
@@ -791,10 +768,6 @@ in vec3 vN;
 in vec3 vLocal;
 in vec3 vWorld;
 in float vGlow;
-in float vWetK;
-in vec3 vWet;
-in vec3 vRay;
-flat in mat3 vR;
 uniform vec3 uEdge;
 uniform float uShadow;
 out vec4 o;
@@ -805,30 +778,12 @@ void main() {
     return;
   }
   vec3 n = normalize(vN);
-  if (vWetK > 0.001) {
-    // a wet cube is cut down to the sphere inside it: corners first, until only a round drop is left
-    float rad = mix(0.88, 0.5, vWetK);
-    vec3 d = normalize(vRay);
-    float b = dot(vLocal, d);
-    float q = dot(vLocal, vLocal) - rad * rad;
-    if (q > 0.0) {
-      float disc = b * b - q;
-      if (disc < 0.0 || b > 0.0) discard;
-      vec3 h = vLocal + (-b - sqrt(disc)) * d;
-      // the drop's own roundness, leaning a little to the bulge of the whole mass so the drops read as one
-      n = normalize(mix(vR * normalize(h), vWet, 0.2 * vWetK));
-    }
-  }
   vec3 col = shade(n, vWorld);
-  // machined bevel: light catches where two faces meet (a melted bead has none)
+  // machined bevel: light catches where two faces meet
   vec3 a = abs(vLocal) * 2.0;
   float mid = a.x + a.y + a.z - max(a.x, max(a.y, a.z)) - min(a.x, min(a.y, a.z));
-  col += (1.0 - vWetK) * uEdge * smoothstep(0.86, 0.96, mid) * (0.35 + 0.65 * max(dot(n, normalize(vec3(-0.55, 0.85, 0.6))), 0.0));
-  // the liquid is darker and wetter, with a tight glint like the sludge's
-  vec3 v = normalize(vec3(0.0, 0.0, uCamZ) - vWorld);
-  float glint = pow(max(dot(reflect(-v, n), normalize(vec3(-0.55, 0.85, 0.6))), 0.0), 90.0);
-  col = col * (1.0 - 0.3 * vWetK) + vWetK * uSpec * glint * 0.55;
-  o = vec4(col + uGlow * vGlow * (1.0 - 0.9 * vWetK), 1.0);
+  col += uEdge * smoothstep(0.86, 0.96, mid) * (0.35 + 0.65 * max(dot(n, normalize(vec3(-0.55, 0.85, 0.6))), 0.0));
+  o = vec4(col + uGlow * vGlow, 1.0);
 }`;
 
 const LINE_VS = `#version 300 es
@@ -854,7 +809,8 @@ void main() {
   float sameA = float(floor(aA.w * 0.5) == floor(aA2.w * 0.5));
   float sameB = float(floor(aB.w * 0.5) == floor(aB2.w * 0.5));
   float same = mix(sameA, sameB, step(0.5, (e1 + e2) * 0.5));
-  vAlpha = (1.0 - max(wetOf(aSeed), wetOf(aSeed2))) * same * smoothstep(uMaxLen, uMaxLen * 0.3, len) * step(0.01, s1 * s2) * on * (0.5 + 0.4 * max(arc1, arc2) + 0.5 * uScatter);
+  // inside the liquid the cubes hang free, with no strings
+  vAlpha = (1.0 - uCloud) * same * smoothstep(uMaxLen, uMaxLen * 0.3, len) * step(0.01, s1 * s2) * on * (0.5 + 0.4 * max(arc1, arc2) + 0.5 * uScatter);
   gl_Position = uProj * vec4(c1 - vec3(0.0, 0.0, uCamZ), 1.0);
 }`;
 
@@ -1008,6 +964,78 @@ void main() {
   o = vec4(0.0, 0.0, 0.0, a);
 }`;
 
+// ---- the liquid between two shapes: one connected body the cubes swim in ----
+// each cube lays a soft splat of "liquid" into a small offscreen buffer; where enough splats overlap the liquid is
+// there, so neighbouring cubes run together into one body and a stray cube alone makes no drop
+const LIQ_VS = `#version 300 es
+precision highp float;
+layout(location=2) in vec4 aA;
+layout(location=3) in vec4 aB;
+layout(location=4) in vec4 aSeed;
+uniform float uBlob, uLiqH, uDensity;
+out float vW;
+${CENTRE}
+void main() {
+  float e, arc, near, scale, peel, debris;
+  vec3 dir;
+  vec3 c = centreOf(aA, aB, aSeed, e, arc, near, scale, dir, peel, debris);
+  vec4 clip = uProj * vec4(c - vec3(0.0, 0.0, uCamZ), 1.0);
+  // down the comet's tail the cubes thin out, so their splats spread wider to keep the liquid joined up
+  float rr = pow(aSeed.x, 1.7) * uTravel;
+  float rad = uBlob * (1.0 + 0.9 * rr) * step(0.01, scale);
+  gl_PointSize = max(1.0, rad * uProj[1][1] / max(0.1, clip.w) * uLiqH);
+  vW = uCloud * uDensity * (1.0 - debris);
+  gl_Position = clip;
+}`;
+
+const LIQ_FS = `#version 300 es
+precision highp float;
+in float vW;
+out vec4 o;
+void main() {
+  vec2 q = gl_PointCoord * 2.0 - 1.0;
+  float d = dot(q, q);
+  if (d > 1.0) discard;
+  float k = (1.0 - d) * (1.0 - d);
+  o = vec4(k * vW);
+}`;
+
+const LIQ_COMP_FS = `#version 300 es
+precision highp float;
+in vec2 vUv;
+uniform sampler2D uTex;
+uniform vec2 uTexel;
+uniform float uThr, uAmount;
+uniform vec3 uBase, uEnvLow, uEnvHigh, uSpec, uRim;
+out vec4 o;
+float D(vec2 uv) {
+  return texture(uTex, uv).r;
+}
+void main() {
+  float d = D(vUv);
+  float a = smoothstep(uThr * 0.85, uThr * 1.25, d);
+  if (a < 0.002) discard;
+  // the surface bulges where the liquid is deep: its slope gives the normal
+  vec2 t = uTexel * 1.5;
+  float gx = D(vUv + vec2(t.x, 0.0)) - D(vUv - vec2(t.x, 0.0));
+  float gy = D(vUv + vec2(0.0, t.y)) - D(vUv - vec2(0.0, t.y));
+  vec3 n = normalize(vec3(-gx, -gy, uThr * 0.3));
+  vec3 v = vec3(0.0, 0.0, 1.0);
+  vec3 l1 = normalize(vec3(-0.55, 0.85, 0.6));
+  vec3 l2 = normalize(vec3(0.8, -0.25, 0.35));
+  float d1 = max(dot(n, l1), 0.0);
+  float d2 = max(dot(n, l2), 0.0);
+  float sp = pow(max(dot(n, normalize(l1 + v)), 0.0), 90.0) + 0.3 * pow(max(dot(n, normalize(l2 + v)), 0.0), 40.0);
+  float fres = pow(1.0 - max(dot(n, v), 0.0), 3.0);
+  vec3 r = reflect(-v, n);
+  vec3 env = mix(uEnvLow, uEnvHigh, smoothstep(-0.35, 0.75, r.y));
+  // wet and dark, like the hero's sludge: deeper inside, so the cubes it holds show through only faintly
+  vec3 col = uBase * (0.08 + 0.5 * d1 + 0.15 * d2) * 0.75 + env * 0.3 + uSpec * sp * 1.1 + uRim * fres * 0.4;
+  float deep = smoothstep(uThr, uThr * 2.6, d);
+  float alpha = a * mix(0.62, 0.86, deep) * uAmount;
+  o = vec4(col * alpha, alpha);
+}`;
+
 function cubeMesh() {
   const P = [];
   const N = [];
@@ -1092,17 +1120,21 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   let lineProg;
   let solidProg;
   let shadowProg;
+  let liqProg;
+  let liqComp;
   try {
     cubeProg = program(CUBE_VS, CUBE_FS);
     fillProg = program(FILL_VS, CUBE_FS);
     lineProg = program(LINE_VS, LINE_FS);
     solidProg = program(SOLID_VS, SOLID_FS);
     shadowProg = program(SHADOW_VS, SHADOW_FS);
+    liqProg = program(LIQ_VS, LIQ_FS);
+    liqComp = program(SHADOW_VS, LIQ_COMP_FS);
   } catch (err) {
     console.warn('[nano forge]', err);
     return null;
   }
-  const progs = [cubeProg, lineProg, solidProg, shadowProg, fillProg];
+  const progs = [cubeProg, lineProg, solidProg, shadowProg, fillProg, liqProg, liqComp];
   /** Set a uniform on every program that has it. */
   const setAll = (name, fn) => {
     for (const p of progs) {
@@ -1259,6 +1291,17 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   const shadowFbo = gl.createFramebuffer();
   let shadowW = 1;
   let shadowH = 1;
+  // the liquid's splat buffer, at a third of the size (it is smooth anyway); half floats where the GPU can
+  // draw into them, else bytes with the splats scaled down so they don't saturate
+  const liqFloat = !!gl.getExtension('EXT_color_buffer_float');
+  const liqTex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, liqTex);
+  for (const [k, v] of [[gl.TEXTURE_MIN_FILTER, gl.LINEAR], [gl.TEXTURE_MAG_FILTER, gl.LINEAR], [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE]])
+    gl.texParameteri(gl.TEXTURE_2D, k, v);
+  const liqFbo = gl.createFramebuffer();
+  let liqW = 1;
+  let liqH = 1;
+  const LIQ_SCALE = liqFloat ? 1 : 0.25;
   const resize = () => {
     const dpr = Math.min(window.devicePixelRatio || 1, dprCap);
     W = canvas.clientWidth;
@@ -1273,6 +1316,16 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, shadowW, shadowH, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
     gl.useProgram(shadowProg);
     gl.uniform2f(shadowProg.u('uTexel'), 1 / shadowW, 1 / shadowH);
+    liqW = Math.max(1, Math.round(canvas.width / 3));
+    liqH = Math.max(1, Math.round(canvas.height / 3));
+    gl.bindTexture(gl.TEXTURE_2D, liqTex);
+    if (liqFloat) gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA16F, liqW, liqH, 0, gl.RGBA, gl.HALF_FLOAT, null);
+    else gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, liqW, liqH, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    gl.useProgram(liqProg);
+    gl.uniform1f(liqProg.u('uLiqH'), liqH);
+    gl.useProgram(liqComp);
+    gl.uniform2f(liqComp.u('uTexel'), 1 / liqW, 1 / liqH);
     const aspect = W / Math.max(1, H);
     // fit a radius of ~1.2 inside the shorter side
     // the canvas is `bleed` times the stage, so loose cubes and the shadow aren't cut at its edge
@@ -1303,7 +1356,15 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   resize();
   gl.bindFramebuffer(gl.FRAMEBUFFER, shadowFbo);
   gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, shadowTex, 0);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, liqFbo);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, liqTex, 0);
   gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  gl.useProgram(liqProg);
+  gl.uniform1f(liqProg.u('uBlob'), spacing * 2.4);
+  gl.uniform1f(liqProg.u('uDensity'), LIQ_SCALE);
+  gl.useProgram(liqComp);
+  gl.uniform1f(liqComp.u('uThr'), 1.4 * LIQ_SCALE);
+  gl.uniform1f(liqComp.u('uAmount'), 1);
   setAll('uCamZ', (l) => gl.uniform1f(l, CAM));
   setAll('uFloor', (l) => gl.uniform1f(l, FLOOR_Y));
   setAll('uPeelThr', (l) => gl.uniform1f(l, PEEL_THR));
@@ -1442,6 +1503,30 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
       gl.drawArrays(gl.LINES, 0, V);
       gl.depthMask(true);
       gl.disable(gl.BLEND);
+    }
+
+    // 4. between shapes: the liquid body, over the cubes it holds
+    if (huddle > 0.01) {
+      gl.bindFramebuffer(gl.FRAMEBUFFER, liqFbo);
+      gl.viewport(0, 0, liqW, liqH);
+      gl.clearColor(0, 0, 0, 0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.disable(gl.DEPTH_TEST);
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.ONE, gl.ONE);
+      gl.useProgram(liqProg);
+      gl.bindVertexArray(cubeVao);
+      gl.drawArraysInstanced(gl.POINTS, 0, 1, N);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+      gl.useProgram(liqComp);
+      gl.bindVertexArray(null);
+      gl.bindTexture(gl.TEXTURE_2D, liqTex);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      gl.bindTexture(gl.TEXTURE_2D, null);
+      gl.disable(gl.BLEND);
+      gl.enable(gl.DEPTH_TEST);
     }
     gl.bindVertexArray(null);
   };
