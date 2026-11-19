@@ -672,8 +672,9 @@ void main() {
   // the cubes a hover peels loose are smaller than the ones that build the shape
   float shrink = mix(1.0, 0.55, peel * (1.0 - uCubes));
   vis *= max(uncovered(aA, aB), peel);
-  // in the cloud between two shapes the cubes swell into soft beads that run together into one liquid mass
-  float swell = 1.0 + uCloud * (1.5 + 0.7 * aSeed.y);
+  // in the cloud between two shapes the cubes soften, swell a little and melt into the liquid blob that
+  // carries the cloud from one shape to the next (drawn by the solid program, see drawGoo)
+  float swell = (1.0 + uCloud * (0.7 + 0.5 * aSeed.y)) * (1.0 - smoothstep(0.35 + 0.3 * aSeed.x, 0.95, uCloud));
   vec3 world = c + R * (aPos * scale * vis * shrink * uSize * swell);
   // the liquid's surface normal: mostly the bulge of the whole mass, a little of each bead
   vWet = normalize(mix(normalize(c + vec3(1e-4)), R * normalize(aPos), 0.18));
@@ -786,6 +787,7 @@ layout(location=1) in vec3 aNormal;
 uniform mat4 uProj;
 uniform mat3 uRot;
 uniform float uCamZ, uTime, uLiquid, uSquash;
+uniform float uGoo, uGooSize; // the liquid cloud between two shapes: how much of it there is, and its size
 uniform vec3 uSway;
 ${LEAK}
 uniform vec4 uTend[6]; // direction, reach
@@ -810,12 +812,16 @@ vec3 surf(vec3 n) {
     + 0.018 * sin(n.z * 4.3 + n.y * 2.0 + t * 2.1)
     + 0.007 * sin(n.x * 9.0 + n.z * 7.0 - t * 3.2)
     + reach(n);
+  // the liquid cloud heaves and lolls more than the standing blob, as one deformed mass
+  r += uGoo * (0.07 * sin(n.x * 2.1 + t * 1.2) * sin(n.z * 1.8 - t * 0.9)
+    + 0.05 * sin(n.y * 2.6 + n.x * 1.4 + t * 1.5)
+    + 0.03 * sin(n.z * 4.7 - n.y * 3.1 - t * 2.3));
   // the coat always sits just over where the cubes were, so the blob never changes size; while it
   // spreads it swells into a rolling lip at its edges
   float coat = uFront < 0.0 || uFront > 0.999 ? 0.0 : 1.0;
   float lip = exp(-pow(leakGap(n) / 0.14, 2.0));
   r += 0.05 + coat * 0.035 * lip;
-  vec3 p = n * r;
+  vec3 p = n * r * uGooSize;
   p.y *= uSquash;
   p.xz /= sqrt(uSquash);
   return p + uSway;
@@ -1215,6 +1221,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, shadowTex, 0);
   gl.bindFramebuffer(gl.FRAMEBUFFER, null);
   setAll('uCamZ', (l) => gl.uniform1f(l, CAM));
+  setAll('uGooSize', (l) => gl.uniform1f(l, 1));
   setAll('uFloor', (l) => gl.uniform1f(l, FLOOR_Y));
   setAll('uPeelThr', (l) => gl.uniform1f(l, PEEL_THR));
 
@@ -1275,6 +1282,19 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     setAll('uRingB', (l) => gl.uniform1f(l, isPlanet(b)));
     setAll('uOrbit', (l) => gl.uniform1f(l, t * 0.3));
 
+    // the blob's tendrils: each creeps out, then snaps back
+    const tendrils = () => {
+      const tend = new Float32Array(24);
+      for (let i = 0; i < 6; i++) {
+        const th = i * 2.4 + t * (0.17 + i * 0.03);
+        const ph = Math.sin(t * (0.23 + i * 0.05) + i * 1.7) * 1.1;
+        const ct = Math.cos(ph);
+        const ph01 = (t * (0.21 + i * 0.037) + i * 0.29) % 1;
+        const out = ph01 < 0.72 ? (ph01 / 0.72) ** 1.6 : (1 - (ph01 - 0.72) / 0.28) ** 3;
+        tend.set([Math.cos(th) * ct, Math.sin(ph), Math.sin(th) * ct, out * (0.07 + (i % 3) * 0.02)], i * 4);
+      }
+      return tend;
+    };
     const drawSolid = () => {
       if (skin <= 0.001) return;
       gl.useProgram(solidProg);
@@ -1284,19 +1304,32 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
         // the blob sways (it keeps its size), and each tendril creeps out, then snaps back
         gl.uniform3f(solidProg.u('uSway'), Math.sin(t * 1.1) * 0.035, Math.sin(t * 1.7) * 0.02, Math.cos(t * 0.9) * 0.025);
         gl.uniform1f(solidProg.u('uSquash'), 1);
-        const tend = new Float32Array(24);
-        for (let i = 0; i < 6; i++) {
-          const th = i * 2.4 + t * (0.17 + i * 0.03);
-          const ph = Math.sin(t * (0.23 + i * 0.05) + i * 1.7) * 1.1;
-          const ct = Math.cos(ph);
-          const ph01 = (t * (0.21 + i * 0.037) + i * 0.29) % 1;
-          const out = ph01 < 0.72 ? (ph01 / 0.72) ** 1.6 : (1 - (ph01 - 0.72) / 0.28) ** 3;
-          tend.set([Math.cos(th) * ct, Math.sin(ph), Math.sin(th) * ct, out * (0.07 + (i % 3) * 0.02)], i * 4);
-        }
-        gl.uniform4fv(solidProg.u('uTend[0]'), tend);
+        gl.uniform4fv(solidProg.u('uTend[0]'), tendrils());
       }
       gl.bindVertexArray(solidVaos[solid].vao);
       gl.drawElements(gl.TRIANGLES, solidVaos[solid].count, gl.UNSIGNED_INT, 0);
+    };
+    // between two shapes the cubes melt into one liquid blob of the same metal as the sludge, which keeps
+    // churning until it breaks back into cubes for the next shape
+    const gooI = shapes.findIndex((s) => s.liquid);
+    const goo = gooI >= 0 ? ss(0.25, 0.75, huddle) : 0;
+    const drawGoo = () => {
+      if (goo <= 0.001 || skin > 0.001) return;
+      gl.useProgram(solidProg);
+      gl.uniform1f(solidProg.u('uReveal'), 1);
+      gl.uniform1f(solidProg.u('uLiquid'), 1);
+      // fully coated: no leaking edge
+      gl.uniform1f(solidProg.u('uFront'), 1);
+      gl.uniform1f(solidProg.u('uGoo'), goo);
+      gl.uniform1f(solidProg.u('uGooSize'), 0.6 + 0.55 * goo);
+      gl.uniform3f(solidProg.u('uSway'), Math.sin(t * 0.8) * 0.06, Math.sin(t * 1.1) * 0.04, Math.cos(t * 0.7) * 0.05);
+      gl.uniform1f(solidProg.u('uSquash'), 1);
+      gl.uniform4fv(solidProg.u('uTend[0]'), tendrils());
+      gl.bindVertexArray(solidVaos[gooI].vao);
+      gl.drawElements(gl.TRIANGLES, solidVaos[gooI].count, gl.UNSIGNED_INT, 0);
+      gl.uniform1f(solidProg.u('uFront'), front);
+      gl.uniform1f(solidProg.u('uGoo'), 0);
+      gl.uniform1f(solidProg.u('uGooSize'), 1);
     };
     const drawCubes = () => {
       gl.useProgram(cubeProg);
@@ -1315,6 +1348,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     gl.disable(gl.DEPTH_TEST);
     setAll('uShadow', (l) => gl.uniform1f(l, 1));
     drawSolid();
+    drawGoo();
     drawCubes();
     setAll('uShadow', (l) => gl.uniform1f(l, 0));
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
@@ -1333,6 +1367,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
 
     // 3. the shape itself, and the packed cubes a hover opens it onto
     drawSolid();
+    drawGoo();
     drawCubes();
     if (skin > 0.001 && peel * skin > 0.001 && fillVaos[solid].count) {
       gl.useProgram(fillProg);
