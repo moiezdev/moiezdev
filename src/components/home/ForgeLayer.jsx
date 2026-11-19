@@ -16,6 +16,8 @@ import { usePrefersReducedMotion } from '../../motion/reducedMotion';
 // height) to END; the rest of the time each shape simply stands
 const START = 1.0;
 const END = 0.3;
+// how quickly the drawn shape catches up with the scroll (per second); lower is slower and smoother
+const GLIDE = 1.4;
 
 const markers = () => [...document.querySelectorAll('[data-forge-spot]')].filter((el) => el.isConnected);
 
@@ -52,7 +54,10 @@ export default function ForgeLayer() {
       }
       root.dataset.forge = '';
 
-      const scene = () => {
+      // how far along the row of shapes we are (2.4 = 40% of the way from shape 2 to shape 3): scroll sets the
+      // target, and the drawn position glides after it, so a shape forms gradually however fast you scroll
+      let pos = -1;
+      const scene = (dt) => {
         const list = markers();
         if (!list.length) return null;
         const W = window.innerWidth;
@@ -66,9 +71,16 @@ export default function ForgeLayer() {
         let j = 0;
         for (let i = 1; i < tops.length; i++) if (tops[i] < begin[i]) j = i;
         // scrubbed evenly, so the shape comes apart and forms at the pace of the scroll
-        const m = j === 0 ? 1 : Math.min(1, Math.max(0, (begin[j] - tops[j]) / Math.max(1, begin[j] - H * END)));
-        const a = forge.shapeIndex(names[Math.max(0, j - 1)]);
-        const b = forge.shapeIndex(names[j]);
+        const target = j === 0 ? 0 : j - 1 + Math.min(1, Math.max(0, (begin[j] - tops[j]) / Math.max(1, begin[j] - H * END)));
+        pos = pos < 0 ? target : pos + (target - pos) * (1 - Math.exp(-dt * GLIDE));
+        if (Math.abs(target - pos) < 1e-4) pos = target;
+        // a whole number is a standing shape; in between, from shape k to k + 1
+        const k = Math.min(names.length - 1, Math.floor(pos + 1e-6));
+        const f = pos - k;
+        const still = f < 1e-4;
+        const m = still ? 1 : f;
+        const a = forge.shapeIndex(names[k]);
+        const b = forge.shapeIndex(names[still ? k : Math.min(names.length - 1, k + 1)]);
         // one large shape that stays centred on the screen: it dissolves into a cloud of cubes in place and the
         // cloud forms the next shape there, with no pull towards any section
         const view = { x: W / 2, y: H / 2, size: Math.min(W * 0.92, H * 0.9) };
@@ -86,7 +98,7 @@ export default function ForgeLayer() {
         const dt = last ? Math.min(0.05, (now - last) / 1000) : 1 / 60;
         last = now;
         t += dt;
-        const s = scene();
+        const s = scene(dt);
         if (s && s.a >= 0 && s.b >= 0) forge.drive(t, dt, s);
       };
       const sync = () => {
