@@ -12,12 +12,14 @@ import { usePrefersReducedMotion } from '../../motion/reducedMotion';
  * and it never takes the pointer.
  */
 
-// the move to a section's shape runs while its marker rises from the bottom of the screen (START x the screen
-// height) to END; the rest of the time each shape simply stands
-const START = 1.0;
-const END = 0.3;
+// each section's shape stands whole while the section crosses the middle 20% of its trip over the screen; the
+// rest of the trip it is forming (coming in) or coming apart (going out), through the cube cloud between sections
+const HOLD = 0.2;
 // how quickly the drawn shape catches up with the scroll (per second); lower is slower and smoother
 const GLIDE = 1.4;
+// how the way from one section to the next is spent: the shape comes apart over the first 40%, the cubes fly as a
+// cloud over the middle 20%, and the next shape forms over the last 40% (the engine's own phases are 22/56/22)
+const phase = (f) => (f < 0.4 ? (f / 0.4) * 0.22 : f < 0.6 ? 0.22 + ((f - 0.4) / 0.2) * 0.56 : 0.78 + ((f - 0.6) / 0.4) * 0.22);
 
 const ss = (a, b, x) => {
   const u = Math.min(1, Math.max(0, (x - a) / (b - a)));
@@ -102,29 +104,43 @@ export default function ForgeLayer() {
         const W = window.innerWidth;
         const H = window.innerHeight;
         const names = list.map((el) => el.dataset.forgeSpot);
-        const tops = list.map((el) => el.getBoundingClientRect().top);
-        // where each marker's move starts: START x the screen height, or sooner for a marker that is already that
-        // close at the top of the page, so the first shape always stands whole before any scrolling
-        const begin = tops.map((top) => Math.min(H * START, top + window.scrollY - 1));
-        // the last marker that has come up past its start leads; the one before it is where we came from
-        let j = 0;
-        for (let i = 1; i < tops.length; i++) if (tops[i] < begin[i]) j = i;
-        // scrubbed evenly, so the shape comes apart and forms at the pace of the scroll
-        const target = j === 0 ? 0 : j - 1 + Math.min(1, Math.max(0, (begin[j] - tops[j]) / Math.max(1, begin[j] - H * END)));
+        // each section's hold, in scroll position: while its middle is within HOLD / 2 of its trip either side of
+        // the middle of the screen. The first holds from the top of the page, the last to the bottom, and no hold
+        // starts past the end of the page, so the last shape always completes.
+        const y = window.scrollY;
+        const maxY = Math.max(0, document.documentElement.scrollHeight - H);
+        const holds = list.map((el) => {
+          const r = (el.closest('section') || el).getBoundingClientRect();
+          const mid = r.top + y + r.height / 2 - H / 2;
+          const half = ((H + r.height) * HOLD) / 2;
+          return [mid - half, mid + half];
+        });
+        holds[0][0] = -Infinity;
+        holds[holds.length - 1][1] = Infinity;
+        for (let i = holds.length - 1; i >= 1; i--) {
+          holds[i][0] = Math.min(holds[i][0], maxY - 1, i + 1 < holds.length ? holds[i + 1][0] - 1 : Infinity);
+          holds[i - 1][1] = Math.min(holds[i - 1][1], holds[i][0] - 1);
+        }
+        let target = 0;
+        for (let i = 0; i < holds.length; i++) {
+          if (y < holds[i][0]) break;
+          target = y <= holds[i][1] || i === holds.length - 1 ? i : i + Math.min(1, (y - holds[i][1]) / Math.max(1, holds[i + 1][0] - holds[i][1]));
+        }
         pos = pos < 0 ? target : pos + (target - pos) * (1 - Math.exp(-dt * GLIDE));
         if (Math.abs(target - pos) < 1e-4) pos = target;
         // a whole number is a standing shape; in between, from shape k to k + 1
         const k = Math.min(names.length - 1, Math.floor(pos + 1e-6));
         const f = pos - k;
         const still = f < 1e-4;
-        const m = still ? 1 : f;
+        const m = still ? 1 : phase(f);
         const a = forge.shapeIndex(names[k]);
         const b = forge.shapeIndex(names[still ? k : Math.min(names.length - 1, k + 1)]);
         // where each of the two shapes stands: the hero's large and dim in the middle of the screen, a section's at
         // full strength in the middle of its free side column; in between, the cloud drifts from one to the other
         const pa = place(list[k], W, H);
         const pb = still ? pa : place(list[Math.min(names.length - 1, k + 1)], W, H);
-        const e = still ? 0 : ss(0.12, 0.88, f);
+        // it changes sides while it is a cloud
+        const e = still ? 0 : ss(0.3, 0.7, f);
         const view = { x: lerp(pa.x, pb.x, e), y: lerp(pa.y, pb.y, e), size: lerp(pa.size, pb.size, e) };
         // crossing the content from one side to the other, the cloud fades back a little
         const across = pa.lift && pb.lift && Math.abs(pa.x - pb.x) > W * 0.2 ? 0.5 * Math.sin(Math.PI * e) : 0;
