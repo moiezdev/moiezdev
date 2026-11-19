@@ -1459,6 +1459,8 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
       px = (p.x / Math.max(1, W)) * 2 - 1;
       py = 1 - (p.y / Math.max(1, H)) * 2;
     }
+    // in between two shapes the cubes dissolve: they drift apart into a loose, thinning cloud, then gather again
+    scatter = moving ? 0.38 * Math.sin(Math.PI * ss(0.04, 0.96, m)) : 0;
     const planetUp = solid >= 0 && shapes[solid].name === 'planet';
     calm += ((planetUp ? 1 : 0) - calm) * Math.min(1, dt * 1.5);
     yaw += dt * 0.32 * (1 - calm);

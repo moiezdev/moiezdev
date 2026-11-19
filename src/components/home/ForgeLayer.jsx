@@ -12,13 +12,13 @@ import { usePrefersReducedMotion } from '../../motion/reducedMotion';
  * and it never takes the pointer.
  */
 
-// a section's shape starts to form when its marker passes START x the screen height and has formed by END
-const START = 0.8;
-const END = 0.35;
+// the move to a section's shape is spread over the whole scroll towards it: the last shape starts to come apart
+// while its section is still being read, when the next marker is still START x the screen height down (below
+// the screen), and the new shape has only formed once that marker is up at END
+const START = 1.25;
+const END = 0.2;
 
 const markers = () => [...document.querySelectorAll('[data-forge-spot]')].filter((el) => el.isConnected);
-
-const smooth = (x) => x * x * (3 - 2 * x);
 
 export default function ForgeLayer() {
   const reduced = usePrefersReducedMotion();
@@ -60,17 +60,19 @@ export default function ForgeLayer() {
         const H = window.innerHeight;
         const names = list.map((el) => el.dataset.forgeSpot);
         const tops = list.map((el) => el.getBoundingClientRect().top);
-        // the last marker that has come up past START leads; the one before it is where we came from
+        // where each marker's move starts: START x the screen height, or sooner for a marker that is already that
+        // close at the top of the page, so the first shape always stands whole before any scrolling
+        const begin = tops.map((top) => Math.min(H * START, top + window.scrollY - 1));
+        // the last marker that has come up past its start leads; the one before it is where we came from
         let j = 0;
-        for (let i = 1; i < tops.length; i++) if (tops[i] < H * START) j = i;
-        const m = j === 0 ? 1 : smooth(Math.min(1, Math.max(0, (H * START - tops[j]) / (H * (START - END)))));
+        for (let i = 1; i < tops.length; i++) if (tops[i] < begin[i]) j = i;
+        // scrubbed evenly, so the shape comes apart and forms at the pace of the scroll
+        const m = j === 0 ? 1 : Math.min(1, Math.max(0, (begin[j] - tops[j]) / Math.max(1, begin[j] - H * END)));
         const a = forge.shapeIndex(names[Math.max(0, j - 1)]);
         const b = forge.shapeIndex(names[j]);
-        // one large shape, centred on the screen. In a move the old shape first rides up with its section, then
-        // the loose cloud pours down towards the section coming up from below, and settles into its shape at the
-        // centre; scrolling back up runs it backwards, so the cloud rises instead.
-        const flow = j === 0 ? 0 : -Math.sin(2 * Math.PI * m) * H * 0.2;
-        const view = { x: W / 2, y: H / 2 + flow, size: Math.min(W * 0.92, H * 0.9) };
+        // one large shape that stays centred on the screen: it dissolves into a cloud of cubes in place and the
+        // cloud forms the next shape there, with no pull towards any section
+        const view = { x: W / 2, y: H / 2, size: Math.min(W * 0.92, H * 0.9) };
         return { a, b, m, view };
       };
 
