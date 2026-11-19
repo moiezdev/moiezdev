@@ -618,6 +618,11 @@ vec3 orbit(vec3 p) {
 }
 ${NOISE}
 
+// between two shapes about half the swarm melts into liquid beads (the same wet black as the hero's sludge)
+// and the rest stay cubes, so the travelling mass is a mix of both
+float wetOf(vec4 seed) {
+  return uCloud * smoothstep(0.36, 0.6, fract(seed.z * 5.17 + seed.x * 2.31));
+}
 vec3 centreOf(vec4 A, vec4 B, vec4 seed, out float e, out float arc, out float near, out float scale, out vec3 dir, out float peel, out float debris) {
   // built from the core outwards, each cube a little out of step
   float delay = seed.x * 0.42 + clamp(length(B.xyz), 0.0, 1.2) * 0.22;
@@ -708,6 +713,10 @@ out vec3 vN;
 out vec3 vLocal;
 out vec3 vWorld;
 out float vGlow;
+out float vWetK;
+out vec3 vWet;
+out vec3 vRay;
+flat out mat3 vR;
 ${CENTRE}
 ${FLOOR}
 void main() {
@@ -726,7 +735,15 @@ void main() {
   // the swarm mixes cube sizes, from grains to chunks
   float u = fract(aSeed.w * 7.31 + aSeed.y * 3.7);
   float mixed = 0.4 + 1.25 * u * u;
-  vec3 world = c + R * (aPos * scale * vis * shrink * uSize * mixed);
+  // a liquid bead swells so the beads next to it run together
+  float wet = wetOf(aSeed);
+  float swell = 1.0 + wet * (1.1 + 0.7 * aSeed.y);
+  vec3 world = c + R * (aPos * scale * vis * shrink * uSize * mixed * swell);
+  // the fragment shader rounds a wet cube into a drop: it needs the view ray in the cube's own frame
+  vWet = normalize(c + vec3(1e-4));
+  vWetK = wet;
+  vRay = transpose(R) * (world - vec3(0.0, 0.0, uCamZ));
+  vR = R;
   if (uShadow > 0.5) world = toFloor(world);
   vN = R * aNormal;
   vLocal = aPos;
@@ -747,8 +764,16 @@ out vec3 vN;
 out vec3 vLocal;
 out vec3 vWorld;
 out float vGlow;
+out float vWetK;
+out vec3 vWet;
+out vec3 vRay;
+flat out mat3 vR;
 ${NOISE}
 void main() {
+  vWetK = 0.0;
+  vWet = vec3(0.0, 1.0, 0.0);
+  vRay = vec3(0.0, 0.0, -1.0);
+  vR = mat3(1.0);
   float show = uPeel > 0.001 ? smoothstep(peelEdge() - 0.01, peelEdge() + 0.02, aF.w) : 0.0;
   // sizes vary a little, so the matrix reads as packed rather than gridded
   float r = fract(sin(float(gl_InstanceID) * 12.9898) * 43758.5453);
@@ -766,6 +791,10 @@ in vec3 vN;
 in vec3 vLocal;
 in vec3 vWorld;
 in float vGlow;
+in float vWetK;
+in vec3 vWet;
+in vec3 vRay;
+flat in mat3 vR;
 uniform vec3 uEdge;
 uniform float uShadow;
 out vec4 o;
@@ -776,12 +805,30 @@ void main() {
     return;
   }
   vec3 n = normalize(vN);
+  if (vWetK > 0.001) {
+    // a wet cube is cut down to the sphere inside it: corners first, until only a round drop is left
+    float rad = mix(0.88, 0.5, vWetK);
+    vec3 d = normalize(vRay);
+    float b = dot(vLocal, d);
+    float q = dot(vLocal, vLocal) - rad * rad;
+    if (q > 0.0) {
+      float disc = b * b - q;
+      if (disc < 0.0 || b > 0.0) discard;
+      vec3 h = vLocal + (-b - sqrt(disc)) * d;
+      // the drop's own roundness, leaning a little to the bulge of the whole mass so the drops read as one
+      n = normalize(mix(vR * normalize(h), vWet, 0.2 * vWetK));
+    }
+  }
   vec3 col = shade(n, vWorld);
-  // machined bevel: light catches where two faces meet
+  // machined bevel: light catches where two faces meet (a melted bead has none)
   vec3 a = abs(vLocal) * 2.0;
   float mid = a.x + a.y + a.z - max(a.x, max(a.y, a.z)) - min(a.x, min(a.y, a.z));
-  col += uEdge * smoothstep(0.86, 0.96, mid) * (0.35 + 0.65 * max(dot(n, normalize(vec3(-0.55, 0.85, 0.6))), 0.0));
-  o = vec4(col + uGlow * vGlow, 1.0);
+  col += (1.0 - vWetK) * uEdge * smoothstep(0.86, 0.96, mid) * (0.35 + 0.65 * max(dot(n, normalize(vec3(-0.55, 0.85, 0.6))), 0.0));
+  // the liquid is darker and wetter, with a tight glint like the sludge's
+  vec3 v = normalize(vec3(0.0, 0.0, uCamZ) - vWorld);
+  float glint = pow(max(dot(reflect(-v, n), normalize(vec3(-0.55, 0.85, 0.6))), 0.0), 90.0);
+  col = col * (1.0 - 0.3 * vWetK) + vWetK * uSpec * glint * 0.55;
+  o = vec4(col + uGlow * vGlow * (1.0 - 0.9 * vWetK), 1.0);
 }`;
 
 const LINE_VS = `#version 300 es
@@ -807,7 +854,7 @@ void main() {
   float sameA = float(floor(aA.w * 0.5) == floor(aA2.w * 0.5));
   float sameB = float(floor(aB.w * 0.5) == floor(aB2.w * 0.5));
   float same = mix(sameA, sameB, step(0.5, (e1 + e2) * 0.5));
-  vAlpha = same * smoothstep(uMaxLen, uMaxLen * 0.3, len) * step(0.01, s1 * s2) * on * (0.5 + 0.4 * max(arc1, arc2) + 0.5 * uScatter);
+  vAlpha = (1.0 - max(wetOf(aSeed), wetOf(aSeed2))) * same * smoothstep(uMaxLen, uMaxLen * 0.3, len) * step(0.01, s1 * s2) * on * (0.5 + 0.4 * max(arc1, arc2) + 0.5 * uScatter);
   gl_Position = uProj * vec4(c1 - vec3(0.0, 0.0, uCamZ), 1.0);
 }`;
 
