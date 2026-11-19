@@ -268,8 +268,12 @@ const norm = (a) => {
 const dot = (a, c) => a[0] * c[0] + a[1] * c[1] + a[2] * c[2];
 const cross = (a, c) => [a[1] * c[2] - a[2] * c[1], a[2] * c[0] - a[0] * c[2], a[0] * c[1] - a[1] * c[0]];
 
-/** A round tube along curve(u), u in [0, 1], with frames carried along the curve (no twisting). */
+/**
+ * A round tube along curve(u), u in [0, 1], with frames carried along the curve (no twisting). `r` is a radius or
+ * a function of u; `caps` is true for flat ends, 'round' for domed ones, false for open ones.
+ */
 function tube(b, curve, segs, r, radial = 14, caps = true) {
+  const rad = typeof r === 'function' ? r : () => r;
   const e = 1e-4;
   let N = null;
   const rings = [];
@@ -286,18 +290,39 @@ function tube(b, curve, segs, r, radial = 14, caps = true) {
       N = norm(sub(N, T.map((t) => t * dot(N, T))));
     }
     const B = cross(T, N);
+    const ru = rad(u);
     const ring = [];
     for (let j = 0; j <= radial; j++) {
       const a = (j / radial) * TAU;
       const n = [0, 1, 2].map((k) => N[k] * Math.cos(a) + B[k] * Math.sin(a));
-      ring.push(b.v(p[0] + n[0] * r, p[1] + n[1] * r, p[2] + n[2] * r, ...n));
+      ring.push(b.v(p[0] + n[0] * ru, p[1] + n[1] * ru, p[2] + n[2] * ru, ...n));
     }
     rings.push(ring);
-    if (i === 0) first = [p, T];
-    last = [p, T];
+    if (i === 0) first = [p, T, N, B, ru];
+    last = [p, T, N, B, ru];
   }
   for (let i = 0; i < segs; i++) for (let j = 0; j < radial; j++) b.quad(rings[i][j], rings[i + 1][j], rings[i + 1][j + 1], rings[i][j + 1]);
-  if (caps) {
+  if (caps === 'round') {
+    // a dome over each end, so the tube finishes like a rounded pipe
+    const K = 8;
+    for (const [[p, T, N, B, ru], ring0, s] of [[first, rings[0], -1], [last, rings[segs], 1]]) {
+      let prev = ring0;
+      for (let k = 1; k <= K; k++) {
+        const ph = (k / K) * (Math.PI / 2);
+        const ring = [];
+        for (let j = 0; j <= radial; j++) {
+          const a = (j / radial) * TAU;
+          const n = [0, 1, 2].map((q) => (N[q] * Math.cos(a) + B[q] * Math.sin(a)) * Math.cos(ph) + T[q] * s * Math.sin(ph));
+          ring.push(b.v(p[0] + n[0] * ru, p[1] + n[1] * ru, p[2] + n[2] * ru, ...n));
+        }
+        for (let j = 0; j < radial; j++) {
+          if (s > 0) b.quad(prev[j], ring[j], ring[j + 1], prev[j + 1]);
+          else b.quad(ring[j], prev[j], prev[j + 1], ring[j + 1]);
+        }
+        prev = ring;
+      }
+    }
+  } else if (caps) {
     for (const [[p, T], ring, s] of [[first, rings[0], -1], [last, rings[segs], 1]]) {
       const c = b.v(...p, T[0] * s, T[1] * s, T[2] * s);
       const flat = ring.map((idx) => b.v(b.P[idx * 3], b.P[idx * 3 + 1], b.P[idx * 3 + 2], T[0] * s, T[1] * s, T[2] * s));
@@ -375,13 +400,16 @@ function solidFor(name, size) {
           const t = u * 2 - 1;
           const a = t * TAU * HELIX_TURNS + off;
           return [Math.cos(a) * 0.4, t * 0.95, Math.sin(a) * 0.4];
-        }, 220, 0.035 + half, 12);
+        }, 220, 0.035 + half, 16, 'round');
       }
       for (let k = 0; k < HELIX_RUNGS; k++) {
         const t = (k / (HELIX_RUNGS - 1)) * 1.8 - 0.9;
         const a = t * TAU * HELIX_TURNS;
         const p0 = [Math.cos(a) * 0.4, t * 0.95, Math.sin(a) * 0.4];
-        tube(b, (u) => [p0[0] * (1 - 2 * u), p0[1], p0[2] * (1 - 2 * u)], 2, half * 0.9, 10, false);
+        // each rung flares into the strands at both ends, so the joints are filleted rather than sharp
+        const rung = half * 0.9;
+        const flare = (u) => rung * (1 + 1.4 * Math.exp(-((u / 0.11) ** 2)) + 1.4 * Math.exp(-(((1 - u) / 0.11) ** 2)));
+        tube(b, (u) => [p0[0] * (1 - 2 * u), p0[1], p0[2] * (1 - 2 * u)], 28, flare, 12, false);
       }
       return b.done();
     }
