@@ -12,15 +12,15 @@ import { usePrefersReducedMotion } from '../../motion/reducedMotion';
  * and it never takes the pointer.
  */
 
-// each section's shape stands whole while the section crosses the middle 8% of its trip over the screen; the
+// each section's shape stands whole while the section crosses the middle 3% of its trip over the screen; the
 // rest of the trip it is forming (coming in) or coming apart (going out), through the cube cloud between sections
-const HOLD = 0.08;
+const HOLD = 0.03;
 // how quickly the drawn shape catches up with the scroll (per second); lower is slower and smoother
 const GLIDE = 1.4;
-// how the way from one section to the next is spent: the shape comes apart over the first 30%, the cubes fly as a
-// cloud over the next 15%, and the next shape forms over the last 55%, a long, slow build (the engine's own phases
+// how the way from one section to the next is spent: the shape comes apart over the first 25%, the cubes fly as a
+// cloud over the next 10%, and the next shape forms over the last 65%, a long, slow build (the engine's own phases
 // are 22/56/22)
-const phase = (f) => (f < 0.3 ? (f / 0.3) * 0.22 : f < 0.45 ? 0.22 + ((f - 0.3) / 0.15) * 0.56 : 0.78 + ((f - 0.45) / 0.55) * 0.22);
+const phase = (f) => (f < 0.25 ? (f / 0.25) * 0.22 : f < 0.35 ? 0.22 + ((f - 0.25) / 0.1) * 0.56 : 0.78 + ((f - 0.35) / 0.65) * 0.22);
 
 const ss = (a, b, x) => {
   const u = Math.min(1, Math.max(0, (x - a) / (b - a)));
@@ -141,7 +141,7 @@ export default function ForgeLayer() {
         const pa = place(list[k], W, H);
         const pb = still ? pa : place(list[Math.min(names.length - 1, k + 1)], W, H);
         // it changes sides while it is a cloud
-        const e = still ? 0 : ss(0.22, 0.52, f);
+        const e = still ? 0 : ss(0.18, 0.42, f);
         const view = { x: lerp(pa.x, pb.x, e), y: lerp(pa.y, pb.y, e), size: lerp(pa.size, pb.size, e) };
         // crossing the content from one side to the other, the cloud fades back a little
         const across = pa.lift && pb.lift && Math.abs(pa.x - pb.x) > W * 0.2 ? 0.5 * Math.sin(Math.PI * e) : 0;
