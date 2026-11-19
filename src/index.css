@@ -1256,69 +1256,61 @@ html[dir='rtl'] .scroll-progress {
 .hero-stage {
   position: relative;
   width: 100%;
-  max-width: 600px;
+  max-width: 560px;
   margin-inline: auto;
   height: clamp(300px, 88vw, 400px);
 }
 @media (min-width: 1024px) {
   .hero-stage {
     height: auto;
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 1 / 1.05;
   }
-}
-/* the forge is a halo behind the head and shoulders: a square 1.5x the stage's height, centred just below the chin,
-   so the shape frames the portrait instead of hiding behind it */
-.hero-stage__halo {
-  position: absolute;
-  top: -40%;
-  left: 50%;
-  height: 150%;
-  aspect-ratio: 1 / 1;
-  transform: translateX(-50%);
-}
-/* the canvas is 1.3x the halo (BLEED in HeroStage.jsx) and fades out well before its own edge,
-   so loose cubes and the swarm stay around the portrait instead of crossing the copy */
-.hero-stage__halo > canvas {
-  position: absolute;
-  inset: -15%;
-  z-index: 0;
-  width: 130%;
-  height: 130%;
-  pointer-events: none;
-  -webkit-mask-image: radial-gradient(closest-side, #000 54%, transparent 74%);
-  mask-image: radial-gradient(closest-side, #000 54%, transparent 74%);
-  animation: hero-stage-in var(--dur-slow) var(--ease-out) both;
 }
 .hero-stage__portrait {
   position: absolute;
-  bottom: -6%;
-  left: 50%;
-  z-index: 1;
-  height: 104%;
-  width: auto;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   max-width: none;
-  transform: translateX(-50%);
+  object-fit: contain;
+  object-position: 50% 100%;
   pointer-events: none;
   user-select: none;
   -webkit-mask-image: linear-gradient(to bottom, #000 80%, transparent 99%);
   mask-image: linear-gradient(to bottom, #000 80%, transparent 99%);
 }
-/* light mode: the black metal would merge with dark hair, so a soft light rim keeps the silhouette apart */
-html[data-theme='light'] .hero-stage__portrait {
-  filter: drop-shadow(0 0 1.5px rgb(255 255 255 / 0.95)) drop-shadow(0 0 16px rgb(255 255 255 / 0.55));
+/* the forge behind the whole home page: under the content (see #root below), dim, so its metal sits close to
+   the page colour and never competes with the text */
+.forge-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.16;
+  animation: forge-layer-in 1.2s var(--ease-out) both;
 }
-@keyframes hero-stage-in {
+html[data-theme='light'] .forge-layer {
+  opacity: 0.1;
+}
+/* tinted bands let the dim forge show through them */
+html[data-forge] .band-tint {
+  background-color: color-mix(in srgb, var(--color-surface-2) 65%, transparent);
+}
+html[data-forge] #root {
+  position: relative;
+  z-index: 1;
+}
+@keyframes forge-layer-in {
   from {
     opacity: 0;
   }
 }
-.hero-stage__glow {
-  position: absolute;
-  inset: 12%;
-  border-radius: 50%;
-  background: radial-gradient(closest-side, var(--glow-a), transparent);
-  filter: blur(24px);
-  opacity: 0.9;
+@media print {
+  .forge-layer {
+    display: none;
+  }
 }
 @media print {
   .hero-stage {

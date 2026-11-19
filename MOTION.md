@@ -18,15 +18,15 @@ Motion on moiez.dev has two jobs. **Most of it explains**: it shows how a system
 | Purpose | explain, confirm, orient | set the tone |
 | Examples | reveals, view transitions, the architecture explainer, button feedback | the home nano forge |
 | How many | as many as a page needs | **one per page, at most**: today only on home |
-| Triggered by | the user, or entering the viewport | time, scroll and the cursor |
+| Triggered by | the user, or entering the viewport | time and scroll |
 | May loop? | only while on screen (rule 5) | yes, while on screen (rule 5) |
 
 A new ambient piece replaces the forge. It isn't added next to it.
 
 ### 3. The signature is live: it answers scroll and the cursor
 
-- **Scroll**: the shape turns as you scroll, breaks back into cubes, and blows apart into shrinking debris as the hero leaves. Scrolling back reassembles it.
-- **Cursor**: hover only. The pointer never turns or tilts the shape. Hovering the stage peels about 15% of the standing solid back into loose cubes, in big patches, and loose cubes near the pointer part and glow. On touch screens a finger does the same while it's down. Device tilt isn't used, because iOS would need a permission prompt for it.
+- **Scroll**: scroll drives the morph. Each home section has its own shape, and as a section comes up the screen the last shape breaks into cubes, the cloud rides up with the old section, pours down towards the new one, and fuses into its shape. Scrolling back up runs it backwards, so the cloud rises instead.
+- **Cursor**: not used for now. The forge sits behind the content, so it never reacts to the pointer. Device tilt isn't used either, because iOS would need a permission prompt for it.
 - Every response is **scrubbed or eased**: it's a function of where the scroll or pointer is now, so going back undoes it. Nothing is triggered once and left half-finished.
 - Responses are gentle. Nothing jumps, flashes, or follows the pointer across the page.
 - No scroll-jacking, no smooth-scroll libraries, no pinned sections. The page always scrolls at the speed you scroll it.
@@ -94,15 +94,16 @@ In Tailwind classes, use them as `duration-(--dur-base) ease-(--ease-spring)`. I
 
 ## The nano forge
 
-`components/home/HeroStage.jsx` is the stage in the hero: beside the copy on desktop (mirrored in RTL), above it on phones. It holds Moiz's full cut-out portrait, and the forge is a halo behind his head and shoulders: a square 1.5x the stage's height, centred just below the chin, so the shapes frame the portrait instead of hiding behind it. The portrait's foot fades out, and in light mode it has a soft light rim so dark hair stays apart from the black metal. The prerendered HTML is the portrait and the halo's glow. Once the browser is idle it loads the engine and adds one WebGL canvas, which fades in. The canvas is 1.3x the halo and fades out from about half its radius (a radial mask), so loose cubes and the opening swarm stay around the portrait instead of crossing the copy. It takes no pointer events.
+`components/home/ForgeLayer.jsx` runs the forge as a dim background behind the whole home page: one fixed, viewport-sized WebGL canvas under the content (`#root` sits above it), at 16% opacity on the dark page and 10% on the light one, so the metal stays close to the page colour and never competes with the text. Tinted bands turn slightly see-through while it runs; cards stay opaque. Each section marks where it starts with `ForgeSpot` (a zero-height `data-forge-spot="<shape>"` marker, via `SectionTitle`'s `forge` prop), and the hero's marker stands for the first shape. The hero itself (`HeroStage.jsx`) is only Moiz's full cut-out portrait beside the copy. The canvas loads once the browser is idle, fades in, and takes no pointer events.
 
 - **Shapes**, in order: a liquid-metal blob (the forge opens on it), a cube, a torus knot, a Möbius loop, a planet with a belt of orbiting debris, and a double helix (1.5 turns, 9 rungs). Every cube has a place in every shape. Only the planet's globe fuses: its ring stays a belt of loose cubes of mixed sizes that orbit it, inner ones faster, and turn slowly. While the planet stands the shape itself stops turning, so only the ring moves. The solid cube has softly rounded edges and corners. The blob is the one living solid: the same metal as the rest, glossier, staying close to a sphere at one fixed size while it gently ripples, sways and pushes out small bulges, all displaced in the vertex shader. It also forms differently from the rest: its cubes first close into a ball, then liquid leaks out of it at scattered spots, one after another, and the puddles spread with wavering, swollen edges and run together until the ball is coated and the cubes and their strings are gone beneath it. Then it settles into the blob. Breaking up runs the same steps backwards.
-- **A cycle (12.7s)**: the standing solid breaks up into its cubes in patches (1.2s). The cubes fly to the next shape, built from the core outwards (4s): each one travels almost straight, without tumbling, and stays square to the grid, so the shape simply comes apart and goes back together. Then they fuse into that shape's smooth solid, which grows over them in patches with a glowing edge (1.5s), and the solid holds (6s). There's no scan line or sweep.
+- **Sections and shapes**: hero, blob; Projects, cube (building blocks); Architecture, torus knot (connected systems); AI, double helix; Experience, Möbius loop (one continuous path); Contact, planet. Order follows the page. One large shape at a time, centred on the screen.
+- **A transition**, scrubbed by scroll, not timed: a section's shape starts to form when its marker passes 80% of the screen height and has formed by 35%. The standing solid breaks up into its cubes in patches, the cubes fly to the next shape, and they fuse into its smooth solid, which grows over them in patches with a glowing edge. There's no timer cycle, no swarm intro, and no scan line or sweep.
 - **Strings**: while cubes are loose, each is linked by hairlines to a few neighbours in the same part of the shape. Separate parts are never strung together: the planet's globe and ring, and the helix's two strands and its rungs, each keep their own strings. Lines that stretch too far fade out, and they're gone once the solid stands.
 - **Shadow**: the shape casts a soft shadow on an unseen floor below it, flattened from its real silhouette. There's no caption or pedestal. In dark mode the shadow is faint by nature.
-- **Scroll**: the shape turns with scroll position, and blows apart into shrinking debris as the hero leaves. It's scrubbed, so scrolling back rebuilds it.
-- **Cursor**: hover only. The pointer never turns or tilts the shape. Hovering the stage peels about 15% of the solid back into smaller cubes, which drift out a little and are strung together. Each opening reads as a dent: its inner wall is in shadow, and a little below the skin the inside is packed with small cubes of mixed sizes, a matrix rather than a hollow shell. It closes up again when the pointer leaves. The patches come from an integer-hash noise shared by the shaders and JS, so the packed cubes are placed under exactly the patches that can open. A finger does the same while it's down.
-- **Off**: only on home, stopped when the stage is off screen or the tab is hidden, and the gentle half-speed version under reduced motion.
+- **Scroll**: only the transitions above. Nothing blows apart.
+- **Cursor**: no hover effect for now (the peel and the dents are still in the engine, switched off).
+- **Off**: only on home, stopped when the tab is hidden, drawn at lower resolution on phones, and the gentle half-speed version under reduced motion.
 
 ## Each functional piece, and what it proves
 
