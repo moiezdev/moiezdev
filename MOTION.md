@@ -38,7 +38,7 @@ A new ambient piece replaces the forge. It isn't added next to it.
 - Ambient code loads after first paint (`requestIdleCallback` plus a dynamic `import()`), so it never competes with the LCP image.
 - No animation library. The whole system is plain CSS, the Web Animations API, a few small hooks and one canvas engine.
 - Without WebGL2 the stage keeps its static glow. Nothing else depends on it.
-- Botfolio's avatar (`components/chatbot/RobotAvatar.jsx`) is the one other canvas: a tiny raymarched ball of the same liquid metal as the forge's blob (white on dark, black on light). It ripples slowly at rest, churns faster while thinking and swells unevenly while speaking. One full-screen triangle per frame at avatar size; only one avatar is on screen at a time. With reduced motion it draws one still frame, and without WebGL2 it shows a shaded CSS sphere.
+- Botfolio's avatar (`components/chatbot/RobotAvatar.jsx`) is the one other canvas: a tiny raymarched ball of the same liquid metal as the forge's blob (white on dark, black on light). It ripples slowly at rest, churns faster while thinking and swells unevenly while speaking. One full-screen triangle per frame at avatar size; only one avatar is on screen at a time. With reduced motion it moves at half speed, and without WebGL2 it shows a shaded CSS sphere.
 
 ### 5. Nothing runs unseen
 
@@ -51,7 +51,7 @@ A new ambient piece replaces the forge. It isn't added next to it.
 With `prefers-reduced-motion: reduce`:
 
 - every token duration becomes `0ms` and the reveal distance `0px`;
-- JS-driven pieces render their final state. The forge draws one still, finished solid (the torus knot) and repaints it only when the theme changes;
+- JS-driven pieces render their final state, with two deliberate exceptions (Moiz's call, 2026-11-19: a frozen hero read as broken). The forge plays a gentle version: it opens on the finished blob instead of a swarm flying in, runs at half speed, and ignores scroll (no scatter, no scroll spin). Botfolio's avatar ripples at half speed;
 - scroll- and cursor-linked effects are off;
 - view transitions are skipped;
 - the custom cursor is off.
@@ -102,7 +102,7 @@ In Tailwind classes, use them as `duration-(--dur-base) ease-(--ease-spring)`. I
 - **Shadow**: the shape casts a soft shadow on an unseen floor below it, flattened from its real silhouette. There's no caption or pedestal. In dark mode the shadow is faint by nature.
 - **Scroll**: the shape turns with scroll position, and blows apart into shrinking debris as the hero leaves. It's scrubbed, so scrolling back rebuilds it.
 - **Cursor**: hover only. The pointer never turns or tilts the shape. Hovering the stage peels about 15% of the solid back into smaller cubes, which drift out a little and are strung together. Each opening reads as a dent: its inner wall is in shadow, and a little below the skin the inside is packed with small cubes of mixed sizes, a matrix rather than a hollow shell. It closes up again when the pointer leaves. The patches come from an integer-hash noise shared by the shaders and JS, so the packed cubes are placed under exactly the patches that can open. A finger does the same while it's down.
-- **Off**: only on home, stopped when the stage is off screen or the tab is hidden, and one still shape under reduced motion.
+- **Off**: only on home, stopped when the stage is off screen or the tab is hidden, and the gentle half-speed version under reduced motion.
 
 ## Each functional piece, and what it proves
 

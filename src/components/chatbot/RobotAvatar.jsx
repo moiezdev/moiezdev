@@ -4,7 +4,7 @@ import { usePrefersReducedMotion } from '../../motion/reducedMotion';
 /**
  * Botfolio's avatar: a small ball of the same liquid metal as the hero's blob — white metal on the dark
  * page, black metal on the light one. It ripples gently at rest, churns faster while thinking, and
- * pulses while speaking. One tiny WebGL2 canvas, raymarched; with reduced motion it holds still, and
+ * pulses while speaking. One tiny WebGL2 canvas, raymarched; with reduced motion it moves at half speed, and
  * without WebGL it falls back to a shaded CSS sphere.
  * `mood`: idle | thinking | speaking
  * `faceOnly` (the panel header) drops the floor shadow.
@@ -163,17 +163,9 @@ const RobotAvatar = ({ size = 64, mood = 'idle', faceOnly = false, className = '
     let theme = themeOf();
     const mo = new MutationObserver(() => {
       theme = themeOf();
-      if (reduced) blob.draw({ time: 0.8, amp: 1, pulse: 0, theme });
     });
     mo.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-
-    if (reduced) {
-      blob.draw({ time: 0.8, amp: 1, pulse: 0, theme });
-      return () => {
-        mo.disconnect();
-        blob.dispose();
-      };
-    }
+    const pace = reduced ? 0.5 : 1;
 
     const frame = (now) => {
       const dt = Math.min(0.05, (now - last) / 1000);
@@ -187,7 +179,7 @@ const RobotAvatar = ({ size = 64, mood = 'idle', faceOnly = false, className = '
         ? Math.max(0, Math.sin(now * 0.017) * 0.6 + Math.sin(now * 0.029 + 1.3) * 0.5)
         : 0;
       pulse += (talk - pulse) * Math.min(1, dt * 12);
-      clock += dt * speed;
+      clock += dt * speed * pace;
       blob.draw({ time: clock, amp, pulse, theme });
       raf = requestAnimationFrame(frame);
     };
