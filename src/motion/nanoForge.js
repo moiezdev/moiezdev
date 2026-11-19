@@ -643,6 +643,8 @@ vec3 centreOf(vec4 A, vec4 B, vec4 seed, out float e, out float arc, out float n
     q += 0.09 * vec3(sin(q.z * 6.1 + tt * 1.7), sin(q.x * 5.7 + tt * 1.5), sin(q.y * 6.3 - tt * 1.9));
     q *= 1.0 + 0.13 * vec3(sin(tt * 0.8), sin(tt * 0.8 + 2.1), sin(tt * 0.8 + 4.2));
     p = mix(p, q, uCloud);
+    // like cereal in milk: each cube keeps bobbing up through the liquid's surface and sinking back in
+    p += normalize(p + vec3(1e-4)) * sin(uTime * 1.3 + seed.w * 6.2832) * (0.08 + 0.1 * seed.z) * uCloud;
   }
   // on hover, the cubes under the patches that peel away come loose and drift out a little
   vec3 obj = mix(A.xyz, B.xyz, e);
@@ -974,6 +976,7 @@ layout(location=3) in vec4 aB;
 layout(location=4) in vec4 aSeed;
 uniform float uBlob, uLiqH, uDensity;
 out float vW;
+out float vZ;
 ${CENTRE}
 void main() {
   float e, arc, near, scale, peel, debris;
@@ -985,19 +988,22 @@ void main() {
   float rad = uBlob * (1.0 + 0.9 * rr) * step(0.01, scale);
   gl_PointSize = max(1.0, rad * uProj[1][1] / max(0.1, clip.w) * uLiqH);
   vW = uCloud * uDensity * (1.0 - debris);
+  vZ = clip.w;
   gl_Position = clip;
 }`;
 
 const LIQ_FS = `#version 300 es
 precision highp float;
 in float vW;
+in float vZ;
 out vec4 o;
 void main() {
   vec2 q = gl_PointCoord * 2.0 - 1.0;
   float d = dot(q, q);
   if (d > 1.0) discard;
-  float k = (1.0 - d) * (1.0 - d);
-  o = vec4(k * vW);
+  float k = (1.0 - d) * (1.0 - d) * vW;
+  // how much liquid, and (weighted) how far away it is
+  o = vec4(k, k * vZ, 0.0, 0.0);
 }`;
 
 const LIQ_COMP_FS = `#version 300 es
@@ -1005,36 +1011,42 @@ precision highp float;
 in vec2 vUv;
 uniform sampler2D uTex;
 uniform vec2 uTexel;
-uniform float uThr, uAmount;
+uniform float uThr, uBulge, uHasDepth;
 uniform vec3 uBase, uEnvLow, uEnvHigh, uSpec, uRim;
 out vec4 o;
 float D(vec2 uv) {
   return texture(uTex, uv).r;
 }
 void main() {
-  float d = D(vUv);
-  float a = smoothstep(uThr * 0.85, uThr * 1.25, d);
-  if (a < 0.002) discard;
+  vec4 s = texture(uTex, vUv);
+  float d = s.r;
+  // a solid, opaque surface, the same metal as the blob
+  float a = smoothstep(uThr * 0.85, uThr * 1.05, d);
+  if (a < 0.01) discard;
   // the surface bulges where the liquid is deep: its slope gives the normal
   vec2 t = uTexel * 1.5;
   float gx = D(vUv + vec2(t.x, 0.0)) - D(vUv - vec2(t.x, 0.0));
   float gy = D(vUv + vec2(0.0, t.y)) - D(vUv - vec2(0.0, t.y));
   vec3 n = normalize(vec3(-gx, -gy, uThr * 0.3));
+  // the blob's shading (the shared metal) with its wetter, tighter highlight
   vec3 v = vec3(0.0, 0.0, 1.0);
   vec3 l1 = normalize(vec3(-0.55, 0.85, 0.6));
   vec3 l2 = normalize(vec3(0.8, -0.25, 0.35));
   float d1 = max(dot(n, l1), 0.0);
   float d2 = max(dot(n, l2), 0.0);
-  float sp = pow(max(dot(n, normalize(l1 + v)), 0.0), 90.0) + 0.3 * pow(max(dot(n, normalize(l2 + v)), 0.0), 40.0);
+  float sp = pow(max(dot(n, normalize(l1 + v)), 0.0), 56.0) + 0.35 * pow(max(dot(n, normalize(l2 + v)), 0.0), 24.0);
   float fres = pow(1.0 - max(dot(n, v), 0.0), 3.0);
   vec3 r = reflect(-v, n);
   vec3 env = mix(uEnvLow, uEnvHigh, smoothstep(-0.35, 0.75, r.y));
-  // wet and dark, like the hero's sludge: deeper inside, so the cubes it holds show through only faintly
-  vec3 col = uBase * (0.08 + 0.5 * d1 + 0.15 * d2) * 0.75 + env * 0.3 + uSpec * sp * 1.1 + uRim * fres * 0.4;
-  float deep = smoothstep(uThr, uThr * 2.6, d);
-  float alpha = a * mix(0.62, 0.86, deep) * uAmount;
-  o = vec4(col * alpha, alpha);
-}`;
+  vec3 col = uBase * (0.12 + 0.78 * d1 + 0.2 * d2) + env * 0.34 + uSpec * sp * 0.8 + uRim * fres * 0.35;
+  col += uSpec * pow(max(dot(r, l1), 0.0), 120.0) * 0.6;
+  // its surface sits in front of the cubes' middle, further out where it is deeper, so the cubes near the top
+  // break through it and the rest are under it
+  float w = s.g / max(1e-4, d) - uBulge * sqrt(clamp((d - uThr) / (uThr * 2.5), 0.0, 1.0));
+  float zn = 20.5 / 19.5 - 20.0 / (19.5 * max(0.6, w));
+  gl_FragDepth = uHasDepth > 0.5 ? zn * 0.5 + 0.5 : 0.0;
+  o = vec4(col * a, a);
+}`
 
 function cubeMesh() {
   const P = [];
@@ -1364,7 +1376,8 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   gl.uniform1f(liqProg.u('uDensity'), LIQ_SCALE);
   gl.useProgram(liqComp);
   gl.uniform1f(liqComp.u('uThr'), 1.4 * LIQ_SCALE);
-  gl.uniform1f(liqComp.u('uAmount'), 1);
+  gl.uniform1f(liqComp.u('uBulge'), 0.22);
+  gl.uniform1f(liqComp.u('uHasDepth'), liqFloat ? 1 : 0);
   setAll('uCamZ', (l) => gl.uniform1f(l, CAM));
   setAll('uFloor', (l) => gl.uniform1f(l, FLOOR_Y));
   setAll('uPeelThr', (l) => gl.uniform1f(l, PEEL_THR));
@@ -1523,10 +1536,12 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
       gl.useProgram(liqComp);
       gl.bindVertexArray(null);
       gl.bindTexture(gl.TEXTURE_2D, liqTex);
+      gl.enable(gl.DEPTH_TEST);
+      gl.depthMask(false);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
+      gl.depthMask(true);
       gl.bindTexture(gl.TEXTURE_2D, null);
       gl.disable(gl.BLEND);
-      gl.enable(gl.DEPTH_TEST);
     }
     gl.bindVertexArray(null);
   };
