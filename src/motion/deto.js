@@ -482,7 +482,7 @@ export function createDeto(canvas, { theme, gentle = false } = {}) {
     const settle = 1 - Math.exp(-dt * 2);
     spin += ((shown === PLANET ? 0 : 1) - spin) * settle;
     pitch += ((shown === HELIX ? 0 : 0.5 + Math.sin(t * 0.13) * 0.08) - pitch) * settle;
-    yaw += dt * 0.3 * spin;
+    yaw += dt * 0.15 * spin;
 
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT);
