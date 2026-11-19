@@ -179,7 +179,7 @@ const ContactSection = () => {
   const sending = status === 'sending';
 
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+    <div className="contact-split grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
       <Reveal className="flex flex-col gap-6">
         <p className="text-[17px] leading-[1.6] text-label-2">{t('contact.intro')}</p>
 
