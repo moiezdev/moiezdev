@@ -111,6 +111,8 @@ export default function ForgeLayer() {
         if (r !== lift) canvas.style.setProperty('--forge-lift', String((lift = r)));
       };
       let pos = -1;
+      let lastPos = -1;
+      let trip = null;
       const scene = (dt) => {
         const list = markers();
         if (!list.length) return null;
@@ -145,17 +147,28 @@ export default function ForgeLayer() {
         const k = Math.min(names.length - 1, Math.floor(pos + 1e-6));
         const f = pos - k;
         const still = f < 1e-4;
-        const m = still ? 1 : phase(f);
-        const a = forge.shapeIndex(names[k]);
-        const b = forge.shapeIndex(names[still ? k : Math.min(names.length - 1, k + 1)]);
+        // the head always leads: a trip entered scrolling back up runs the same journey the other way round, from
+        // shape k + 1 to shape k (the direction is set when the trip starts, so turning back halfway never jumps)
+        const prev = lastPos;
+        lastPos = pos;
+        if (still) trip = null;
+        else if (!trip || trip.k !== k) trip = { k, back: pos < prev };
+        const back = !still && trip.back;
+        const kb = Math.min(names.length - 1, k + 1);
+        const ia = back ? kb : k;
+        const ib = still ? k : back ? k : kb;
+        const fw = back ? 1 - f : f;
+        const m = still ? 1 : phase(fw);
+        const a = forge.shapeIndex(names[ia]);
+        const b = forge.shapeIndex(names[ib]);
         // where each of the two shapes stands: the hero's large and dim in the middle of the screen, a section's at
         // full strength in the middle of its free side column; in between, the cloud drifts from one to the other
-        const pa = place(list[k], W, H);
-        const pb = still ? pa : place(list[Math.min(names.length - 1, k + 1)], W, H);
+        const pa = place(list[ia], W, H);
+        const pb = still ? pa : place(list[ib], W, H);
         // the journey: h runs 0 -> 1 + TAIL while the slime travels (the head arrives at 1, the tail end at 1 + TAIL)
-        const h = still ? 0 : Math.min(1, Math.max(0, (f - TRAVEL[0]) / (TRAVEL[1] - TRAVEL[0]))) * (1 + TAIL);
+        const h = still ? 0 : Math.min(1, Math.max(0, (fw - TRAVEL[0]) / (TRAVEL[1] - TRAVEL[0]))) * (1 + TAIL);
         const eh = ease(h);
-        const amt = still ? 0 : ss(0.12, 0.28, f) * (1 - ss(TRAVEL[1], 0.8, f));
+        const amt = still ? 0 : ss(0.12, 0.28, fw) * (1 - ss(TRAVEL[1], 0.8, fw));
         // the path bows downwards a little, as if the slime were heavy
         const dx = pb.x - pa.x;
         const dy = pb.y - pa.y;
@@ -174,10 +187,9 @@ export default function ForgeLayer() {
         const unit = Math.max(1, size * 0.4);
         view.travel = { amt, head: h, tail: TAIL, d: [dx / unit, -dy / unit], n: [(nx * bow) / unit, (-ny * bow) / unit] };
         const e = eh;
-        // crossing the content from one side to the other, the cloud fades back a little
-        const across = pa.lift && pb.lift && Math.abs(pa.x - pb.x) > W * 0.2 ? 0.5 * Math.sin(Math.PI * e) : 0;
+        // the liquid stays solid all the way across (no fading back while it crosses the content)
         const l = lerp(pa.lift, pb.lift, e);
-        setLift(l * (1 - across));
+        setLift(l);
         // the dim background has no floor shadow; a shape in its own column stands on one
         view.shadow = l;
         return { a, b, m, view };

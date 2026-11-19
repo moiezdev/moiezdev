@@ -657,19 +657,21 @@ vec3 centreOf(vec4 A, vec4 B, vec4 seed, out float e, out float arc, out float n
   // smaller down the tail; a cube sits where the head was a moment ago (further back for cubes further down the
   // tail), so the tail follows the head's own path, bends with it and thins out, then catches up on arrival
   if (uTravel > 0.001) {
-    float r = pow(seed.x, 1.7);
-    // the comet: a full-size head (as wide as the shape) tapering into its tail
-    c *= mix(1.0, 1.0 - 0.6 * r, uTravel);
+    // most of the mass stays in the head; a light tail of fewer cubes
+    float r = pow(seed.x, 2.4);
+    // the comet: a full-size head (as wide as the shape) tapering into a tail that gets thinner all the way
+    float taper = sqrt(r);
+    c *= mix(1.0, 1.0 - 0.96 * taper, uTravel);
     float hp = easeJ(uHead);
     float tp = easeJ(uHead - r * uTailL);
     vec2 off = (tp - hp) * uPathD + (sin(3.14159265 * tp) - sin(3.14159265 * hp)) * uPathN;
     // a slow ripple runs down the tail while it streams
     vec2 dirP = normalize(uPathD + vec2(1e-5));
     vec2 perp = vec2(-dirP.y, dirP.x);
-    off += perp * sin(r * 10.0 - uTime * 2.6 + seed.y * 2.0) * 0.12 * r * smoothstep(0.0, 0.05, hp - tp);
+    off += perp * sin(r * 10.0 - uTime * 2.6 + seed.y * 2.0) * 0.05 * r * smoothstep(0.0, 0.05, hp - tp);
     c.xy += off * uTravel;
     // its cubes and drops are bigger at the head, smaller down the tail
-    scale *= mix(1.0, 1.6 - 0.9 * r, uTravel);
+    scale *= mix(1.0, 1.6 - 1.4 * taper, uTravel);
   }
   // the pointer parts the cubes around it
   vec4 c0 = uProj * vec4(c - vec3(0.0, 0.0, uCamZ), 1.0);
@@ -983,9 +985,9 @@ void main() {
   vec3 dir;
   vec3 c = centreOf(aA, aB, aSeed, e, arc, near, scale, dir, peel, debris);
   vec4 clip = uProj * vec4(c - vec3(0.0, 0.0, uCamZ), 1.0);
-  // down the comet's tail the cubes thin out, so their splats spread wider to keep the liquid joined up
-  float rr = pow(aSeed.x, 1.7) * uTravel;
-  float rad = uBlob * (1.0 + 0.9 * rr) * step(0.01, scale);
+  // the liquid thins down the comet's tail with its cubes
+  float rr = sqrt(pow(aSeed.x, 2.4)) * uTravel;
+  float rad = uBlob * (1.0 - 0.55 * rr) * step(0.01, scale);
   gl_PointSize = max(1.0, rad * uProj[1][1] / max(0.1, clip.w) * uLiqH);
   vW = uCloud * uDensity * (1.0 - debris);
   vZ = clip.w;
@@ -1002,8 +1004,8 @@ void main() {
   float d = dot(q, q);
   if (d > 1.0) discard;
   float k = (1.0 - d) * (1.0 - d) * vW;
-  // how much liquid, and (weighted) how far away it is
-  o = vec4(k, k * vZ, 0.0, 0.0);
+  // how much liquid, (weighted) how far away it is, and the nearest cube (kept by a MIN blend)
+  o = vec4(k, k * vZ, 0.0, vZ);
 }`;
 
 const LIQ_COMP_FS = `#version 300 es
@@ -1011,7 +1013,7 @@ precision highp float;
 in vec2 vUv;
 uniform sampler2D uTex;
 uniform vec2 uTexel;
-uniform float uThr, uBulge, uHasDepth;
+uniform float uThr, uSink, uHasDepth;
 uniform vec3 uBase, uEnvLow, uEnvHigh, uSpec, uRim;
 out vec4 o;
 float D(vec2 uv) {
@@ -1040,9 +1042,9 @@ void main() {
   vec3 env = mix(uEnvLow, uEnvHigh, smoothstep(-0.35, 0.75, r.y));
   vec3 col = uBase * (0.12 + 0.78 * d1 + 0.2 * d2) + env * 0.34 + uSpec * sp * 0.8 + uRim * fres * 0.35;
   col += uSpec * pow(max(dot(r, l1), 0.0), 120.0) * 0.6;
-  // its surface sits in front of the cubes' middle, further out where it is deeper, so the cubes near the top
-  // break through it and the rest are under it
-  float w = s.g / max(1e-4, d) - uBulge * sqrt(clamp((d - uThr) / (uThr * 2.5), 0.0, 1.0));
+  // its surface lies just behind the nearest cubes everywhere alike, so cubes break through it all over the body
+  // (not only where it is thickest), each one as it bobs up, and sink back under it
+  float w = s.a + uSink;
   float zn = 20.5 / 19.5 - 20.0 / (19.5 * max(0.6, w));
   gl_FragDepth = uHasDepth > 0.5 ? zn * 0.5 + 0.5 : 0.0;
   o = vec4(col * a, a);
@@ -1376,7 +1378,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   gl.uniform1f(liqProg.u('uDensity'), LIQ_SCALE);
   gl.useProgram(liqComp);
   gl.uniform1f(liqComp.u('uThr'), 1.4 * LIQ_SCALE);
-  gl.uniform1f(liqComp.u('uBulge'), 0.22);
+  gl.uniform1f(liqComp.u('uSink'), 0.13);
   gl.uniform1f(liqComp.u('uHasDepth'), liqFloat ? 1 : 0);
   setAll('uCamZ', (l) => gl.uniform1f(l, CAM));
   setAll('uFloor', (l) => gl.uniform1f(l, FLOOR_Y));
@@ -1522,14 +1524,16 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     if (huddle > 0.01) {
       gl.bindFramebuffer(gl.FRAMEBUFFER, liqFbo);
       gl.viewport(0, 0, liqW, liqH);
-      gl.clearColor(0, 0, 0, 0);
+      gl.clearColor(0, 0, 0, 1000);
       gl.clear(gl.COLOR_BUFFER_BIT);
       gl.disable(gl.DEPTH_TEST);
       gl.enable(gl.BLEND);
       gl.blendFunc(gl.ONE, gl.ONE);
+      gl.blendEquationSeparate(gl.FUNC_ADD, gl.MIN);
       gl.useProgram(liqProg);
       gl.bindVertexArray(cubeVao);
       gl.drawArraysInstanced(gl.POINTS, 0, 1, N);
+      gl.blendEquation(gl.FUNC_ADD);
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
