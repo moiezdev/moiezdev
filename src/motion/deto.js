@@ -138,7 +138,7 @@ float planet(vec3 p) {
   float st = sin(0.42);
   vec3 q = vec3(p.x, ct * p.y - st * p.z, st * p.y + ct * p.z);
   // two belts of debris instead of one solid ring: the inner one orbits faster
-  float debris = min(belt(q, 0.86, 50.0, 0.42, 3.0), belt(q, 1.06, 66.0, 0.26, 17.0));
+  float debris = min(belt(q, 0.78, 46.0, 0.42, 3.0), belt(q, 0.97, 60.0, 0.26, 17.0));
   return min(globe, debris);
 }
 const float HK = 3.0 * PI / 1.64; // the strands' turn per unit of height
