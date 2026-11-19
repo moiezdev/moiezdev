@@ -590,6 +590,12 @@ uniform float uCamZ, uMix, uTime, uScatter, uCloud, uAspect, uPointerOn;
 // path (0..1 + tail), the tail's length, and the path (straight part and downward bow, world units on screen axes)
 uniform float uTravel, uHead, uTailL;
 uniform vec2 uPathD, uPathN;
+// the comet's width along its body (r: 0 at the head's front, 1 at the tail's tip): the full head, then the tail
+// starting at 75% of the head's width and thinning all the way to a fine tip
+float tailWidth(float r) {
+  float shoulder = mix(1.0, 0.75, smoothstep(0.0, 0.15, r));
+  return shoulder * (1.0 - 0.96 * pow(clamp((r - 0.15) / 0.85, 0.0, 1.0), 0.8));
+}
 float easeJ(float u) {
   float x = clamp(u, 0.0, 1.0);
   return x * x * x * (x * (x * 6.0 - 15.0) + 10.0);
@@ -644,7 +650,7 @@ vec3 centreOf(vec4 A, vec4 B, vec4 seed, out float e, out float arc, out float n
     q *= 1.0 + 0.13 * vec3(sin(tt * 0.8), sin(tt * 0.8 + 2.1), sin(tt * 0.8 + 4.2));
     p = mix(p, q, uCloud);
     // like cereal in milk: each cube keeps bobbing up through the liquid's surface and sinking back in
-    p += normalize(p + vec3(1e-4)) * sin(uTime * 1.3 + seed.w * 6.2832) * (0.08 + 0.1 * seed.z) * uCloud;
+    p += normalize(p + vec3(1e-4)) * sin(uTime * 1.3 + seed.w * 6.2832) * (0.03 + 0.04 * seed.z) * uCloud;
   }
   // on hover, the cubes under the patches that peel away come loose and drift out a little
   vec3 obj = mix(A.xyz, B.xyz, e);
@@ -660,8 +666,8 @@ vec3 centreOf(vec4 A, vec4 B, vec4 seed, out float e, out float arc, out float n
     // most of the mass stays in the head; a light tail of fewer cubes
     float r = pow(seed.x, 2.4);
     // the comet: a full-size head (as wide as the shape) tapering into a tail that gets thinner all the way
-    float taper = sqrt(r);
-    c *= mix(1.0, 1.0 - 0.96 * taper, uTravel);
+    float taper = tailWidth(r);
+    c *= mix(1.0, taper, uTravel);
     float hp = easeJ(uHead);
     float tp = easeJ(uHead - r * uTailL);
     vec2 off = (tp - hp) * uPathD + (sin(3.14159265 * tp) - sin(3.14159265 * hp)) * uPathN;
@@ -671,7 +677,7 @@ vec3 centreOf(vec4 A, vec4 B, vec4 seed, out float e, out float arc, out float n
     off += perp * sin(r * 10.0 - uTime * 2.6 + seed.y * 2.0) * 0.05 * r * smoothstep(0.0, 0.05, hp - tp);
     c.xy += off * uTravel;
     // its cubes and drops are bigger at the head, smaller down the tail
-    scale *= mix(1.0, 1.6 - 1.4 * taper, uTravel);
+    scale *= mix(1.0, 0.3 + 1.3 * taper, uTravel);
   }
   // the pointer parts the cubes around it
   vec4 c0 = uProj * vec4(c - vec3(0.0, 0.0, uCamZ), 1.0);
@@ -986,8 +992,7 @@ void main() {
   vec3 c = centreOf(aA, aB, aSeed, e, arc, near, scale, dir, peel, debris);
   vec4 clip = uProj * vec4(c - vec3(0.0, 0.0, uCamZ), 1.0);
   // the liquid thins down the comet's tail with its cubes
-  float rr = sqrt(pow(aSeed.x, 2.4)) * uTravel;
-  float rad = uBlob * (1.0 - 0.55 * rr) * step(0.01, scale);
+  float rad = uBlob * mix(1.0, 0.45 + 0.55 * tailWidth(pow(aSeed.x, 2.4)), uTravel) * step(0.01, scale);
   gl_PointSize = max(1.0, rad * uProj[1][1] / max(0.1, clip.w) * uLiqH);
   vW = uCloud * uDensity * (1.0 - debris);
   vZ = clip.w;
@@ -1016,8 +1021,9 @@ uniform vec2 uTexel;
 uniform float uThr, uSink, uHasDepth;
 uniform vec3 uBase, uEnvLow, uEnvHigh, uSpec, uRim;
 out vec4 o;
+// the surface's height: a dome, steep at the rim and rounded over the top, from how much liquid is there
 float D(vec2 uv) {
-  return texture(uTex, uv).r;
+  return sqrt(max(0.0, texture(uTex, uv).r - uThr * 0.8));
 }
 void main() {
   vec4 s = texture(uTex, vUv);
@@ -1026,10 +1032,11 @@ void main() {
   float a = smoothstep(uThr * 0.85, uThr * 1.05, d);
   if (a < 0.01) discard;
   // the surface bulges where the liquid is deep: its slope gives the normal
-  vec2 t = uTexel * 1.5;
-  float gx = D(vUv + vec2(t.x, 0.0)) - D(vUv - vec2(t.x, 0.0));
-  float gy = D(vUv + vec2(0.0, t.y)) - D(vUv - vec2(0.0, t.y));
-  vec3 n = normalize(vec3(-gx, -gy, uThr * 0.3));
+  // sampled wide and averaged over two rings, so the surface reads as one smooth, thick liquid
+  vec2 t = uTexel * 2.5;
+  float gx = D(vUv + vec2(t.x, 0.0)) - D(vUv - vec2(t.x, 0.0)) + 0.5 * (D(vUv + vec2(2.0 * t.x, 0.0)) - D(vUv - vec2(2.0 * t.x, 0.0)));
+  float gy = D(vUv + vec2(0.0, t.y)) - D(vUv - vec2(0.0, t.y)) + 0.5 * (D(vUv + vec2(0.0, 2.0 * t.y)) - D(vUv - vec2(0.0, 2.0 * t.y)));
+  vec3 n = normalize(vec3(-gx, -gy, sqrt(uThr) * 0.3));
   // the blob's shading (the shared metal) with its wetter, tighter highlight
   vec3 v = vec3(0.0, 0.0, 1.0);
   vec3 l1 = normalize(vec3(-0.55, 0.85, 0.6));
@@ -1041,7 +1048,11 @@ void main() {
   vec3 r = reflect(-v, n);
   vec3 env = mix(uEnvLow, uEnvHigh, smoothstep(-0.35, 0.75, r.y));
   vec3 col = uBase * (0.12 + 0.78 * d1 + 0.2 * d2) + env * 0.34 + uSpec * sp * 0.8 + uRim * fres * 0.35;
-  col += uSpec * pow(max(dot(r, l1), 0.0), 120.0) * 0.6;
+  // the shine: a sharp, bright glint, a softer sheen around it, and a bright rim where it curves away
+  col += uSpec * (pow(max(dot(n, normalize(l1 + v)), 0.0), 220.0) * 1.8 + pow(max(dot(n, normalize(l1 + v)), 0.0), 30.0) * 0.3 + pow(max(dot(n, normalize(l2 + v)), 0.0), 90.0) * 0.5);
+  col += env * fres * 0.25;
+  // a broad soft window reflection across the upper left of the dome, so it reads wet even where it is flat
+  col += uSpec * smoothstep(0.62, 0.9, 0.5 + n.y * 0.7 - n.x * 0.5) * 0.22;
   // its surface lies just behind the nearest cubes everywhere alike, so cubes break through it all over the body
   // (not only where it is thickest), each one as it bobs up, and sink back under it
   float w = s.a + uSink;
@@ -1374,11 +1385,11 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, liqTex, 0);
   gl.bindFramebuffer(gl.FRAMEBUFFER, null);
   gl.useProgram(liqProg);
-  gl.uniform1f(liqProg.u('uBlob'), spacing * 2.4);
+  gl.uniform1f(liqProg.u('uBlob'), spacing * 3.4);
   gl.uniform1f(liqProg.u('uDensity'), LIQ_SCALE);
   gl.useProgram(liqComp);
-  gl.uniform1f(liqComp.u('uThr'), 1.4 * LIQ_SCALE);
-  gl.uniform1f(liqComp.u('uSink'), 0.13);
+  gl.uniform1f(liqComp.u('uThr'), 2.2 * LIQ_SCALE);
+  gl.uniform1f(liqComp.u('uSink'), 0.05);
   gl.uniform1f(liqComp.u('uHasDepth'), liqFloat ? 1 : 0);
   setAll('uCamZ', (l) => gl.uniform1f(l, CAM));
   setAll('uFloor', (l) => gl.uniform1f(l, FLOOR_Y));
