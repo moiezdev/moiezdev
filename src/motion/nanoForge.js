@@ -390,8 +390,18 @@ function solidFor(name, size) {
       // a unit sphere: the vertex shader turns it into the moving blob
       return sphere(builder(), 1, 144, 104).done();
     case 'planet': {
-      // only the globe fuses; the ring stays a belt of loose debris
-      return sphere(builder(), 0.5 + half * 0.6).done();
+      const b = sphere(builder(), 0.5 + half * 0.6);
+      // the ring as a few fine concentric bands, tilted like the debris belt (the page draws no cubes)
+      const tilt = 0.42;
+      for (const [rr, w] of [[0.74, 0.016], [0.83, 0.022], [0.93, 0.02], [1.03, 0.014]]) {
+        tube(b, (u) => {
+          const a = u * TAU;
+          const x = Math.cos(a) * rr;
+          const z = Math.sin(a) * rr;
+          return [x, -z * Math.sin(tilt), z * Math.cos(tilt)];
+        }, 160, w, 10, false);
+      }
+      return b.done();
     }
     case 'double helix': {
       const b = builder();
@@ -1263,7 +1273,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
       setAll(u, (l) => gl.uniform3fv(l, v));
     setAll('uLineAlpha', (l) => gl.uniform1f(l, L.lineAlpha));
     gl.useProgram(shadowProg);
-    gl.uniform1f(shadowProg.u('uDark'), L.shadow);
+    gl.uniform1f(shadowProg.u('uDark'), L.shadow * shadowMul);
   };
 
   // eased interaction state
@@ -1274,6 +1284,10 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   let py = 0;
   let scatter = 0;
   let huddle = 0;
+  let goo = 0;
+  // how much floor shadow to lay down (page mode: none under the dim hero background)
+  let shadowMul = 1;
+  let heave = 0;
   let shown = -1;
   let yaw = 0.6;
   let face = 0; // 1 while a flat shape (text) turns to face the viewer
@@ -1325,6 +1339,8 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     };
     const drawSolid = () => {
       if (skin <= 0.001) return;
+      // on the page a moving sludge is carried by the liquid blob instead
+      if (page && liquid && goo > 0.001) return;
       gl.useProgram(solidProg);
       gl.uniform1f(solidProg.u('uReveal'), skin);
       gl.uniform1f(solidProg.u('uLiquid'), liquid ? 1 : 0);
@@ -1340,16 +1356,15 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     // between two shapes the cubes melt into one liquid blob of the same metal as the sludge, which keeps
     // churning until it breaks back into cubes for the next shape
     const gooI = shapes.findIndex((s) => s.liquid);
-    const goo = gooI >= 0 ? ss(0.25, 0.75, huddle) : 0;
     const drawGoo = () => {
-      if (goo <= 0.001 || skin > 0.001) return;
+      if (gooI < 0 || goo <= 0.001) return;
       gl.useProgram(solidProg);
       gl.uniform1f(solidProg.u('uReveal'), 1);
       gl.uniform1f(solidProg.u('uLiquid'), 1);
       // fully coated: no leaking edge
       gl.uniform1f(solidProg.u('uFront'), 1);
-      gl.uniform1f(solidProg.u('uGoo'), goo);
-      gl.uniform1f(solidProg.u('uGooSize'), 0.6 + 0.55 * goo);
+      gl.uniform1f(solidProg.u('uGoo'), heave);
+      gl.uniform1f(solidProg.u('uGooSize'), 0.5 + 0.5 * goo + 0.3 * heave);
       gl.uniform3f(solidProg.u('uSway'), Math.sin(t * 0.8) * 0.06, Math.sin(t * 1.1) * 0.04, Math.cos(t * 0.7) * 0.05);
       gl.uniform1f(solidProg.u('uSquash'), 1);
       gl.uniform4fv(solidProg.u('uTend[0]'), tendrils());
@@ -1360,6 +1375,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
       gl.uniform1f(solidProg.u('uGooSize'), 1);
     };
     const drawCubes = () => {
+      if (page) return;
       gl.useProgram(cubeProg);
       gl.enable(gl.CULL_FACE);
       gl.bindVertexArray(cubeVao);
@@ -1397,7 +1413,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     drawSolid();
     drawGoo();
     drawCubes();
-    if (skin > 0.001 && peel * skin > 0.001 && fillVaos[solid].count) {
+    if (!page && skin > 0.001 && peel * skin > 0.001 && fillVaos[solid].count) {
       gl.useProgram(fillProg);
       gl.enable(gl.CULL_FACE);
       gl.bindVertexArray(fillVaos[solid].vao);
@@ -1405,7 +1421,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
       gl.disable(gl.CULL_FACE);
     }
 
-    if (skin < 0.999 || peel * skin > 0.001) {
+    if (!page && (skin < 0.999 || peel * skin > 0.001)) {
       gl.useProgram(lineProg);
       gl.enable(gl.BLEND);
       gl.depthMask(false);
@@ -1517,7 +1533,14 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     let reveal = 0;
     let mix = 1;
     let from = target;
-    if (moving) {
+    if (moving && page) {
+      // no cubes: the standing solid dissolves in patches, a liquid blob of the sludge's metal wells up in its
+      // place and heaves, and the next solid grows over it in patches
+      from = a;
+      mix = m < 0.5 ? 0 : 1;
+      solid = m < 0.5 ? a : b;
+      reveal = m < 0.5 ? 1 - ss(0.04, 0.4, m) : ss(0.6, 0.96, m);
+    } else if (moving) {
       from = a;
       mix = ss(0.22, 0.78, m);
       if (m < 0.22) {
@@ -1549,6 +1572,14 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     // in between two shapes the cubes dissolve into one huddled, churning cloud, then gather into the next shape
     scatter = 0;
     huddle = moving ? ss(0.06, 0.32, m) * (1 - ss(0.68, 0.94, m)) : 0;
+    if (page) {
+      // how much liquid there is: it wells up as the first solid dissolves (or is that solid, for the sludge) and
+      // sinks away as the next one forms
+      const up = shapes[a].liquid ? 1 : ss(0.1, 0.36, m);
+      const down = shapes[b].liquid ? 1 : 1 - ss(0.64, 0.9, m);
+      goo = moving ? up * down : 0;
+      heave = moving ? ss(0.1, 0.36, m) * (1 - ss(0.64, 0.9, m)) : 0;
+    }
     const planetUp = solid >= 0 && shapes[solid].name === 'planet';
     calm += ((planetUp ? 1 : 0) - calm) * Math.min(1, dt * 1.5);
     yaw += dt * 0.32 * (1 - calm);
@@ -1561,6 +1592,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
       }
       return;
     }
+    shadowMul = view.shadow ?? 1;
     placeView(view);
     draw({ a: from, b: target, mix, solid, reveal, t, yaw, pitch: 0.38 + Math.sin(t * 0.21) * 0.08 * (1 - calm) });
   }

@@ -8,7 +8,7 @@ const Experience = () => {
   const { t, jobs } = useContent();
 
   return (
-    <section className="w-full px-5 py-24 md:py-36 lg:py-44" id="experience">
+    <section className="w-full px-5 py-20 md:py-28 lg:py-32" id="experience">
       <div className="app-container forge-side forge-side--start">
         <SectionTitle
           forge="möbius loop"

@@ -25,7 +25,7 @@ const FeaturedCard = ({ project, pinTech, className = '' }) => {
   return (
     <article
       data-vt-project={project.id}
-      className={`group relative grid surface surface-hover lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] ${className}`}
+      className={`featured-card group relative grid surface surface-hover lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] ${className}`}
     >
       <TransitionLink
         to={to}
@@ -34,7 +34,7 @@ const FeaturedCard = ({ project, pinTech, className = '' }) => {
         shared={shared}
         data-vt-image
         data-cursor-label={t('cursor.view')}
-        className="relative block isolate overflow-hidden bg-surface-2 aspect-[16/10] lg:aspect-auto lg:min-h-[440px] rounded-ss-[var(--radius-card)] rounded-se-[var(--radius-card)] lg:rounded-se-none lg:rounded-es-[var(--radius-card)]"
+        className="featured-card__media relative block isolate overflow-hidden bg-surface-2 aspect-[16/10] lg:aspect-auto lg:min-h-[440px] rounded-ss-[var(--radius-card)] rounded-se-[var(--radius-card)] lg:rounded-se-none lg:rounded-es-[var(--radius-card)]"
       >
         <Img
           src={project.imageUrl}

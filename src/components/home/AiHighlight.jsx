@@ -48,7 +48,7 @@ const AiHighlight = () => {
   const demo = projects.find((p) => p.aiDemo);
 
   return (
-    <section className="band-tint w-full px-5 py-24 md:py-36 lg:py-44" id="ai">
+    <section className="band-tint w-full px-5 py-20 md:py-28 lg:py-32" id="ai">
       <div className="app-container forge-side forge-side--end">
         <ForgeSpot shape="double helix" />
         <div className="ai-split grid grid-cols-[minmax(0,1fr)] gap-14 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-20">

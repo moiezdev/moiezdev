@@ -1318,6 +1318,20 @@ html[data-theme='light'] .forge-layer {
   html[data-forge] .forge-side .lg\:grid-cols-3 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+  /* two cards per row, so the third would sit alone: it waits, as it does on tablets */
+  html[data-forge] .forge-side .sm\:max-lg\:hidden {
+    display: none;
+  }
+  /* the featured case study stacks, screenshot over details, instead of squeezing both side by side */
+  html[data-forge] .forge-side .featured-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  html[data-forge] .forge-side .featured-card__media {
+    aspect-ratio: 16 / 9;
+    min-height: 0;
+    border-start-end-radius: var(--radius-card);
+    border-end-start-radius: 0;
+  }
   html[data-forge] .forge-side .ai-split {
     grid-template-columns: minmax(0, 1fr);
     gap: 3rem;

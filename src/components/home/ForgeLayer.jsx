@@ -122,7 +122,10 @@ export default function ForgeLayer() {
         const view = { x: lerp(pa.x, pb.x, e), y: H / 2, size: lerp(pa.size, pb.size, e) };
         // crossing the content from one side to the other, the cloud fades back a little
         const across = pa.lift && pb.lift && Math.abs(pa.x - pb.x) > W * 0.2 ? 0.5 * Math.sin(Math.PI * e) : 0;
-        setLift(lerp(pa.lift, pb.lift, e) * (1 - across));
+        const l = lerp(pa.lift, pb.lift, e);
+        setLift(l * (1 - across));
+        // the dim background has no floor shadow; a shape in its own column stands on one
+        view.shadow = l;
         return { a, b, m, view };
       };
 
