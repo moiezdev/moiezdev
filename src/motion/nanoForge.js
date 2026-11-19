@@ -557,7 +557,7 @@ float leakGap(vec3 n) {
 const CENTRE = `
 uniform mat4 uProj;
 uniform mat3 uRot;
-uniform float uCamZ, uMix, uTime, uScatter, uAspect, uPointerOn;
+uniform float uCamZ, uMix, uTime, uScatter, uCloud, uAspect, uPointerOn;
 uniform vec2 uPointer;
 uniform float uRound; // 1 when the standing solid is the sludge, whose skin is a unit sphere
 ${LEAK}
@@ -598,6 +598,16 @@ vec3 centreOf(vec4 A, vec4 B, vec4 seed, out float e, out float arc, out float n
   vec3 p = mix(pa, pb, e) + dir * arc * (0.05 + seed.x * 0.05);
   p += dir * 0.005 * sin(uTime * 1.6 + seed.y * 40.0);
   p += dir * uScatter * (0.7 + seed.x * 1.8);
+  // between two shapes (page mode) the cubes huddle into one lumpy cloud that keeps churning and swaying,
+  // instead of spreading out evenly
+  if (uCloud > 0.001) {
+    float tt = uTime * 0.7;
+    vec3 q = p * 0.6;
+    q += 0.2 * vec3(sin(q.y * 3.2 + tt + seed.x * 5.0), sin(q.z * 2.9 - tt * 1.1 + seed.y * 5.0), sin(q.x * 3.5 + tt * 0.9 + seed.z * 5.0));
+    q += 0.09 * vec3(sin(q.z * 6.1 + tt * 1.7), sin(q.x * 5.7 + tt * 1.5), sin(q.y * 6.3 - tt * 1.9));
+    q *= 1.0 + 0.13 * vec3(sin(tt * 0.8), sin(tt * 0.8 + 2.1), sin(tt * 0.8 + 4.2));
+    p = mix(p, q, uCloud);
+  }
   // on hover, the cubes under the patches that peel away come loose and drift out a little
   vec3 obj = mix(A.xyz, B.xyz, e);
   peel = uPeel > 0.001 ? smoothstep(peelEdge() - 0.015, peelEdge() + 0.015, chunk(uRound > 0.5 ? normalize(obj) : obj)) : 0.0;
@@ -1216,6 +1226,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   let px = 0;
   let py = 0;
   let scatter = 0;
+  let huddle = 0;
   let shown = -1;
   let yaw = 0.6;
   let face = 0; // 1 while a flat shape (text) turns to face the viewer
@@ -1236,6 +1247,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     setAll('uMix', (l) => gl.uniform1f(l, mix));
     setAll('uTime', (l) => gl.uniform1f(l, t));
     setAll('uScatter', (l) => gl.uniform1f(l, scatter));
+    setAll('uCloud', (l) => gl.uniform1f(l, huddle));
     setAll('uPointer', (l) => gl.uniform2f(l, px, py));
     setAll('uPointerOn', (l) => gl.uniform1f(l, near));
     // the blob forms differently from the other shapes
@@ -1459,8 +1471,9 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
       px = (p.x / Math.max(1, W)) * 2 - 1;
       py = 1 - (p.y / Math.max(1, H)) * 2;
     }
-    // in between two shapes the cubes dissolve: they drift apart into a loose, thinning cloud, then gather again
-    scatter = moving ? 0.38 * Math.sin(Math.PI * ss(0.04, 0.96, m)) : 0;
+    // in between two shapes the cubes dissolve into one huddled, churning cloud, then gather into the next shape
+    scatter = 0;
+    huddle = moving ? ss(0.06, 0.32, m) * (1 - ss(0.68, 0.94, m)) : 0;
     const planetUp = solid >= 0 && shapes[solid].name === 'planet';
     calm += ((planetUp ? 1 : 0) - calm) * Math.min(1, dt * 1.5);
     yaw += dt * 0.32 * (1 - calm);

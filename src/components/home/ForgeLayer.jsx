@@ -12,11 +12,10 @@ import { usePrefersReducedMotion } from '../../motion/reducedMotion';
  * and it never takes the pointer.
  */
 
-// the move to a section's shape is spread over the whole scroll towards it: the last shape starts to come apart
-// while its section is still being read, when the next marker is still START x the screen height down (below
-// the screen), and the new shape has only formed once that marker is up at END
-const START = 1.25;
-const END = 0.2;
+// the move to a section's shape runs while its marker rises from the bottom of the screen (START x the screen
+// height) to END; the rest of the time each shape simply stands
+const START = 1.0;
+const END = 0.3;
 
 const markers = () => [...document.querySelectorAll('[data-forge-spot]')].filter((el) => el.isConnected);
 
