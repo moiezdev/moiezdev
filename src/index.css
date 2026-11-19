@@ -1279,8 +1279,8 @@ html[dir='rtl'] .scroll-progress {
   -webkit-mask-image: linear-gradient(to bottom, #000 80%, transparent 99%);
   mask-image: linear-gradient(to bottom, #000 80%, transparent 99%);
 }
-/* the forge behind the whole home page: under the content (see #root below), dim, so its metal sits close to
-   the page colour and never competes with the text */
+/* the forge behind the whole home page, under the content (see #root below), at full strength everywhere
+   (Moiz: nothing may dim or blur it) */
 .forge-layer {
   position: fixed;
   inset: 0;
@@ -1288,14 +1288,7 @@ html[dir='rtl'] .scroll-progress {
   width: 100%;
   height: 100%;
   pointer-events: none;
-  /* dim in the hero; --forge-lift (set by ForgeLayer.jsx) brings it to full strength where a section gives the
-     shape its own side column */
-  --forge-dim: 0.38;
-  opacity: calc(var(--forge-dim) + (0.96 - var(--forge-dim)) * var(--forge-lift, 0));
   animation: forge-layer-in 1.2s var(--ease-out) backwards;
-}
-html[data-theme='light'] .forge-layer {
-  --forge-dim: 0.24;
 }
 /* on wide screens each section after the hero keeps its content in one column and leaves the other for the
    forge's shape, alternating sides down the page (forge-side--end: shape on the inline end, --start: on the
@@ -1342,18 +1335,16 @@ html[data-theme='light'] .forge-layer {
     gap: 3rem;
   }
 }
-/* tinted bands let the dim forge show through them */
+/* tinted bands would wash the shape out as it passes under them, so with the forge they stay clear */
 html[data-forge] .band-tint {
-  background-color: color-mix(in srgb, var(--color-surface-2) 65%, transparent);
+  background-color: transparent;
 }
-/* while the forge runs, the home page's cards turn to glossy glass so the shapes show through them: a
-   see-through fill, a light blur that keeps text readable, a thin bright edge and a soft sheen from the top */
+/* while the forge runs, the home page's cards turn to clear glass so the shapes show through them: a
+   see-through fill (no blur, so the shape stays sharp), a thin bright edge and a soft sheen from the top */
 html[data-forge] .surface,
 html[data-forge] .arch-node {
   background-color: color-mix(in srgb, var(--color-surface) 52%, transparent);
   background-image: linear-gradient(150deg, rgb(255 255 255 / 0.07), transparent 42%);
-  -webkit-backdrop-filter: saturate(150%) blur(4px);
-  backdrop-filter: saturate(150%) blur(4px);
 }
 html[data-forge] .surface {
   box-shadow: var(--shadow-card), inset 0 0 0 1px rgb(255 255 255 / 0.07), inset 0 1px 0 rgb(255 255 255 / 0.1);
