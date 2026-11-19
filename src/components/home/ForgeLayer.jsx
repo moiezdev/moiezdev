@@ -18,6 +18,11 @@ import { usePrefersReducedMotion } from '../../motion/reducedMotion';
 const HOLD = 0.6;
 // how quickly the drawn shape catches up with the scroll (per second); lower is slower and smoother
 const GLIDE = 1.4;
+// the fastest it moves on, in sections per second, however fast the page is flung
+const MAX_SPEED = 0.9;
+// more than this many sections behind the scroll, it skips straight to the one in view, in a trip this long (s)
+const SKIP = 1;
+const SKIP_TIME = 1.8;
 // how the way from one section to the next is spent by Deto, the living liquid (src/motion/deto.js):
 //   0    - 0.28  the standing shape melts into one round body of liquid
 //   0.28 - 0.6   the body floats to the next shape's place (its own physics adds inertia, stretch and its tail)
@@ -104,8 +109,11 @@ export default function ForgeLayer() {
         if (r !== lift) canvas.style.setProperty('--forge-lift', String((lift = r)));
       };
       let pos = -1;
+      let posV = 0;
       let lastPos = -1;
       let trip = null;
+      let skip = null;
+      let shown = null;
       const scene = (dt) => {
         const list = markers();
         if (!list.length) return null;
@@ -136,35 +144,81 @@ export default function ForgeLayer() {
           if (y < holds[i][0]) break;
           target = y <= holds[i][1] || i === holds.length - 1 ? i : i + Math.min(1, (y - holds[i][1]) / Math.max(1, holds[i + 1][0] - holds[i][1]));
         }
-        pos = pos < 0 ? target : pos + (target - pos) * (1 - Math.exp(-dt * GLIDE));
-        if (Math.abs(target - pos) < 1e-4) pos = target;
-        // a whole number is a standing shape; in between, from shape k to k + 1
-        const k = Math.min(names.length - 1, Math.floor(pos + 1e-6));
-        const f = pos - k;
-        const still = f < 1e-4;
-        // the head always leads: a trip entered scrolling back up runs the same journey the other way round, from
-        // shape k + 1 to shape k (the direction is set when the trip starts, so turning back halfway never jumps)
-        const prev = lastPos;
-        lastPos = pos;
-        if (still) trip = null;
-        else if (!trip || trip.k !== k) trip = { k, back: pos < prev };
-        const back = !still && trip.back;
-        const kb = Math.min(names.length - 1, k + 1);
-        const ia = back ? kb : k;
-        const ib = still ? k : back ? k : kb;
-        const fw = back ? 1 - f : f;
+        if (pos < 0) pos = target;
+        // a fast scroll that leaves Deto more than a section behind: it goes straight to the section in view, from
+        // where it is and the shape it shows now, without visiting the sections in between (one timed trip). The
+        // section it is heading for follows the scroll until the new shape starts to form.
+        const dest = Math.min(names.length - 1, Math.max(0, Math.round(target)));
+        if (!skip && Math.abs(target - pos) > SKIP && shown) {
+          const mNow = shown.still ? 1 : phase(shown.fw);
+          // leave from the shape it mostly is now: still standing, or already round (then the trip starts round)
+          const from = shown.still || mNow < 0.5 ? shown.ia : shown.ib;
+          const round = !shown.still && mNow > 0.2 && mNow < 0.8;
+          skip = { from, to: dest, f: round ? TRAVEL[0] : 0, start: shown.view };
+        }
+        let ia;
+        let ib;
+        let fw;
+        let still;
+        let pa;
+        if (skip) {
+          skip.f += dt / SKIP_TIME;
+          if (skip.f < TRAVEL[1]) skip.to = dest;
+          if (skip.f >= 1) {
+            pos = lastPos = skip.to;
+            posV = 0;
+            trip = null;
+            skip = null;
+          }
+        }
+        if (skip) {
+          ia = skip.from;
+          ib = skip.to;
+          fw = skip.f;
+          still = false;
+          pa = skip.start;
+        } else {
+          // otherwise the drawn position chases the scroll at a capped, smoothly changing speed, and never passes
+          // it, so it never turns back on its own
+          const want = Math.max(-MAX_SPEED, Math.min(MAX_SPEED, (target - pos) * GLIDE));
+          posV += (want - posV) * (1 - Math.exp(-dt * 6));
+          const gap = target - pos;
+          const step = posV * dt;
+          if (Math.abs(gap) < 1e-4 || (step * gap > 0 && Math.abs(step) >= Math.abs(gap))) {
+            pos = target;
+            posV = 0;
+          } else if (step * gap > 0) pos += step;
+          // (moving away from the scroll, after it turned round: it holds still while its speed turns round too)
+          // a whole number is a standing shape; in between, from shape k to k + 1
+          const k = Math.min(names.length - 1, Math.floor(pos + 1e-6));
+          const f = pos - k;
+          still = f < 1e-4;
+          // the head always leads: a trip entered scrolling back up runs the same journey the other way round, from
+          // shape k + 1 to shape k (the direction is set when the trip starts, so turning back halfway never jumps)
+          const prev = lastPos;
+          lastPos = pos;
+          if (still) trip = null;
+          else if (!trip || trip.k !== k) trip = { k, back: pos < prev };
+          const back = !still && trip.back;
+          const kb = Math.min(names.length - 1, k + 1);
+          ia = back ? kb : k;
+          ib = still ? k : back ? k : kb;
+          fw = back ? 1 - f : f;
+          pa = place(list[ia], W, H);
+        }
         const m = still ? 1 : phase(fw);
         const a = forge.shapeIndex(names[ia]);
         const b = forge.shapeIndex(names[ib]);
         // where each of the two shapes stands: the hero's behind the portrait, a section's in the middle of its free
         // side column; in between, the body floats from one to the other
-        const pa = place(list[ia], W, H);
         const pb = still ? pa : place(list[ib], W, H);
         // where the way has got to, straight from one place to the next (it floats: nothing pulls it down). This is
         // only the target: Deto's own physics (inertia, stretch, its tail) follows it.
         const eh = still ? 0 : ease((fw - TRAVEL[0]) / (TRAVEL[1] - TRAVEL[0]));
         const view = { x: lerp(pa.x, pb.x, eh), y: lerp(pa.y, pb.y, eh), size: lerp(pa.size, pb.size, eh) };
-        setLift(lerp(pa.lift, pb.lift, eh));
+        const lifted = lerp(pa.lift, pb.lift, eh);
+        setLift(lifted);
+        shown = { ia, ib, fw, still, view: { ...view, lift: lifted } };
         return { a, b, m, view };
       };
 
