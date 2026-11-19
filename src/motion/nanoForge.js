@@ -1493,6 +1493,11 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
       dt *= 0.5;
     }
     const ss = (e0, e1, x) => Math.min(1, Math.max(0, (x - e0) / (e1 - e0)));
+    // the same ramp, eased at both ends, for what must not change speed suddenly (the cubes' flight, the cloud)
+    const sm = (e0, e1, x) => {
+      const u = ss(e0, e1, x);
+      return u * u * (3 - 2 * u);
+    };
     const moving = a !== b && m > 0 && m < 1;
     const target = !moving && m >= 1 ? b : a === b || m <= 0 ? a : b;
     let solid = -1;
@@ -1501,7 +1506,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     let from = target;
     if (moving) {
       from = a;
-      mix = ss(0.22, 0.78, m);
+      mix = sm(0.22, 0.78, m);
       if (m < 0.22) {
         solid = a;
         reveal = 1 - m / 0.22;
@@ -1530,7 +1535,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     }
     // in between two shapes the cubes dissolve into one huddled, churning cloud, then gather into the next shape
     scatter = 0;
-    huddle = moving ? ss(0.06, 0.32, m) * (1 - ss(0.68, 0.94, m)) : 0;
+    huddle = moving ? sm(0.06, 0.32, m) * (1 - sm(0.68, 0.94, m)) : 0;
     const planetUp = solid >= 0 && shapes[solid].name === 'planet';
     calm += ((planetUp ? 1 : 0) - calm) * Math.min(1, dt * 1.5);
     yaw += dt * 0.32 * (1 - calm);

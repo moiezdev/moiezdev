@@ -18,17 +18,16 @@ const HOLD = 0.03;
 // how quickly the drawn shape catches up with the scroll (per second); lower is slower and smoother
 const GLIDE = 1.4;
 // how the way from one section to the next is spent, as one living mass:
-//   0    - 0.2   the standing shape breaks up into its cubes
-//   0.2  - 0.28  the cubes pull together into one slime
+//   0    - 0.28  the standing shape breaks up into its cubes and they pull together into one slime
 //   0.28 - 0.6   the slime travels to the next shape's place, head first, a comet tail streaming behind along the
 //                path the head took and thinning out; the tail catches up once the head has arrived
-//   0.6  - 0.66  the gathered slime spreads into the next shape's positions
-//   0.66 - 1     the next shape's skin grows over them
+//   0.6  - 1     the gathered slime slowly spreads into the next shape's positions and its skin grows over them
+// Every stage eases in and out of the next (no sudden change of speed), so the hand-overs do not jerk.
 // The engine's own morph phases are 0-0.22 break, 0.22-0.78 cubes in flight, 0.78-1 form.
 const TRAVEL = [0.28, 0.6];
 const TAIL = 0.55; // how long the tail is, as a share of the journey
-const phase = (f) =>
-  f < 0.2 ? (f / 0.2) * 0.22 : f < 0.28 ? 0.22 + ((f - 0.2) / 0.08) * 0.28 : f < 0.6 ? 0.5 : f < 0.66 ? 0.5 + ((f - 0.6) / 0.06) * 0.28 : 0.78 + ((f - 0.66) / 0.34) * 0.22;
+const wave = (u) => 0.5 - 0.5 * Math.cos(Math.PI * Math.min(1, Math.max(0, u)));
+const phase = (f) => (f < TRAVEL[0] ? 0.5 * wave(f / TRAVEL[0]) : f < TRAVEL[1] ? 0.5 : 0.5 + 0.5 * wave((f - TRAVEL[1]) / (1 - TRAVEL[1])));
 // the head speeds up and slows down along the way (the same easing the engine gives the tail)
 const ease = (u) => {
   const x = Math.min(1, Math.max(0, u));
@@ -156,7 +155,7 @@ export default function ForgeLayer() {
         // the journey: h runs 0 -> 1 + TAIL while the slime travels (the head arrives at 1, the tail end at 1 + TAIL)
         const h = still ? 0 : Math.min(1, Math.max(0, (f - TRAVEL[0]) / (TRAVEL[1] - TRAVEL[0]))) * (1 + TAIL);
         const eh = ease(h);
-        const amt = still ? 0 : ss(0.2, 0.28, f) * (1 - ss(0.6, 0.66, f));
+        const amt = still ? 0 : ss(0.12, 0.28, f) * (1 - ss(TRAVEL[1], 0.8, f));
         // the path bows downwards a little, as if the slime were heavy
         const dx = pb.x - pa.x;
         const dy = pb.y - pa.y;
