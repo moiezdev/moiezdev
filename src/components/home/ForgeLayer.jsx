@@ -17,27 +17,21 @@ import { usePrefersReducedMotion } from '../../motion/reducedMotion';
 const HOLD = 0.03;
 // how quickly the drawn shape catches up with the scroll (per second); lower is slower and smoother
 const GLIDE = 1.4;
-// how the way from one section to the next is spent, as one living mass:
-//   0    - 0.28  the standing shape breaks up into its cubes and they pull together into one slime
-//   0.28 - 0.6   the slime travels to the next shape's place, head first, a comet tail streaming behind along the
-//                path the head took and thinning out; the tail catches up once the head has arrived
-//   0.6  - 1     the gathered slime slowly spreads into the next shape's positions and its skin grows over them
+// how the way from one section to the next is spent by Deto, the living liquid (src/motion/deto.js):
+//   0    - 0.28  the standing shape melts into one round body of liquid
+//   0.28 - 0.6   the body floats to the next shape's place (its own physics adds inertia, stretch and its tail)
+//   0.6  - 1     the next shape slowly grows out of it
 // Every stage eases in and out of the next (no sudden change of speed), so the hand-overs do not jerk.
-// The engine's own morph phases are 0-0.22 break, 0.22-0.78 cubes in flight, 0.78-1 form.
+// Deto's morph phases are 0-0.22 melt, 0.22-0.78 round, 0.78-1 form.
 const TRAVEL = [0.28, 0.6];
-const TAIL = 0.55; // how long the tail is, as a share of the journey
 const wave = (u) => 0.5 - 0.5 * Math.cos(Math.PI * Math.min(1, Math.max(0, u)));
 const phase = (f) => (f < TRAVEL[0] ? 0.5 * wave(f / TRAVEL[0]) : f < TRAVEL[1] ? 0.5 : 0.5 + 0.5 * wave((f - TRAVEL[1]) / (1 - TRAVEL[1])));
-// the head speeds up and slows down along the way (the same easing the engine gives the tail)
+// the target speeds up and slows down along the way
 const ease = (u) => {
   const x = Math.min(1, Math.max(0, u));
   return x * x * x * (x * (x * 6 - 15) + 10);
 };
 
-const ss = (a, b, x) => {
-  const u = Math.min(1, Math.max(0, (x - a) / (b - a)));
-  return u * u * (3 - 2 * u);
-};
 const lerp = (a, b, u) => a + (b - a) * u;
 
 /**
@@ -78,7 +72,7 @@ export default function ForgeLayer() {
     let cleanup = () => {};
 
     const start = async () => {
-      const { createNanoForge } = await import('../../motion/nanoForge.js');
+      const { createDeto } = await import('../../motion/deto.js');
       if (cancelled) return;
 
       const root = document.documentElement;
@@ -88,12 +82,10 @@ export default function ForgeLayer() {
       document.body.appendChild(canvas);
 
       const theme = () => (root.dataset.theme === 'light' ? 'light' : 'dark');
-      // a background never reacts to the pointer
-      const ptr = { x: 0, y: 0, active: false };
 
       let forge;
       try {
-        forge = createNanoForge(canvas, { theme, pointer: () => ptr, gentle: reduced, page: true });
+        forge = createDeto(canvas, { theme, gentle: reduced });
       } catch (err) {
         console.warn('[nano forge]', err);
       }
@@ -161,37 +153,15 @@ export default function ForgeLayer() {
         const m = still ? 1 : phase(fw);
         const a = forge.shapeIndex(names[ia]);
         const b = forge.shapeIndex(names[ib]);
-        // where each of the two shapes stands: the hero's large and dim in the middle of the screen, a section's at
-        // full strength in the middle of its free side column; in between, the cloud drifts from one to the other
+        // where each of the two shapes stands: the hero's behind the portrait, a section's in the middle of its free
+        // side column; in between, the body floats from one to the other
         const pa = place(list[ia], W, H);
         const pb = still ? pa : place(list[ib], W, H);
-        // the journey: h runs 0 -> 1 + TAIL while the slime travels (the head arrives at 1, the tail end at 1 + TAIL)
-        const h = still ? 0 : Math.min(1, Math.max(0, (fw - TRAVEL[0]) / (TRAVEL[1] - TRAVEL[0]))) * (1 + TAIL);
-        const eh = ease(h);
-        const amt = still ? 0 : ss(0.12, 0.28, fw) * (1 - ss(TRAVEL[1], 0.8, fw));
-        // the path bows downwards a little, as if the slime were heavy
-        const dx = pb.x - pa.x;
-        const dy = pb.y - pa.y;
-        const dist = Math.hypot(dx, dy);
-        let nx = dist > 1 ? -dy / dist : 0;
-        let ny = dist > 1 ? dx / dist : 0;
-        if (ny < 0) {
-          nx = -nx;
-          ny = -ny;
-        }
-        const bow = dist * 0.16;
-        const arc = Math.sin(Math.PI * eh);
-        const size = lerp(pa.size, pb.size, eh);
-        const view = { x: pa.x + dx * eh + nx * bow * arc, y: pa.y + dy * eh + ny * bow * arc, size };
-        // the same path for the engine, in its units (y up), so each cube can sit where the head was a moment ago
-        const unit = Math.max(1, size * 0.4);
-        view.travel = { amt, head: h, tail: TAIL, d: [dx / unit, -dy / unit], n: [(nx * bow) / unit, (-ny * bow) / unit] };
-        const e = eh;
-        // the liquid stays solid all the way across (no fading back while it crosses the content)
-        const l = lerp(pa.lift, pb.lift, e);
-        setLift(l);
-        // the dim background has no floor shadow; a shape in its own column stands on one
-        view.shadow = l;
+        // where the way has got to, straight from one place to the next (it floats: nothing pulls it down). This is
+        // only the target: Deto's own physics (inertia, stretch, its tail) follows it.
+        const eh = still ? 0 : ease((fw - TRAVEL[0]) / (TRAVEL[1] - TRAVEL[0]));
+        const view = { x: lerp(pa.x, pb.x, eh), y: lerp(pa.y, pb.y, eh), size: lerp(pa.size, pb.size, eh) };
+        setLift(lerp(pa.lift, pb.lift, eh));
         return { a, b, m, view };
       };
 
