@@ -8,7 +8,7 @@ import { usePrefersReducedMotion } from '../../motion/reducedMotion';
  * stands for the first shape. One fixed, viewport-sized canvas sits behind the content, at low opacity so it never
  * competes with the text, and draws one large shape in the middle of the screen. As a section's marker rises from
  * low on the screen to the upper part, the last shape breaks into cubes and they fuse into that section's shape;
- * scrolling back plays it in reverse. Nothing runs on a timer except the shape's own idle turning and rippling,
+ * scrolling back plays it in reverse. Nothing runs on a timer except the liquid's own rippling and the planet's orbiting debris,
  * and it never takes the pointer.
  */
 

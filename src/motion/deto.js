@@ -82,7 +82,7 @@ float mobius(vec3 p) {
   float c = cos(ph * 0.5);
   float s = sin(ph * 0.5);
   w = vec2(c * w.x + s * w.y, -s * w.x + c * w.y);
-  return box2(w, vec2(0.21, 0.035), 0.03);
+  return box2(w, vec2(0.13, 0.035), 0.03);
 }
 float hash1(float n) {
   return fract(sin(n * 127.1 + 311.7) * 43758.5453);
@@ -108,17 +108,26 @@ float belt(vec3 q, float R, float N, float speed, float seed) {
     float a = (id + 0.5 + (hash1(h) - 0.5) * 0.5) * cell;
     float r = R + (hash1(h + 0.1) - 0.5) * 0.12;
     vec3 c = vec3(cos(a) * r, (hash1(h + 0.2) - 0.5) * 0.12, sin(a) * r);
-    float size = 0.022 + 0.042 * pow(hash1(h + 0.3), 1.8);
+    float size = 0.014 + 0.026 * pow(hash1(h + 0.3), 1.8);
     vec3 lp = o - c;
     float t1 = hash1(h + 0.4) * 6.283 + uTime * (hash1(h + 0.5) - 0.5) * 1.4;
     float t2 = hash1(h + 0.6) * 6.283;
     lp.xy = mat2(cos(t1), sin(t1), -sin(t1), cos(t1)) * lp.xy;
     lp.yz = mat2(cos(t2), sin(t2), -sin(t2), cos(t2)) * lp.yz;
     vec3 ext = size * vec3(1.0, 0.5 + 0.6 * hash1(h + 0.7), 0.6 + 0.5 * hash1(h + 0.8));
-    // a worn chunk of rock rather than a cube: a well-rounded box with a lump on one side
-    vec3 bq = abs(lp) - ext + size * 0.45;
-    float rock = length(max(bq, 0.0)) + min(max(bq.x, max(bq.y, bq.z)), 0.0) - size * 0.45;
-    rock = smin(rock, length(lp - ext * vec3(0.55, 0.3, -0.25)) - size * 0.6, size * 0.4);
+    // every piece its own kind: a smooth pebble, a lumpy rock or a sharp shard (scaled per axis, so the distance is
+    // shrunk by the smallest axis to stay safe for the march)
+    float kind = hash1(h + 1.1);
+    vec3 sp = lp / ext;
+    float sm = min(ext.x, min(ext.y, ext.z));
+    float rock;
+    if (kind < 0.38) rock = (length(sp) - 1.0) * sm;
+    else if (kind < 0.76) {
+      rock = length(sp) - 0.8;
+      rock = smin(rock, length(sp - vec3(0.55, 0.35, -0.2)) - 0.55, 0.3);
+      rock = smin(rock, length(sp - vec3(-0.45, -0.3, 0.35)) - 0.5, 0.3);
+      rock *= sm;
+    } else rock = ((dot(abs(sp), vec3(1.0)) - 1.15) * 0.577 - 0.06) * sm;
     d = min(d, rock);
   }
   return d;
@@ -129,7 +138,7 @@ float planet(vec3 p) {
   float st = sin(0.42);
   vec3 q = vec3(p.x, ct * p.y - st * p.z, st * p.y + ct * p.z);
   // two belts of debris instead of one solid ring: the inner one orbits faster
-  float debris = min(belt(q, 0.72, 30.0, 0.42, 3.0), belt(q, 0.93, 42.0, 0.26, 17.0));
+  float debris = min(belt(q, 0.86, 50.0, 0.42, 3.0), belt(q, 1.06, 66.0, 0.26, 17.0));
   return min(globe, debris);
 }
 const float HK = 3.0 * PI / 1.64; // the strands' turn per unit of height
@@ -278,6 +287,7 @@ const LOOK = {
 };
 
 const NAMES = ['toxic sludge', 'cube', 'torus knot', 'möbius loop', 'planet', 'double helix'];
+const HELIX = NAMES.indexOf('double helix');
 
 const ss = (a, b, x) => {
   const u = Math.min(1, Math.max(0, (x - a) / (b - a)));
@@ -354,7 +364,8 @@ export function createDeto(canvas, { theme, gentle = false } = {}) {
   let lastM = 1;
   const spine = Array.from({ length: SPINE }, () => [0, 0]);
   const spineU = new Float32Array(SPINE * 2);
-  let yaw = 0.6;
+  const yaw = 0.6;
+  let pitch = 0.5;
 
   // frame-time watchdog: a phone that can't keep up drops to a lower resolution once
   let slow = 0;
@@ -414,9 +425,18 @@ export function createDeto(canvas, { theme, gentle = false } = {}) {
     // in body units per second
     const speed = Math.hypot(body.vx, body.vy) / R;
     if (speed > 0.08) {
+      // the stretch runs along an axis, not an arrow: a stretch along -d is the same as along d. So the axis
+      // only ever turns the short way. Turning it the long way (when the body swings back past its place on
+      // arriving) took it through zero, where it snapped round sideways: the sudden flip of the liquid.
+      let tx = body.vx / (speed * R);
+      let ty = -body.vy / (speed * R);
+      if (tx * dirX + ty * dirY < 0) {
+        tx = -tx;
+        ty = -ty;
+      }
       const f = 1 - Math.exp(-dt * 9);
-      dirX += (body.vx / (speed * R) - dirX) * f;
-      dirY += (-body.vy / (speed * R) - dirY) * f;
+      dirX += (tx - dirX) * f;
+      dirY += (ty - dirY) * f;
       const l = Math.hypot(dirX, dirY) || 1;
       dirX /= l;
       dirY /= l;
@@ -454,7 +474,10 @@ export function createDeto(canvas, { theme, gentle = false } = {}) {
     lastM = m;
     const push = Math.min(1, Math.hypot(ax, ay) / R / 40);
     agitation += (Math.max(changing, push, moving ? 0.35 : 0) - agitation) * (1 - Math.exp(-dt * 3));
-    yaw += dt * 0.3;
+    // the shapes do not turn: each faces the viewer steadily (only the planet's debris orbits). The double helix
+    // stands straight upright, the rest are tipped a little towards the viewer; the change eases in, never snaps
+    const shown = moving && m < 0.5 ? a : b;
+    pitch += ((shown === HELIX ? 0 : 0.5) - pitch) * (1 - Math.exp(-dt * 2));
 
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT);
@@ -471,7 +494,7 @@ export function createDeto(canvas, { theme, gentle = false } = {}) {
     gl.uniform1f(u('uStretch'), stretch);
     gl.uniform2fv(u('uSpine[0]'), spineU);
     gl.uniform1f(u('uTail'), tailAmt);
-    gl.uniformMatrix3fv(u('uRot'), false, rotation(yaw, 0.5 + Math.sin(t * 0.13) * 0.08));
+    gl.uniformMatrix3fv(u('uRot'), false, rotation(yaw, pitch));
     gl.bindVertexArray(vao);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   }
