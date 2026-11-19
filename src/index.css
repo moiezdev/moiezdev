@@ -1269,23 +1269,29 @@ html[dir='rtl'] .scroll-progress {
     aspect-ratio: 1 / 1;
   }
 }
-/* the canvas is 1.5x the stage (BLEED in HeroStage.jsx) and fades out well before its own edge,
-   so loose cubes, the scroll scatter and the shadow never hit a hard cut */
-.hero-stage__canvas > canvas {
-  position: absolute;
-  inset: -25%;
-  z-index: 0;
-  width: 150%;
-  height: 150%;
+/* the forge's one canvas (components/home/ForgeLayer.jsx): page-sized, above the page, never takes the pointer */
+.forge-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
-  -webkit-mask-image: radial-gradient(closest-side, #000 74%, transparent 100%);
-  mask-image: radial-gradient(closest-side, #000 74%, transparent 100%);
   animation: hero-stage-in var(--dur-slow) var(--ease-out) both;
+}
+@media print {
+  .forge-layer {
+    display: none;
+  }
 }
 @keyframes hero-stage-in {
   from {
     opacity: 0;
   }
+}
+/* once the forge is drawing, the hero's placeholder glow steps back */
+html[data-forge] .hero-stage__glow {
+  opacity: 0.5;
 }
 .hero-stage__glow {
   position: absolute;

@@ -7,6 +7,7 @@ import Contact from '../components/home/Contact.jsx';
 import LogoStrip from '../components/credibility/LogoStrip.jsx';
 import Testimonials from '../components/credibility/Testimonials.jsx';
 import Transition from '../components/functions/Transition.jsx';
+import ForgeLayer from '../components/home/ForgeLayer.jsx';
 
 /**
  * Home: hero → selected work → architecture → AI integration → short experience →
@@ -16,6 +17,7 @@ import Transition from '../components/functions/Transition.jsx';
 export default function Index() {
   return (
     <Transition>
+      <ForgeLayer />
       <Hero />
       <Projects />
       <Architecture />
