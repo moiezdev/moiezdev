@@ -1,4 +1,3 @@
-import Img from '../ui/Img';
 import Button from '../ui/Button';
 import ExternalIcon from '../ui/ExternalIcon';
 import { useContent } from '../../i18n/content';
@@ -12,19 +11,6 @@ const Stat = ({ value, label }) => (
       {value}
     </span>
     <span className="mt-2 text-[12px] sm:text-[13px] md:text-[14px] leading-snug text-label-2 text-balance">{label}</span>
-  </div>
-);
-
-/** A small round portrait beside the name: the hero's visual is the 3D stage. */
-const Avatar = ({ alt }) => (
-  <div className="relative shrink-0 size-14 md:size-16 overflow-hidden rounded-full ring-1 ring-separator bg-surface-2">
-    <Img
-      src="/heroSection/hero-img.webp"
-      alt={alt}
-      sizes="64px"
-      priority
-      className="absolute max-w-none w-[170%] start-[-35%] top-[-4%] h-auto"
-    />
   </div>
 );
 
@@ -51,8 +37,7 @@ const Hero = () => {
             {t('hero.available')}
           </span>
 
-          <div className="mt-6 lg:mt-8 flex items-center gap-3.5 text-start">
-            <Avatar alt={t('hero.portraitAlt')} />
+          <div className="mt-6 lg:mt-8 text-center lg:text-start">
             <p className="flex flex-col min-w-0">
               <span className="text-[18px] md:text-[22px] font-semibold tracking-[-0.02em] text-label leading-tight">
                 {t('hero.name')}
@@ -93,7 +78,7 @@ const Hero = () => {
         </div>
 
         <div className="order-first lg:order-none">
-          <HeroStage />
+          <HeroStage alt={t('hero.portraitAlt')} />
         </div>
       </div>
 

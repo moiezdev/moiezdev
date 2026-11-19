@@ -954,7 +954,7 @@ function rotation(yaw, pitch, roll = 0) {
  *   bleed?: number,                 how many times bigger than the stage the canvas is (default 1)
  * }} opts
  */
-export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () => ({ x: 0, y: 0, active: false }), onShape = () => {}, bleed = 1, gentle = false, page = false }) {
+export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () => ({ x: 0, y: 0, active: false }), onShape = () => {}, bleed = 1, gentle = false }) {
   const gl = canvas.getContext('webgl2', { antialias: true, alpha: true, premultipliedAlpha: true, powerPreference: 'high-performance' });
   if (!gl) return null;
 
@@ -1138,7 +1138,6 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   let W = 0;
   let H = 0;
   let dprCap = small ? 1.5 : 2;
-  if (page) dprCap = small ? 1.25 : 1.5;
   const CAM = 4.2;
   const shadowTex = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, shadowTex);
@@ -1168,25 +1167,6 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     const proj = perspective(fov, aspect, 0.5, 20);
     setAll('uProj', (l) => gl.uniformMatrix4fv(l, false, proj));
     setAll('uAspect', (l) => gl.uniform1f(l, aspect));
-    lastView = null;
-  };
-  // page mode: the shape is drawn into a box (centre x, y and size, in the canvas's CSS px) of a page-sized canvas
-  let lastView = null;
-  const BOX_PROJ = perspective(2 * Math.atan(1.32 / 4.2), 1, 0.5, 20);
-  const placeView = ({ x, y, size }) => {
-    if (lastView && lastView.x === x && lastView.y === y && lastView.size === size) return;
-    lastView = { x, y, size };
-    const sx = size / Math.max(1, W);
-    const sy = size / Math.max(1, H);
-    const ox = (2 * x) / Math.max(1, W) - 1;
-    const oy = 1 - (2 * y) / Math.max(1, H);
-    const P = BOX_PROJ;
-    const out = new Float32Array(P);
-    for (let c = 0; c < 4; c++) {
-      out[c * 4] = sx * P[c * 4] + ox * P[c * 4 + 3];
-      out[c * 4 + 1] = sy * P[c * 4 + 1] + oy * P[c * 4 + 3];
-    }
-    setAll('uProj', (l) => gl.uniformMatrix4fv(l, false, out));
   };
   resize();
   gl.bindFramebuffer(gl.FRAMEBUFFER, shadowFbo);
@@ -1405,78 +1385,6 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     });
   }
 
-  /**
-   * Page mode: the page's scroll decides the shape. `a` and `b` are shape indexes, `m` (0..1) how far the
-   * move from a to b has got: a breaks into cubes, they fly to b, and fuse into its skin. `view` is where
-   * the shape is drawn ({x, y, size} in CSS px); `null` when it's off screen, which skips the frame.
-   */
-  function drive(t, dt, { a, b, m, view }) {
-    if (!checked && dt > 0.034) slow += dt;
-    if (!checked && t > 4) {
-      checked = 1;
-      if (slow > 1.4 && dprCap > 1) {
-        dprCap = 1;
-        resize();
-      }
-    }
-    if (gentle) {
-      t *= 0.5;
-      dt *= 0.5;
-    }
-    const ss = (e0, e1, x) => Math.min(1, Math.max(0, (x - e0) / (e1 - e0)));
-    const moving = a !== b && m > 0 && m < 1;
-    const target = !moving && m >= 1 ? b : a === b || m <= 0 ? a : b;
-    let solid = -1;
-    let reveal = 0;
-    let mix = 1;
-    let from = target;
-    if (moving) {
-      from = a;
-      mix = ss(0.22, 0.78, m);
-      if (m < 0.22) {
-        solid = a;
-        reveal = 1 - m / 0.22;
-      } else if (m > 0.78) {
-        solid = b;
-        reveal = (m - 0.78) / 0.22;
-      }
-    } else {
-      solid = target;
-      reveal = 1;
-    }
-    if (target !== shown && reveal > 0) {
-      shown = target;
-      onShape(target, shapes[target].name, shapes.length);
-    }
-    const ease = Math.min(1, dt * 3);
-    const p = pointer();
-    const inView = !!view && p.active && Math.hypot(p.x - view.x, p.y - view.y) < view.size * 0.6;
-    near += ((inView ? 1 : 0) - near) * ease;
-    // hovering the shape itself peels about 15% of its skin back into cubes
-    const over = !!view && p.active && Math.hypot(p.x - view.x, p.y - view.y) < view.size * 0.36;
-    peel += ((over && !moving ? 1 : 0) - peel) * Math.min(1, dt * 2.2);
-    if (p.active) {
-      px = (p.x / Math.max(1, W)) * 2 - 1;
-      py = 1 - (p.y / Math.max(1, H)) * 2;
-    }
-    const planetUp = solid >= 0 && shapes[solid].name === 'planet';
-    calm += ((planetUp ? 1 : 0) - calm) * Math.min(1, dt * 1.5);
-    yaw += dt * 0.32 * (1 - calm);
-    if (!view) {
-      if (lastView !== 'off') {
-        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-        gl.clearColor(0, 0, 0, 0);
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        lastView = 'off';
-      }
-      return;
-    }
-    placeView(view);
-    draw({ a: from, b: target, mix, solid, reveal, t, yaw, pitch: 0.38 + Math.sin(t * 0.21) * 0.08 * (1 - calm) });
-  }
-
-  const shapeIndex = (name) => shapes.findIndex((s) => s.name === name);
-
   /** One finished shape, no motion (reduced motion). */
   function still(index = shapes.findIndex((s) => s.name === 'torus knot')) {
     scatter = 0;
@@ -1491,5 +1399,5 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     gl.getExtension('WEBGL_lose_context')?.loseContext();
   }
 
-  return { step, drive, shapeIndex, still, resize, destroy, count: N };
+  return { step, still, resize, destroy, count: N };
 }

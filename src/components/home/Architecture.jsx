@@ -10,8 +10,7 @@ const Architecture = () => {
   return (
     <section className="w-full px-5 py-20 md:py-28" id="architecture">
       <div className="app-container">
-        <SectionTitle
-          forge="torus knot" eyebrow={t('arch.eyebrow')} title={t('arch.headline')} subtitle={t('arch.subtitle')} />
+        <SectionTitle eyebrow={t('arch.eyebrow')} title={t('arch.headline')} subtitle={t('arch.subtitle')} />
         <Reveal>
           <ArchitectureFigure />
         </Reveal>

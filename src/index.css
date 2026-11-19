@@ -1258,40 +1258,59 @@ html[dir='rtl'] .scroll-progress {
   width: 100%;
   max-width: 600px;
   margin-inline: auto;
-}
-.hero-stage__canvas {
-  position: relative;
-  height: clamp(220px, 60vw, 320px);
+  height: clamp(300px, 88vw, 400px);
 }
 @media (min-width: 1024px) {
-  .hero-stage__canvas {
+  .hero-stage {
     height: auto;
     aspect-ratio: 1 / 1;
   }
 }
-/* the forge's one canvas (components/home/ForgeLayer.jsx): page-sized, above the page, never takes the pointer */
-.forge-layer {
-  position: fixed;
-  inset: 0;
-  z-index: 30;
-  width: 100%;
-  height: 100%;
+/* the forge is a halo behind the head and shoulders: a square 1.5x the stage's height, centred just below the chin,
+   so the shape frames the portrait instead of hiding behind it */
+.hero-stage__halo {
+  position: absolute;
+  top: -40%;
+  left: 50%;
+  height: 150%;
+  aspect-ratio: 1 / 1;
+  transform: translateX(-50%);
+}
+/* the canvas is 1.3x the halo (BLEED in HeroStage.jsx) and fades out well before its own edge,
+   so loose cubes and the swarm stay around the portrait instead of crossing the copy */
+.hero-stage__halo > canvas {
+  position: absolute;
+  inset: -15%;
+  z-index: 0;
+  width: 130%;
+  height: 130%;
   pointer-events: none;
+  -webkit-mask-image: radial-gradient(closest-side, #000 54%, transparent 74%);
+  mask-image: radial-gradient(closest-side, #000 54%, transparent 74%);
   animation: hero-stage-in var(--dur-slow) var(--ease-out) both;
 }
-@media print {
-  .forge-layer {
-    display: none;
-  }
+.hero-stage__portrait {
+  position: absolute;
+  bottom: -6%;
+  left: 50%;
+  z-index: 1;
+  height: 104%;
+  width: auto;
+  max-width: none;
+  transform: translateX(-50%);
+  pointer-events: none;
+  user-select: none;
+  -webkit-mask-image: linear-gradient(to bottom, #000 80%, transparent 99%);
+  mask-image: linear-gradient(to bottom, #000 80%, transparent 99%);
+}
+/* light mode: the black metal would merge with dark hair, so a soft light rim keeps the silhouette apart */
+html[data-theme='light'] .hero-stage__portrait {
+  filter: drop-shadow(0 0 1.5px rgb(255 255 255 / 0.95)) drop-shadow(0 0 16px rgb(255 255 255 / 0.55));
 }
 @keyframes hero-stage-in {
   from {
     opacity: 0;
   }
-}
-/* once the forge is drawing, the hero's placeholder glow steps back */
-html[data-forge] .hero-stage__glow {
-  opacity: 0.5;
 }
 .hero-stage__glow {
   position: absolute;

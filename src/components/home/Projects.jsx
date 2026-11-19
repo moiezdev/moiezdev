@@ -14,7 +14,6 @@ const Projects = () => {
     <section className="band-tint w-full px-5 py-20 md:py-28 scroll-mt-16" id="work">
       <div className="app-container">
         <SectionTitle
-          forge="cube"
           eyebrow={t('projects.eyebrow')}
           title={t('projects.headline')}
           buttonText={t('projects.viewAll')}
