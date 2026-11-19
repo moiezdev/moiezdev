@@ -17,15 +17,23 @@ import { usePrefersReducedMotion } from '../../motion/reducedMotion';
 const HOLD = 0.03;
 // how quickly the drawn shape catches up with the scroll (per second); lower is slower and smoother
 const GLIDE = 1.4;
-// the swarm's travel between places on screen: spring stiffness and damping (per second², per second; slightly
-// under-damped, so it settles with a small overshoot) and how many seconds of its travel it trails behind
-const SPRING = 5;
-const DAMP = 3.4;
-const LAG = 0.32;
-// how the way from one section to the next is spent: the shape comes apart over the first 25%, the cubes fly as a
-// cloud over the next 10%, and the next shape forms over the last 65%, a long, slow build (the engine's own phases
-// are 22/56/22)
-const phase = (f) => (f < 0.25 ? (f / 0.25) * 0.22 : f < 0.35 ? 0.22 + ((f - 0.25) / 0.1) * 0.56 : 0.78 + ((f - 0.35) / 0.65) * 0.22);
+// how the way from one section to the next is spent, as one living mass:
+//   0    - 0.2   the standing shape breaks up into its cubes
+//   0.2  - 0.28  the cubes pull together into one slime
+//   0.28 - 0.6   the slime travels to the next shape's place, head first, a comet tail streaming behind along the
+//                path the head took and thinning out; the tail catches up once the head has arrived
+//   0.6  - 0.66  the gathered slime spreads into the next shape's positions
+//   0.66 - 1     the next shape's skin grows over them
+// The engine's own morph phases are 0-0.22 break, 0.22-0.78 cubes in flight, 0.78-1 form.
+const TRAVEL = [0.28, 0.6];
+const TAIL = 0.55; // how long the tail is, as a share of the journey
+const phase = (f) =>
+  f < 0.2 ? (f / 0.2) * 0.22 : f < 0.28 ? 0.22 + ((f - 0.2) / 0.08) * 0.28 : f < 0.6 ? 0.5 : f < 0.66 ? 0.5 + ((f - 0.6) / 0.06) * 0.28 : 0.78 + ((f - 0.66) / 0.34) * 0.22;
+// the head speeds up and slows down along the way (the same easing the engine gives the tail)
+const ease = (u) => {
+  const x = Math.min(1, Math.max(0, u));
+  return x * x * x * (x * (x * 6 - 15) + 10);
+};
 
 const ss = (a, b, x) => {
   const u = Math.min(1, Math.max(0, (x - a) / (b - a)));
@@ -104,7 +112,6 @@ export default function ForgeLayer() {
         if (r !== lift) canvas.style.setProperty('--forge-lift', String((lift = r)));
       };
       let pos = -1;
-      let sp = null;
       const scene = (dt) => {
         const list = markers();
         if (!list.length) return null;
@@ -146,26 +153,28 @@ export default function ForgeLayer() {
         // full strength in the middle of its free side column; in between, the cloud drifts from one to the other
         const pa = place(list[k], W, H);
         const pb = still ? pa : place(list[Math.min(names.length - 1, k + 1)], W, H);
-        // it changes sides while it is a cloud, over twice the scroll it used to take
-        const e = still ? 0 : ss(0.08, 0.56, f);
-        const goal = { x: lerp(pa.x, pb.x, e), y: lerp(pa.y, pb.y, e), size: lerp(pa.size, pb.size, e) };
-        // the drawn position is a damped spring towards that goal, so the swarm accelerates, travels and settles
-        // with a little overshoot, and its speed pulls it into a trailing drop (see uTrail in the engine)
-        if (!sp) sp = { ...goal, vx: 0, vy: 0, vs: 0 };
-        const step = Math.min(dt, 1 / 30);
-        for (const [p, v] of [['x', 'vx'], ['y', 'vy'], ['size', 'vs']]) {
-          sp[v] += ((goal[p] - sp[p]) * SPRING - sp[v] * DAMP) * step;
-          sp[p] += sp[v] * step;
+        // the journey: h runs 0 -> 1 + TAIL while the slime travels (the head arrives at 1, the tail end at 1 + TAIL)
+        const h = still ? 0 : Math.min(1, Math.max(0, (f - TRAVEL[0]) / (TRAVEL[1] - TRAVEL[0]))) * (1 + TAIL);
+        const eh = ease(h);
+        const amt = still ? 0 : ss(0.2, 0.28, f) * (1 - ss(0.6, 0.66, f));
+        // the path bows downwards a little, as if the slime were heavy
+        const dx = pb.x - pa.x;
+        const dy = pb.y - pa.y;
+        const dist = Math.hypot(dx, dy);
+        let nx = dist > 1 ? -dy / dist : 0;
+        let ny = dist > 1 ? dx / dist : 0;
+        if (ny < 0) {
+          nx = -nx;
+          ny = -ny;
         }
-        const unit = Math.max(1, sp.size * 0.45);
-        let tx = (-sp.vx / unit) * LAG;
-        let ty = (sp.vy / unit) * LAG;
-        const tlen = Math.hypot(tx, ty);
-        if (tlen > 0.9) {
-          tx *= 0.9 / tlen;
-          ty *= 0.9 / tlen;
-        }
-        const view = { x: sp.x, y: sp.y, size: sp.size, trail: [tx, ty] };
+        const bow = dist * 0.16;
+        const arc = Math.sin(Math.PI * eh);
+        const size = lerp(pa.size, pb.size, eh);
+        const view = { x: pa.x + dx * eh + nx * bow * arc, y: pa.y + dy * eh + ny * bow * arc, size };
+        // the same path for the engine, in its units (y up), so each cube can sit where the head was a moment ago
+        const unit = Math.max(1, size * 0.4);
+        view.travel = { amt, head: h, tail: TAIL, d: [dx / unit, -dy / unit], n: [(nx * bow) / unit, (-ny * bow) / unit] };
+        const e = eh;
         // crossing the content from one side to the other, the cloud fades back a little
         const across = pa.lift && pb.lift && Math.abs(pa.x - pb.x) > W * 0.2 ? 0.5 * Math.sin(Math.PI * e) : 0;
         const l = lerp(pa.lift, pb.lift, e);

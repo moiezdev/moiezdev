@@ -586,7 +586,14 @@ const CENTRE = `
 uniform mat4 uProj;
 uniform mat3 uRot;
 uniform float uCamZ, uMix, uTime, uScatter, uCloud, uAspect, uPointerOn;
-uniform vec3 uTrail; // how far, and which way, the swarm trails behind as it travels (world units, on screen axes)
+// the slime's journey between two places (page mode): how much of a slime it is, where the head is along the
+// path (0..1 + tail), the tail's length, and the path (straight part and downward bow, world units on screen axes)
+uniform float uTravel, uHead, uTailL;
+uniform vec2 uPathD, uPathN;
+float easeJ(float u) {
+  float x = clamp(u, 0.0, 1.0);
+  return x * x * x * (x * (x * 6.0 - 15.0) + 10.0);
+}
 uniform vec2 uPointer;
 uniform float uRound; // 1 when the standing solid is the sludge, whose skin is a unit sphere
 ${LEAK}
@@ -644,13 +651,21 @@ vec3 centreOf(vec4 A, vec4 B, vec4 seed, out float e, out float arc, out float n
   // w holds the cube's scale, plus 2 x the part it belongs to (the planet's globe and ring, each helix strand and the rungs)
   scale = mix(mod(A.w, 2.0), mod(B.w, 2.0), e) * (1.0 - 0.1 * arc) * (1.0 - 0.75 * uScatter);
   vec3 c = uRot * p;
-  // pulled along as it travels: the swarm stretches into a trailing drop, the cubes at the back lagging most,
-  // so it elongates against its motion and springs back together when it stops
-  float tl = length(uTrail);
-  if (tl > 1e-4) {
-    vec3 tdir = uTrail / tl;
-    float back = clamp(dot(normalize(c + vec3(1e-4)), tdir) * 0.5 + 0.5, 0.0, 1.0);
-    c += uTrail * (0.12 + 0.88 * back * back) * (0.6 + 0.8 * seed.x);
+  // travelling as one slime: each cube has a place along the body, most of them in the round head and fewer and
+  // smaller down the tail; a cube sits where the head was a moment ago (further back for cubes further down the
+  // tail), so the tail follows the head's own path, bends with it and thins out, then catches up on arrival
+  if (uTravel > 0.001) {
+    float r = pow(seed.x, 1.7);
+    c *= mix(1.0, 0.5 * (1.0 - 0.75 * r), uTravel);
+    float hp = easeJ(uHead);
+    float tp = easeJ(uHead - r * uTailL);
+    vec2 off = (tp - hp) * uPathD + (sin(3.14159265 * tp) - sin(3.14159265 * hp)) * uPathN;
+    // a slow ripple runs down the tail while it streams
+    vec2 dirP = normalize(uPathD + vec2(1e-5));
+    vec2 perp = vec2(-dirP.y, dirP.x);
+    off += perp * sin(r * 10.0 - uTime * 2.6 + seed.y * 2.0) * 0.06 * r * smoothstep(0.0, 0.05, hp - tp);
+    c.xy += off * uTravel;
+    scale *= 1.0 - 0.6 * r * uTravel;
   }
   // the pointer parts the cubes around it
   vec4 c0 = uProj * vec4(c - vec3(0.0, 0.0, uCamZ), 1.0);
@@ -1529,8 +1544,12 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
       return;
     }
     shadowMul = view.shadow ?? 1;
-    const tr = view.trail || [0, 0];
-    setAll('uTrail', (l) => gl.uniform3f(l, tr[0], tr[1], 0));
+    const tv = view.travel || { amt: 0, head: 0, tail: 0, d: [0, 0], n: [0, 0] };
+    setAll('uTravel', (l) => gl.uniform1f(l, tv.amt));
+    setAll('uHead', (l) => gl.uniform1f(l, tv.head));
+    setAll('uTailL', (l) => gl.uniform1f(l, tv.tail));
+    setAll('uPathD', (l) => gl.uniform2f(l, tv.d[0], tv.d[1]));
+    setAll('uPathN', (l) => gl.uniform2f(l, tv.n[0], tv.n[1]));
     placeView(view);
     draw({ a: from, b: target, mix, solid, reveal, t, yaw, pitch: 0.38 + Math.sin(t * 0.21) * 0.08 * (1 - calm) });
   }
