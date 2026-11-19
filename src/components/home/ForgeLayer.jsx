@@ -51,7 +51,7 @@ const place = (el, W, H) => {
   const stage = el.closest('.hero-stage');
   if (stage) {
     const r = stage.getBoundingClientRect();
-    return { x: r.left + r.width / 2, y: r.top + r.height * 0.45, size: Math.min(Math.max(r.width, r.height) * 1.2, H * 0.76), lift: 0 };
+    return { x: r.left + r.width / 2, y: r.top + r.height * 0.45, size: Math.min(Math.max(r.width, r.height) * 0.9, H * 0.57), lift: 0 };
   }
   const box = el.closest('.forge-side');
   if (!box || W < 1024) return centre;
