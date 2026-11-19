@@ -586,6 +586,7 @@ const CENTRE = `
 uniform mat4 uProj;
 uniform mat3 uRot;
 uniform float uCamZ, uMix, uTime, uScatter, uCloud, uAspect, uPointerOn;
+uniform vec3 uTrail; // how far, and which way, the swarm trails behind as it travels (world units, on screen axes)
 uniform vec2 uPointer;
 uniform float uRound; // 1 when the standing solid is the sludge, whose skin is a unit sphere
 ${LEAK}
@@ -643,6 +644,14 @@ vec3 centreOf(vec4 A, vec4 B, vec4 seed, out float e, out float arc, out float n
   // w holds the cube's scale, plus 2 x the part it belongs to (the planet's globe and ring, each helix strand and the rungs)
   scale = mix(mod(A.w, 2.0), mod(B.w, 2.0), e) * (1.0 - 0.1 * arc) * (1.0 - 0.75 * uScatter);
   vec3 c = uRot * p;
+  // pulled along as it travels: the swarm stretches into a trailing drop, the cubes at the back lagging most,
+  // so it elongates against its motion and springs back together when it stops
+  float tl = length(uTrail);
+  if (tl > 1e-4) {
+    vec3 tdir = uTrail / tl;
+    float back = clamp(dot(normalize(c + vec3(1e-4)), tdir) * 0.5 + 0.5, 0.0, 1.0);
+    c += uTrail * (0.12 + 0.88 * back * back) * (0.6 + 0.8 * seed.x);
+  }
   // the pointer parts the cubes around it
   vec4 c0 = uProj * vec4(c - vec3(0.0, 0.0, uCamZ), 1.0);
   vec2 d = c0.xy / c0.w - uPointer;
@@ -1520,6 +1529,8 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
       return;
     }
     shadowMul = view.shadow ?? 1;
+    const tr = view.trail || [0, 0];
+    setAll('uTrail', (l) => gl.uniform3f(l, tr[0], tr[1], 0));
     placeView(view);
     draw({ a: from, b: target, mix, solid, reveal, t, yaw, pitch: 0.38 + Math.sin(t * 0.21) * 0.08 * (1 - calm) });
   }

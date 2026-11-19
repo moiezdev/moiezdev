@@ -17,6 +17,11 @@ import { usePrefersReducedMotion } from '../../motion/reducedMotion';
 const HOLD = 0.03;
 // how quickly the drawn shape catches up with the scroll (per second); lower is slower and smoother
 const GLIDE = 1.4;
+// the swarm's travel between places on screen: spring stiffness and damping (per second², per second; slightly
+// under-damped, so it settles with a small overshoot) and how many seconds of its travel it trails behind
+const SPRING = 5;
+const DAMP = 3.4;
+const LAG = 0.32;
 // how the way from one section to the next is spent: the shape comes apart over the first 25%, the cubes fly as a
 // cloud over the next 10%, and the next shape forms over the last 65%, a long, slow build (the engine's own phases
 // are 22/56/22)
@@ -99,6 +104,7 @@ export default function ForgeLayer() {
         if (r !== lift) canvas.style.setProperty('--forge-lift', String((lift = r)));
       };
       let pos = -1;
+      let sp = null;
       const scene = (dt) => {
         const list = markers();
         if (!list.length) return null;
@@ -140,9 +146,26 @@ export default function ForgeLayer() {
         // full strength in the middle of its free side column; in between, the cloud drifts from one to the other
         const pa = place(list[k], W, H);
         const pb = still ? pa : place(list[Math.min(names.length - 1, k + 1)], W, H);
-        // it changes sides while it is a cloud
-        const e = still ? 0 : ss(0.18, 0.42, f);
-        const view = { x: lerp(pa.x, pb.x, e), y: lerp(pa.y, pb.y, e), size: lerp(pa.size, pb.size, e) };
+        // it changes sides while it is a cloud, over twice the scroll it used to take
+        const e = still ? 0 : ss(0.08, 0.56, f);
+        const goal = { x: lerp(pa.x, pb.x, e), y: lerp(pa.y, pb.y, e), size: lerp(pa.size, pb.size, e) };
+        // the drawn position is a damped spring towards that goal, so the swarm accelerates, travels and settles
+        // with a little overshoot, and its speed pulls it into a trailing drop (see uTrail in the engine)
+        if (!sp) sp = { ...goal, vx: 0, vy: 0, vs: 0 };
+        const step = Math.min(dt, 1 / 30);
+        for (const [p, v] of [['x', 'vx'], ['y', 'vy'], ['size', 'vs']]) {
+          sp[v] += ((goal[p] - sp[p]) * SPRING - sp[v] * DAMP) * step;
+          sp[p] += sp[v] * step;
+        }
+        const unit = Math.max(1, sp.size * 0.45);
+        let tx = (-sp.vx / unit) * LAG;
+        let ty = (sp.vy / unit) * LAG;
+        const tlen = Math.hypot(tx, ty);
+        if (tlen > 0.9) {
+          tx *= 0.9 / tlen;
+          ty *= 0.9 / tlen;
+        }
+        const view = { x: sp.x, y: sp.y, size: sp.size, trail: [tx, ty] };
         // crossing the content from one side to the other, the cloud fades back a little
         const across = pa.lift && pb.lift && Math.abs(pa.x - pb.x) > W * 0.2 ? 0.5 * Math.sin(Math.PI * e) : 0;
         const l = lerp(pa.lift, pb.lift, e);
