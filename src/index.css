@@ -1288,11 +1288,40 @@ html[dir='rtl'] .scroll-progress {
   width: 100%;
   height: 100%;
   pointer-events: none;
-  opacity: 0.38;
-  animation: forge-layer-in 1.2s var(--ease-out) both;
+  /* dim in the hero; --forge-lift (set by ForgeLayer.jsx) brings it to full strength where a section gives the
+     shape its own side column */
+  --forge-dim: 0.38;
+  opacity: calc(var(--forge-dim) + (0.96 - var(--forge-dim)) * var(--forge-lift, 0));
+  animation: forge-layer-in 1.2s var(--ease-out) backwards;
 }
 html[data-theme='light'] .forge-layer {
-  opacity: 0.24;
+  --forge-dim: 0.24;
+}
+/* on wide screens each section after the hero keeps its content in one column and leaves the other for the
+   forge's shape, alternating sides down the page (forge-side--end: shape on the inline end, --start: on the
+   inline start). Without the forge (no WebGL) the sections keep their full width. */
+@media (min-width: 1024px) {
+  html[data-forge] .forge-side {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    column-gap: 3rem;
+  }
+  html[data-forge] .forge-side > * {
+    grid-column: 1;
+  }
+  html[data-forge] .forge-side--start {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  }
+  html[data-forge] .forge-side--start > * {
+    grid-column: 2;
+  }
+  html[data-forge] .forge-side .lg\:grid-cols-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  html[data-forge] .forge-side .ai-split {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 3rem;
+  }
 }
 /* tinted bands let the dim forge show through them */
 html[data-forge] .band-tint {

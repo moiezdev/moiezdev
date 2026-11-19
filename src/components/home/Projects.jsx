@@ -12,7 +12,7 @@ const Projects = () => {
 
   return (
     <section className="band-tint w-full px-5 py-20 md:py-28 scroll-mt-16" id="work">
-      <div className="app-container">
+      <div className="app-container forge-side forge-side--end">
         <SectionTitle
           forge="cube"
           eyebrow={t('projects.eyebrow')}

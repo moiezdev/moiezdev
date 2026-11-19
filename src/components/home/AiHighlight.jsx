@@ -49,9 +49,10 @@ const AiHighlight = () => {
 
   return (
     <section className="band-tint w-full px-5 py-24 md:py-36 lg:py-44" id="ai">
-      <div className="app-container grid grid-cols-[minmax(0,1fr)] gap-14 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-20">
+      <div className="app-container forge-side forge-side--end">
+        <ForgeSpot shape="double helix" />
+        <div className="ai-split grid grid-cols-[minmax(0,1fr)] gap-14 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-20">
         <Reveal className="min-w-0">
-          <ForgeSpot shape="double helix" />
           <p className="eyebrow mb-3">{t('ai.eyebrow')}</p>
           <h2 className="headline-1 text-label">{t('ai.headline')}</h2>
           <p className="lead mt-5 mb-10">{t('ai.subtitle')}</p>
@@ -81,6 +82,7 @@ const AiHighlight = () => {
             </Item>
           )}
         </Reveal>
+        </div>
       </div>
     </section>
   );

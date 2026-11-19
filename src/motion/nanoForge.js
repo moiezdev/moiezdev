@@ -656,6 +656,7 @@ out vec3 vN;
 out vec3 vLocal;
 out vec3 vWorld;
 out float vGlow;
+out vec3 vWet;
 ${CENTRE}
 ${FLOOR}
 void main() {
@@ -671,7 +672,11 @@ void main() {
   // the cubes a hover peels loose are smaller than the ones that build the shape
   float shrink = mix(1.0, 0.55, peel * (1.0 - uCubes));
   vis *= max(uncovered(aA, aB), peel);
-  vec3 world = c + R * (aPos * scale * vis * shrink * uSize);
+  // in the cloud between two shapes the cubes swell into soft beads that run together into one liquid mass
+  float swell = 1.0 + uCloud * (1.5 + 0.7 * aSeed.y);
+  vec3 world = c + R * (aPos * scale * vis * shrink * uSize * swell);
+  // the liquid's surface normal: mostly the bulge of the whole mass, a little of each bead
+  vWet = normalize(mix(normalize(c + vec3(1e-4)), R * normalize(aPos), 0.18));
   if (uShadow > 0.5) world = toFloor(world);
   vN = R * aNormal;
   vLocal = aPos;
@@ -692,8 +697,10 @@ out vec3 vN;
 out vec3 vLocal;
 out vec3 vWorld;
 out float vGlow;
+out vec3 vWet;
 ${NOISE}
 void main() {
+  vWet = vec3(0.0, 1.0, 0.0);
   float show = uPeel > 0.001 ? smoothstep(peelEdge() - 0.01, peelEdge() + 0.02, aF.w) : 0.0;
   // sizes vary a little, so the matrix reads as packed rather than gridded
   float r = fract(sin(float(gl_InstanceID) * 12.9898) * 43758.5453);
@@ -711,8 +718,9 @@ in vec3 vN;
 in vec3 vLocal;
 in vec3 vWorld;
 in float vGlow;
+in vec3 vWet;
 uniform vec3 uEdge;
-uniform float uShadow;
+uniform float uShadow, uCloud;
 out vec4 o;
 ${SHADE}
 void main() {
@@ -720,13 +728,16 @@ void main() {
     o = vec4(1.0);
     return;
   }
-  vec3 n = normalize(vN);
+  vec3 n = normalize(mix(normalize(vN), normalize(vWet), uCloud));
   vec3 col = shade(n, vWorld);
-  // machined bevel: light catches where two faces meet
+  // machined bevel: light catches where two faces meet (gone once the cubes have melted)
   vec3 a = abs(vLocal) * 2.0;
   float mid = a.x + a.y + a.z - max(a.x, max(a.y, a.z)) - min(a.x, min(a.y, a.z));
-  col += uEdge * smoothstep(0.86, 0.96, mid) * (0.35 + 0.65 * max(dot(n, normalize(vec3(-0.55, 0.85, 0.6))), 0.0));
-  o = vec4(col + uGlow * vGlow, 1.0);
+  col += (1.0 - uCloud) * uEdge * smoothstep(0.86, 0.96, mid) * (0.35 + 0.65 * max(dot(n, normalize(vec3(-0.55, 0.85, 0.6))), 0.0));
+  // and a wet, tight highlight like the sludge's
+  vec3 v = normalize(vec3(0.0, 0.0, uCamZ) - vWorld);
+  col = col * (1.0 - 0.22 * uCloud) + uCloud * uSpec * pow(max(dot(reflect(-v, n), normalize(vec3(-0.55, 0.85, 0.6))), 0.0), 90.0) * 0.45;
+  o = vec4(col + uGlow * vGlow * (1.0 - 0.9 * uCloud), 1.0);
 }`;
 
 const LINE_VS = `#version 300 es
@@ -752,7 +763,8 @@ void main() {
   float sameA = float(floor(aA.w * 0.5) == floor(aA2.w * 0.5));
   float sameB = float(floor(aB.w * 0.5) == floor(aB2.w * 0.5));
   float same = mix(sameA, sameB, step(0.5, (e1 + e2) * 0.5));
-  vAlpha = same * smoothstep(uMaxLen, uMaxLen * 0.3, len) * step(0.01, s1 * s2) * on * (0.5 + 0.4 * max(arc1, arc2) + 0.5 * uScatter);
+  // a liquid has no strings
+  vAlpha = (1.0 - uCloud) * same * smoothstep(uMaxLen, uMaxLen * 0.3, len) * step(0.01, s1 * s2) * on * (0.5 + 0.4 * max(arc1, arc2) + 0.5 * uScatter);
   gl_Position = uProj * vec4(c1 - vec3(0.0, 0.0, uCamZ), 1.0);
 }`;
 

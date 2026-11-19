@@ -19,6 +19,34 @@ const END = 0.3;
 // how quickly the drawn shape catches up with the scroll (per second); lower is slower and smoother
 const GLIDE = 1.4;
 
+const ss = (a, b, x) => {
+  const u = Math.min(1, Math.max(0, (x - a) / (b - a)));
+  return u * u * (3 - 2 * u);
+};
+const lerp = (a, b, u) => a + (b - a) * u;
+
+/**
+ * Where a marker's shape stands. Inside a `.forge-side` section on a wide screen it is the middle of the column the
+ * content leaves free (see index.css), at full strength; anywhere else (the hero, a phone) it is large, dim and in
+ * the middle of the screen.
+ */
+const place = (el, W, H) => {
+  const centre = { x: W / 2, size: Math.min(W * 0.92, H * 0.9), lift: 0 };
+  const box = el.closest('.forge-side');
+  if (!box || W < 1024) return centre;
+  const cs = getComputedStyle(box);
+  const cols = cs.gridTemplateColumns.split(' ').map(parseFloat);
+  if (cols.length !== 2 || cols.some((c) => !(c > 0))) return centre;
+  const r = box.getBoundingClientRect();
+  const gap = parseFloat(cs.columnGap) || 0;
+  // the free column is the second for --end and the first for --start, counted from the inline start
+  const free = box.classList.contains('forge-side--start') ? 0 : 1;
+  const from = free === 0 ? 0 : cols[0] + gap;
+  const mid = from + cols[free] / 2;
+  const x = cs.direction === 'rtl' ? r.right - parseFloat(cs.paddingRight) - mid : r.left + parseFloat(cs.paddingLeft) + mid;
+  return { x, size: Math.min(cols[free] * 1.2, H * 0.8), lift: 1 };
+};
+
 const markers = () => [...document.querySelectorAll('[data-forge-spot]')].filter((el) => el.isConnected);
 
 export default function ForgeLayer() {
@@ -56,6 +84,11 @@ export default function ForgeLayer() {
 
       // how far along the row of shapes we are (2.4 = 40% of the way from shape 2 to shape 3): scroll sets the
       // target, and the drawn position glides after it, so a shape forms gradually however fast you scroll
+      let lift = -1;
+      const setLift = (v) => {
+        const r = Math.round(v * 100) / 100;
+        if (r !== lift) canvas.style.setProperty('--forge-lift', String((lift = r)));
+      };
       let pos = -1;
       const scene = (dt) => {
         const list = markers();
@@ -81,9 +114,15 @@ export default function ForgeLayer() {
         const m = still ? 1 : f;
         const a = forge.shapeIndex(names[k]);
         const b = forge.shapeIndex(names[still ? k : Math.min(names.length - 1, k + 1)]);
-        // one large shape that stays centred on the screen: it dissolves into a cloud of cubes in place and the
-        // cloud forms the next shape there, with no pull towards any section
-        const view = { x: W / 2, y: H / 2, size: Math.min(W * 0.92, H * 0.9) };
+        // where each of the two shapes stands: the hero's large and dim in the middle of the screen, a section's at
+        // full strength in the middle of its free side column; in between, the cloud drifts from one to the other
+        const pa = place(list[k], W, H);
+        const pb = still ? pa : place(list[Math.min(names.length - 1, k + 1)], W, H);
+        const e = still ? 0 : ss(0.12, 0.88, f);
+        const view = { x: lerp(pa.x, pb.x, e), y: H / 2, size: lerp(pa.size, pb.size, e) };
+        // crossing the content from one side to the other, the cloud fades back a little
+        const across = pa.lift && pb.lift && Math.abs(pa.x - pb.x) > W * 0.2 ? 0.5 * Math.sin(Math.PI * e) : 0;
+        setLift(lerp(pa.lift, pb.lift, e) * (1 - across));
         return { a, b, m, view };
       };
 

@@ -9,7 +9,7 @@ const Experience = () => {
 
   return (
     <section className="w-full px-5 py-24 md:py-36 lg:py-44" id="experience">
-      <div className="app-container">
+      <div className="app-container forge-side forge-side--start">
         <SectionTitle
           forge="möbius loop"
           eyebrow={t('experience.eyebrow')}
