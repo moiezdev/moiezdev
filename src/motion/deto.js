@@ -287,6 +287,7 @@ const LOOK = {
 };
 
 const NAMES = ['toxic sludge', 'cube', 'torus knot', 'möbius loop', 'planet', 'double helix'];
+const PLANET = NAMES.indexOf('planet');
 const HELIX = NAMES.indexOf('double helix');
 
 const ss = (a, b, x) => {
@@ -364,7 +365,8 @@ export function createDeto(canvas, { theme, gentle = false } = {}) {
   let lastM = 1;
   const spine = Array.from({ length: SPINE }, () => [0, 0]);
   const spineU = new Float32Array(SPINE * 2);
-  const yaw = 0.6;
+  let yaw = 0.6;
+  let spin = 1;
   let pitch = 0.5;
 
   // frame-time watchdog: a phone that can't keep up drops to a lower resolution once
@@ -474,10 +476,13 @@ export function createDeto(canvas, { theme, gentle = false } = {}) {
     lastM = m;
     const push = Math.min(1, Math.hypot(ax, ay) / R / 40);
     agitation += (Math.max(changing, push, moving ? 0.35 : 0) - agitation) * (1 - Math.exp(-dt * 3));
-    // the shapes do not turn: each faces the viewer steadily (only the planet's debris orbits). The double helix
-    // stands straight upright, the rest are tipped a little towards the viewer; the change eases in, never snaps
+    // its slow turn, per shape: the planet holds still (only its debris orbits), the double helix stands straight
+    // upright (turning only about its own axis); the change eases in, never snaps
     const shown = moving && m < 0.5 ? a : b;
-    pitch += ((shown === HELIX ? 0 : 0.5) - pitch) * (1 - Math.exp(-dt * 2));
+    const settle = 1 - Math.exp(-dt * 2);
+    spin += ((shown === PLANET ? 0 : 1) - spin) * settle;
+    pitch += ((shown === HELIX ? 0 : 0.5 + Math.sin(t * 0.13) * 0.08) - pitch) * settle;
+    yaw += dt * 0.3 * spin;
 
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT);
