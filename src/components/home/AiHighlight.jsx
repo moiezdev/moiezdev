@@ -18,21 +18,21 @@ const BOT_NAME = chatbot.botName || 'BotFolio';
 const Item = ({ icon, title, body, tags, children }) => {
   const Icon = icon;
   return (
-    <li className="flex gap-4 border-t border-separator py-6 first:border-t-0 first:pt-0">
-      <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-[12px] bg-fill text-label">
-        <Icon className="text-[20px]" aria-hidden />
+    <li className="flex gap-5 border-t border-separator py-8 md:py-10 first:border-t-0 first:pt-0">
+      <span className="inline-flex size-12 shrink-0 items-center justify-center rounded-[14px] bg-fill text-label">
+        <Icon className="text-[22px]" aria-hidden />
       </span>
       <div className="min-w-0">
-        <h3 className="text-[19px] font-semibold tracking-[-0.02em] text-label">{title}</h3>
-        <p className="mt-1.5 text-[15px] leading-relaxed text-label-2">{body}</p>
+        <h3 className="text-[21px] font-semibold tracking-[-0.02em] text-label">{title}</h3>
+        <p className="mt-2 text-[16px] md:text-[17px] leading-relaxed text-label-2">{body}</p>
         {tags?.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-1.5">
+          <div className="mt-4 flex flex-wrap gap-1.5">
             {tags.map((tag) => (
               <TechChip key={tag} name={tag} />
             ))}
           </div>
         )}
-        <div className="mt-3">{children}</div>
+        <div className="mt-4">{children}</div>
       </div>
     </li>
   );
@@ -48,13 +48,13 @@ const AiHighlight = () => {
   const demo = projects.find((p) => p.aiDemo);
 
   return (
-    <section className="band-tint w-full px-5 py-20 md:py-28" id="ai">
-      <div className="app-container grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
+    <section className="band-tint w-full px-5 py-24 md:py-36 lg:py-44" id="ai">
+      <div className="app-container grid grid-cols-[minmax(0,1fr)] gap-14 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-20">
         <Reveal className="min-w-0">
           <ForgeSpot shape="double helix" />
           <p className="eyebrow mb-3">{t('ai.eyebrow')}</p>
           <h2 className="headline-1 text-label">{t('ai.headline')}</h2>
-          <p className="lead mt-4">{t('ai.subtitle')}</p>
+          <p className="lead mt-5 mb-10">{t('ai.subtitle')}</p>
           <WhenNear minHeight={340}>
             <ApiConsole />
           </WhenNear>

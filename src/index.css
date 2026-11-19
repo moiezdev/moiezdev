@@ -1321,10 +1321,6 @@ html[data-theme='light'][data-forge] .surface {
 html[data-forge] .surface .bg-surface-2\/70 {
   background-color: color-mix(in srgb, var(--color-surface-2) 40%, transparent);
 }
-/* each shape holds while its section is read, so short sections get a little more room while the forge runs */
-html[data-forge] :is(#work, #architecture, #ai, #experience) {
-  min-height: 130svh;
-}
 html[data-forge] #root {
   position: relative;
   z-index: 1;
