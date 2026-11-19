@@ -8,10 +8,11 @@ const NATIVE = '[data-native-cursor]';
 const lerp = (a, b, t) => a + (b - a) * t;
 
 /**
- * iPadOS-style adaptive pointer.
- * - A dot tracks the mouse; a soft ring trails behind it.
- * - Over buttons and links the ring morphs into the element's own shape and
- *   the element leans slightly toward the pointer.
+ * iPadOS-style adaptive pointer with Deto's liquid feel.
+ * - A dot tracks the mouse; a drop of liquid glass trails behind it on a spring, stretching along its motion and
+ *   wobbling out when it stops.
+ * - Over buttons and links the drop spreads into the element's own shape with a
+ *   jelly wobble, and the element leans slightly toward the pointer.
  * - Elements with `data-cursor-label` turn the ring into a labelled bubble.
  * - The chat panel ([data-native-cursor]) and text fields use the native pointer.
  * Disabled on touch devices and when the user prefers reduced motion; the loop
@@ -35,6 +36,15 @@ const Cursor = () => {
 
     const mouse = { x: -100, y: -100 };
     const pos = { x: -100, y: -100, w: 36, h: 36 };
+    // liquid physics, the same feel as Deto: the drop follows on a slightly underdamped spring, stretches along its
+    // motion keeping its area, and wobbles out through a squash when it stops; landing on a button kicks a jelly wobble
+    const vel = { x: 0, y: 0 };
+    let stretch = 0;
+    let stretchV = 0;
+    let angle = 0;
+    let jelly = 0;
+    let jellyV = 0;
+    let last = 0;
     let target = null; // { el, mode: 'shape' | 'label' }
     let hidden = true;
     let pressed = false;
@@ -98,6 +108,7 @@ const Cursor = () => {
       }
       const lean = getComputedStyle(hit).translate === 'none';
       target = { el: hit, mode: 'shape', lean };
+      jellyV += 9;
       ring.dataset.mode = 'shape';
       const radius = parseFloat(getComputedStyle(hit).borderTopLeftRadius) || 10;
       ring.style.borderRadius = `${Math.min(radius + 4, 999)}px`;
@@ -113,6 +124,7 @@ const Cursor = () => {
     const onOver = (e) => resolve(e.target);
     const onDown = () => {
       pressed = true;
+      jellyV -= 7;
     };
     const onUp = () => {
       pressed = false;
@@ -120,7 +132,9 @@ const Cursor = () => {
     const onLeave = () => setVisible(false);
     const onScroll = () => resolve(document.elementFromPoint(mouse.x, mouse.y));
 
-    const tick = () => {
+    const tick = (now) => {
+      const dt = Math.min(0.05, last ? (now - last) / 1000 : 1 / 60);
+      last = now;
       let tx = mouse.x;
       let ty = mouse.y;
       let tw = 36;
@@ -162,17 +176,57 @@ const Cursor = () => {
         pos.y = ty;
         pos.w = tw;
         pos.h = th;
+        stretch = 0;
+        stretchV = 0;
       } else {
-        const k = target?.mode === 'shape' ? 0.28 : 0.2;
-        pos.x = lerp(pos.x, tx, k);
-        pos.y = lerp(pos.y, ty, k);
+        const k = target?.mode === 'shape' ? 900 : 520;
+        const c = 2 * (target?.mode === 'shape' ? 0.8 : 0.62) * Math.sqrt(k);
+        if (pos.x < -50) {
+          pos.x = tx;
+          pos.y = ty;
+        }
+        for (let i = 0; i < 3; i++) {
+          const h = dt / 3;
+          vel.x += (k * (tx - pos.x) - c * vel.x) * h;
+          vel.y += (k * (ty - pos.y) - c * vel.y) * h;
+          pos.x += vel.x * h;
+          pos.y += vel.y * h;
+        }
         pos.w = lerp(pos.w, tw, 0.25);
         pos.h = lerp(pos.h, th, 0.25);
+        // the stretch: towards a stretch that grows with speed, on a lightly damped spring (it swings back through
+        // a squash when the drop stops); the axis only turns the short way, so it never snaps round
+        const speed = Math.hypot(vel.x, vel.y);
+        const want = target?.mode === 'shape' ? 0 : Math.min(0.45, speed / 2600);
+        if (speed > 40) {
+          let a = Math.atan2(vel.y, vel.x);
+          let d = a - angle;
+          d = Math.atan2(Math.sin(d), Math.cos(d));
+          if (d > Math.PI / 2) d -= Math.PI;
+          if (d < -Math.PI / 2) d += Math.PI;
+          a = angle + d;
+          angle += (a - angle) * (1 - Math.exp(-dt * 14));
+        }
+        const w = 2 * Math.PI * 3.2;
+        stretchV += (w * w * (want - stretch) - 2 * 0.22 * w * stretchV) * dt;
+        stretch = Math.max(-0.3, Math.min(0.6, stretch + stretchV * dt));
       }
+      // the jelly wobble after landing on a button (or pressing): squash one way, then the other
+      const wj = 2 * Math.PI * 4.5;
+      jellyV += (-wj * wj * jelly - 2 * 0.18 * wj * jellyV) * dt;
+      jelly += jellyV * dt;
+      const jx = 1 + jelly * 0.06;
+      const jy = 1 - jelly * 0.06;
+      const sa = 1 + stretch;
+      const sb = 1 / Math.sqrt(sa);
+      const deg = (angle * 180) / Math.PI;
 
       ring.style.width = `${pos.w}px`;
       ring.style.height = `${pos.h}px`;
-      ring.style.transform = `translate3d(${pos.x - pos.w / 2}px, ${pos.y - pos.h / 2}px, 0)`;
+      ring.style.transform =
+        target?.mode === 'shape'
+          ? `translate3d(${pos.x - pos.w / 2}px, ${pos.y - pos.h / 2}px, 0) scale(${jx}, ${jy})`
+          : `translate3d(${pos.x - pos.w / 2}px, ${pos.y - pos.h / 2}px, 0) rotate(${deg}deg) scale(${sa * jx}, ${sb * jy}) rotate(${-deg}deg)`;
       dot.style.transform = `translate3d(${mouse.x - 3}px, ${mouse.y - 3}px, 0) scale(${pressed ? 0.6 : 1})`;
       // stop while the tab is hidden; resumes on visibilitychange
       raf = document.visibilityState === 'hidden' ? 0 : requestAnimationFrame(tick);

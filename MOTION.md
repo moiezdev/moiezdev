@@ -121,7 +121,8 @@ In Tailwind classes, use them as `duration-(--dur-base) ease-(--ease-spring)`. I
 | Button press and success check | Buttons, contact form | Immediate feedback: scale 0.98 on press, animated check after sending. |
 | Tech chip tooltips | Tech chips, `ui/TechChip.jsx` | What each technology was used for, and in which projects. Data: `src/data/techNotes.json`. |
 | Copy email/phone with toast | Contact | One-tap copy with a "Copied" confirmation. |
-| Custom cursor | Fine pointers only, `ui/Cursor.jsx` | Dot tracks the pointer exactly; a hairline ring trails by under 80ms. The ring grows over links and shows a label over cards ("View ↗") and the pass ("Flip pass"). The native cursor is used over inputs and in the chatbot. |
+| Custom cursor | Fine pointers only, `ui/Cursor.jsx` | Dot tracks the pointer exactly; a drop of liquid glass (lit like Deto) trails it on a slightly underdamped spring, stretches along its motion keeping its area, and wobbles out through a squash when it stops. Over buttons and links it spreads into the element's shape with a jelly wobble (pressing wobbles it too); over cards it shows a label ("View ↗") and on the pass ("Flip pass"). The native cursor is used over inputs and in the chatbot. |
+| Button hover | `ui/Button.jsx` (`.btn-liquid`), fine pointers, not with reduced motion | Deto's liquid: the button gives a short jelly wobble (squash, stretch, settle in 0.7s) and a wet glint sweeps across it once. Plain text buttons don't. |
 
 The code window on About is kept static on purpose: it is read, not watched.
 

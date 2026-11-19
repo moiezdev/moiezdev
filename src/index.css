@@ -603,8 +603,14 @@ textarea:-webkit-autofill {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: color-mix(in srgb, var(--color-label) 8%, transparent);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-label) 14%, transparent);
+  /* a drop of liquid glass, lit like Deto: a bright glint up and to the left, a darker body edge down and right */
+  background:
+    radial-gradient(circle at 32% 28%, color-mix(in srgb, white 70%, transparent) 0, transparent 34%),
+    color-mix(in srgb, var(--color-label) 9%, transparent);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--color-label) 20%, transparent),
+    inset -3px -4px 8px color-mix(in srgb, var(--color-label) 14%, transparent),
+    0 4px 12px color-mix(in srgb, var(--color-label) 10%, transparent);
   -webkit-backdrop-filter: blur(2px);
   backdrop-filter: blur(2px);
   transition:
@@ -1072,6 +1078,54 @@ html[dir='rtl'] .scroll-progress {
 }
 .btn-press:active {
   transform: scale(0.98);
+}
+/* Buttons: Deto's liquid on hover. The button gives a jelly wobble (squash one way, then the other, settling) and
+   a wet glint sweeps across it once, like the highlight running over Deto's surface. Fine pointers only, and never
+   with reduced motion. */
+.btn-liquid {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.btn-liquid::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  pointer-events: none;
+  background: linear-gradient(
+    110deg,
+    transparent 30%,
+    color-mix(in srgb, white 38%, transparent) 46%,
+    color-mix(in srgb, white 12%, transparent) 54%,
+    transparent 66%
+  );
+  transform: translateX(-130%);
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .btn-liquid:hover {
+    animation: btn-jelly 0.7s var(--ease-out) both;
+  }
+  .btn-liquid:hover::after {
+    transform: translateX(130%);
+    transition: transform 0.9s var(--ease-out);
+  }
+}
+@keyframes btn-jelly {
+  0% {
+    transform: scale(1, 1);
+  }
+  25% {
+    transform: scale(1.05, 0.94);
+  }
+  45% {
+    transform: scale(0.97, 1.04);
+  }
+  65% {
+    transform: scale(1.015, 0.985);
+  }
+  100% {
+    transform: scale(1, 1);
+  }
 }
 
 /* contact form: the success check settles in (scale + opacity only) */
