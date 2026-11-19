@@ -390,18 +390,8 @@ function solidFor(name, size) {
       // a unit sphere: the vertex shader turns it into the moving blob
       return sphere(builder(), 1, 144, 104).done();
     case 'planet': {
-      const b = sphere(builder(), 0.5 + half * 0.6);
-      // the ring as a few fine concentric bands, tilted like the debris belt (the page draws no cubes)
-      const tilt = 0.42;
-      for (const [rr, w] of [[0.74, 0.016], [0.83, 0.022], [0.93, 0.02], [1.03, 0.014]]) {
-        tube(b, (u) => {
-          const a = u * TAU;
-          const x = Math.cos(a) * rr;
-          const z = Math.sin(a) * rr;
-          return [x, -z * Math.sin(tilt), z * Math.cos(tilt)];
-        }, 160, w, 10, false);
-      }
-      return b.done();
+      // only the globe fuses; the ring stays a belt of loose debris
+      return sphere(builder(), 0.5 + half * 0.6).done();
     }
     case 'double helix': {
       const b = builder();
@@ -694,7 +684,6 @@ out vec3 vN;
 out vec3 vLocal;
 out vec3 vWorld;
 out float vGlow;
-out vec3 vWet;
 ${CENTRE}
 ${FLOOR}
 void main() {
@@ -710,12 +699,10 @@ void main() {
   // the cubes a hover peels loose are smaller than the ones that build the shape
   float shrink = mix(1.0, 0.55, peel * (1.0 - uCubes));
   vis *= max(uncovered(aA, aB), peel);
-  // in the cloud between two shapes the cubes soften, swell a little and melt into the liquid blob that
-  // carries the cloud from one shape to the next (drawn by the solid program, see drawGoo)
-  float swell = (1.0 + uCloud * (0.7 + 0.5 * aSeed.y)) * (1.0 - smoothstep(0.35 + 0.3 * aSeed.x, 0.95, uCloud));
-  vec3 world = c + R * (aPos * scale * vis * shrink * uSize * swell);
-  // the liquid's surface normal: mostly the bulge of the whole mass, a little of each bead
-  vWet = normalize(mix(normalize(c + vec3(1e-4)), R * normalize(aPos), 0.18));
+  // the swarm mixes cube sizes, from grains to chunks
+  float u = fract(aSeed.w * 7.31 + aSeed.y * 3.7);
+  float mixed = 0.4 + 1.25 * u * u;
+  vec3 world = c + R * (aPos * scale * vis * shrink * uSize * mixed);
   if (uShadow > 0.5) world = toFloor(world);
   vN = R * aNormal;
   vLocal = aPos;
@@ -736,10 +723,8 @@ out vec3 vN;
 out vec3 vLocal;
 out vec3 vWorld;
 out float vGlow;
-out vec3 vWet;
 ${NOISE}
 void main() {
-  vWet = vec3(0.0, 1.0, 0.0);
   float show = uPeel > 0.001 ? smoothstep(peelEdge() - 0.01, peelEdge() + 0.02, aF.w) : 0.0;
   // sizes vary a little, so the matrix reads as packed rather than gridded
   float r = fract(sin(float(gl_InstanceID) * 12.9898) * 43758.5453);
@@ -757,9 +742,8 @@ in vec3 vN;
 in vec3 vLocal;
 in vec3 vWorld;
 in float vGlow;
-in vec3 vWet;
 uniform vec3 uEdge;
-uniform float uShadow, uCloud;
+uniform float uShadow;
 out vec4 o;
 ${SHADE}
 void main() {
@@ -767,16 +751,13 @@ void main() {
     o = vec4(1.0);
     return;
   }
-  vec3 n = normalize(mix(normalize(vN), normalize(vWet), uCloud));
+  vec3 n = normalize(vN);
   vec3 col = shade(n, vWorld);
-  // machined bevel: light catches where two faces meet (gone once the cubes have melted)
+  // machined bevel: light catches where two faces meet
   vec3 a = abs(vLocal) * 2.0;
   float mid = a.x + a.y + a.z - max(a.x, max(a.y, a.z)) - min(a.x, min(a.y, a.z));
-  col += (1.0 - uCloud) * uEdge * smoothstep(0.86, 0.96, mid) * (0.35 + 0.65 * max(dot(n, normalize(vec3(-0.55, 0.85, 0.6))), 0.0));
-  // and a wet, tight highlight like the sludge's
-  vec3 v = normalize(vec3(0.0, 0.0, uCamZ) - vWorld);
-  col = col * (1.0 - 0.22 * uCloud) + uCloud * uSpec * pow(max(dot(reflect(-v, n), normalize(vec3(-0.55, 0.85, 0.6))), 0.0), 90.0) * 0.45;
-  o = vec4(col + uGlow * vGlow * (1.0 - 0.9 * uCloud), 1.0);
+  col += uEdge * smoothstep(0.86, 0.96, mid) * (0.35 + 0.65 * max(dot(n, normalize(vec3(-0.55, 0.85, 0.6))), 0.0));
+  o = vec4(col + uGlow * vGlow, 1.0);
 }`;
 
 const LINE_VS = `#version 300 es
@@ -802,8 +783,7 @@ void main() {
   float sameA = float(floor(aA.w * 0.5) == floor(aA2.w * 0.5));
   float sameB = float(floor(aB.w * 0.5) == floor(aB2.w * 0.5));
   float same = mix(sameA, sameB, step(0.5, (e1 + e2) * 0.5));
-  // a liquid has no strings
-  vAlpha = (1.0 - uCloud) * same * smoothstep(uMaxLen, uMaxLen * 0.3, len) * step(0.01, s1 * s2) * on * (0.5 + 0.4 * max(arc1, arc2) + 0.5 * uScatter);
+  vAlpha = same * smoothstep(uMaxLen, uMaxLen * 0.3, len) * step(0.01, s1 * s2) * on * (0.5 + 0.4 * max(arc1, arc2) + 0.5 * uScatter);
   gl_Position = uProj * vec4(c1 - vec3(0.0, 0.0, uCamZ), 1.0);
 }`;
 
@@ -825,7 +805,6 @@ layout(location=1) in vec3 aNormal;
 uniform mat4 uProj;
 uniform mat3 uRot;
 uniform float uCamZ, uTime, uLiquid, uSquash;
-uniform float uGoo, uGooSize; // the liquid cloud between two shapes: how much of it there is, and its size
 uniform vec3 uSway;
 ${LEAK}
 uniform vec4 uTend[6]; // direction, reach
@@ -850,16 +829,12 @@ vec3 surf(vec3 n) {
     + 0.018 * sin(n.z * 4.3 + n.y * 2.0 + t * 2.1)
     + 0.007 * sin(n.x * 9.0 + n.z * 7.0 - t * 3.2)
     + reach(n);
-  // the liquid cloud heaves and lolls more than the standing blob, as one deformed mass
-  r += uGoo * (0.07 * sin(n.x * 2.1 + t * 1.2) * sin(n.z * 1.8 - t * 0.9)
-    + 0.05 * sin(n.y * 2.6 + n.x * 1.4 + t * 1.5)
-    + 0.03 * sin(n.z * 4.7 - n.y * 3.1 - t * 2.3));
   // the coat always sits just over where the cubes were, so the blob never changes size; while it
   // spreads it swells into a rolling lip at its edges
   float coat = uFront < 0.0 || uFront > 0.999 ? 0.0 : 1.0;
   float lip = exp(-pow(leakGap(n) / 0.14, 2.0));
   r += 0.05 + coat * 0.035 * lip;
-  vec3 p = n * r * uGooSize;
+  vec3 p = n * r;
   p.y *= uSquash;
   p.xz /= sqrt(uSquash);
   return p + uSway;
@@ -1069,7 +1044,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
 
   // ---- sizes: fewer cubes on small or low-power screens ----
   const small = Math.min(window.innerWidth, window.innerHeight) < 700 || (navigator.hardwareConcurrency || 8) <= 4;
-  const g = small ? 15 : 22; // voxel cube edge
+  const g = small ? 19 : 29; // voxel cube edge (a dense swarm: 4,592 cubes on desktop, 2,018 on phones)
   const N = g * g * g - (g - 2) ** 3; // every cube in the hollow cube is used
   const spacing = (2 * 0.62) / (g - 1);
   const size = spacing * 0.86;
@@ -1259,7 +1234,6 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, shadowTex, 0);
   gl.bindFramebuffer(gl.FRAMEBUFFER, null);
   setAll('uCamZ', (l) => gl.uniform1f(l, CAM));
-  setAll('uGooSize', (l) => gl.uniform1f(l, 1));
   setAll('uFloor', (l) => gl.uniform1f(l, FLOOR_Y));
   setAll('uPeelThr', (l) => gl.uniform1f(l, PEEL_THR));
 
@@ -1284,10 +1258,8 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   let py = 0;
   let scatter = 0;
   let huddle = 0;
-  let goo = 0;
   // how much floor shadow to lay down (page mode: none under the dim hero background)
   let shadowMul = 1;
-  let heave = 0;
   let shown = -1;
   let yaw = 0.6;
   let face = 0; // 1 while a flat shape (text) turns to face the viewer
@@ -1324,23 +1296,8 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     setAll('uRingB', (l) => gl.uniform1f(l, isPlanet(b)));
     setAll('uOrbit', (l) => gl.uniform1f(l, t * 0.3));
 
-    // the blob's tendrils: each creeps out, then snaps back
-    const tendrils = () => {
-      const tend = new Float32Array(24);
-      for (let i = 0; i < 6; i++) {
-        const th = i * 2.4 + t * (0.17 + i * 0.03);
-        const ph = Math.sin(t * (0.23 + i * 0.05) + i * 1.7) * 1.1;
-        const ct = Math.cos(ph);
-        const ph01 = (t * (0.21 + i * 0.037) + i * 0.29) % 1;
-        const out = ph01 < 0.72 ? (ph01 / 0.72) ** 1.6 : (1 - (ph01 - 0.72) / 0.28) ** 3;
-        tend.set([Math.cos(th) * ct, Math.sin(ph), Math.sin(th) * ct, out * (0.07 + (i % 3) * 0.02)], i * 4);
-      }
-      return tend;
-    };
     const drawSolid = () => {
       if (skin <= 0.001) return;
-      // on the page a moving sludge is carried by the liquid blob instead
-      if (page && liquid && goo > 0.001) return;
       gl.useProgram(solidProg);
       gl.uniform1f(solidProg.u('uReveal'), skin);
       gl.uniform1f(solidProg.u('uLiquid'), liquid ? 1 : 0);
@@ -1348,34 +1305,21 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
         // the blob sways (it keeps its size), and each tendril creeps out, then snaps back
         gl.uniform3f(solidProg.u('uSway'), Math.sin(t * 1.1) * 0.035, Math.sin(t * 1.7) * 0.02, Math.cos(t * 0.9) * 0.025);
         gl.uniform1f(solidProg.u('uSquash'), 1);
-        gl.uniform4fv(solidProg.u('uTend[0]'), tendrils());
+        const tend = new Float32Array(24);
+        for (let i = 0; i < 6; i++) {
+          const th = i * 2.4 + t * (0.17 + i * 0.03);
+          const ph = Math.sin(t * (0.23 + i * 0.05) + i * 1.7) * 1.1;
+          const ct = Math.cos(ph);
+          const ph01 = (t * (0.21 + i * 0.037) + i * 0.29) % 1;
+          const out = ph01 < 0.72 ? (ph01 / 0.72) ** 1.6 : (1 - (ph01 - 0.72) / 0.28) ** 3;
+          tend.set([Math.cos(th) * ct, Math.sin(ph), Math.sin(th) * ct, out * (0.07 + (i % 3) * 0.02)], i * 4);
+        }
+        gl.uniform4fv(solidProg.u('uTend[0]'), tend);
       }
       gl.bindVertexArray(solidVaos[solid].vao);
       gl.drawElements(gl.TRIANGLES, solidVaos[solid].count, gl.UNSIGNED_INT, 0);
     };
-    // between two shapes the cubes melt into one liquid blob of the same metal as the sludge, which keeps
-    // churning until it breaks back into cubes for the next shape
-    const gooI = shapes.findIndex((s) => s.liquid);
-    const drawGoo = () => {
-      if (gooI < 0 || goo <= 0.001) return;
-      gl.useProgram(solidProg);
-      gl.uniform1f(solidProg.u('uReveal'), 1);
-      gl.uniform1f(solidProg.u('uLiquid'), 1);
-      // fully coated: no leaking edge
-      gl.uniform1f(solidProg.u('uFront'), 1);
-      gl.uniform1f(solidProg.u('uGoo'), heave);
-      gl.uniform1f(solidProg.u('uGooSize'), 0.5 + 0.5 * goo + 0.3 * heave);
-      gl.uniform3f(solidProg.u('uSway'), Math.sin(t * 0.8) * 0.06, Math.sin(t * 1.1) * 0.04, Math.cos(t * 0.7) * 0.05);
-      gl.uniform1f(solidProg.u('uSquash'), 1);
-      gl.uniform4fv(solidProg.u('uTend[0]'), tendrils());
-      gl.bindVertexArray(solidVaos[gooI].vao);
-      gl.drawElements(gl.TRIANGLES, solidVaos[gooI].count, gl.UNSIGNED_INT, 0);
-      gl.uniform1f(solidProg.u('uFront'), front);
-      gl.uniform1f(solidProg.u('uGoo'), 0);
-      gl.uniform1f(solidProg.u('uGooSize'), 1);
-    };
     const drawCubes = () => {
-      if (page) return;
       gl.useProgram(cubeProg);
       gl.enable(gl.CULL_FACE);
       gl.bindVertexArray(cubeVao);
@@ -1392,7 +1336,6 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     gl.disable(gl.DEPTH_TEST);
     setAll('uShadow', (l) => gl.uniform1f(l, 1));
     drawSolid();
-    drawGoo();
     drawCubes();
     setAll('uShadow', (l) => gl.uniform1f(l, 0));
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
@@ -1411,9 +1354,8 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
 
     // 3. the shape itself, and the packed cubes a hover opens it onto
     drawSolid();
-    drawGoo();
     drawCubes();
-    if (!page && skin > 0.001 && peel * skin > 0.001 && fillVaos[solid].count) {
+    if (skin > 0.001 && peel * skin > 0.001 && fillVaos[solid].count) {
       gl.useProgram(fillProg);
       gl.enable(gl.CULL_FACE);
       gl.bindVertexArray(fillVaos[solid].vao);
@@ -1421,7 +1363,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
       gl.disable(gl.CULL_FACE);
     }
 
-    if (!page && (skin < 0.999 || peel * skin > 0.001)) {
+    if (skin < 0.999 || peel * skin > 0.001) {
       gl.useProgram(lineProg);
       gl.enable(gl.BLEND);
       gl.depthMask(false);
@@ -1533,14 +1475,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     let reveal = 0;
     let mix = 1;
     let from = target;
-    if (moving && page) {
-      // no cubes: the standing solid dissolves in patches, a liquid blob of the sludge's metal wells up in its
-      // place and heaves, and the next solid grows over it in patches
-      from = a;
-      mix = m < 0.5 ? 0 : 1;
-      solid = m < 0.5 ? a : b;
-      reveal = m < 0.5 ? 1 - ss(0.04, 0.4, m) : ss(0.6, 0.96, m);
-    } else if (moving) {
+    if (moving) {
       from = a;
       mix = ss(0.22, 0.78, m);
       if (m < 0.22) {
@@ -1572,14 +1507,6 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     // in between two shapes the cubes dissolve into one huddled, churning cloud, then gather into the next shape
     scatter = 0;
     huddle = moving ? ss(0.06, 0.32, m) * (1 - ss(0.68, 0.94, m)) : 0;
-    if (page) {
-      // how much liquid there is: it wells up as the first solid dissolves (or is that solid, for the sludge) and
-      // sinks away as the next one forms
-      const up = shapes[a].liquid ? 1 : ss(0.1, 0.36, m);
-      const down = shapes[b].liquid ? 1 : 1 - ss(0.64, 0.9, m);
-      goo = moving ? up * down : 0;
-      heave = moving ? ss(0.1, 0.36, m) * (1 - ss(0.64, 0.9, m)) : 0;
-    }
     const planetUp = solid >= 0 && shapes[solid].name === 'planet';
     calm += ((planetUp ? 1 : 0) - calm) * Math.min(1, dt * 1.5);
     yaw += dt * 0.32 * (1 - calm);
