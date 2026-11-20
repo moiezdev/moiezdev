@@ -647,6 +647,8 @@ vec3 orbit(vec3 p) {
   return axisAngle(RING_AXIS, uOrbit / pow(max(r, 0.5), 1.5)) * p;
 }
 ${NOISE}
+// how far a ring rock has risen out of the globe it first gathers into (1 once it's out in the ring)
+float gRise;
 
 vec3 centreOf(vec4 A, vec4 B, vec4 seed, vec4 S, out float e, out float arc, out float near, out float scale, out vec3 dir, out float peel, out float debris, out float melt) {
   // built from the core outwards, each cube a little out of step
@@ -660,7 +662,19 @@ vec3 centreOf(vec4 A, vec4 B, vec4 seed, vec4 S, out float e, out float arc, out
   float ringB = uRingB * step(0.5, floor(B.w * 0.5));
   vec3 pa = ringA > 0.5 ? orbit(A.xyz) : A.xyz;
   vec3 pb = ringB > 0.5 ? orbit(B.xyz) : B.xyz;
-  debris = mix(ringA, ringB, step(0.5, e));
+  // forming the planet, the ring's rocks don't fly straight to the ring: they first gather into the globe
+  // with the rest, sooner, then break away from its surface one after another and drift out into orbit
+  gRise = 1.0;
+  if (ringB > 0.5) {
+    e = clamp((uMix - seed.x * 0.22 - clamp(length(B.xyz), 0.0, 1.2) * 0.1) / 0.3, 0.0, 1.0);
+    e = e * e * e * (e * (e * 6.0 - 15.0) + 10.0);
+    arc = sin(3.14159265 * e);
+    float r = clamp((uMix - 0.62 - seed.w * 0.26) / 0.12, 0.0, 1.0);
+    gRise = r * r * (3.0 - 2.0 * r);
+    vec3 spot = normalize(pb - RING_AXIS * dot(pb, RING_AXIS) * 0.6 + vec3(1e-4)) * 0.5;
+    pb = mix(spot, pb, gRise) + RING_AXIS * sin(3.14159265 * gRise) * (seed.y - 0.5) * 0.12;
+  }
+  debris = max(ringA * (1.0 - e), ringB * gRise);
   vec3 p = mix(pa, pb, e) + dir * arc * (0.05 + seed.x * 0.05);
   p += dir * 0.005 * sin(uTime * 1.6 + seed.y * 40.0);
   // fusing: as the skin's front comes near, the cubes close up and settle onto the skin, then melt into it
