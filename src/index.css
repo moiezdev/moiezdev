@@ -1251,52 +1251,57 @@ html[dir='rtl'] .scroll-progress {
   .stack-dot { display: none; }
 }
 
-/* the hero's 3D stage (components/home/HeroStage.jsx, motion/nanoForge.js).
-   Prerendered as a soft glow and a pedestal; the WebGL canvas fades in on top. */
+/* the hero's portrait (components/home/HeroStage.jsx): the full cut-out, standing on the stats row's line */
 .hero-stage {
   position: relative;
   width: 100%;
-  max-width: 600px;
+  max-width: 300px;
   margin-inline: auto;
-}
-.hero-stage__canvas {
-  position: relative;
-  height: clamp(220px, 60vw, 320px);
+  aspect-ratio: 1246 / 1400;
 }
 @media (min-width: 1024px) {
-  .hero-stage__canvas {
-    height: auto;
-    aspect-ratio: 1 / 1;
-  }
-}
-/* the canvas is 1.5x the stage (BLEED in HeroStage.jsx) and fades out well before its own edge,
-   so loose cubes, the scroll scatter and the shadow never hit a hard cut */
-.hero-stage__canvas > canvas {
-  position: absolute;
-  inset: -25%;
-  z-index: 0;
-  width: 150%;
-  height: 150%;
-  pointer-events: none;
-  -webkit-mask-image: radial-gradient(closest-side, #000 74%, transparent 100%);
-  mask-image: radial-gradient(closest-side, #000 74%, transparent 100%);
-  animation: hero-stage-in var(--dur-slow) var(--ease-out) both;
-}
-@keyframes hero-stage-in {
-  from {
-    opacity: 0;
+  .hero-stage {
+    max-width: 480px;
+    margin-inline-end: 0;
   }
 }
 .hero-stage__glow {
   position: absolute;
-  inset: 12%;
+  inset: 8% 10% 0;
   border-radius: 50%;
   background: radial-gradient(closest-side, var(--glow-a), transparent);
-  filter: blur(24px);
-  opacity: 0.9;
+  filter: blur(28px);
+  opacity: 0.7;
+}
+.hero-stage__portrait {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: contain;
+  object-position: 50% 100%;
+  user-select: none;
+  -webkit-mask-image: linear-gradient(to bottom, #000 82%, transparent 99%);
+  mask-image: linear-gradient(to bottom, #000 82%, transparent 99%);
+}
+/* Deto, the hero's liquid (components/home/HeroLiquid.jsx, motion/deto.js): one canvas over the whole hero, under the
+   copy and the portrait, drawn dim so it never competes with the text. It appears at once (no fade). */
+.hero-liquid {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.hero-liquid__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.32;
 }
 @media print {
-  .hero-stage {
+  .hero-liquid {
     display: none;
   }
 }

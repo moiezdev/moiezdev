@@ -1,6 +1,6 @@
 # Motion
 
-Motion on moiez.dev has two jobs. **Most of it explains**: it shows how a system works, confirms that an action happened, or keeps you oriented when the page changes. **One piece sets the tone**: the nano forge in the home hero. It's a few thousand machined metal cubes, rendered in real 3D, strung together by hairlines, that keep flying apart and re-assembling into a new shape. Once they're in place they fuse into the real, smooth solid of that shape. It answers the cursor and scroll. It's the site's signature, so it gets a strict budget, and nothing else on the site gets to be decoration.
+Motion on moiez.dev has two jobs. **Most of it explains**: it shows how a system works, confirms that an action happened, or keeps you oriented when the page changes. **One piece sets the tone**: Deto, the living liquid in the home hero. It's one body of liquid metal floating in space, rendered in real 3D, that turns from one shape straight into the next. It sits dim in the middle of the hero, between the copy and Moiz's portrait. It's the site's signature, so it gets a strict budget, and nothing else on the site gets to be decoration.
 
 ## The rules
 
@@ -9,24 +9,24 @@ Motion on moiez.dev has two jobs. **Most of it explains**: it shows how a system
 - Every page renders complete on first paint, in prerendered HTML, with no JavaScript. Motion only ever enhances what is already there.
 - An element is hidden for a reveal only when it is fully below the fold *and* the browser can observe it.
 - Text never moves for effect. There's no parallax, typewriter or word-by-word stagger on copy. Text is placed once and stays put.
-- Ambient motion gets its own space and never sits behind text. The nano forge lives in a stage beside the hero copy (above it on phones), so nothing has to be dimmed for the copy to stay readable. The rest of the page has no background animation.
+- Ambient motion stays out of the copy's way. Deto sits in the gap between the hero copy and the portrait (behind the portrait on phones), drawn at 32% so the text it brushes stays fully readable. The rest of the page has no background animation.
 
 ### 2. Two kinds of motion
 
 | | Functional | Ambient (signature) |
 | --- | --- | --- |
 | Purpose | explain, confirm, orient | set the tone |
-| Examples | reveals, view transitions, the architecture explainer, button feedback | the home nano forge |
+| Examples | reveals, view transitions, the architecture explainer, button feedback | Deto, the hero's living liquid |
 | How many | as many as a page needs | **one per page, at most**: today only on home |
-| Triggered by | the user, or entering the viewport | time, scroll and the cursor |
+| Triggered by | the user, or entering the viewport | time |
 | May loop? | only while on screen (rule 5) | yes, while on screen (rule 5) |
 
-A new ambient piece replaces the forge. It isn't added next to it.
+A new ambient piece replaces Deto. It isn't added next to it.
 
-### 3. The signature is live: it answers scroll and the cursor
+### 3. The signature runs on its own
 
-- **Scroll**: the shape turns as you scroll, breaks back into cubes, and blows apart into shrinking debris as the hero leaves. Scrolling back reassembles it.
-- **Cursor**: hover only. The pointer never turns or tilts the shape. Hovering the stage peels about 15% of the standing solid back into loose cubes, in big patches, and loose cubes near the pointer part and glow. On touch screens a finger does the same while it's down. Device tilt isn't used, because iOS would need a permission prompt for it.
+- **Scroll**: not used. Deto scrolls away with the hero like the rest of the page.
+- **Cursor**: not used. The canvas takes no pointer events. Device tilt isn't used either, because iOS would need a permission prompt for it.
 - Every response is **scrubbed or eased**: it's a function of where the scroll or pointer is now, so going back undoes it. Nothing is triggered once and left half-finished.
 - Responses are gentle. Nothing jumps, flashes, or follows the pointer across the page.
 - No scroll-jacking, no smooth-scroll libraries, no pinned sections. The page always scrolls at the speed you scroll it.
@@ -34,16 +34,16 @@ A new ambient piece replaces the forge. It isn't added next to it.
 ### 4. Cheap to run
 
 - Animate `transform` and `opacity` in the DOM. Three deliberate exceptions remain: `stroke-dashoffset` and `offset-path` in the architecture explainer, and the circular `clip-path` theme reveal on the View Transition snapshot.
-- Anything heavier goes on **one** `<canvas>`. The nano forge is the one WebGL piece: WebGL2, no library, a handful of draws per frame (the floor shadow, drawn at quarter size and blurred, then the solid, one instanced cube mesh, and one pass of hairlines that reuses the cubes' maths). Every shape and solid is precomputed, and the whole morph runs in the vertex shader, so the CPU only updates a few uniforms per frame. It's 2,648 cubes on desktop and 1,178 on phones and small or low-core devices, with the device pixel ratio capped at 2 (1.5 on phones). If the first 4 seconds run slow, it drops to 1x once.
+- Anything heavier goes on **one** `<canvas>`. Deto is the one WebGL piece on the page: WebGL2, no library, one raymarched full-screen draw per frame, with pixels away from the body discarded early. The resolution is capped at 1.25x (1x on phones and small or low-core devices), and if the first 4 seconds run slow it drops to 0.75x once.
 - Ambient code loads after first paint (`requestIdleCallback` plus a dynamic `import()`), so it never competes with the LCP image.
 - No animation library. The whole system is plain CSS, the Web Animations API, a few small hooks and one canvas engine.
-- Without WebGL2 the stage keeps its static glow. Nothing else depends on it.
-- Botfolio's avatar (`components/chatbot/RobotAvatar.jsx`) is the one other canvas: a tiny raymarched ball of the same liquid metal as the forge's blob (white on dark, black on light). It ripples slowly at rest, churns faster while thinking and swells unevenly while speaking. One full-screen triangle per frame at avatar size; only one avatar is on screen at a time. With reduced motion it moves at half speed, and without WebGL2 it shows a shaded CSS sphere.
+- Without WebGL2 the hero is just the copy and the portrait. Nothing else depends on it.
+- Botfolio's avatar (`components/chatbot/RobotAvatar.jsx`) is the one other canvas: a tiny raymarched ball of the same liquid metal as Deto (white on dark, black on light). It ripples slowly at rest, churns faster while thinking and swells unevenly while speaking. One full-screen triangle per frame at avatar size; only one avatar is on screen at a time. With reduced motion it moves at half speed, and without WebGL2 it shows a shaded CSS sphere.
 
 ### 5. Nothing runs unseen
 
 - Anything that repeats (the queue visual, gallery autoplay, the cursor's rAF) runs only while it is on screen and the tab is visible. Gate it with `usePauseWhenHidden`, or with an IntersectionObserver plus `visibilitychange` for rAF loops.
-- The forge runs only while its stage is on screen (IntersectionObserver) and the tab is visible.
+- Deto runs only while the hero is on screen (IntersectionObserver) and the tab is visible.
 - Status pulses stop after 3 iterations.
 
 ### 6. Reduced motion is respected
@@ -51,7 +51,7 @@ A new ambient piece replaces the forge. It isn't added next to it.
 With `prefers-reduced-motion: reduce`:
 
 - every token duration becomes `0ms` and the reveal distance `0px`;
-- JS-driven pieces render their final state, with two deliberate exceptions (Moiz's call, 2026-11-19: a frozen hero read as broken). The forge plays a gentle version: it opens on the finished blob instead of a swarm flying in, runs at half speed, and ignores scroll (no scatter, no scroll spin). Botfolio's avatar ripples at half speed;
+- JS-driven pieces render their final state, with two deliberate exceptions (Moiz's call, 2026-11-19: a frozen hero read as broken). Deto runs at half speed. Botfolio's avatar ripples at half speed;
 - scroll- and cursor-linked effects are off;
 - view transitions are skipped;
 - the custom cursor is off.
@@ -59,13 +59,13 @@ With `prefers-reduced-motion: reduce`:
 ### 7. Every input, both directions, both themes
 
 - Each hover effect has a `:focus-visible` equivalent and doesn't depend on hover on touch.
-- Directional motion (arrows, sliders, the segmented thumb, the queue, the forge's stage beside the copy) is mirrored in RTL.
-- Anything drawn in JS reads the theme at draw time. Every forge shape is one neutral metal: near-white on dark and near-black on light, with no tint.
+- Directional motion (arrows, sliders, the segmented thumb, the queue, the hero's portrait side and Deto's place between copy and portrait) is mirrored in RTL.
+- Anything drawn in JS reads the theme at draw time. Every Deto shape is one neutral metal: near-white on dark and near-black on light, with no tint.
 - Canvas is `aria-hidden` and hidden when printing. It listens to the pointer on the window, so it never takes clicks or blocks scrolling.
 
 ### 8. One vocabulary
 
-Every duration and easing comes from the tokens below. No ad-hoc `300ms` values. Canvas timing (the forge's morph and hold) is the one place where it lives in its own module, as named constants.
+Every duration and easing comes from the tokens below. No ad-hoc `300ms` values. Canvas timing (Deto's morph and hold) is the one place where it lives in its own module, as named constants.
 
 ## Tokens (`src/motion/tokens.css`, `src/motion/tokens.js`)
 
@@ -90,19 +90,16 @@ In Tailwind classes, use them as `duration-(--dur-base) ease-(--ease-spring)`. I
 | `reducedMotion.js` | `prefersReducedMotion()` and a `usePrefersReducedMotion()` hook (via `useSyncExternalStore`). |
 | `viewTransition.js` | `withViewTransition()` and `navigateWithTransition()`. Card → case study shared-element morph. Waits for the new route to commit before the snapshot is taken. |
 | `prefsTransitions.js` | Circular theme reveal from the toggle, and the EN⇄AR crossfade. |
-| `nanoForge.js` | The forge engine: the shapes, their solids (rounded box, tubes, Möbius band, globe, the blob), the WebGL2 shaders and buffers, the metal look per theme, and a `step(t, dt)` that reads scroll and the pointer. Knows nothing about React or the DOM beyond its canvas. |
+| `deto.js` | Deto, the hero's living liquid: the shapes as signed distance fields, the raymarching shader and the metal look per theme, driven by `drive(t, dt, { a, b, m, view })`. Knows nothing about React or the DOM beyond its canvas. |
 
-## The nano forge
+## Deto, the hero's liquid
 
-`components/home/HeroStage.jsx` is the stage in the hero: beside the copy on desktop (mirrored in RTL), above it on phones. The prerendered HTML is only its glow. Once the browser is idle it loads the engine and adds one WebGL canvas, which fades in. The canvas is 1.5x the stage on every side and fades out softly towards its own edge (a radial mask), so loose cubes, the scroll scatter and the shadow never hit a hard cut. It takes no pointer events, and the copy sits above it.
+`components/home/Hero.jsx` puts the copy on one side and Moiz's full cut-out portrait (`HeroStage.jsx`) on the other, mirrored in RTL; on phones the portrait stacks above the copy. `HeroLiquid.jsx` adds one WebGL2 canvas over the whole hero section, under the copy and the portrait, once the browser is idle. It takes no pointer events and is hidden when printing.
 
-- **Shapes**, in order: a liquid-metal blob (the forge opens on it), a cube, a torus knot, a Möbius loop, a planet with a belt of orbiting debris, and a double helix (1.5 turns, 9 rungs). Every cube has a place in every shape. Only the planet's globe fuses: its ring stays a belt of loose cubes of mixed sizes that orbit it, inner ones faster, and turn slowly. While the planet stands the shape itself stops turning, so only the ring moves. The solid cube has softly rounded edges and corners. The blob is the one living solid: the same metal as the rest, glossier, staying close to a sphere at one fixed size while it gently ripples, sways and pushes out small bulges, all displaced in the vertex shader. It also forms differently from the rest: its cubes first close into a ball, then liquid leaks out of it at scattered spots, one after another, and the puddles spread with wavering, swollen edges and run together until the ball is coated and the cubes and their strings are gone beneath it. Then it settles into the blob. Breaking up runs the same steps backwards.
-- **A cycle (12.7s)**: the standing solid breaks up into its cubes in patches (1.2s). The cubes fly to the next shape, built from the core outwards (4s): each one travels almost straight, without tumbling, and stays square to the grid, so the shape simply comes apart and goes back together. Then they fuse into that shape's smooth solid, which grows over them in patches with a glowing edge (1.5s), and the solid holds (6s). There's no scan line or sweep.
-- **Strings**: while cubes are loose, each is linked by hairlines to a few neighbours in the same part of the shape. Separate parts are never strung together: the planet's globe and ring, and the helix's two strands and its rungs, each keep their own strings. Lines that stretch too far fade out, and they're gone once the solid stands.
-- **Shadow**: the shape casts a soft shadow on an unseen floor below it, flattened from its real silhouette. There's no caption or pedestal. In dark mode the shadow is faint by nature.
-- **Scroll**: the shape turns with scroll position, and blows apart into shrinking debris as the hero leaves. It's scrubbed, so scrolling back rebuilds it.
-- **Cursor**: hover only. The pointer never turns or tilts the shape. Hovering the stage peels about 15% of the solid back into smaller cubes, which drift out a little and are strung together. Each opening reads as a dent: its inner wall is in shadow, and a little below the skin the inside is packed with small cubes of mixed sizes, a matrix rather than a hollow shell. It closes up again when the pointer leaves. The patches come from an integer-hash noise shared by the shaders and JS, so the packed cubes are placed under exactly the patches that can open. A finger does the same while it's down.
-- **Off**: only on home, stopped when the stage is off screen or the tab is hidden, and the gentle half-speed version under reduced motion.
+- **Where**: on desktop, centred in the gap between the copy and the portrait, at the middle of their height; on phones, behind the portrait. Drawn at 32% opacity. It only exists in the hero; no other section has background animation.
+- **What**: one body of liquid metal floating in space, raymarched from signed distance fields. Near-white on the dark theme, near-black on the light one.
+- **Cycle**: it appears at once, full size (no pop-up, no fade, no drop-in), as a round liquid whose surface waves and dances. Then it runs through its shapes on a timer: a rounded cube, a torus knot, a double helix standing upright, a Möbius band and a planet. Each stands 4 s and turns straight into the next over 2.6 s, with no sphere in between. The planet's globe forms first, then its debris fans out from behind it into three rings, and tucks back behind it before the next shape. The planet holds still while only its debris orbits; every other shape turns slowly. No jiggle, no bounce, no squash.
+- **Off**: only on home, stopped when the hero is off screen or the tab is hidden, and at half speed under reduced motion.
 
 ## Each functional piece, and what it proves
 
@@ -131,7 +128,7 @@ Loading screens, scroll-jacking, smooth-scroll libraries, pinned sections, paral
 
 ## Adding motion
 
-- Decide which kind it is (rule 2). If it's ambient, it replaces the forge.
+- Decide which kind it is (rule 2). If it's ambient, it replaces Deto.
 - Reach for an existing token and an existing component first.
 - If it loops, gate it (rule 5). If it is driven by JS, check `prefersReducedMotion()` and render the end state.
 - If it follows scroll or the pointer, scrub or ease it: it must undo itself when you go back.

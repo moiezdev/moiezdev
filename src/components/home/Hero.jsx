@@ -1,10 +1,10 @@
-import Img from '../ui/Img';
 import Button from '../ui/Button';
 import ExternalIcon from '../ui/ExternalIcon';
 import { useContent } from '../../i18n/content';
 import { getExperienceYears } from '../../utils/experience';
 import site from '../../data/site.json';
 import HeroStage from './HeroStage';
+import HeroLiquid from './HeroLiquid';
 
 const Stat = ({ value, label }) => (
   <div className="flex flex-col items-center lg:items-start text-center lg:text-start px-2 sm:px-4 lg:ps-0 lg:pe-6 min-w-0">
@@ -12,19 +12,6 @@ const Stat = ({ value, label }) => (
       {value}
     </span>
     <span className="mt-2 text-[12px] sm:text-[13px] md:text-[14px] leading-snug text-label-2 text-balance">{label}</span>
-  </div>
-);
-
-/** A small round portrait beside the name: the hero's visual is the 3D stage. */
-const Avatar = ({ alt }) => (
-  <div className="relative shrink-0 size-14 md:size-16 overflow-hidden rounded-full ring-1 ring-separator bg-surface-2">
-    <Img
-      src="/heroSection/hero-img.webp"
-      alt={alt}
-      sizes="64px"
-      priority
-      className="absolute max-w-none w-[170%] start-[-35%] top-[-4%] h-auto"
-    />
   </div>
 );
 
@@ -44,15 +31,17 @@ const Hero = () => {
         }}
       />
 
-      <div className="relative app-container grid items-center gap-4 lg:gap-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
-        <div className="relative z-[1] flex flex-col items-center text-center lg:items-start lg:text-start">
+      {/* Deto, dim, in the middle of the hero: between the copy and the portrait (behind the portrait on phones) */}
+      <HeroLiquid />
+
+      <div className="relative z-[1] app-container grid items-center gap-6 lg:gap-16 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+        <div data-hero-copy className="relative flex flex-col items-center text-center lg:items-start lg:text-start">
           <span className="inline-flex items-center gap-2 rounded-full glass ring-1 ring-separator px-4 py-1.5 text-[13px] md:text-[14px] text-label-2">
             <span className="status-dot" aria-hidden />
             {t('hero.available')}
           </span>
 
-          <div className="mt-6 lg:mt-8 flex items-center gap-3.5 text-start">
-            <Avatar alt={t('hero.portraitAlt')} />
+          <div className="mt-6 lg:mt-8">
             <p className="flex flex-col min-w-0">
               <span className="text-[18px] md:text-[22px] font-semibold tracking-[-0.02em] text-label leading-tight">
                 {t('hero.name')}
@@ -93,12 +82,12 @@ const Hero = () => {
         </div>
 
         <div className="order-first lg:order-none">
-          <HeroStage />
+          <HeroStage alt={t('hero.portraitAlt')} />
         </div>
       </div>
 
       {/* stats: a full-width row under copy and portrait, so the portrait centres on the copy alone */}
-      <div className="relative app-container flex justify-center lg:justify-start">
+      <div className="relative z-[1] app-container flex justify-center lg:justify-start">
         <div className="mt-12 md:mt-16 w-full max-w-3xl grid grid-cols-3 [&>*+*]:border-s [&>*+*]:border-separator lg:[&>*+*]:ps-6">
           <Stat value={t('hero.statLatencyValue')} label={t('hero.statLatency')} />
           <Stat value={t('hero.statTicketsValue')} label={t('hero.statTickets')} />
