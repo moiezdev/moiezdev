@@ -52,18 +52,21 @@ function pad(pts, n) {
 /**
  * Fill a volume with cubes on a grid, so every shape is solid cubes right through, not a shell.
  * sample() returns a random point inside the volume as [x, y, z, part]. The grid spacing is the
- * largest that still fits n cubes (never smaller than `min` x the base spacing, so thin shapes keep
- * real cubes and leave the rest as hidden spares). w = cube scale relative to the base + 2 x part.
+ * largest that still fits n cubes, so each shape sizes its cubes to use (nearly) all of them: thin
+ * shapes get small cubes, roomy ones big cubes. w = cube scale relative to the base + 2 x part.
  */
-function voxelize(n, sample, base, { min = 0.72, max = 1.9, samples = 160000 } = {}) {
+function voxelize(n, sample, base, { min = 0.3, max = 1.9, samples = n * 22 } = {}) {
   const S = new Float32Array(samples * 4);
   for (let i = 0; i < samples; i++) S.set(sample(), i * 4);
   const cells = (sp) => {
     const m = new Map();
-    for (let i = 0; i < samples; i++) {
-      const k = [0, 1, 2].map((c) => Math.round(S[i * 4 + c] / sp));
-      const key = (k[0] + 512) * 1048576 + (k[1] + 512) * 1024 + (k[2] + 512);
-      if (!m.has(key)) m.set(key, [k[0] * sp, k[1] * sp, k[2] * sp, sp / base + 2 * S[i * 4 + 3]]);
+    const inv = 1 / sp;
+    for (let i = 0; i < samples * 4; i += 4) {
+      const x = Math.round(S[i] * inv);
+      const y = Math.round(S[i + 1] * inv);
+      const z = Math.round(S[i + 2] * inv);
+      const key = (x + 512) * 1048576 + (y + 512) * 1024 + (z + 512);
+      if (!m.has(key)) m.set(key, [x * sp, y * sp, z * sp, sp / base + 2 * S[i + 3]]);
     }
     return m;
   };
@@ -72,7 +75,7 @@ function voxelize(n, sample, base, { min = 0.72, max = 1.9, samples = 160000 } =
   let best = cells(hi);
   if (cells(lo).size <= n) best = cells(lo);
   else
-    for (let it = 0; it < 14; it++) {
+    for (let it = 0; it < 11; it++) {
       const mid = (lo + hi) / 2;
       const c = cells(mid);
       if (c.size > n) lo = mid;
