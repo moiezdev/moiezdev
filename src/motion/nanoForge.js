@@ -17,8 +17,6 @@ const TAU = Math.PI * 2;
 const MORPH = 4.0; // seconds for the cubes to fly to the next shape
 const HOLD = 6.0; // seconds the formed shape holds
 const CYCLE = MORPH + HOLD;
-const BRAIN_YAW = -2.1; // the brain's best side: mostly profile, a little of the front
-const BRAIN_PITCH = 0.32;
 
 
 // ---------- look ----------
@@ -438,7 +436,6 @@ export function createNanoForge(canvas, { data, theme, scroll = () => 0, pointer
   // eased interaction state
   let near = 0;
   let calm = 0; // 1 while the planet stands still
-  let pose = 0; // 1 while the brain holds its three-quarter view
   let px = 0;
   let py = 0;
   let scatter = 0;
@@ -532,15 +529,7 @@ export function createNanoForge(canvas, { data, theme, scroll = () => 0, pointer
     // while the planet stands, the globe stops turning and only its debris ring orbits
     const planetUp = shapes[target].name === 'planet' && mix > 0.9;
     calm += ((planetUp ? 1 : 0) - calm) * Math.min(1, dt * 1.5);
-    // while the brain stands, it turns to a three-quarter side view (front, top and one temple showing)
-    // and only sways a little round it, so it reads as a brain instead of spinning end-on
-    const brainUp = shapes[target].name === 'brain' && mix > 0.6;
-    pose += ((brainUp ? 1 : 0) - pose) * Math.min(1, dt * 1.2);
-    yaw += dt * 0.32 * (1 - calm) * (1 - pose);
-    if (pose > 0.001) {
-      const goal = BRAIN_YAW + TAU * Math.round((yaw - BRAIN_YAW) / TAU) + Math.sin(t * 0.35) * 0.22;
-      yaw += (goal - yaw) * Math.min(1, dt * 1.6) * pose;
-    }
+    yaw += dt * 0.32 * (1 - calm);
     const sp = gentle ? 0 : Math.min(1, Math.max(0, scroll()));
     scatter += (Math.min(1, Math.max(0, (sp - 0.08) / 0.7)) - scatter) * Math.min(1, dt * 8);
     draw({
@@ -549,7 +538,7 @@ export function createNanoForge(canvas, { data, theme, scroll = () => 0, pointer
       mix,
       t,
       yaw: yaw + sp * 1.6,
-      pitch: 0.38 + (BRAIN_PITCH - 0.38) * pose + Math.sin(t * 0.21) * 0.08 * (1 - calm) * (1 - pose * 0.6),
+      pitch: 0.38 + Math.sin(t * 0.21) * 0.08 * (1 - calm),
     });
   }
 
