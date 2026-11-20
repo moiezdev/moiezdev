@@ -14,7 +14,7 @@
  */
 
 const TAU = Math.PI * 2;
-const MORPH = 4.0; // seconds for the cubes to fly to the next shape
+const MORPH = 2.7; // seconds for the cubes to fly to the next shape (1.5x faster, Moiz 2026-11-20)
 const HOLD = 6.0; // seconds the formed shape holds
 const CYCLE = MORPH + HOLD;
 
