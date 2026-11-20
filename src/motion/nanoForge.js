@@ -21,6 +21,11 @@ const FUSE = 1.5; // seconds for them to fuse into its solid
 const HOLD = 6.0; // seconds the solid holds
 const CYCLE = BREAK + MORPH + FUSE + HOLD;
 const FLOOR_Y = -1.12; // the floor the shadow falls on, below the shapes
+// the shards' size, in units of the old cube edge: a triangle's circumradius, its thickness, and how far
+// the centre of its outer face rises
+const SHARD_R = 1.2;
+const SHARD_T = 0.16;
+const SHARD_PEAK = 0.06;
 const PEEL_THR = 0.706; // chunk noise above this covers ~15% of a surface: the share a hover peels back into cubes
 
 // ---------- shapes: n points, xyz in about [-1, 1], w = cube scale (0 hides a spare cube) ----------
@@ -629,6 +634,7 @@ vec3 orbit(vec3 p) {
 ${NOISE}
 // how far a ring rock has risen out of the globe it first gathers into (1 once it's out in the ring)
 float gRise;
+vec3 gSpot; // and the spot on the globe it rises from
 
 vec3 centreOf(vec4 A, vec4 B, vec4 seed, vec4 S, out float e, out float arc, out float near, out float scale, out vec3 dir, out float peel, out float debris, out float melt) {
   // built from the core outwards, each cube a little out of step
@@ -645,6 +651,7 @@ vec3 centreOf(vec4 A, vec4 B, vec4 seed, vec4 S, out float e, out float arc, out
   // forming the planet, the ring's rocks don't fly straight to the ring: they first gather into the globe
   // with the rest, sooner, then break away from its surface one after another and drift out into orbit
   gRise = 1.0;
+  gSpot = B.xyz;
   if (ringB > 0.5) {
     e = clamp((uMix - seed.x * 0.22 - clamp(length(B.xyz), 0.0, 1.2) * 0.1) / 0.3, 0.0, 1.0);
     e = e * e * e * (e * (e * 6.0 - 15.0) + 10.0);
@@ -652,6 +659,7 @@ vec3 centreOf(vec4 A, vec4 B, vec4 seed, vec4 S, out float e, out float arc, out
     float r = clamp((uMix - 0.62 - seed.w * 0.26) / 0.12, 0.0, 1.0);
     gRise = r * r * (3.0 - 2.0 * r);
     vec3 spot = normalize(pb - RING_AXIS * dot(pb, RING_AXIS) * 0.6 + vec3(1e-4)) * 0.5;
+    gSpot = spot;
     pb = mix(spot, pb, gRise) + RING_AXIS * sin(3.14159265 * gRise) * (seed.y - 0.5) * 0.12;
   }
   debris = max(ringA * (1.0 - e), ringB * gRise);
@@ -662,13 +670,17 @@ vec3 centreOf(vec4 A, vec4 B, vec4 seed, vec4 S, out float e, out float arc, out
   float fd = uFuse * S.w > 0.5 ? uThr - skin(S.xyz) : -9.0;
   float pull = smoothstep(-SKIN_LEAD * 0.6, SKIN_TAIL * 0.4, fd);
   melt = smoothstep(-0.015, SKIN_TAIL, fd);
+  // on hover, the skin draws back off big patches the same way it breaks up: the cubes under them rise
+  // back out of it at their own spots, closed up and flush, then melt in again when the pointer leaves
+  vec3 obj = mix(A.xyz, B.xyz, e);
+  vec3 at = S.w > 0.5 ? S.xyz : obj;
+  peel = uPeel > 0.001 ? smoothstep(peelEdge() - 0.015, peelEdge() + 0.015, chunk(uRound > 0.5 ? normalize(at) : at)) : 0.0;
+  melt *= 1.0 - peel;
   float swell = smoothstep(-SKIN_LEAD, -SKIN_LEAD * 0.35, fd) * (1.0 - melt);
   p = mix(p, S.xyz, pull);
   p += dir * uScatter * (0.7 + seed.x * 1.8);
-  // on hover, the cubes under the patches that peel away come loose and drift out a little
-  vec3 obj = mix(A.xyz, B.xyz, e);
-  peel = uPeel > 0.001 ? smoothstep(peelEdge() - 0.015, peelEdge() + 0.015, chunk(uRound > 0.5 ? normalize(obj) : obj)) : 0.0;
-  p += (normalize(obj + vec3(1e-4)) * 0.09 + dir * 0.05 + dir * 0.02 * sin(uTime * 2.0 + seed.z * 30.0)) * peel * uPeel;
+  // the risen cubes stand just proud of the skin and stir a little, so the patch reads as loose
+  p += (normalize(at + vec3(1e-4)) * 0.012 + dir * 0.004 * sin(uTime * 2.0 + seed.z * 30.0)) * peel * pull;
   // w holds the cube's scale, plus 2 x the part it belongs to (the planet's globe and its ring)
   // closing up, each cube swells a little to shut the gaps to its neighbours, then sinks away to nothing
   scale = mix(mod(A.w, 2.0), mod(B.w, 2.0), e) * (1.0 - 0.1 * arc) * (1.0 - 0.75 * uScatter) * (1.0 + 0.16 * swell);
@@ -678,6 +690,8 @@ vec3 centreOf(vec4 A, vec4 B, vec4 seed, vec4 S, out float e, out float arc, out
   vec2 d = c0.xy / c0.w - uPointer;
   d.x *= uAspect;
   near = uPointerOn * smoothstep(0.42, 0.0, length(d));
+  // risen hover cubes only lean away a little, so a patch stays a patch instead of scattering
+  near *= 1.0 - 0.75 * peel;
   vec2 away = normalize(d + vec2(1e-4));
   away.x /= uAspect;
   c.xy += away * near * 0.32;
@@ -710,9 +724,12 @@ layout(location=2) in vec4 aA;
 layout(location=3) in vec4 aB;
 layout(location=4) in vec4 aSeed;
 layout(location=8) in vec4 aS;
+layout(location=10) in vec4 aFA; // which way the shard faces in shape A / B
+layout(location=11) in vec4 aFB;
 uniform float uSize, uCubes;
 out vec3 vN;
 out vec3 vLocal;
+out vec3 vLocalN;
 out vec3 vWorld;
 out float vGlow;
 ${CENTRE}
@@ -723,20 +740,25 @@ void main() {
   vec3 c = centreOf(aA, aB, aSeed, aS, e, arc, near, scale, dir, peel, debris, melt);
   // while the solid stands the cubes are gone, except the planet's debris and the ones a hover has peeled loose
   float vis = max(max(uCubes * (1.0 - melt), peel), debris);
-  // no tumbling in flight: cubes keep square to the grid and only turn when scattered by scroll;
-  // the ring's debris turns slowly as it orbits
+  // each shard lies flat on the surface, turned at random about its own normal, and tilts smoothly from
+  // one shape's surface to the next in flight; it only tumbles when scattered by scroll, and the ring's
+  // debris turns slowly as it orbits
   float spin = uScatter * aSeed.w * 5.0 + debris * uOrbit * (aSeed.w - 0.5) * 4.0;
-  mat3 R = uRot * axisAngle(dir, spin);
-  // the cubes a hover peels loose are smaller than the ones that build the shape
-  float shrink = mix(1.0, 0.55, peel * max(1.0 - uCubes, melt));
-  vec3 world = c + R * (aPos * scale * vis * shrink * uSize);
+  // a ring shard sits on the globe like the rest until it breaks away, then turns flat into the ring
+  vec3 fn = mix(aFA.xyz, mix(normalize(gSpot + vec3(1e-4)), aFB.xyz, gRise), e);
+  fn = dot(fn, fn) < 1e-4 ? dir : normalize(fn);
+  vec3 t1 = normalize(cross(fn, abs(fn.y) < 0.9 ? vec3(0.0, 1.0, 0.0) : vec3(1.0, 0.0, 0.0)));
+  mat3 F = axisAngle(fn, aSeed.z * 6.2831853) * mat3(t1, cross(fn, t1), fn);
+  mat3 R = uRot * axisAngle(dir, spin) * F;
+  vec3 world = c + R * (aPos * scale * vis * uSize);
   if (uShadow > 0.5) world = toFloor(world);
   vN = R * aNormal;
   vLocal = aPos;
+  vLocalN = aNormal;
   vWorld = world;
   // a faint warmth on the cubes just as they melt in (the blob's leak keeps its own glow)
   float hot = melt * (1.0 - melt) * 4.0 * (1.0 - max(peel, debris));
-  vGlow = arc * 0.3 + near * 0.35 + (1.0 - uCubes) * 0.6 * (1.0 - max(peel, debris)) + hot * 0.35 + peel * 0.25;
+  vGlow = arc * 0.3 + near * 0.35 + (1.0 - uCubes) * 0.6 * (1.0 - max(peel, debris)) + hot * 0.35;
   gl_Position = uProj * vec4(world - vec3(0.0, 0.0, uCamZ), 1.0);
 }`;
 
@@ -750,16 +772,28 @@ uniform mat3 uRot;
 uniform float uCamZ, uSize;
 out vec3 vN;
 out vec3 vLocal;
+out vec3 vLocalN;
 out vec3 vWorld;
 out float vGlow;
 ${NOISE}
+mat3 turn(vec3 a, float t) {
+  a = normalize(a);
+  float c = cos(t), s = sin(t), k = 1.0 - c;
+  return mat3(c + a.x*a.x*k, a.y*a.x*k + a.z*s, a.z*a.x*k - a.y*s,
+              a.x*a.y*k - a.z*s, c + a.y*a.y*k, a.z*a.y*k + a.x*s,
+              a.x*a.z*k + a.y*s, a.y*a.z*k - a.x*s, c + a.z*a.z*k);
+}
 void main() {
   float show = uPeel > 0.001 ? smoothstep(peelEdge() - 0.01, peelEdge() + 0.02, aF.w) : 0.0;
-  // sizes vary a little, so the matrix reads as packed rather than gridded
-  float r = fract(sin(float(gl_InstanceID) * 12.9898) * 43758.5453);
-  vec3 world = uRot * (aF.xyz + aPos * uSize * (0.5 + 0.35 * r) * show);
-  vN = uRot * aNormal;
+  // sizes and turns vary, so the inside reads as a heap of shards rather than a grid
+  float id = float(gl_InstanceID);
+  float r = fract(sin(id * 12.9898) * 43758.5453);
+  vec3 ax = vec3(fract(sin(id * 78.233) * 43758.5453), fract(sin(id * 39.425) * 24634.6345), fract(sin(id * 3.71) * 9123.17)) * 2.0 - 1.0;
+  mat3 T = uRot * turn(ax + vec3(1e-3), r * 6.2831853);
+  vec3 world = uRot * aF.xyz + T * (aPos * uSize * (0.5 + 0.35 * r) * show);
+  vN = T * aNormal;
   vLocal = aPos;
+  vLocalN = aNormal;
   vWorld = world;
   vGlow = 0.0;
   gl_Position = uProj * vec4(world - vec3(0.0, 0.0, uCamZ), 1.0);
@@ -769,6 +803,7 @@ const CUBE_FS = `#version 300 es
 precision highp float;
 in vec3 vN;
 in vec3 vLocal;
+in vec3 vLocalN;
 in vec3 vWorld;
 in float vGlow;
 uniform vec3 uEdge;
@@ -782,10 +817,12 @@ void main() {
   }
   vec3 n = normalize(vN);
   vec3 col = shade(n, vWorld);
-  // machined bevel: light catches where two faces meet
-  vec3 a = abs(vLocal) * 2.0;
-  float mid = a.x + a.y + a.z - max(a.x, max(a.y, a.z)) - min(a.x, min(a.y, a.z));
-  col += uEdge * smoothstep(0.86, 0.96, mid) * (0.35 + 0.65 * max(dot(n, normalize(vec3(-0.55, 0.85, 0.6))), 0.0));
+  // cut edges: light catches along the shard's rim, on its faces and on its side walls
+  float inr = ${(SHARD_R / 2).toFixed(4)};
+  vec2 q = vLocal.xy;
+  float out3 = max(dot(q, vec2(0.0, -1.0)), max(dot(q, vec2(0.8660254, 0.5)), dot(q, vec2(-0.8660254, 0.5))));
+  float rim = abs(vLocalN.z) > 0.3 ? smoothstep(inr * 0.8, inr * 0.95, out3) : smoothstep(0.55, 0.95, abs(vLocal.z) / ${(SHARD_T / 2).toFixed(4)});
+  col += uEdge * rim * (0.35 + 0.65 * max(dot(n, normalize(vec3(-0.55, 0.85, 0.6))), 0.0));
   o = vec4(col + uGlow * vGlow, 1.0);
 }`;
 
@@ -912,7 +949,8 @@ void main() {
   if (uPeel > 0.001) {
     float pe = peelEdge() - chunk(vObj);
     if (pe < 0.0) discard;
-    edge = max(edge, (1.0 - smoothstep(0.0, 0.035, pe)) * min(1.0, uPeel * 3.0));
+    // the same soft warm rim as the skin's edge while it forms
+    edge = max(edge, (1.0 - smoothstep(0.0, 0.05, pe)) * 0.45 * min(1.0, uPeel * 3.0));
   }
   if (uShadow > 0.5) {
     o = vec4(1.0);
@@ -964,30 +1002,99 @@ void main() {
   o = vec4(0.0, 0.0, 0.0, a);
 }`;
 
-function cubeMesh() {
+/**
+ * One faceted shard: a flat equilateral triangle with a little thickness and a low three-facet peak on its
+ * outer face (+z), so each catches the light like a cut chip. Its plane is xy, its outer side +z.
+ * Big enough that shards lying on a surface at random turns overlap into a closed, scaly skin.
+ */
+function shardMesh() {
   const P = [];
   const N = [];
   const I = [];
-  const faces = [
-    [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
-    [[-1, 0, 0], [0, 1, 0], [0, 0, -1]],
-    [[0, 1, 0], [0, 0, 1], [1, 0, 0]],
-    [[0, -1, 0], [0, 0, -1], [1, 0, 0]],
-    [[0, 0, 1], [1, 0, 0], [0, 1, 0]],
-    [[0, 0, -1], [-1, 0, 0], [0, 1, 0]],
-  ];
-  for (const [nn, u, w] of faces) {
+  const corner = (k) => {
+    const a = Math.PI / 2 + (k * TAU) / 3;
+    return [Math.cos(a) * SHARD_R, Math.sin(a) * SHARD_R];
+  };
+  const h = SHARD_T / 2;
+  // a flat-shaded triangle, wound counter-clockwise as seen from outside
+  const tri = (a, b, c) => {
+    const n = norm(cross(sub(b, a), sub(c, a)));
     const base = P.length / 3;
-    for (const [su, sw] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) {
-      for (let k = 0; k < 3; k++) P.push(nn[k] * 0.5 + u[k] * su * 0.5 + w[k] * sw * 0.5);
-      N.push(...nn);
+    for (const v of [a, b, c]) {
+      P.push(...v);
+      N.push(...n);
     }
-    // wind every face counter-clockwise as seen from outside
-    const cr = [u[1] * w[2] - u[2] * w[1], u[2] * w[0] - u[0] * w[2], u[0] * w[1] - u[1] * w[0]];
-    const ccw = cr[0] * nn[0] + cr[1] * nn[1] + cr[2] * nn[2] > 0;
-    I.push(...(ccw ? [base, base + 1, base + 2, base, base + 2, base + 3] : [base, base + 2, base + 1, base, base + 3, base + 2]));
+    I.push(base, base + 1, base + 2);
+  };
+  const apex = [0, 0, h + SHARD_PEAK];
+  for (let k = 0; k < 3; k++) {
+    const [ax, ay] = corner(k);
+    const [bx, by] = corner((k + 1) % 3);
+    // outer facets up to the peak, the flat underside, and the side walls
+    tri([ax, ay, h], [bx, by, h], apex);
+    tri([0, 0, -h], [bx, by, -h], [ax, ay, -h]);
+    tri([ax, ay, -h], [bx, by, -h], [bx, by, h]);
+    tri([ax, ay, -h], [bx, by, h], [ax, ay, h]);
   }
   return { P: new Float32Array(P), N: new Float32Array(N), I: new Uint16Array(I) };
+}
+
+/**
+ * Which way each shard of a formation faces: the shape's outward normal at its spot, so the shards lie flat
+ * on the surface like scales. [x, y, z, 0] per point, in the same (settled) order as the points.
+ */
+function facingFor(name, pts) {
+  const n = pts.length / 4;
+  const out = new Float32Array(n * 4);
+  const knot = name === 'torus knot' ? Array.from({ length: 900 }, (_, k) => knotCurve(k / 900)) : null;
+  const ringAxis = [0, Math.cos(0.42), Math.sin(0.42)];
+  for (let i = 0; i < n; i++) {
+    const p = [pts[i * 4], pts[i * 4 + 1], pts[i * 4 + 2]];
+    const w = pts[i * 4 + 3];
+    let f;
+    if (name === 'cube') {
+      // the faces this voxel sits on (two or three at an edge or corner, so those shards sit at 45 degrees)
+      const m = Math.max(...p.map(Math.abs));
+      f = norm(p.map((c) => (Math.abs(c) > m - 1e-3 ? Math.sign(c) : 0)));
+    } else if (name === 'torus knot') {
+      let best = knot[0];
+      let bd = Infinity;
+      for (const c of knot) {
+        const d = (c[0] - p[0]) ** 2 + (c[1] - p[1]) ** 2 + (c[2] - p[2]) ** 2;
+        if (d < bd) {
+          bd = d;
+          best = c;
+        }
+      }
+      f = norm(sub(p, best));
+    } else if (name === 'möbius loop') {
+      // the band's normal: find the band point under p
+      let bu = 0;
+      let bv = 0;
+      let bd = Infinity;
+      for (let a = 0; a < 360; a++)
+        for (let b = 0; b <= 6; b++) {
+          const u = (a / 360) * TAU;
+          const v = -MOBIUS_W + (b / 6) * 2 * MOBIUS_W;
+          const q = mobiusAt(u, v);
+          const d = (q[0] - p[0]) ** 2 + (q[1] - p[1]) ** 2 + (q[2] - p[2]) ** 2;
+          if (d < bd) {
+            bd = d;
+            bu = u;
+            bv = v;
+          }
+        }
+      const e = 1e-4;
+      f = norm(cross(sub(mobiusAt(bu + e, bv), mobiusAt(bu - e, bv)), sub(mobiusAt(bu, bv + e), mobiusAt(bu, bv - e))));
+    } else if (name === 'planet' && Math.floor(w / 2) >= 1) {
+      // ring debris lies flat in the ring's plane (turning about its axis never changes that)
+      f = ringAxis;
+    } else if (name === 'cloud') {
+      f = norm([rand(-1, 1), rand(-1, 1), rand(-1, 1)]);
+    } else f = norm(p);
+    out.set([f[0], f[1], f[2], 0], i * 4);
+  }
+  return out;
 }
 
 function perspective(fovy, aspect, near, far) {
@@ -1101,7 +1208,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   // ---- cubes: one instanced mesh ----
   const cubeVao = gl.createVertexArray();
   gl.bindVertexArray(cubeVao);
-  const mesh = cubeMesh();
+  const mesh = shardMesh();
   buf(mesh.P);
   attrib(0, 3);
   buf(mesh.N);
@@ -1115,11 +1222,14 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   const shapeBufs = settled.map((d) => buf(d));
   const startData = settle(cloud(N));
   const startBuf = buf(startData);
+  // which way each shard faces in every shape
+  const facingBufs = shapes.map((s, i) => buf(facingFor(s.name, settled[i])));
+  const startFacing = buf(facingFor('cloud', startData));
   // where each cube melts into its shape's solid, and the pace the skin spreads at
   const snaps = shapes.map((s, i) => snapFor(s.name, settled[i], size));
   const skinTables = snaps.map((d) => skinTable(d));
   const snapBufs = snaps.map((d) => buf(d));
-  for (const loc of [2, 3, 8]) {
+  for (const loc of [2, 3, 8, 10, 11]) {
     gl.enableVertexAttribArray(loc);
     gl.vertexAttribDivisor(loc, 1);
   }
@@ -1192,6 +1302,10 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     gl.vertexAttribPointer(3, 4, gl.FLOAT, false, 0, 0);
     gl.bindBuffer(gl.ARRAY_BUFFER, snapBufs[sv]);
     gl.vertexAttribPointer(8, 4, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, a < 0 ? startFacing : facingBufs[a]);
+    gl.vertexAttribPointer(10, 4, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, facingBufs[b]);
+    gl.vertexAttribPointer(11, 4, gl.FLOAT, false, 0, 0);
     const LA = a < 0 ? lineStart : lineBufs[a];
     const LB = lineBufs[b];
     gl.bindVertexArray(lineVao);
