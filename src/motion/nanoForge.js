@@ -396,8 +396,12 @@ function snapFor(name, pts, size) {
   for (let i = 0; i < n; i++) {
     const p = at(i);
     const w = pts[i * 4 + 3];
-    if (w <= 0 || name === 'toxic sludge') {
+    if (w <= 0) {
       put(i, p, 0);
+      continue;
+    }
+    if (name === 'toxic sludge') {
+      put(i, norm(p).map((c) => c * BLOB_R));
       continue;
     }
     if (name === 'cube') {
@@ -428,6 +432,7 @@ function snapFor(name, pts, size) {
  * fused (0..1) to that threshold, from the field's spread over the shape's own cubes, so the skin covers
  * the shape at an even pace instead of rushing through the middle.
  */
+const BLOB_R = 0.57; // the blob's resting radius: just over its ball of cubes
 const SKIN_LEAD = 0.24; // the cubes start to close up this far (in skin() units) ahead of the skin
 const SKIN_TAIL = 0.12; // and are fully gone this far behind it
 function skinTable(snap) {
@@ -604,25 +609,6 @@ vec3 toFloor(vec3 w) {
   return uPitch * u;
 }`;
 
-const LEAK = `
-// the blob's liquid leaks out of its cube ball at scattered spots, each starting at its own moment, and the
-// puddles spread until they meet and cover the ball. uFront is how far that has got (0..1; -1: no blob forming).
-// leakGap(n) < 0 where the liquid has reached direction n.
-uniform float uFront;
-const int LEAKS = 9;
-const vec4 LEAK[9] = vec4[9](
-  vec4(-0.42, 0.52, 0.74, 0.0), vec4(0.71, -0.18, 0.68, 0.08), vec4(0.12, 0.93, -0.35, 0.16),
-  vec4(-0.8, -0.45, 0.4, 0.05), vec4(0.3, -0.85, -0.43, 0.22), vec4(-0.55, 0.1, -0.83, 0.12),
-  vec4(0.88, 0.42, -0.2, 0.28), vec4(0.05, -0.2, 0.98, 0.18), vec4(-0.2, -0.6, -0.1, 0.3));
-float leakGap(vec3 n) {
-  float g = 9.0;
-  for (int i = 0; i < LEAKS; i++) {
-    float f = clamp((uFront - LEAK[i].w) / (0.85 - LEAK[i].w), 0.0, 1.0);
-    float reach = 1.35 * f * (2.0 - f) - 0.05;
-    g = min(g, acos(clamp(dot(n, normalize(LEAK[i].xyz)), -1.0, 1.0)) - reach);
-  }
-  return g;
-}`;
 
 /** Where cube `seed` is between shape A and shape B: shared by the cubes and the lines between them. */
 const CENTRE = `
@@ -631,12 +617,6 @@ uniform mat3 uRot;
 uniform float uCamZ, uMix, uTime, uScatter, uAspect, uPointerOn;
 uniform vec2 uPointer;
 uniform float uRound; // 1 when the standing solid is the sludge, whose skin is a unit sphere
-${LEAK}
-// cubes (and their strings) the liquid has covered are gone
-float uncovered(vec4 A, vec4 B) {
-  if (uFront < -0.5) return 1.0;
-  return smoothstep(-0.22, 0.02, leakGap(normalize(mix(A.xyz, B.xyz, uMix) + vec3(1e-4))));
-}
 uniform float uRingA, uRingB, uOrbit; // 1 when shape A / B is the planet, whose ring stays loose debris
 const vec3 RING_AXIS = vec3(0.0, 0.9130889, 0.4077604); // the ring's normal: (0, cos 0.42, sin 0.42)
 mat3 axisAngle(vec3 a, float t) {
@@ -690,13 +670,17 @@ vec3 centreOf(vec4 A, vec4 B, vec4 seed, vec4 S, out float e, out float arc, out
   float fd = uFuse * S.w > 0.5 ? uThr - skin(S.xyz) : -9.0;
   float pull = smoothstep(-SKIN_LEAD * 0.6, SKIN_TAIL * 0.4, fd);
   melt = smoothstep(-0.015, SKIN_TAIL, fd);
+  // on hover, the skin draws back off big patches the same way it breaks up: the cubes under them rise
+  // back out of it at their own spots, closed up and flush, then melt in again when the pointer leaves
+  vec3 obj = mix(A.xyz, B.xyz, e);
+  vec3 at = S.w > 0.5 ? S.xyz : obj;
+  peel = uPeel > 0.001 ? smoothstep(peelEdge() - 0.015, peelEdge() + 0.015, chunk(uRound > 0.5 ? normalize(at) : at)) : 0.0;
+  melt *= 1.0 - peel;
   float swell = smoothstep(-SKIN_LEAD, -SKIN_LEAD * 0.35, fd) * (1.0 - melt);
   p = mix(p, S.xyz, pull);
   p += dir * uScatter * (0.7 + seed.x * 1.8);
-  // on hover, the cubes under the patches that peel away come loose and drift out a little
-  vec3 obj = mix(A.xyz, B.xyz, e);
-  peel = uPeel > 0.001 ? smoothstep(peelEdge() - 0.015, peelEdge() + 0.015, chunk(uRound > 0.5 ? normalize(obj) : obj)) : 0.0;
-  p += (normalize(obj + vec3(1e-4)) * 0.09 + dir * 0.05 + dir * 0.02 * sin(uTime * 2.0 + seed.z * 30.0)) * peel * uPeel;
+  // the risen cubes stand just proud of the skin and stir a little, so the patch reads as loose
+  p += (normalize(at + vec3(1e-4)) * 0.012 + dir * 0.004 * sin(uTime * 2.0 + seed.z * 30.0)) * peel * pull;
   // w holds the cube's scale, plus 2 x the part it belongs to (the planet's globe and its ring)
   // closing up, each cube swells a little to shut the gaps to its neighbours, then sinks away to nothing
   scale = mix(mod(A.w, 2.0), mod(B.w, 2.0), e) * (1.0 - 0.1 * arc) * (1.0 - 0.75 * uScatter) * (1.0 + 0.16 * swell);
@@ -706,6 +690,8 @@ vec3 centreOf(vec4 A, vec4 B, vec4 seed, vec4 S, out float e, out float arc, out
   vec2 d = c0.xy / c0.w - uPointer;
   d.x *= uAspect;
   near = uPointerOn * smoothstep(0.42, 0.0, length(d));
+  // risen hover cubes only lean away a little, so a patch stays a patch instead of scattering
+  near *= 1.0 - 0.75 * peel;
   vec2 away = normalize(d + vec2(1e-4));
   away.x /= uAspect;
   c.xy += away * near * 0.32;
@@ -764,10 +750,7 @@ void main() {
   vec3 t1 = normalize(cross(fn, abs(fn.y) < 0.9 ? vec3(0.0, 1.0, 0.0) : vec3(1.0, 0.0, 0.0)));
   mat3 F = axisAngle(fn, aSeed.z * 6.2831853) * mat3(t1, cross(fn, t1), fn);
   mat3 R = uRot * axisAngle(dir, spin) * F;
-  // the cubes a hover peels loose are smaller than the ones that build the shape
-  float shrink = mix(1.0, 0.55, peel * max(1.0 - uCubes, melt));
-  vis *= max(uncovered(aA, aB), peel);
-  vec3 world = c + R * (aPos * scale * vis * shrink * uSize);
+  vec3 world = c + R * (aPos * scale * vis * uSize);
   if (uShadow > 0.5) world = toFloor(world);
   vN = R * aNormal;
   vLocal = aPos;
@@ -775,7 +758,7 @@ void main() {
   vWorld = world;
   // a faint warmth on the cubes just as they melt in (the blob's leak keeps its own glow)
   float hot = melt * (1.0 - melt) * 4.0 * (1.0 - max(peel, debris));
-  vGlow = arc * 0.3 + near * 0.35 + (1.0 - uCubes) * 0.6 * (1.0 - max(peel, debris)) + hot * 0.35 + peel * 0.25;
+  vGlow = arc * 0.3 + near * 0.35 + (1.0 - uCubes) * 0.6 * (1.0 - max(peel, debris)) + hot * 0.35;
   gl_Position = uProj * vec4(world - vec3(0.0, 0.0, uCamZ), 1.0);
 }`;
 
@@ -864,7 +847,7 @@ void main() {
   float len = distance(c1, c2);
   // loose cubes are strung together, and so are the ones a hover peels off
   // a string goes as soon as either of its cubes starts to melt in
-  float on = max(uCubes * min(uncovered(aA, aB), uncovered(aA2, aB2)) * (1.0 - max(m1, m2)), min(p1, p2));
+  float on = max(uCubes * (1.0 - max(m1, m2)), min(p1, p2));
   // never string two separate parts together (the globe and its ring)
   float sameA = float(floor(aA.w * 0.5) == floor(aA2.w * 0.5));
   float sameB = float(floor(aB.w * 0.5) == floor(aB2.w * 0.5));
@@ -890,10 +873,10 @@ layout(location=0) in vec3 aPos;
 layout(location=1) in vec3 aNormal;
 uniform mat4 uProj;
 uniform mat3 uRot;
-uniform float uCamZ, uTime, uLiquid, uSquash;
+uniform float uCamZ, uTime, uLiquid, uSquash, uAlive;
 uniform vec3 uSway;
-${LEAK}
 uniform vec4 uTend[6]; // direction, reach
+const float BLOB_R = ${BLOB_R};
 out vec3 vN;
 out vec3 vWorld;
 out vec3 vObj;
@@ -910,20 +893,17 @@ float reach(vec3 n) {
 }
 vec3 surf(vec3 n) {
   float t = uTime;
-  float r = 0.52
-    + 0.022 * sin(n.x * 3.1 + t * 1.7) * sin(n.y * 2.7 - t * 1.3)
+  // while the skin forms it's a calm ball sitting just over the cubes (so they melt into it like any other
+  // shape); once it has closed it comes alive, and it calms down again before it breaks up
+  float r = BLOB_R + uAlive * (
+      0.022 * sin(n.x * 3.1 + t * 1.7) * sin(n.y * 2.7 - t * 1.3)
     + 0.018 * sin(n.z * 4.3 + n.y * 2.0 + t * 2.1)
     + 0.007 * sin(n.x * 9.0 + n.z * 7.0 - t * 3.2)
-    + reach(n);
-  // the coat always sits just over where the cubes were, so the blob never changes size; while it
-  // spreads it swells into a rolling lip at its edges
-  float coat = uFront < 0.0 || uFront > 0.999 ? 0.0 : 1.0;
-  float lip = exp(-pow(leakGap(n) / 0.14, 2.0));
-  r += 0.05 + coat * 0.035 * lip;
+    + reach(n));
   vec3 p = n * r;
   p.y *= uSquash;
   p.xz /= sqrt(uSquash);
-  return p + uSway;
+  return p + uSway * uAlive;
 }
 
 void main() {
@@ -953,7 +933,7 @@ in vec3 vN;
 in vec3 vWorld;
 in vec3 vObj;
 uniform float uLiquid, uShadow, uTime;
-${LEAK}
+const float BLOB_R = ${BLOB_R};
 uniform vec3 uEdge;
 out vec4 o;
 ${SHADE}
@@ -961,17 +941,16 @@ ${NOISE}
 void main() {
   // the skin spreads over the cubes in broad patches from where it forms first (the cubes melt into it just
   // behind its edge, see centreOf), with a soft warm rim where it's still forming
-  float gap = uThr - skin(vObj);
-  if (uLiquid > 0.5) {
-    // the liquid covers the ball from where it leaks out, its edges wavering as they run
-    if (leakGap(normalize(vObj)) > (noise(vObj * 4.0 + uTime * 0.6) - 0.5) * 0.3) discard;
-  } else if (gap < 0.0) discard;
-  float edge = uLiquid > 0.5 ? 0.0 : (1.0 - smoothstep(0.0, 0.05, gap)) * 0.45;
+  // (the blob's mesh is a unit sphere: its skin is measured on the ball its cubes melt into)
+  float gap = uThr - skin(uLiquid > 0.5 ? normalize(vObj) * BLOB_R : vObj);
+  if (gap < 0.0) discard;
+  float edge = (1.0 - smoothstep(0.0, 0.05, gap)) * 0.45;
   // a hover peels big patches away, and their cubes come loose
   if (uPeel > 0.001) {
     float pe = peelEdge() - chunk(vObj);
     if (pe < 0.0) discard;
-    edge = max(edge, (1.0 - smoothstep(0.0, 0.035, pe)) * min(1.0, uPeel * 3.0));
+    // the same soft warm rim as the skin's edge while it forms
+    edge = max(edge, (1.0 - smoothstep(0.0, 0.05, pe)) * 0.45 * min(1.0, uPeel * 3.0));
   }
   if (uShadow > 0.5) {
     o = vec4(1.0);
@@ -1293,7 +1272,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   // [how far below the skin the matrix starts, how deep it goes]
   const FILL_DEPTH = { cube: [0.08, 0.14], 'torus knot': [0.05, 0.06], 'möbius loop': [0.005, 0.008], planet: [0.08, 0.14], 'toxic sludge': [0.08, 0.14] };
   const fillVaos = shapes.map((s) => {
-    const data = fillers(s.mesh, small ? 2000 : 4500, FILL_DEPTH[s.name] ?? [0.04, 0.08], { round: s.liquid ? 0.57 : 0 });
+    const data = fillers(s.mesh, small ? 2000 : 4500, FILL_DEPTH[s.name] ?? [0.04, 0.08], { round: s.liquid ? BLOB_R : 0 });
     const vao = gl.createVertexArray();
     gl.bindVertexArray(vao);
     buf(mesh.P);
@@ -1431,13 +1410,12 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     setAll('uPointerOn', (l) => gl.uniform1f(l, near));
     // the blob forms differently from the other shapes
     const ss = (e0, e1, x) => { const u = Math.min(1, Math.max(0, (x - e0) / (e1 - e0))); return u * u * (3 - 2 * u); };
-    // the blob: liquid leaks out of its cube ball at scattered spots until it's covered, then settles
-    const front = liquid ? skin : -1;
-    // every other solid spreads over its cubes, which melt into it where it passes (uThr, uFuse)
-    setAll('uCubes', (l) => gl.uniform1f(l, liquid ? 1 - ss(0.85, 1, skin) : 1));
-    setAll('uFuse', (l) => gl.uniform1f(l, solid >= 0 && !liquid ? 1 : 0));
-    setAll('uThr', (l) => gl.uniform1f(l, solid >= 0 && !liquid ? skinThreshold(skinTables[solid], skin) : -9));
-    setAll('uFront', (l) => gl.uniform1f(l, front));
+    // every solid, the blob too, spreads over its cubes, which melt into it where it passes (uThr, uFuse);
+    // the blob only starts to move once its skin has nearly closed, and calms again before it breaks up
+    setAll('uCubes', (l) => gl.uniform1f(l, 1));
+    setAll('uFuse', (l) => gl.uniform1f(l, solid >= 0 ? 1 : 0));
+    setAll('uThr', (l) => gl.uniform1f(l, solid >= 0 ? skinThreshold(skinTables[solid], skin) : -9));
+    setAll('uAlive', (l) => gl.uniform1f(l, liquid ? ss(0.75, 1, skin) : 0));
     setAll('uPeel', (l) => gl.uniform1f(l, peel * skin));
     setAll('uRound', (l) => gl.uniform1f(l, liquid ? 1 : 0));
     const isPlanet = (i) => (i >= 0 && shapes[i].name === 'planet' ? 1 : 0);
@@ -1554,10 +1532,10 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     const soft = (x) => x * x * (3 - 2 * x);
     if (phase < BREAK && from >= 0) {
       solid = from;
-      reveal = shapes[from].liquid ? 1 - phase / BREAK : 1 - soft(phase / BREAK);
+      reveal = 1 - soft(phase / BREAK);
     } else if (fuse > 0) {
       solid = target;
-      reveal = shapes[target].liquid ? fuse : soft(fuse);
+      reveal = soft(fuse);
     }
     // name the shape as it fuses
     if (target !== shown && (fuse > 0 || k === 0)) {
