@@ -1344,23 +1344,6 @@ html[dir='rtl'] .scroll-progress {
   pointer-events: none;
   animation: forge-layer-in 1.2s var(--ease-out) backwards;
 }
-/* Contact on wide screens: its content keeps one column and leaves the other for Deto's handshake. Without Deto
-   (no WebGL) it keeps its full width. */
-@media (min-width: 1024px) {
-  html[data-forge] .forge-side {
-    display: grid;
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-    column-gap: 3rem;
-  }
-  html[data-forge] .forge-side > * {
-    grid-column: 1;
-  }
-  /* intro, status and direct links on top, the message form below */
-  html[data-forge] .forge-side .contact-split {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 2.5rem;
-  }
-}
 html[data-forge] #root {
   position: relative;
   z-index: 1;

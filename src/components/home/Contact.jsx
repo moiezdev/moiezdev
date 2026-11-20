@@ -6,9 +6,9 @@ const Contact = () => {
   const { t } = useContent();
   return (
     <section className="w-full px-5 pt-20 md:pt-28" id="contact">
-      <div className="app-container forge-side forge-side--end">
+      <div className="app-container">
         <SectionTitle
-          forge="handshake" eyebrow={t('contact.eyebrow')} title={t('contact.headline')} />
+          eyebrow={t('contact.eyebrow')} title={t('contact.headline')} />
         <ContactSection />
       </div>
     </section>

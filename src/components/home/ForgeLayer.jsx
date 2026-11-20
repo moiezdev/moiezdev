@@ -4,11 +4,8 @@ import { usePrefersReducedMotion } from '../../motion/reducedMotion';
 /**
  * Deto, the home page's living liquid (src/motion/deto.js), on one fixed canvas behind the content (see MOTION.md).
  *
- * It lives in two places only. Behind the hero portrait it runs through all its shapes on a timer, melting each into
- * round liquid and growing the next out of it. In Contact (marked with `data-forge-spot="handshake"`, see ForgeSpot)
- * it holds two hands shaking, in the column the contact content leaves free. It never travels between them: the
- * hero's Deto scrolls away with the hero, and once Contact comes up from the bottom of the screen Deto starts there.
- * It never takes the pointer.
+ * It lives only in the hero: dim, in the middle of the hero, it runs through all its shapes on a timer, melting each
+ * into round liquid and growing the next out of it, and scrolls away with the hero. It never takes the pointer.
  */
 
 // the hero's cycle of shapes, and how long each stands and takes to change into the next (seconds)
@@ -17,46 +14,16 @@ const HOLD_S = 4;
 const MORPH_S = 2.6;
 // how strong the hero's Deto is drawn (it sits behind the hero's text)
 const HERO_OPACITY = 0.32;
-// the handshake: the two stand still for REACH_AT seconds, raise their hands to the clasp over REACH_S, then pump
-// for PUMP_S
-const REACH_AT = 0.8;
-const REACH_S = 1.4;
-const PUMP_S = 1.5;
 // how one change of shape is spent: 0-0.28 the standing shape melts into round liquid, it stays round to 0.6, then
 // the next shape slowly grows out of it. Every stage eases into the next, so nothing jerks.
 // Deto's morph phases are 0-0.22 melt, 0.22-0.78 round, 0.78-1 form.
 const TRAVEL = [0.28, 0.6];
 const wave = (u) => 0.5 - 0.5 * Math.cos(Math.PI * Math.min(1, Math.max(0, u)));
 const phase = (f) => (f < TRAVEL[0] ? 0.5 * wave(f / TRAVEL[0]) : f < TRAVEL[1] ? 0.5 : 0.5 + 0.5 * wave((f - TRAVEL[1]) / (1 - TRAVEL[1])));
-/**
- * Where a marker's shape stands. In the hero, behind the portrait, scrolling with it. Inside a `.forge-side` section
- * on a wide screen, the middle of the column the content leaves free; on a phone, the middle of the screen. Either
- * way it rises with its section from the bottom of the screen and then stays at mid-height while the section is read.
- */
+/** Where the hero's Deto stands: dim, in the middle of the hero section, scrolling with it. */
 const place = (el, W, H) => {
-  const sec = el.closest('section');
-  const sr = sec ? sec.getBoundingClientRect() : null;
-  const y = sr ? Math.max(H / 2, sr.top + Math.min(sr.height, H) / 2) : H / 2;
-  const centre = { x: W / 2, y, size: Math.min(W * 0.92, H * 0.9), lift: 0 };
-  // the hero's Deto stands dim in the middle of the hero, behind its text and portrait, and scrolls with it
-  const stage = el.closest('.hero-stage');
-  if (stage) {
-    const r = (stage.closest('section') || stage).getBoundingClientRect();
-    return { x: r.left + r.width / 2, y: r.top + Math.min(r.height, H) / 2, size: Math.min(W * 0.62, H * 0.72), lift: 0, dim: true };
-  }
-  const box = el.closest('.forge-side');
-  if (!box || W < 1024) return centre;
-  const cs = getComputedStyle(box);
-  const cols = cs.gridTemplateColumns.split(' ').map(parseFloat);
-  if (cols.length !== 2 || cols.some((c) => !(c > 0))) return centre;
-  const r = box.getBoundingClientRect();
-  const gap = parseFloat(cs.columnGap) || 0;
-  // the free column is the second for --end and the first for --start, counted from the inline start
-  const free = box.classList.contains('forge-side--start') ? 0 : 1;
-  const from = free === 0 ? 0 : cols[0] + gap;
-  const mid = from + cols[free] / 2;
-  const x = cs.direction === 'rtl' ? r.right - parseFloat(cs.paddingRight) - mid : r.left + parseFloat(cs.paddingLeft) + mid;
-  return { x, y, size: Math.min(cols[free] * 1.2, H * 0.8), lift: 1 };
+  const r = (el.closest('section') || el).getBoundingClientRect();
+  return { x: r.left + r.width / 2, y: r.top + Math.min(r.height, H) / 2, size: Math.min(W * 0.62, H * 0.72), lift: 0 };
 };
 
 export default function ForgeLayer() {
@@ -97,41 +64,19 @@ export default function ForgeLayer() {
         const r = Math.round(v * 100) / 100;
         if (r !== lift) canvas.style.setProperty('--forge-lift', String((lift = r)));
       };
-      // Deto lives in two places only (Moiz, 2026-11-20): behind the hero portrait, where it runs through all its
-      // shapes on its own, and beside the contact form, where it holds a handshake. Between them it does not travel:
-      // the hero's Deto scrolls away with the hero, and once Contact comes up from the bottom Deto starts over there.
-      let lastAnchor = null;
+      // Deto lives only in the hero (Moiz, 2026-11-20): dim in its middle, running through all its shapes on its own,
+      // and scrolling away with it
       let clock = 0;
-      let shakeT = -1;
       const scene = (dt) => {
         const W = window.innerWidth;
         const H = window.innerHeight;
         const hero = document.querySelector('.hero-stage [data-forge-spot]');
-        const contact = document.querySelector('[data-forge-spot="handshake"]');
-        const contactBox = contact && (contact.closest('section') || contact);
-        const useContact = !!contact && (!hero || contactBox.getBoundingClientRect().top < H);
-        const anchor = useContact ? contact : hero;
-        if (!anchor) return null;
-        const snap = lastAnchor !== null && anchor !== lastAnchor;
-        lastAnchor = anchor;
-        const p = place(anchor, W, H);
+        if (!hero) return null;
+        const p = place(hero, W, H);
         setLift(p.lift);
-        // dim in the hero, so it never competes with the text and buttons; full strength for the handshake
-        const opacity = p.dim ? HERO_OPACITY : 1;
-        if (canvas.style.opacity !== String(opacity)) canvas.style.opacity = String(opacity);
+        // dim, so it never competes with the hero's text and buttons
+        if (canvas.style.opacity !== String(HERO_OPACITY)) canvas.style.opacity = String(HERO_OPACITY);
         const view = { x: p.x, y: p.y, size: p.size };
-        if (useContact) {
-          // the handshake plays each time Contact comes up: the two stand, arms at their sides; after a moment they
-          // reach out and clasp hands, pump three times, and hold the clasp
-          if (snap || shakeT < 0) shakeT = 0;
-          shakeT += dt;
-          const reach = Math.min(1, Math.max(0, (shakeT - REACH_AT) / REACH_S));
-          const u = shakeT - REACH_AT - REACH_S;
-          const pump = u > 0 && u < PUMP_S ? 0.035 * Math.sin((u / PUMP_S) * 6 * Math.PI) * (1 - u / PUMP_S) : 0;
-          const hands = forge.shapeIndex('handshake');
-          return { a: hands, b: hands, m: 1, view, snap, pose: { reach, pump } };
-        }
-        shakeT = -1;
         // the hero's cycle: each shape stands for HOLD_S seconds, then melts into the round liquid and the next one
         // grows out of it over MORPH_S seconds, round and round
         clock += dt;
@@ -140,9 +85,9 @@ export default function ForgeLayer() {
         const into = clock - n * step;
         const i = n % CYCLE.length;
         const a = forge.shapeIndex(CYCLE[i]);
-        if (into < HOLD_S) return { a, b: a, m: 1, view, snap };
+        if (into < HOLD_S) return { a, b: a, m: 1, view };
         const b = forge.shapeIndex(CYCLE[(i + 1) % CYCLE.length]);
-        return { a, b, m: phase((into - HOLD_S) / MORPH_S), view, snap };
+        return { a, b, m: phase((into - HOLD_S) / MORPH_S), view };
       };
 
       const onResize = () => forge.resize();

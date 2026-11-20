@@ -30,7 +30,6 @@ precision highp float;
 uniform vec2 uP;        // the body's centre, device px (GL: origin bottom left)
 uniform float uR;       // device px per body unit
 uniform float uTime, uAmp;
-uniform float uReach, uPump; // the handshake: how far the arms have come up to the clasp (0 down, 1 clasped), and the pump
 uniform int uA, uB;     // shapes being morphed between (equal while one stands)
 uniform float uMeltA, uFormB; // how much of shape A is left (melting into the round body), how much of B has formed
 uniform vec2 uDir;      // the direction of motion (screen axes, y up)
@@ -158,76 +157,6 @@ float strand(vec3 p, float side) {
   }
   return length(p - vec3(side * 0.42 * cos(HK * y), y, side * 0.42 * sin(HK * y)));
 }
-// two people shaking hands, full figures in profile facing each other, made of water: no neck, the drop-shaped head
-// (a small drip on top) flowing straight into broad soft shoulders, one body that splits low into short stubby legs
-// with tapered feet, thick arms tapering to the hands, and on the clasped hands just a thumb
-float capsule(vec3 p, vec3 a, vec3 b, float r) {
-  vec3 pa = p - a;
-  vec3 ba = b - a;
-  float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
-  return length(pa - ba * h) - r;
-}
-// a capsule whose radius runs from r1 at a to r2 at b (Inigo Quilez's round cone)
-float cone(vec3 p, vec3 a, vec3 b, float r1, float r2) {
-  vec3 ba = b - a;
-  float l2 = dot(ba, ba);
-  float rr = r1 - r2;
-  float a2 = l2 - rr * rr;
-  float il2 = 1.0 / l2;
-  vec3 pa = p - a;
-  float y = dot(pa, ba);
-  float z = y - l2;
-  vec3 xv = pa * l2 - ba * y;
-  float x2 = dot(xv, xv);
-  float y2 = y * y * l2;
-  float z2 = z * z * l2;
-  float k = sign(rr) * rr * rr * x2;
-  if (sign(z) * a2 * z2 > k) return sqrt(x2 + z2) * il2 - r2;
-  if (sign(y) * a2 * y2 < k) return sqrt(x2 + y2) * il2 - r1;
-  return (sqrt(x2 * a2 * il2) + y * rr) * il2 - r1;
-}
-float ellipsoid(vec3 p, vec3 r) {
-  return (length(p / r) - 1.0) * min(r.x, min(r.y, r.z));
-}
-// one figure, standing left of the middle and facing it (+x); its right side is +z. The legs stand apart front and
-// back and the far arm swings a little back, so from three-quarters they do not hide each other.
-float figure(vec3 p) {
-  vec3 q = p - vec3(-0.44, 0.0, 0.0);
-  // the head, a smooth drop with a nose and a wavy hair crest swept back (no eyes or mouth)
-  float d = ellipsoid(q - vec3(0.02, 0.72, 0.0), vec3(0.12, 0.15, 0.115));
-  d = smin(d, cone(q, vec3(0.11, 0.72, 0.0), vec3(0.165, 0.68, 0.0), 0.035, 0.022), 0.025);
-  float hair = length(q - vec3(0.05, 0.86, 0.0)) - 0.065;
-  hair = smin(hair, length(q - vec3(-0.02, 0.9, 0.0)) - 0.07, 0.05);
-  hair = smin(hair, length(q - vec3(-0.09, 0.86, 0.0)) - 0.06, 0.05);
-  hair = smin(hair, cone(q, vec3(-0.06, 0.92, 0.0), vec3(0.03, 1.0, 0.0), 0.04, 0.015), 0.04);
-  d = smin(d, hair, 0.04);
-  // a V-shaped body: broad soft shoulders and chest, a slim waist, the hips a touch wider again
-  float body = ellipsoid(q - vec3(0.0, 0.4, 0.0), vec3(0.12, 0.15, 0.22));
-  body = smin(body, cone(q, vec3(0.0, 0.02, 0.0), vec3(0.0, 0.3, 0.0), 0.085, 0.11), 0.08);
-  body = smin(body, ellipsoid(q - vec3(0.0, -0.03, 0.0), vec3(0.1, 0.09, 0.13)), 0.06);
-  d = smin(d, body, 0.07);
-  // legs, smooth and tapering, with soft pointed feet
-  d = smin(d, cone(q, vec3(0.03, -0.06, 0.06), vec3(0.12, -0.84, 0.07), 0.085, 0.055), 0.06);
-  d = smin(d, cone(q, vec3(-0.03, -0.06, -0.06), vec3(-0.11, -0.84, -0.07), 0.085, 0.055), 0.06);
-  d = smin(d, cone(q, vec3(0.12, -0.86, 0.07), vec3(0.21, -0.92, 0.07), 0.055, 0.025), 0.035);
-  d = smin(d, cone(q, vec3(-0.11, -0.86, -0.07), vec3(-0.02, -0.92, -0.07), 0.055, 0.025), 0.035);
-  // the far arm hangs a little behind, thick at the shoulder and tapering
-  d = smin(d, cone(q, vec3(0.0, 0.44, -0.2), vec3(-0.08, 0.02, -0.23), 0.075, 0.045), 0.05);
-  // the near arm: hanging at its side to begin with, then it comes up and forward to the middle, where the two hands
-  // clasp (a thumb over the top) and pump
-  float r = smoothstep(0.0, 1.0, uReach);
-  vec3 hand = mix(vec3(0.07, 0.03, 0.22), vec3(0.44, 0.26 + uPump, 0.015), r);
-  vec3 elbow = mix(vec3(0.03, 0.24, 0.23), vec3(0.2, 0.28 + uPump * 0.4, 0.12), r);
-  float arm = cone(q, vec3(0.0, 0.44, 0.2), elbow, 0.075, 0.055);
-  arm = smin(arm, cone(q, elbow, hand - vec3(0.04, 0.0, -0.01) * r, 0.055, 0.048), 0.04);
-  arm = smin(arm, length(q - hand) - 0.07, 0.04);
-  arm = smin(arm, capsule(q, hand + vec3(-0.04, 0.04, 0.055), hand + vec3(0.03, 0.1, 0.045), 0.027), 0.02);
-  return smin(d, arm, 0.05);
-}
-float hands(vec3 p) {
-  // the second figure is the first turned round the middle, so its right hand meets the first one's
-  return smin(figure(p), figure(vec3(-p.x, p.y, -p.z)), 0.03);
-}
 float helix(vec3 p) {
   float strands = min(strand(p, 1.0), strand(p, -1.0));
   strands -= 0.085;
@@ -248,7 +177,6 @@ float shapeOf(int i, vec3 p) {
   if (i == 2) return knot(p);
   if (i == 3) return mobius(p);
   if (i == 4) return planet(p);
-  if (i == 6) return hands(p);
   return helix(p);
 }
 
@@ -358,10 +286,9 @@ const LOOK = {
   light: { base: [0.09, 0.095, 0.1], envLow: [0.01, 0.01, 0.012], envHigh: [0.42, 0.43, 0.45], spec: [0.85, 0.85, 0.87], rim: [0.22, 0.23, 0.25] },
 };
 
-const NAMES = ['toxic sludge', 'cube', 'torus knot', 'möbius loop', 'planet', 'double helix', 'handshake'];
+const NAMES = ['toxic sludge', 'cube', 'torus knot', 'möbius loop', 'planet', 'double helix'];
 const PLANET = NAMES.indexOf('planet');
 const HELIX = NAMES.indexOf('double helix');
-const HANDS = NAMES.indexOf('handshake');
 
 const ss = (a, b, x) => {
   const u = Math.min(1, Math.max(0, (x - a) / (b - a)));
@@ -446,7 +373,7 @@ export function createDeto(canvas, { theme, gentle = false } = {}) {
   let checkedAt = 0;
   let checked = false;
 
-  function drive(time, dtRaw, { a, b, m, view, snap, pose }) {
+  function drive(time, dtRaw, { a, b, m, view, snap }) {
     const ts = gentle ? 0.5 : 1;
     const dt = Math.min(0.05, Math.max(0, dtRaw)) * ts;
     const t = time * ts;
@@ -548,16 +475,10 @@ export function createDeto(canvas, { theme, gentle = false } = {}) {
     // its slow turn, per shape: the planet holds still (only its debris orbits), the double helix stands straight
     // upright (turning only about its own axis); the change eases in, never snaps
     const shown = moving && m < 0.5 ? a : b;
-    // the handshake holds still too, seen three-quarters on and a little from above
     const settle = snap ? 1 : 1 - Math.exp(-dt * 2);
-    spin += ((shown === PLANET || shown === HANDS ? 0 : 1) - spin) * settle;
-    pitch += ((shown === HELIX ? 0 : shown === HANDS ? 0.18 : 0.5 + Math.sin(t * 0.13) * 0.08) - pitch) * settle;
+    spin += ((shown === PLANET ? 0 : 1) - spin) * settle;
+    pitch += ((shown === HELIX ? 0 : 0.5 + Math.sin(t * 0.13) * 0.08) - pitch) * settle;
     yaw += dt * 0.08 * spin;
-    if (shown === HANDS) {
-      // three-quarters on, so the shoulders' V and both figures' limbs show
-      const front = Math.round(yaw / (2 * Math.PI)) * 2 * Math.PI + 0.7;
-      yaw += (front - yaw) * settle;
-    }
 
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT);
@@ -567,8 +488,6 @@ export function createDeto(canvas, { theme, gentle = false } = {}) {
     gl.uniform1f(u('uTime'), t);
     // no jiggle: the surface stays still (Moiz, 2026-11-20)
     gl.uniform1f(u('uAmp'), 0);
-    gl.uniform1f(u('uReach'), pose ? pose.reach : 1);
-    gl.uniform1f(u('uPump'), pose ? pose.pump : 0);
     gl.uniform1i(u('uA'), Math.max(0, a));
     gl.uniform1i(u('uB'), Math.max(0, b));
     gl.uniform1f(u('uMeltA'), meltA);
