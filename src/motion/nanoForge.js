@@ -49,54 +49,85 @@ function pad(pts, n) {
   return pts;
 }
 
-/** A hollow cube built from a voxel grid: the most "transformium" of the set. */
-function voxelCube(n, g) {
-  const pts = [];
-  const h = 0.62;
-  for (let x = 0; x < g; x++)
-    for (let y = 0; y < g; y++)
-      for (let z = 0; z < g; z++) {
-        if (x && y && z && x < g - 1 && y < g - 1 && z < g - 1) continue;
-        const f = (v) => (v / (g - 1)) * 2 * h - h;
-        pts.push([f(x), f(y), f(z)]);
+/**
+ * Fill a volume with cubes on a grid, so every shape is solid cubes right through, not a shell.
+ * sample() returns a random point inside the volume as [x, y, z, part]. The grid spacing is the
+ * largest that still fits n cubes (never smaller than `min` x the base spacing, so thin shapes keep
+ * real cubes and leave the rest as hidden spares). w = cube scale relative to the base + 2 x part.
+ */
+function voxelize(n, sample, base, { min = 0.72, max = 1.9, samples = 160000 } = {}) {
+  const S = new Float32Array(samples * 4);
+  for (let i = 0; i < samples; i++) S.set(sample(), i * 4);
+  const cells = (sp) => {
+    const m = new Map();
+    for (let i = 0; i < samples; i++) {
+      const k = [0, 1, 2].map((c) => Math.round(S[i * 4 + c] / sp));
+      const key = (k[0] + 512) * 1048576 + (k[1] + 512) * 1024 + (k[2] + 512);
+      if (!m.has(key)) m.set(key, [k[0] * sp, k[1] * sp, k[2] * sp, sp / base + 2 * S[i * 4 + 3]]);
+    }
+    return m;
+  };
+  let lo = base * min;
+  let hi = base * max;
+  let best = cells(hi);
+  if (cells(lo).size <= n) best = cells(lo);
+  else
+    for (let it = 0; it < 14; it++) {
+      const mid = (lo + hi) / 2;
+      const c = cells(mid);
+      if (c.size > n) lo = mid;
+      else {
+        hi = mid;
+        best = c;
       }
-  return pad(pts, n);
+    }
+  return pad([...best.values()], n);
 }
 
-function torusKnot(n) {
+/** A point in a disc of radius r around p, square to the tangent t. */
+function disc(p, t, r) {
+  const tl = Math.hypot(...t) || 1;
+  let o = [rand(-1, 1), rand(-1, 1), rand(-1, 1)];
+  const d = (o[0] * t[0] + o[1] * t[1] + o[2] * t[2]) / (tl * tl);
+  o = [o[0] - t[0] * d, o[1] - t[1] * d, o[2] - t[2] * d];
+  const ol = Math.hypot(...o) || 1;
+  const k = (r * Math.sqrt(Math.random())) / ol;
+  return [p[0] + o[0] * k, p[1] + o[1] * k, p[2] + o[2] * k];
+}
+
+/** A solid cube of g x g x g cubes: the most "transformium" of the set. */
+function voxelCube(g) {
   const pts = [];
-  for (let i = 0; i < n; i++) {
-    const t = (i / n) * TAU;
-    const c = (u) => {
-      const r = Math.cos(3 * u) + 2.1;
-      return [r * Math.cos(2 * u), r * Math.sin(2 * u), Math.sin(3 * u) * 1.1];
-    };
-    const p = c(t);
-    const q = c(t + 0.001);
-    const tan = [q[0] - p[0], q[1] - p[1], q[2] - p[2]];
-    const tl = Math.hypot(...tan);
-    // a random offset around the tube, with its tangent part removed
-    let o = [rand(-1, 1), rand(-1, 1), rand(-1, 1)];
-    const d = (o[0] * tan[0] + o[1] * tan[1] + o[2] * tan[2]) / (tl * tl);
-    o = [o[0] - tan[0] * d, o[1] - tan[1] * d, o[2] - tan[2] * d];
-    const ol = Math.hypot(...o) || 1;
-    const R = 0.42;
-    pts.push([(p[0] + (o[0] / ol) * R) / 3.3, (p[1] + (o[1] / ol) * R) / 3.3, (p[2] + (o[2] / ol) * R) / 3.3]);
-  }
+  const h = 0.62;
+  const f = (v) => (v / (g - 1)) * 2 * h - h;
+  for (let x = 0; x < g; x++) for (let y = 0; y < g; y++) for (let z = 0; z < g; z++) pts.push([f(x), f(y), f(z)]);
   return pts;
 }
 
-function planet(n) {
-  const pts = [];
-  const ns = Math.round(n * 0.7);
-  const golden = Math.PI * (3 - Math.sqrt(5));
-  for (let i = 0; i < ns; i++) {
-    const y = 1 - (i / (ns - 1)) * 2;
-    const r = Math.sqrt(1 - y * y);
-    pts.push([Math.cos(golden * i) * r * 0.5, y * 0.5, Math.sin(golden * i) * r * 0.5]);
-  }
+const knotAt = (u) => {
+  const r = Math.cos(3 * u) + 2.1;
+  return [(r * Math.cos(2 * u)) / 3.3, (r * Math.sin(2 * u)) / 3.3, (Math.sin(3 * u) * 1.1) / 3.3];
+};
+function torusKnot(n, base) {
+  return voxelize(n, () => {
+    const u = rand(0, TAU);
+    const p = knotAt(u);
+    const q = knotAt(u + 0.001);
+    return [...disc(p, [q[0] - p[0], q[1] - p[1], q[2] - p[2]], 0.155), 0];
+  }, base);
+}
+
+/** A solid globe of cubes, and a belt of loose debris (its own part, so no strings run between them). */
+function planet(n, base) {
+  const ringN = Math.round(Math.sqrt(n) * 8);
+  const pts = voxelize(n - ringN, () => {
+    let p;
+    do p = [rand(-1, 1), rand(-1, 1), rand(-1, 1)];
+    while (Math.hypot(...p) > 1);
+    return [p[0] * 0.5, p[1] * 0.5, p[2] * 0.5, 0];
+  }, base);
   const tilt = 0.42;
-  for (let i = ns; i < n; i++) {
+  for (let i = 0; i < ringN; i++) {
     const a = rand(0, TAU);
     const r = Math.sqrt(rand(0.7 * 0.7, 1.08 * 1.08));
     const x = Math.cos(a) * r;
@@ -104,7 +135,7 @@ function planet(n) {
     // a loose belt of debris: some thickness, and rocks of every size
     const y = rand(-0.045, 0.045) * (0.4 + Math.random());
     const scale = 0.3 + Math.random() ** 1.8 * 0.85;
-    // w = 2 + scale: the second part (the ring), so no strings run between it and the globe
+    // w = 2 + scale: the second part (the ring)
     pts.push([x, y * Math.cos(tilt) - z * Math.sin(tilt), y * Math.sin(tilt) + z * Math.cos(tilt), 2 + scale]);
   }
   return pts;
@@ -112,30 +143,32 @@ function planet(n) {
 
 const HELIX_TURNS = 0.75; // per half: 1.5 turns top to bottom
 const HELIX_RUNGS = 9;
-function helix(n) {
-  const pts = [];
-  const rungs = Math.round(n * 0.14);
-  const strand = n - rungs;
-  for (let i = 0; i < strand; i++) {
-    const t = (i / strand) * 2 - 1;
-    const a = t * TAU * HELIX_TURNS + (i % 2 ? Math.PI : 0);
-    const j = () => rand(-0.035, 0.035);
-    // each strand is its own part (w = 1 or 3), so no strings jump the gap between them
-    pts.push([Math.cos(a) * 0.4 + j(), t * 0.95, Math.sin(a) * 0.4 + j(), i % 2 ? 3 : 1]);
-  }
-  for (let i = 0; i < rungs; i++) {
+function helix(n, base) {
+  return voxelize(n, () => {
+    if (Math.random() < 0.8) {
+      // each strand is its own part (0 or 1), so no strings jump the gap between them
+      const side = Math.random() < 0.5 ? 0 : 1;
+      const t = rand(-1, 1);
+      const at = (tt) => {
+        const a = tt * TAU * HELIX_TURNS + side * Math.PI;
+        return [Math.cos(a) * 0.4, tt * 0.95, Math.sin(a) * 0.4];
+      };
+      const p = at(t);
+      const q = at(t + 0.001);
+      return [...disc(p, [q[0] - p[0], q[1] - p[1], q[2] - p[2]], 0.075), side];
+    }
+    // the rungs are a third part
     const k = Math.floor(rand(0, HELIX_RUNGS));
     const t = (k / (HELIX_RUNGS - 1)) * 1.8 - 0.9;
     const a = t * TAU * HELIX_TURNS;
     const s = rand(-0.4, 0.4);
-    // the rungs are a third part (w = 5)
-    pts.push([Math.cos(a) * s, t * 0.95, Math.sin(a) * s, 5]);
-  }
-  return pts;
+    return [...disc([Math.cos(a) * s, t * 0.95, Math.sin(a) * s], [Math.cos(a), 0, Math.sin(a)], 0.04), 2];
+  }, base);
 }
 
 const MOBIUS_R = 0.72;
-const MOBIUS_W = 0.1;
+const MOBIUS_W = 0.17;
+const MOBIUS_T = 0.05; // half the band's thickness
 /** A point on the Möbius band: u around the loop (one full twist per 2π), v across it. */
 // tipped towards the viewer so the twist reads, instead of lying flat like a ring
 const MOBIUS_TILT = 0.95;
@@ -148,17 +181,20 @@ const mobiusAt = (u, v) => {
   return [r * Math.cos(u), y * c - z * s, y * s + z * c];
 };
 
-/** Cubes spread evenly over a Möbius band (denser where the band runs wider from the centre). */
-function mobius(n) {
-  const pts = [];
-  while (pts.length < n) {
+/** A thick Möbius band of cubes. */
+function mobius(n, base) {
+  const e = 1e-3;
+  return voxelize(n, () => {
     const u = rand(0, TAU);
     const v = rand(-MOBIUS_W, MOBIUS_W);
-    // area weighting: the outer edge of the loop has more surface than the inner one
-    if (Math.random() * (MOBIUS_R + MOBIUS_W) > MOBIUS_R + v * Math.cos(u / 2)) continue;
-    pts.push(mobiusAt(u, v));
-  }
-  return pts;
+    const p = mobiusAt(u, v);
+    const du = mobiusAt(u + e, v).map((c, k) => c - p[k]);
+    const dv = mobiusAt(u, v + e).map((c, k) => c - p[k]);
+    const nn = [du[1] * dv[2] - du[2] * dv[1], du[2] * dv[0] - du[0] * dv[2], du[0] * dv[1] - du[1] * dv[0]];
+    const l = Math.hypot(...nn) || 1;
+    const t = rand(-MOBIUS_T, MOBIUS_T) / l;
+    return [p[0] + nn[0] * t, p[1] + nn[1] * t, p[2] + nn[2] * t, 0];
+  }, base);
 }
 
 function cloud(n) {
@@ -512,17 +548,18 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
 
   // ---- sizes: fewer cubes on small or low-power screens ----
   const small = Math.min(window.innerWidth, window.innerHeight) < 700 || (navigator.hardwareConcurrency || 8) <= 4;
-  const g = small ? 15 : 22; // voxel cube edge
-  const N = g * g * g - (g - 2) ** 3; // every cube in the hollow cube is used
+  const g = small ? 13 : 20; // solid cube edge
+  const N = g * g * g; // every cube in the solid cube is used
   const spacing = (2 * 0.62) / (g - 1);
   const size = spacing * 0.86;
 
+  // every shape is filled with cubes right through
   const shapes = [
-    { name: 'cube', pts: voxelCube(N, g) },
-    { name: 'torus knot', pts: pad(torusKnot(N), N) },
-    { name: 'möbius loop', pts: mobius(N) },
-    { name: 'planet', pts: pad(planet(N), N) },
-    { name: 'double helix', pts: pad(helix(N), N) },
+    { name: 'cube', pts: voxelCube(g) },
+    { name: 'torus knot', pts: torusKnot(N, spacing) },
+    { name: 'möbius loop', pts: mobius(N, spacing) },
+    { name: 'planet', pts: planet(N, spacing) },
+    { name: 'double helix', pts: helix(N, spacing) },
   ];
 
   const buf = (data, target = gl.ARRAY_BUFFER) => {
