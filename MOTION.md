@@ -119,11 +119,10 @@ In Tailwind classes, use them as `duration-(--dur-base) ease-(--ease-spring)`. I
 | ⌘K palette | Everywhere, `CommandPalette.jsx` | Keyboard-first UX, plus shortcuts: open the TWLM case study, download the CV, switch language, toggle theme, contact via WhatsApp. |
 | Scroll progress and moving TOC marker | Case studies | Orientation in long-form writing. |
 | Card hover | Cards | Lift 3px, shadow fade, image scale 1.03, arrow nudge (mirrored in RTL). The same effect on `:focus-visible`. |
-| Cube controls | Buttons, tabs, filter chips, nav (`.cube-btn`, `.cube-tab`, `.cube-nav` in `index.css`) | Each control is a small machined block like the hero's cubes: squared corners, a bevel and a hard side face to the bottom-end (mirrored in RTL), no soft shadow. Hover (real hover only, not touch) lifts it 1px onto its side; pressing pushes it flat. Unchosen tabs sit flat and the chosen one stands up. The current page in the nav is marked with a small cube turned on its corner. |
-| Success check | Contact form | Animated check after sending. |
+| Button press and success check | Buttons, contact form | Immediate feedback: scale 0.98 on press, animated check after sending. |
 | Tech chip tooltips | Tech chips, `ui/TechChip.jsx` | What each technology was used for, and in which projects. Data: `src/data/techNotes.json`. |
 | Copy email/phone with toast | Contact | One-tap copy with a "Copied" confirmation. |
-| Custom cursor | Fine pointers only, `ui/Cursor.jsx` | A tiny cube turned on its corner tracks the pointer exactly; a square frame of four corner brackets trails by under 80ms. The brackets snap round links and controls, and over cards ("View ↗") and the pass ("Flip pass") it becomes a solid label block with a hard side. The native cursor is used over inputs and in the chatbot. |
+| Custom cursor | Fine pointers only, `ui/Cursor.jsx` | Dot tracks the pointer exactly; a hairline ring trails by under 80ms. The ring grows over links and shows a label over cards ("View ↗") and the pass ("Flip pass"). The native cursor is used over inputs and in the chatbot. |
 
 The code window on About is kept static on purpose: it is read, not watched.
 

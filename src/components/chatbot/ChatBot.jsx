@@ -556,7 +556,7 @@ const ChatBot = () => {
                       type="button"
                       key={s}
                       onClick={() => send(s)}
-                      className="cube-btn border border-accent/50 text-accent text-[13px] font-medium px-3.5 py-1.5 hover:bg-accent hover:text-on-accent cursor-pointer"
+                      className="rounded-full ring-1 ring-inset ring-accent/50 text-accent text-[13px] font-medium px-3.5 py-1.5 hover:bg-accent hover:text-on-accent transition-colors cursor-pointer"
                     >
                       {s}
                     </button>
@@ -600,7 +600,7 @@ const ChatBot = () => {
               <button
                 type="submit"
                 disabled={busy || !input.trim()}
-                className="inline-flex size-8 shrink-0 items-center justify-center cube-btn cube-btn--solid bg-accent text-on-accent disabled:opacity-30 cursor-pointer"
+                className="inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-accent text-on-accent disabled:opacity-30 transition-opacity cursor-pointer"
                 aria-label={t(lang, 'chat.send')}
               >
                 <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" aria-hidden>

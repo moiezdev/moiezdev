@@ -588,36 +588,25 @@ textarea:-webkit-autofill {
   will-change: transform;
 }
 .cursor-dot {
-  /* a tiny cube, turned on its corner */
-  width: 7px;
-  height: 7px;
-  border-radius: 1px;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
   background: var(--color-label);
-  box-shadow: inset 1px 1px 0 color-mix(in srgb, var(--color-bg) 35%, transparent);
   transition:
     opacity 0.2s,
     transform 0.05s linear;
 }
 .cursor-ring {
-  /* a square selection frame: only its four corners are drawn, like a cube being targeted */
-  --c: color-mix(in srgb, var(--color-label) 70%, transparent);
-  --t: 8px;
   width: 36px;
   height: 36px;
-  border-radius: 3px !important;
+  border-radius: 999px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background:
-    linear-gradient(var(--c), var(--c)) top left / var(--t) 1.5px,
-    linear-gradient(var(--c), var(--c)) top left / 1.5px var(--t),
-    linear-gradient(var(--c), var(--c)) top right / var(--t) 1.5px,
-    linear-gradient(var(--c), var(--c)) top right / 1.5px var(--t),
-    linear-gradient(var(--c), var(--c)) bottom left / var(--t) 1.5px,
-    linear-gradient(var(--c), var(--c)) bottom left / 1.5px var(--t),
-    linear-gradient(var(--c), var(--c)) bottom right / var(--t) 1.5px,
-    linear-gradient(var(--c), var(--c)) bottom right / 1.5px var(--t);
-  background-repeat: no-repeat;
+  background: color-mix(in srgb, var(--color-label) 8%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-label) 14%, transparent);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
   transition:
     opacity 0.25s,
     background-color 0.3s var(--ease-spring),
@@ -625,23 +614,23 @@ textarea:-webkit-autofill {
     border-radius 0.3s var(--ease-spring);
 }
 .cursor-ring[data-mode='shape'] {
-  /* locks onto a control: the corners snap round it */
-  --c: var(--color-label);
-  --t: 7px;
+  background: color-mix(in srgb, var(--color-label) 7%, transparent);
+  box-shadow: none;
+  backdrop-filter: none;
 }
 .cursor-ring[data-mode='hover'] {
-  --c: var(--color-label);
-  --t: 12px;
+  background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-accent) 35%, transparent);
 }
 .cursor-ring[data-mode='label'] {
-  border-radius: var(--cube-r) !important;
   background: var(--color-accent);
-  box-shadow: 3px 3px 0 0 color-mix(in srgb, var(--color-label) 55%, var(--color-bg));
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  backdrop-filter: none;
 }
 /* text fields: a slim caret in the label colour, shown instantly (no colour fade) */
 .cursor-ring[data-mode='text'] {
   transition: opacity 0.15s;
-  border-radius: 2px !important;
+  border-radius: 2px;
   background: var(--color-label);
   box-shadow: none;
   -webkit-backdrop-filter: none;
@@ -1071,107 +1060,6 @@ html[dir='rtl'] .scroll-progress {
   transition:
     transform var(--dur-base) var(--ease-spring),
     opacity var(--dur-fast) var(--ease-out);
-}
-
-/* ---------- Cube buttons and tabs (match the hero's machined cubes) ----------
-   Each control is a small metal block: square-ish corners, a bevel (lit top edge, dark bottom edge) and a solid
-   side face to the bottom-end, drawn as a hard offset. Hovering lifts the block onto its side a little more;
-   pressing pushes it flat into the page. No soft shadows. Mirrored in RTL. */
-:root {
-  --cube-r: 5px;
-  --cube-d: 3px;
-  --cube-side: color-mix(in srgb, var(--color-label) 28%, transparent);
-  --cube-hi: rgba(255, 255, 255, 0.22);
-  --cube-lo: rgba(0, 0, 0, 0.22);
-}
-[dir='rtl'] {
-  --cube-x: -1;
-}
-.cube-btn,
-.cube-tab {
-  --cx: var(--cube-x, 1);
-  border-radius: var(--cube-r) !important;
-  box-shadow:
-    inset 0 1px 0 var(--cube-hi),
-    inset 0 -1px 0 var(--cube-lo),
-    calc(var(--cx) * var(--cube-d)) var(--cube-d) 0 0 var(--cube-side);
-  transition:
-    transform var(--dur-fast) var(--ease-spring),
-    box-shadow var(--dur-fast) var(--ease-spring),
-    background-color var(--dur-fast) var(--ease-out),
-    color var(--dur-fast) var(--ease-out),
-    opacity var(--dur-fast) var(--ease-out);
-}
-.cube-btn:active,
-.cube-tab:active {
-  transform: translate(calc(var(--cx) * var(--cube-d)), var(--cube-d)) !important;
-  box-shadow:
-    inset 0 1px 0 var(--cube-hi),
-    inset 0 -1px 0 var(--cube-lo),
-    0 0 0 0 var(--cube-side);
-}
-/* the dark/solid blocks get a deeper side in their own colour */
-.cube-btn--solid,
-.cube-tab[aria-selected='true'],
-.cube-tab[aria-pressed='true'] {
-  --cube-side: color-mix(in srgb, var(--color-label) 55%, var(--color-bg));
-}
-/* a plain block has no side until it's chosen: tabs sit flat, the chosen one stands up */
-.cube-tab:not([aria-selected='true']):not([aria-pressed='true']) {
-  --cube-side: transparent;
-  --cube-hi: transparent;
-  --cube-lo: transparent;
-}
-/* only real hover lifts a block: on touch a tapped control would otherwise stay lifted */
-@media (hover: hover) {
-  .cube-btn:hover,
-  .cube-tab:hover {
-    transform: translate(calc(var(--cx) * -1px), -1px);
-    box-shadow:
-      inset 0 1px 0 var(--cube-hi),
-      inset 0 -1px 0 var(--cube-lo),
-      calc(var(--cx) * (var(--cube-d) + 1px)) calc(var(--cube-d) + 1px) 0 0 var(--cube-side);
-  }
-  .cube-tab:not([aria-selected='true']):not([aria-pressed='true']):hover {
-    --cube-side: color-mix(in srgb, var(--color-label) 18%, transparent);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .cube-btn,
-  .cube-tab {
-    transition: none;
-  }
-}
-
-/* nav tabs: a tiny cube marks the current page; hovering shows its outline */
-.cube-nav {
-  position: relative;
-}
-.cube-nav::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  bottom: -9px;
-  width: 5px;
-  height: 5px;
-  translate: -50% 0;
-  rotate: 45deg;
-  scale: 0;
-  background: var(--color-label);
-  border-radius: 1px;
-  transition:
-    scale var(--dur-fast) var(--ease-spring),
-    background-color var(--dur-fast) var(--ease-out);
-}
-.cube-nav:hover:not([aria-current='page'])::after {
-  scale: 1;
-  background: transparent;
-  box-shadow: inset 0 0 0 1px var(--color-label-2);
-}
-.cube-nav[aria-current='page']::after {
-  scale: 1;
-  background: var(--color-label);
-  box-shadow: none;
 }
 
 /* ---------- Buttons: press state ---------- */

@@ -52,7 +52,7 @@ const Cursor = () => {
       if (target?.el && target.mode === 'shape' && target.lean) target.el.style.translate = '';
       target = null;
       ring.dataset.mode = 'default';
-      ring.style.borderRadius = '3px';
+      ring.style.borderRadius = '999px';
       label.textContent = '';
       dot.style.opacity = hidden ? '0' : '1';
     };
@@ -100,7 +100,7 @@ const Cursor = () => {
       target = { el: hit, mode: 'shape', lean };
       ring.dataset.mode = 'shape';
       const radius = parseFloat(getComputedStyle(hit).borderTopLeftRadius) || 10;
-      ring.style.borderRadius = `${Math.min(radius + 4, 7)}px`;
+      ring.style.borderRadius = `${Math.min(radius + 4, 999)}px`;
       dot.style.opacity = '0';
       return undefined;
     };
@@ -173,7 +173,7 @@ const Cursor = () => {
       ring.style.width = `${pos.w}px`;
       ring.style.height = `${pos.h}px`;
       ring.style.transform = `translate3d(${pos.x - pos.w / 2}px, ${pos.y - pos.h / 2}px, 0)`;
-      dot.style.transform = `translate3d(${mouse.x - 3.5}px, ${mouse.y - 3.5}px, 0) rotate(45deg) scale(${pressed ? 0.6 : 1})`;
+      dot.style.transform = `translate3d(${mouse.x - 3}px, ${mouse.y - 3}px, 0) scale(${pressed ? 0.6 : 1})`;
       // stop while the tab is hidden; resumes on visibilitychange
       raf = document.visibilityState === 'hidden' ? 0 : requestAnimationFrame(tick);
     };

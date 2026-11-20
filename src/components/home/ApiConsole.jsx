@@ -116,7 +116,7 @@ export default function ApiConsole() {
                 aria-selected={tab === id}
                 aria-controls="con-panel"
                 onClick={() => replay(id)}
-                className={`cube-tab cursor-pointer px-3 py-1 text-[12px] font-medium ${tab === id ? 'bg-fill text-label' : 'text-label-2 hover:text-label'}`}
+                className={`rounded-full px-3 py-1 text-[12px] font-medium transition-colors duration-(--dur-fast) ${tab === id ? 'bg-fill text-label' : 'text-label-2 hover:text-label'}`}
               >
                 {t(`aiConsole.tabs.${id}`)}
               </button>

@@ -14,9 +14,9 @@ const NAV = [
   { id: 'contact', key: 'nav.contact', link: '/contact' },
 ];
 
-// a flat block that stands up on hover (.cube-tab); 32px visually, but the ::after layer grows the tap area to 44px (WCAG 2.5.5)
+// 32px visually, but the ::after layer grows the tap area to 44px (WCAG 2.5.5)
 const iconBtn =
-  "relative inline-flex items-center justify-center size-8 cube-tab text-label-2 hover:text-label hover:bg-fill cursor-pointer after:absolute after:-inset-1.5 after:content-['']";
+  "relative inline-flex items-center justify-center size-8 rounded-full text-label-2 hover:text-label hover:bg-fill transition-colors cursor-pointer after:absolute after:-inset-1.5 after:content-['']";
 
 // a small label under a header control, shown on hover and keyboard focus;
 // it also gives the control its accessible name
@@ -34,7 +34,7 @@ const PrefsToggles = () => {
       <button
         type="button"
         onClick={() => transitionLang(toggleLang)}
-        className="relative inline-flex h-8 min-w-8 items-center justify-center cube-btn border border-separator px-2.5 text-[13px] font-semibold text-label-2 hover:text-label hover:bg-fill cursor-pointer after:absolute after:-inset-1.5 after:content-['']"
+        className="relative inline-flex h-8 min-w-8 items-center justify-center rounded-full px-2.5 text-[13px] font-semibold text-label-2 ring-1 ring-inset ring-separator hover:text-label hover:bg-fill transition-colors cursor-pointer after:absolute after:-inset-1.5 after:content-['']"
       >
         <span lang={other} className={other === 'ar' ? 'leading-none' : 'tracking-[0.02em]'}>
           {t('a11y.langLabel')}
@@ -87,7 +87,7 @@ const Navbar = () => {
   }, [open]);
 
   const linkClass = ({ isActive }) =>
-    `cube-nav text-[13px] tracking-[-0.01em] transition-colors ${
+    `text-[13px] tracking-[-0.01em] transition-colors ${
       isActive ? 'text-label font-medium' : 'text-label-2 hover:text-label'
     }`;
 
@@ -117,7 +117,7 @@ const Navbar = () => {
           <button
             type="button"
             onClick={openCommandPalette}
-            className="hidden lg:inline-flex items-center gap-2 h-8 ps-3 pe-1.5 me-1 cube-btn bg-fill text-[13px] text-label-2 hover:text-label cursor-pointer"
+            className="hidden lg:inline-flex items-center gap-2 h-8 ps-3 pe-1.5 me-1 rounded-full bg-fill text-[13px] text-label-2 hover:text-label transition-colors"
             // named by its visible text ("Search"); the shortcut hint is decoration
             aria-haspopup="dialog"
           >
@@ -126,7 +126,7 @@ const Navbar = () => {
               <path d="m13.5 13.5 4 4" />
             </svg>
             {t('cmd.search')}
-            <kbd aria-hidden className="text-[11px] font-medium rounded-[3px] bg-surface px-2 py-0.5 ring-1 ring-separator">
+            <kbd aria-hidden className="text-[11px] font-medium rounded-full bg-surface px-2 py-0.5 ring-1 ring-separator">
               {mac ? '⌘K' : 'Ctrl K'}
             </kbd>
           </button>
@@ -174,16 +174,11 @@ const Navbar = () => {
                 to={item.link}
                 end={item.link === '/'}
                 className={({ isActive }) =>
-                  `group/m flex items-center gap-3 py-2 text-[28px] font-semibold tracking-[-0.02em] ${
+                  `block py-2 text-[28px] font-semibold tracking-[-0.02em] ${
                     isActive ? 'text-label' : 'text-label-2 hover:text-label'
                   }`
                 }
               >
-                {/* the current page is marked with a small cube, as in the desktop bar */}
-                <span
-                  aria-hidden
-                  className="size-2 shrink-0 rotate-45 rounded-[1px] bg-label scale-0 transition-transform duration-(--dur-fast) group-aria-[current=page]/m:scale-100"
-                />
                 {t(item.key)}
               </NavLink>
             </li>
