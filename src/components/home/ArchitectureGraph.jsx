@@ -318,8 +318,8 @@ export default function ArchitectureGraph({ titles }) {
               type="button"
               aria-pressed={active}
               onClick={() => setPathId(active ? null : sc.id)}
-              className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium ring-1 transition-colors duration-(--dur-fast) ${
-                active ? 'bg-label text-bg ring-label' : 'bg-fill text-label-2 ring-separator hover:text-label'
+              className={`cube-tab cursor-pointer px-3.5 py-1.5 text-[13px] font-medium ${
+                active ? 'bg-label text-bg' : 'bg-fill text-label-2 hover:text-label'
               }`}
             >
               {sc.label[lang] || sc.label.en}

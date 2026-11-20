@@ -1,13 +1,13 @@
 import { forwardRef } from 'react';
 import { Link } from 'react-router-dom';
 
+// every variant but `plain` is a small machined block (see .cube-btn in index.css): squared corners, a bevel
+// and a hard side face that the press pushes flat. No soft shadows.
 const VARIANTS = {
-  primary:
-    'bg-accent text-on-accent hover:bg-accent-hover shadow-[0_1px_2px_rgba(0,0,0,0.08)] active:scale-[0.97]',
-  secondary: 'bg-fill text-label hover:bg-[color-mix(in_srgb,var(--color-fill)_160%,transparent)] active:scale-[0.97]',
-  outline:
-    'text-accent ring-1 ring-inset ring-accent hover:bg-accent hover:text-on-accent active:scale-[0.97]',
-  plain: 'text-accent hover:underline underline-offset-4',
+  primary: 'cube-btn cube-btn--solid bg-accent text-on-accent hover:bg-accent-hover',
+  secondary: 'cube-btn bg-fill text-label hover:bg-[color-mix(in_srgb,var(--color-fill)_160%,transparent)]',
+  outline: 'cube-btn border border-accent text-accent hover:bg-accent hover:text-on-accent',
+  plain: 'btn-press rounded-[5px] text-accent hover:underline underline-offset-4',
 };
 
 const SIZES = {
@@ -17,7 +17,7 @@ const SIZES = {
 };
 
 /**
- * Pill button following Apple's HIG. Renders a router Link when `to` is given,
+ * Cube button, matching the hero's machined cubes. Renders a router Link when `to` is given,
  * an anchor when `href` is given, and a native button otherwise.
  */
 const Button = forwardRef(function Button(
@@ -35,7 +35,7 @@ const Button = forwardRef(function Button(
   ref,
 ) {
   const tone = VARIANTS[variant || (primary ? 'primary' : 'secondary')];
-  const classes = `inline-flex items-center justify-center gap-1.5 rounded-full font-medium tracking-[-0.01em] whitespace-nowrap select-none btn-press disabled:opacity-40 disabled:pointer-events-none cursor-pointer ${SIZES[size]} ${tone} ${className}`;
+  const classes = `inline-flex items-center justify-center gap-1.5 font-medium tracking-[-0.01em] whitespace-nowrap select-none disabled:opacity-40 disabled:pointer-events-none cursor-pointer ${SIZES[size]} ${tone} ${className}`;
 
   if (to) {
     return (

@@ -65,8 +65,8 @@ const Projects = () => {
       type="button"
       onClick={() => setFilter(value)}
       aria-pressed={filter === value}
-      className={`inline-flex items-center gap-1.5 h-9 px-4 rounded-full text-[14px] font-medium btn-press ${
-        filter === value ? 'bg-label text-bg shadow-sm' : 'bg-fill text-label hover:bg-[color-mix(in_srgb,var(--color-fill)_170%,transparent)]'
+      className={`cube-tab cursor-pointer inline-flex items-center gap-1.5 h-9 px-4 text-[14px] font-medium ${
+        filter === value ? 'bg-label text-bg' : 'bg-fill text-label hover:bg-[color-mix(in_srgb,var(--color-fill)_170%,transparent)]'
       }`}
     >
       {Icon && <Icon className="text-[14px]" style={{ color: filter === value ? 'currentColor' : readableIconColor(color) }} aria-hidden />}

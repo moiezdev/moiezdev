@@ -17,7 +17,8 @@ const TAU = Math.PI * 2;
 const MORPH = 4.0; // seconds for the cubes to fly to the next shape
 const HOLD = 6.0; // seconds the formed shape holds
 const CYCLE = MORPH + HOLD;
-const FLOOR_Y = -1.12; // the floor the shadow falls on, below the shapes
+const BRAIN_YAW = -2.1; // the brain's best side: mostly profile, a little of the front
+const BRAIN_PITCH = 0.32;
 
 
 // ---------- look ----------
@@ -34,7 +35,6 @@ const LOOK = {
     glow: [0.8, 0.83, 0.88],
     line: [0.86, 0.87, 0.9],
     lineAlpha: 0.85,
-    shadow: 0.55,
   },
   light: {
     // black metal on the light page
@@ -47,24 +47,11 @@ const LOOK = {
     glow: [0.22, 0.23, 0.25],
     line: [0.1, 0.105, 0.115],
     lineAlpha: 0.75,
-    shadow: 0.2,
   },
 };
 
 // ---------- shaders ----------
 
-/** Flattens a point onto the floor under the shape, lit from a little above and to the left. */
-const FLOOR = `
-uniform float uShadow, uFloor;
-uniform mat3 uPitch;
-vec3 toFloor(vec3 w) {
-  vec3 u = transpose(uPitch) * w;
-  float h = u.y - uFloor;
-  u.x += h * 0.2;
-  u.z -= h * 0.1;
-  u.y = uFloor;
-  return uPitch * u;
-}`;
 
 const CENTRE = `
 uniform mat4 uProj;
@@ -149,7 +136,6 @@ out vec3 vLocal;
 out vec3 vWorld;
 out float vGlow;
 ${CENTRE}
-${FLOOR}
 void main() {
   float e, arc, near, scale, debris;
   vec3 dir;
@@ -159,7 +145,6 @@ void main() {
   float spin = uScatter * aSeed.w * 5.0 + debris * uOrbit * (aSeed.w - 0.5) * 4.0;
   mat3 R = uRot * axisAngle(dir, spin);
   vec3 world = c + R * (aPos * scale * uSize);
-  if (uShadow > 0.5) world = toFloor(world);
   vN = R * aNormal;
   vLocal = aPos;
   vWorld = world;
@@ -174,14 +159,9 @@ in vec3 vLocal;
 in vec3 vWorld;
 in float vGlow;
 uniform vec3 uEdge;
-uniform float uShadow;
 out vec4 o;
 ${SHADE}
 void main() {
-  if (uShadow > 0.5) {
-    o = vec4(1.0);
-    return;
-  }
   vec3 n = normalize(vN);
   vec3 col = shade(n, vWorld);
   // machined bevel: light catches where two faces meet
@@ -229,35 +209,6 @@ void main() {
   o = vec4(uLine * a, a);
 }`;
 
-/** The floor shadow: drawn small into its own texture, then laid down softly blurred. */
-const SHADOW_VS = `#version 300 es
-out vec2 vUv;
-void main() {
-  vec2 p = vec2(gl_VertexID == 1 ? 3.0 : -1.0, gl_VertexID == 2 ? 3.0 : -1.0);
-  vUv = p * 0.5 + 0.5;
-  gl_Position = vec4(p, 0.0, 1.0);
-}`;
-
-const SHADOW_FS = `#version 300 es
-precision highp float;
-in vec2 vUv;
-uniform sampler2D uTex;
-uniform vec2 uTexel;
-uniform float uDark;
-out vec4 o;
-void main() {
-  float a = 0.0;
-  float wsum = 0.0;
-  for (int i = -3; i <= 3; i++) {
-    for (int j = -3; j <= 3; j++) {
-      float w = exp(-float(i * i + j * j) / 6.0);
-      a += texture(uTex, vUv + vec2(float(i), float(j)) * uTexel * 1.4).a * w;
-      wsum += w;
-    }
-  }
-  a = a / wsum * uDark;
-  o = vec4(0.0, 0.0, 0.0, a);
-}`;
 
 function cubeMesh() {
   const P = [];
@@ -341,16 +292,14 @@ export function createNanoForge(canvas, { data, theme, scroll = () => 0, pointer
   };
   let cubeProg;
   let lineProg;
-  let shadowProg;
   try {
     cubeProg = program(CUBE_VS, CUBE_FS);
     lineProg = program(LINE_VS, LINE_FS);
-    shadowProg = program(SHADOW_VS, SHADOW_FS);
   } catch (err) {
     console.warn('[nano forge]', err);
     return null;
   }
-  const progs = [cubeProg, lineProg, shadowProg];
+  const progs = [cubeProg, lineProg];
   /** Set a uniform on every program that has it. */
   const setAll = (name, fn) => {
     for (const p of progs) {
@@ -457,13 +406,6 @@ export function createNanoForge(canvas, { data, theme, scroll = () => 0, pointer
   let H = 0;
   let dprCap = small ? 1.5 : 2;
   const CAM = 4.2;
-  const shadowTex = gl.createTexture();
-  gl.bindTexture(gl.TEXTURE_2D, shadowTex);
-  for (const [k, v] of [[gl.TEXTURE_MIN_FILTER, gl.LINEAR], [gl.TEXTURE_MAG_FILTER, gl.LINEAR], [gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE]])
-    gl.texParameteri(gl.TEXTURE_2D, k, v);
-  const shadowFbo = gl.createFramebuffer();
-  let shadowW = 1;
-  let shadowH = 1;
   const resize = () => {
     const dpr = Math.min(window.devicePixelRatio || 1, dprCap);
     W = canvas.clientWidth;
@@ -471,27 +413,16 @@ export function createNanoForge(canvas, { data, theme, scroll = () => 0, pointer
     canvas.width = Math.max(1, Math.round(W * dpr));
     canvas.height = Math.max(1, Math.round(H * dpr));
     gl.viewport(0, 0, canvas.width, canvas.height);
-    // the shadow is drawn at a quarter of the size: cheap, and soft once it's blurred
-    shadowW = Math.max(1, Math.round(canvas.width / 4));
-    shadowH = Math.max(1, Math.round(canvas.height / 4));
-    gl.bindTexture(gl.TEXTURE_2D, shadowTex);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, shadowW, shadowH, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-    gl.useProgram(shadowProg);
-    gl.uniform2f(shadowProg.u('uTexel'), 1 / shadowW, 1 / shadowH);
     const aspect = W / Math.max(1, H);
     // fit a radius of ~1.2 inside the shorter side
-    // the canvas is `bleed` times the stage, so loose cubes and the shadow aren't cut at its edge
+    // the canvas is `bleed` times the stage, so loose cubes aren't cut at its edge
     const fov = 2 * Math.atan((1.32 * bleed) / CAM / Math.min(1, aspect));
     const proj = perspective(fov, aspect, 0.5, 20);
     setAll('uProj', (l) => gl.uniformMatrix4fv(l, false, proj));
     setAll('uAspect', (l) => gl.uniform1f(l, aspect));
   };
   resize();
-  gl.bindFramebuffer(gl.FRAMEBUFFER, shadowFbo);
-  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, shadowTex, 0);
-  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
   setAll('uCamZ', (l) => gl.uniform1f(l, CAM));
-  setAll('uFloor', (l) => gl.uniform1f(l, FLOOR_Y));
 
   let lookTheme = null;
   const applyLook = () => {
@@ -502,13 +433,12 @@ export function createNanoForge(canvas, { data, theme, scroll = () => 0, pointer
     for (const [u, v] of [['uBase', L.base], ['uEnvLow', L.envLow], ['uEnvHigh', L.envHigh], ['uSpec', L.spec], ['uRim', L.rim], ['uEdge', L.edge], ['uGlow', L.glow], ['uLine', L.line]])
       setAll(u, (l) => gl.uniform3fv(l, v));
     setAll('uLineAlpha', (l) => gl.uniform1f(l, L.lineAlpha));
-    gl.useProgram(shadowProg);
-    gl.uniform1f(shadowProg.u('uDark'), L.shadow);
   };
 
   // eased interaction state
   let near = 0;
   let calm = 0; // 1 while the planet stands still
+  let pose = 0; // 1 while the brain holds its three-quarter view
   let px = 0;
   let py = 0;
   let scatter = 0;
@@ -525,7 +455,6 @@ export function createNanoForge(canvas, { data, theme, scroll = () => 0, pointer
     bindPair(a, b);
     const rot = rotation(y, pitch, Math.sin(t * 0.13) * 0.06 * (1 - calm));
     setAll('uRot', (l) => gl.uniformMatrix3fv(l, false, rot));
-    setAll('uPitch', (l) => gl.uniformMatrix3fv(l, false, rotation(0, pitch)));
     setAll('uMix', (l) => gl.uniform1f(l, mix));
     setAll('uTime', (l) => gl.uniform1f(l, t));
     setAll('uScatter', (l) => gl.uniform1f(l, scatter));
@@ -546,31 +475,7 @@ export function createNanoForge(canvas, { data, theme, scroll = () => 0, pointer
       gl.disable(gl.CULL_FACE);
     };
 
-    // 1. the shape's silhouette, flattened onto the floor, into the small shadow texture
-    gl.bindTexture(gl.TEXTURE_2D, null);
-    gl.bindFramebuffer(gl.FRAMEBUFFER, shadowFbo);
-    gl.viewport(0, 0, shadowW, shadowH);
-    gl.clearColor(0, 0, 0, 0);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.disable(gl.DEPTH_TEST);
-    setAll('uShadow', (l) => gl.uniform1f(l, 1));
-    drawCubes();
-    setAll('uShadow', (l) => gl.uniform1f(l, 0));
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-    gl.viewport(0, 0, canvas.width, canvas.height);
-
-    // 2. lay it down, blurred
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    gl.useProgram(shadowProg);
-    gl.bindTexture(gl.TEXTURE_2D, shadowTex);
-    gl.enable(gl.BLEND);
-    gl.bindVertexArray(null);
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
-    gl.disable(gl.BLEND);
-    gl.bindTexture(gl.TEXTURE_2D, null);
-    gl.enable(gl.DEPTH_TEST);
-
-    // 3. the cubes themselves
     drawCubes();
 
     if (strings > 0.001) {
@@ -627,7 +532,15 @@ export function createNanoForge(canvas, { data, theme, scroll = () => 0, pointer
     // while the planet stands, the globe stops turning and only its debris ring orbits
     const planetUp = shapes[target].name === 'planet' && mix > 0.9;
     calm += ((planetUp ? 1 : 0) - calm) * Math.min(1, dt * 1.5);
-    yaw += dt * 0.32 * (1 - calm);
+    // while the brain stands, it turns to a three-quarter side view (front, top and one temple showing)
+    // and only sways a little round it, so it reads as a brain instead of spinning end-on
+    const brainUp = shapes[target].name === 'brain' && mix > 0.6;
+    pose += ((brainUp ? 1 : 0) - pose) * Math.min(1, dt * 1.2);
+    yaw += dt * 0.32 * (1 - calm) * (1 - pose);
+    if (pose > 0.001) {
+      const goal = BRAIN_YAW + TAU * Math.round((yaw - BRAIN_YAW) / TAU) + Math.sin(t * 0.35) * 0.22;
+      yaw += (goal - yaw) * Math.min(1, dt * 1.6) * pose;
+    }
     const sp = gentle ? 0 : Math.min(1, Math.max(0, scroll()));
     scatter += (Math.min(1, Math.max(0, (sp - 0.08) / 0.7)) - scatter) * Math.min(1, dt * 8);
     draw({
@@ -636,7 +549,7 @@ export function createNanoForge(canvas, { data, theme, scroll = () => 0, pointer
       mix,
       t,
       yaw: yaw + sp * 1.6,
-      pitch: 0.38 + Math.sin(t * 0.21) * 0.08 * (1 - calm),
+      pitch: 0.38 + (BRAIN_PITCH - 0.38) * pose + Math.sin(t * 0.21) * 0.08 * (1 - calm) * (1 - pose * 0.6),
     });
   }
 

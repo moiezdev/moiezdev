@@ -8,7 +8,6 @@ import { usePrefersReducedMotion } from '../../motion/reducedMotion';
  * syllable-like pulses while it's speaking. One tiny WebGL2 canvas, one instanced cube draw; with reduced motion
  * it moves at half speed, and without WebGL it falls back to a shaded CSS sphere.
  * `mood`: idle | thinking | speaking
- * `faceOnly` (the panel header) drops the floor shadow.
  */
 
 // a ball of cubes on a grid, 7 across, filled right through
@@ -190,7 +189,7 @@ function createBlob(canvas) {
   };
 }
 
-const RobotAvatar = ({ size = 64, mood = 'idle', faceOnly = false, className = '' }) => {
+const RobotAvatar = ({ size = 64, mood = 'idle', className = '' }) => {
   const canvasRef = useRef(null);
   const fallbackRef = useRef(null);
   const moodRef = useRef(mood);
@@ -249,12 +248,6 @@ const RobotAvatar = ({ size = 64, mood = 'idle', faceOnly = false, className = '
 
   return (
     <div className={`relative select-none ${className}`} style={{ width: size, height: size }} aria-hidden>
-      {!faceOnly && (
-        <span
-          className="absolute left-1/2 -translate-x-1/2 rounded-[50%] bg-black/30 blur-[3px]"
-          style={{ bottom: size * 0.02, width: size * 0.5, height: size * 0.07 }}
-        />
-      )}
       <canvas ref={canvasRef} className="relative block" style={{ width: size, height: size }} />
       <span
         ref={fallbackRef}

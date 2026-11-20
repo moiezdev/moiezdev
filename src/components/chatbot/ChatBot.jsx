@@ -447,7 +447,7 @@ const ChatBot = () => {
         >
           <div className="flex items-center gap-2 border-b border-separator px-4 py-3">
             <div className="shrink-0 -my-1">
-              <RobotAvatar size={48} faceOnly isOpen mood={avatarMood} />
+              <RobotAvatar size={48} isOpen mood={avatarMood} />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-label text-[15px] font-semibold leading-tight">{BOT_HANDLE}</p>
@@ -556,7 +556,7 @@ const ChatBot = () => {
                       type="button"
                       key={s}
                       onClick={() => send(s)}
-                      className="rounded-full ring-1 ring-inset ring-accent/50 text-accent text-[13px] font-medium px-3.5 py-1.5 hover:bg-accent hover:text-on-accent transition-colors cursor-pointer"
+                      className="cube-btn border border-accent/50 text-accent text-[13px] font-medium px-3.5 py-1.5 hover:bg-accent hover:text-on-accent cursor-pointer"
                     >
                       {s}
                     </button>
@@ -600,7 +600,7 @@ const ChatBot = () => {
               <button
                 type="submit"
                 disabled={busy || !input.trim()}
-                className="inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-accent text-on-accent disabled:opacity-30 transition-opacity cursor-pointer"
+                className="inline-flex size-8 shrink-0 items-center justify-center cube-btn cube-btn--solid bg-accent text-on-accent disabled:opacity-30 cursor-pointer"
                 aria-label={t(lang, 'chat.send')}
               >
                 <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" aria-hidden>
@@ -622,7 +622,7 @@ const ChatBot = () => {
             type="button"
             ref={fabRef}
             onClick={openChat}
-            className="relative size-12 sm:size-16 rounded-full glass ring-1 ring-separator shadow-[0_12px_32px_rgba(0,0,0,0.2)] inline-flex items-center justify-center hover:scale-105 active:scale-95 transition-transform duration-(--dur-base) cursor-pointer"
+            className="relative size-12 sm:size-16 rounded-full glass ring-1 ring-separator inline-flex items-center justify-center hover:scale-105 active:scale-95 transition-transform duration-(--dur-base) cursor-pointer"
             aria-label={t(lang, 'a11y.openChat', { name: BOT_NAME })}
             aria-expanded={false}
           >

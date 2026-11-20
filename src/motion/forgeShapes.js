@@ -43,7 +43,7 @@ function pad(pts, n) {
  * some 2x2x2. The count is whatever the shape needs: a thin shape uses few cubes, a big one many.
  * w = cube scale relative to the base + 8 x part.
  */
-function voxelize(sample, sp, base, { inside = null, box = 0 } = {}) {
+function voxelize(sample, sp, base, { inside = null, box = 0, fineSkin = false } = {}) {
   const K = (x, y, z) => (x + 512) * 1048576 + (y + 512) * 1024 + (z + 512);
   const cells = new Map();
   const inv = 1 / sp;
@@ -73,6 +73,12 @@ function voxelize(sample, sp, base, { inside = null, box = 0 } = {}) {
     }
   }
   const order = [...cells.values()].sort((a, b) => a[4] - b[4]);
+  // fineSkin: the outer layer stays single cubes, so fine surface relief (a brain's folds) isn't flattened
+  const skin = new Set();
+  if (fineSkin)
+    for (const [key, [x, y, z]] of cells)
+      if (!cells.has(K(x + 1, y, z)) || !cells.has(K(x - 1, y, z)) || !cells.has(K(x, y + 1, z)) || !cells.has(K(x, y - 1, z)) || !cells.has(K(x, y, z + 1)) || !cells.has(K(x, y, z - 1)))
+        skin.add(key);
   const taken = new Set();
   const fits = (x, y, z, s, part) => {
     for (let a = 0; a < s; a++)
@@ -80,7 +86,7 @@ function voxelize(sample, sp, base, { inside = null, box = 0 } = {}) {
         for (let c = 0; c < s; c++) {
           const key = K(x + a, y + b, z + c);
           const cell = cells.get(key);
-          if (!cell || cell[3] !== part || taken.has(key)) return false;
+          if (!cell || cell[3] !== part || taken.has(key) || (s > 1 && skin.has(key))) return false;
         }
     return true;
   };
@@ -235,40 +241,45 @@ function helix(sp, base) {
 }
 
 /**
- * A brain: two hemispheres split by a deep fissure, their surface folded into ridges and grooves, with
- * the cerebellum tucked under the back and the brain stem below. Each hemisphere is its own part, and so
- * is the cerebellum with the stem, so strings never cross the fissure.
+ * A brain: two hemispheres pressed together into one solid mass, their surface folded into winding ridges
+ * and grooves, with temporal lobes low on each side, the cerebellum tucked under the back and the stem
+ * below. Each hemisphere is its own part, and so is the cerebellum with the stem.
  */
 function brain(sp, base) {
   const S = 1.25; // a little bigger than the other shapes' unit size, so the folds have room
+  // the folds: a meandering groove wherever a smooth noise crosses its middle, so they wind like gyri
+  const fold = (x, y, z) => noise3(x * 4.5 + 3, y * 4.5 + 7, z * 4.5 + 1) + 0.3 * noise3(x * 9 + 9, y * 9, z * 9 + 5) - 0.65;
   const inside = (p) => {
     const [x, y, z] = p.map((c) => c / S);
-    // cerebellum and stem, under the back
-    const cb = Math.hypot(x / 0.22, (y + 0.24) / 0.13, (z + 0.24) / 0.17);
-    const stem = Math.hypot(x / 0.07, (z + 0.12) / 0.075) <= 1 && y < -0.2 && y > -0.5;
+    // cerebellum and stem, tucked under the back
+    const cb = Math.hypot(x / 0.24, (y + 0.2) / 0.12, (z + 0.27) / 0.15);
+    const stem = Math.hypot(x / 0.065, (z + 0.13) / 0.07) <= 1 && y < -0.15 && y > -0.46;
     if (cb <= 1 || stem) {
       // fine horizontal folds on the cerebellum
-      if (cb <= 1 && cb > 0.8 && Math.sin((y + 0.24) * 110) > 0.55) return -1;
+      if (cb <= 1 && cb > 0.75 && Math.sin((y + 0.2) * 120) > 0.5) return -1;
       return 2;
     }
-    // the hemispheres: one egg-shaped half each side of the fissure, flatter underneath
+    // the cerebrum: two hemispheres pressed together into one mass (no gap), longer front to back,
+    // domed on top and flat underneath, with a temporal lobe bulging low on each side
     const side = x < 0 ? 0 : 1;
-    const hx = Math.abs(x) - 0.215;
-    const yy = y > 0 ? y / 0.36 : y / 0.25;
-    const d = Math.hypot(hx / 0.235, yy, z / (0.47 - 0.05 * y));
-    if (Math.abs(x) < 0.022 && y > -0.12) return -1; // the fissure between them
-    if (d > 1.04) return -1;
-    // the folds: grooves where a ridged noise is near zero, cut into the outer skin
-    if (d > 0.84) {
-      // winding folds: stripes bent by noise, so they snake over the surface like gyri
-      const w = noise3(x * 4 + 3, y * 4 + 7, z * 4 + 1);
-      const f = Math.sin((y * 9 + z * 6 + x * 3) + w * 9 + noise3(x * 9 + 9, y * 9, z * 9 + 5) * 3);
-      if (Math.abs(f) < 0.32) return -1; // a groove (sulcus)
-      if (d > 0.96 && Math.abs(f) < 0.62) return -1; // the ridges (gyri) stand proud
+    const ax = Math.abs(x);
+    const yy = y > 0 ? y / 0.33 : y / 0.2;
+    const zz = z / (0.46 - 0.04 * y);
+    const hemi = Math.hypot((ax - 0.13) / 0.25, yy, zz);
+    const temporal = Math.hypot((ax - 0.22) / 0.14, (y + 0.1) / 0.11, (z - 0.05) / 0.25);
+    const d = Math.min(hemi, temporal);
+    if (d > 1.0) return -1;
+    // only a faint seam along the top where the halves meet, not a split
+    if (ax < 0.014 && y > 0.1 && d > 0.75) return -1;
+    // grooves cut into the outer skin; deeper ones every so often
+    if (d > 0.7) {
+      const f = Math.abs(fold(x, y, z));
+      if (f < 0.07) return -1;
+      if (d > 0.88 && f < 0.12) return -1;
     }
     return side;
   };
-  return voxelize(null, sp, base, { inside, box: 0.56 * S });
+  return voxelize(null, sp, base, { inside, box: 0.56 * S, fineSkin: true });
 }
 
 const MOBIUS_R = 0.72;
