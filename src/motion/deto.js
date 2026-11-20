@@ -37,6 +37,8 @@ uniform float uStretch; // along-motion stretch: 0 round, > 0 drawn out, < 0 squ
 uniform vec2 uSpine[${SPINE}]; // the tail's spine, body units, relative to the centre
 uniform float uTail;    // 0 no tail .. 1 full
 uniform mat3 uRot;      // the shape's slow turn
+uniform float uEmerge;  // the planet's debris: 0 all tucked behind the globe .. 1 out in their rings
+uniform vec3 uBack;     // straight away from the viewer, in the shape's own axes
 uniform vec3 uBase, uEnvLow, uEnvHigh, uSpec, uRim;
 out vec4 o;
 
@@ -90,17 +92,35 @@ float hash1(float n) {
 }
 // one belt of debris round the planet: rocks of every size in cells round the ring, each a little off the line,
 // tumbled its own way, a few cells left empty, the whole belt orbiting at its own speed
-float belt(vec3 q, float R, float N, float speed, float seed) {
+float wrapA(float a) {
+  return mod(a + PI, 2.0 * PI) - PI;
+}
+// while the planet forms, the debris fan out from behind the globe: every rock starts bunched up behind it, low
+// down near the globe, and opens out along its own orbit to its place in the ring (and gathers back on the way out)
+float belt(vec3 q, vec3 bq, float R, float N, float speed, float seed) {
   float rr = length(q.xz);
+  float formed = uEmerge > 0.999 ? 1.0 : 0.0;
   // far from the belt: a cheap bound (the rocks all lie inside this flat band)
-  float bound = max(abs(rr - R) - 0.16, abs(q.y) - 0.13);
+  float bound = formed > 0.5 ? max(abs(rr - R) - 0.16, abs(q.y) - 0.13) : max(rr - R - 0.16, abs(q.y) - 0.13);
   if (bound > 0.08) return bound;
   float sa = uTime * speed;
   float cs = cos(sa);
   float sn = sin(sa);
   vec3 o = vec3(cs * q.x - sn * q.z, q.y, sn * q.x + cs * q.z);
   float cell = 2.0 * PI / N;
-  float id0 = floor(atan(o.z, o.x) / cell);
+  float phi = atan(o.z, o.x);
+  // the fan: angles round the orbit, measured from the point behind the globe, are squeezed by f
+  float ba = 0.0;
+  float f = 1.0;
+  if (formed < 0.5) {
+    vec2 bo = vec2(cs * bq.x - sn * bq.z, sn * bq.x + cs * bq.z);
+    ba = atan(bo.y, bo.x);
+    f = mix(0.08, 1.0, smoothstep(0.0, 1.0, uEmerge));
+    float u = wrapA(phi - ba) / f;
+    if (abs(u) > PI + cell) return max(bound, 0.03);
+    phi = ba + u;
+  }
+  float id0 = floor(phi / cell);
   float d = 1e9;
   for (int k = -1; k <= 1; k++) {
     float id = mod(id0 + float(k), N);
@@ -108,8 +128,17 @@ float belt(vec3 q, float R, float N, float speed, float seed) {
     if (hash1(h + 0.9) < 0.18) continue;
     float a = (id + 0.5 + (hash1(h) - 0.5) * 0.5) * cell;
     float r = R + (hash1(h + 0.1) - 0.5) * 0.06;
-    vec3 c = vec3(cos(a) * r, (hash1(h + 0.2) - 0.5) * 0.08, sin(a) * r);
-    float size = 0.014 + 0.026 * pow(hash1(h + 0.3), 1.8);
+    float y0 = (hash1(h + 0.2) - 0.5) * 0.08;
+    float grow = 1.0;
+    if (formed < 0.5) {
+      // each rock leaves a moment after the one before, from just inside the globe out to its ring
+      grow = smoothstep(0.0, 1.0, clamp((uEmerge - hash1(h + 1.3) * 0.35) / 0.65, 0.0, 1.0));
+      a = ba + wrapA(a - ba) * f;
+      r = mix(0.34, r, grow);
+      y0 *= grow;
+    }
+    vec3 c = vec3(cos(a) * r, y0, sin(a) * r);
+    float size = (0.014 + 0.026 * pow(hash1(h + 0.3), 1.8)) * mix(0.5, 1.0, grow);
     vec3 lp = o - c;
     float t1 = hash1(h + 0.4) * 6.283 + uTime * (hash1(h + 0.5) - 0.5) * 1.4;
     float t2 = hash1(h + 0.6) * 6.283;
@@ -133,14 +162,16 @@ float belt(vec3 q, float R, float N, float speed, float seed) {
   }
   return d;
 }
-float planet(vec3 p) {
-  float globe = length(p) - 0.5;
+float globe(vec3 p) {
+  return length(p) - 0.5;
+}
+// three rings of debris instead of one solid ring: the inner ones orbit faster
+float debris(vec3 p) {
   float ct = cos(0.42);
   float st = sin(0.42);
   vec3 q = vec3(p.x, ct * p.y - st * p.z, st * p.y + ct * p.z);
-  // three rings of debris instead of one solid ring: the inner ones orbit faster
-  float debris = min(belt(q, 0.75, 44.0, 0.46, 3.0), min(belt(q, 0.89, 54.0, 0.33, 17.0), belt(q, 1.03, 64.0, 0.24, 31.0)));
-  return min(globe, debris);
+  vec3 bq = vec3(uBack.x, ct * uBack.y - st * uBack.z, st * uBack.y + ct * uBack.z);
+  return min(belt(q, bq, 0.75, 44.0, 0.46, 3.0), min(belt(q, bq, 0.89, 54.0, 0.33, 17.0), belt(q, bq, 1.03, 64.0, 0.24, 31.0)));
 }
 const float HK = 3.0 * PI / 1.64; // the strands' turn per unit of height
 // the distance to one strand: the nearest point found by a few Newton steps along the strand's height
@@ -177,7 +208,7 @@ float shapeOf(int i, vec3 p) {
   if (i == 1) return cube(p);
   if (i == 2) return knot(p);
   if (i == 3) return mobius(p);
-  if (i == 4) return planet(p);
+  if (i == 4) return globe(p);
   return helix(p);
 }
 
@@ -193,6 +224,8 @@ float body(vec3 p) {
   // one shape turns straight into the next (no round liquid in between)
   float s = shapeOf(uA, q);
   if (uFormB > 0.001) s = mix(s, shapeOf(uB, q), uFormB);
+  // the planet's debris are not blended in with the shapes: they fly out from behind the globe, whole
+  if (uEmerge > 0.001) s = min(s, debris(q));
   // a ripple across the surface, livelier while it is changing or being pushed
   vec3 n = normalize(q + 1e-5);
   s -= uAmp * (0.6 * sin(n.x * 5.0 + uTime * 1.9) * sin(n.y * 4.0 - uTime * 1.4) + 0.4 * sin(n.z * 7.0 + n.x * 3.0 + uTime * 2.6));
@@ -477,11 +510,20 @@ export function createDeto(canvas, { theme, gentle = false } = {}) {
     gl.uniform1i(u('uA'), Math.max(0, a));
     gl.uniform1i(u('uB'), Math.max(0, b));
     gl.uniform1f(u('uFormB'), formB);
+    // the debris: out once the globe has mostly formed, tucked back behind it before it turns into the next shape
+    let emerge = 0;
+    if (moving && b === PLANET) emerge = ss(0.6, 1, m);
+    else if (moving && a === PLANET) emerge = 1 - ss(0, 0.45, m);
+    else if (!moving && b === PLANET) emerge = 1;
+    gl.uniform1f(u('uEmerge'), emerge);
+    const rot = rotation(yaw, pitch);
+    // the view's far side in the shape's axes: rot maps view to shape, so its third column, negated
+    gl.uniform3f(u('uBack'), -rot[6], -rot[7], -rot[8]);
     gl.uniform2f(u('uDir'), dirX, dirY);
     gl.uniform1f(u('uStretch'), stretch);
     gl.uniform2fv(u('uSpine[0]'), spineU);
     gl.uniform1f(u('uTail'), tailAmt);
-    gl.uniformMatrix3fv(u('uRot'), false, rotation(yaw, pitch));
+    gl.uniformMatrix3fv(u('uRot'), false, rot);
     gl.bindVertexArray(vao);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   }
