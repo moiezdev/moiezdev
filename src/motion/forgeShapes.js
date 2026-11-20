@@ -43,7 +43,7 @@ function pad(pts, n) {
  * some 2x2x2. The count is whatever the shape needs: a thin shape uses few cubes, a big one many.
  * w = cube scale relative to the base + 8 x part.
  */
-function voxelize(sample, sp, base, { samples = 0 } = {}) {
+function voxelize(sample, sp, base, { inside = null, box = 0 } = {}) {
   const K = (x, y, z) => (x + 512) * 1048576 + (y + 512) * 1024 + (z + 512);
   const cells = new Map();
   const inv = 1 / sp;
@@ -54,12 +54,23 @@ function voxelize(sample, sp, base, { samples = 0 } = {}) {
     const key = K(x, y, z);
     if (!cells.has(key)) cells.set(key, [x, y, z, q[3], Math.random()]);
   };
-  // keep sampling until new points stop finding new cells, so the volume is covered without holes
-  let misses = 0;
-  for (let i = 0; (samples && i < samples) || (!samples && misses < 40000); i++) {
-    const before = cells.size;
-    add(sample());
-    misses = cells.size === before ? misses + 1 : 0;
+  if (inside) {
+    // a volume with a cheap inside test: check every cell of the grid over [-box, box]
+    const m = Math.ceil(box * inv);
+    for (let x = -m; x <= m; x++)
+      for (let y = -m; y <= m; y++)
+        for (let z = -m; z <= m; z++) {
+          const part = inside([x * sp, y * sp, z * sp]);
+          if (part >= 0) cells.set(K(x, y, z), [x, y, z, part, Math.random()]);
+        }
+  } else {
+    // keep sampling until new points stop finding new cells, so the volume is covered without holes
+    let misses = 0;
+    while (misses < 12000) {
+      const before = cells.size;
+      add(sample());
+      misses = cells.size === before ? misses + 1 : 0;
+    }
   }
   const order = [...cells.values()].sort((a, b) => a[4] - b[4]);
   const taken = new Set();
@@ -87,6 +98,24 @@ function voxelize(sample, sp, base, { samples = 0 } = {}) {
   return out;
 }
 
+const hash3 = (x, y, z) => {
+  const h = Math.sin(x * 127.1 + y * 311.7 + z * 74.7) * 43758.5453;
+  return h - Math.floor(h);
+};
+/** Smooth value noise in 3D, about [0, 1]. */
+function noise3(x, y, z) {
+  const ix = Math.floor(x), iy = Math.floor(y), iz = Math.floor(z);
+  const f = (t) => t * t * (3 - 2 * t);
+  const fx = f(x - ix), fy = f(y - iy), fz = f(z - iz);
+  const l = (a, b, t) => a + (b - a) * t;
+  const h = (a, b, c) => hash3(ix + a, iy + b, iz + c);
+  return l(
+    l(l(h(0, 0, 0), h(1, 0, 0), fx), l(h(0, 1, 0), h(1, 1, 0), fx), fy),
+    l(l(h(0, 0, 1), h(1, 0, 1), fx), l(h(0, 1, 1), h(1, 1, 1), fx), fy),
+    fz,
+  );
+}
+
 /** A point in a disc of radius r around p, square to the tangent t. */
 function disc(p, t, r) {
   const tl = Math.hypot(...t) || 1;
@@ -98,9 +127,33 @@ function disc(p, t, r) {
   return [p[0] + o[0] * k, p[1] + o[1] * k, p[2] + o[2] * k];
 }
 
-/** A solid cube of cubes: the most "transformium" of the set. */
+/**
+ * A solid cube of cubes whose sides aren't plain: raised plates and sunken panels of different sizes,
+ * like a machined block.
+ */
 function voxelCube(sp, base) {
-  return voxelize(() => [rand(-0.5, 0.5), rand(-0.5, 0.5), rand(-0.5, 0.5), 0], sp, base);
+  const H = 0.48;
+  // how far the surface sits out (or in) at a point on a face, from a blocky pattern of plates
+  const relief = (u, v, face) => {
+    const big = hash3(Math.floor(u / 0.16), Math.floor(v / 0.16), face);
+    const small = hash3(Math.floor(u / 0.07) + 31, Math.floor(v / 0.07) + 17, face + 7);
+    let d = 0;
+    if (big > 0.62) d += 0.04; // a raised plate
+    else if (big < 0.22) d -= 0.035; // a sunken panel
+    if (small > 0.8) d += 0.025; // studs and nubs
+    else if (small < 0.1) d -= 0.025; // small vents
+    return d;
+  };
+  const inside = (p) => {
+    const a = p.map(Math.abs);
+    const k = a[0] >= a[1] && a[0] >= a[2] ? 0 : a[1] >= a[2] ? 1 : 2;
+    const face = k * 2 + (p[k] > 0 ? 1 : 0);
+    const [u, v] = [p[(k + 1) % 3], p[(k + 2) % 3]];
+    // the edges stay crisp; relief only away from them
+    const edge = Math.max(Math.abs(u), Math.abs(v)) > H - 0.05;
+    return a[k] <= H + (edge ? 0 : relief(u + 1, v + 1, face)) ? 0 : -1;
+  };
+  return voxelize(null, sp, base, { inside, box: H + 0.07 });
 }
 
 const knotAt = (u) => {
@@ -112,18 +165,32 @@ function torusKnot(sp, base) {
     const u = rand(0, TAU);
     const p = knotAt(u);
     const q = knotAt(u + 0.001);
-    return [...disc(p, [q[0] - p[0], q[1] - p[1], q[2] - p[2]], 0.085), 0];
+    // a ribbed tube: rings of raised cubes all along it, and a slow swell and pinch
+    const r = 0.07 * (1 + 0.12 * Math.sin(u * 5)) + (Math.sin(u * 90) > 0.6 ? 0.016 : 0);
+    return [...disc(p, [q[0] - p[0], q[1] - p[1], q[2] - p[2]], r), 0];
   }, sp, base);
 }
 
 /** A solid globe of cubes, and a belt of loose debris (its own part, so no strings run between them). */
 function planet(sp, base, ringN) {
-  const pts = voxelize(() => {
-    let p;
-    do p = [rand(-1, 1), rand(-1, 1), rand(-1, 1)];
-    while (Math.hypot(...p) > 1);
-    return [p[0] * 0.44, p[1] * 0.44, p[2] * 0.44, 0];
-  }, sp, base);
+  // a globe with terrain: continents raised over the sea, mountain ranges on them, craters and polar caps
+  const R = 0.4;
+  const height = (n) => {
+    const c = noise3(n[0] * 2.2 + 5, n[1] * 2.2 + 1, n[2] * 2.2 + 9) * 0.65 + noise3(n[0] * 5 + 2, n[1] * 5, n[2] * 5 + 4) * 0.35;
+    let h = 0;
+    if (c > 0.5) h += 0.05; // land
+    if (c > 0.6) h += 0.06 * noise3(n[0] * 11, n[1] * 11 + 3, n[2] * 11); // mountains
+    if (Math.abs(n[1]) > 0.86) h += 0.04; // ice caps
+    if (c < 0.5 && hash3(Math.floor(n[0] * 9), Math.floor(n[1] * 9), Math.floor(n[2] * 9)) > 0.9) h -= 0.035; // craters
+    return h;
+  };
+  const inside = (p) => {
+    const l = Math.hypot(...p);
+    if (l < R - 0.03) return 0;
+    if (l > R + 0.13) return -1;
+    return l <= R + height(p.map((c) => c / l)) ? 0 : -1;
+  };
+  const pts = voxelize(null, sp, base, { inside, box: R + 0.13 });
   const tilt = 0.42;
   for (let i = 0; i < ringN; i++) {
     const a = rand(0, TAU);
@@ -140,7 +207,7 @@ function planet(sp, base, ringN) {
 }
 
 const HELIX_TURNS = 0.75; // per half: 1.5 turns top to bottom
-const HELIX_RUNGS = 9;
+const HELIX_RUNGS = 14;
 function helix(sp, base) {
   return voxelize(() => {
     if (Math.random() < 0.8) {
@@ -153,20 +220,23 @@ function helix(sp, base) {
       };
       const p = at(t);
       const q = at(t + 0.001);
-      return [...disc(p, [q[0] - p[0], q[1] - p[1], q[2] - p[2]], 0.045), side];
+      // strands ribbed along their length, swelling into a node where each rung meets them
+      const node = Math.cos(((t + 0.9) / 1.8) * (HELIX_RUNGS - 1) * TAU) > 0.93 ? 0.03 : 0;
+      const r = 0.036 + (Math.sin(t * 160) > 0.5 ? 0.008 : 0) + node;
+      return [...disc(p, [q[0] - p[0], q[1] - p[1], q[2] - p[2]], r), side];
     }
     // the rungs are a third part
     const k = Math.floor(rand(0, HELIX_RUNGS));
     const t = (k / (HELIX_RUNGS - 1)) * 1.8 - 0.9;
     const a = t * TAU * HELIX_TURNS;
     const s = rand(-0.4, 0.4);
-    return [...disc([Math.cos(a) * s, t * 0.95, Math.sin(a) * s], [Math.cos(a), 0, Math.sin(a)], 0.028), 2];
+    return [...disc([Math.cos(a) * s, t * 0.95, Math.sin(a) * s], [Math.cos(a), 0, Math.sin(a)], 0.02), 2];
   }, sp, base);
 }
 
 const MOBIUS_R = 0.72;
-const MOBIUS_W = 0.15;
-const MOBIUS_T = 0.02; // half the band's thickness
+const MOBIUS_W = 0.095;
+const MOBIUS_T = 0.011; // half the band's thickness
 /** A point on the Möbius band: u around the loop (one full twist per 2π), v across it. */
 // tipped towards the viewer so the twist reads, instead of lying flat like a ring
 const MOBIUS_TILT = 0.95;
@@ -212,7 +282,7 @@ function cloud(n) {
  */
 export function buildShapes(small) {
   // one fine grid for every shape, so detail is kept; coarser on phones
-  const spacing = small ? 0.05 : 0.033;
+  const spacing = small ? 0.04 : 0.024;
   // every shape is filled with cubes of random sizes right through, as many as it needs
   const shapes = [
     ['cube', voxelCube(spacing, spacing)],
