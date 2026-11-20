@@ -662,13 +662,17 @@ vec3 centreOf(vec4 A, vec4 B, vec4 seed, vec4 S, out float e, out float arc, out
   float fd = uFuse * S.w > 0.5 ? uThr - skin(S.xyz) : -9.0;
   float pull = smoothstep(-SKIN_LEAD * 0.6, SKIN_TAIL * 0.4, fd);
   melt = smoothstep(-0.015, SKIN_TAIL, fd);
+  // on hover, the skin draws back off big patches the same way it breaks up: the cubes under them rise
+  // back out of it at their own spots, closed up and flush, then melt in again when the pointer leaves
+  vec3 obj = mix(A.xyz, B.xyz, e);
+  vec3 at = S.w > 0.5 ? S.xyz : obj;
+  peel = uPeel > 0.001 ? smoothstep(peelEdge() - 0.015, peelEdge() + 0.015, chunk(uRound > 0.5 ? normalize(at) : at)) : 0.0;
+  melt *= 1.0 - peel;
   float swell = smoothstep(-SKIN_LEAD, -SKIN_LEAD * 0.35, fd) * (1.0 - melt);
   p = mix(p, S.xyz, pull);
   p += dir * uScatter * (0.7 + seed.x * 1.8);
-  // on hover, the cubes under the patches that peel away come loose and drift out a little
-  vec3 obj = mix(A.xyz, B.xyz, e);
-  peel = uPeel > 0.001 ? smoothstep(peelEdge() - 0.015, peelEdge() + 0.015, chunk(uRound > 0.5 ? normalize(obj) : obj)) : 0.0;
-  p += (normalize(obj + vec3(1e-4)) * 0.09 + dir * 0.05 + dir * 0.02 * sin(uTime * 2.0 + seed.z * 30.0)) * peel * uPeel;
+  // the risen cubes stand just proud of the skin and stir a little, so the patch reads as loose
+  p += (normalize(at + vec3(1e-4)) * 0.012 + dir * 0.004 * sin(uTime * 2.0 + seed.z * 30.0)) * peel * pull;
   // w holds the cube's scale, plus 2 x the part it belongs to (the planet's globe and its ring)
   // closing up, each cube swells a little to shut the gaps to its neighbours, then sinks away to nothing
   scale = mix(mod(A.w, 2.0), mod(B.w, 2.0), e) * (1.0 - 0.1 * arc) * (1.0 - 0.75 * uScatter) * (1.0 + 0.16 * swell);
@@ -678,6 +682,8 @@ vec3 centreOf(vec4 A, vec4 B, vec4 seed, vec4 S, out float e, out float arc, out
   vec2 d = c0.xy / c0.w - uPointer;
   d.x *= uAspect;
   near = uPointerOn * smoothstep(0.42, 0.0, length(d));
+  // risen hover cubes only lean away a little, so a patch stays a patch instead of scattering
+  near *= 1.0 - 0.75 * peel;
   vec2 away = normalize(d + vec2(1e-4));
   away.x /= uAspect;
   c.xy += away * near * 0.32;
@@ -727,16 +733,14 @@ void main() {
   // the ring's debris turns slowly as it orbits
   float spin = uScatter * aSeed.w * 5.0 + debris * uOrbit * (aSeed.w - 0.5) * 4.0;
   mat3 R = uRot * axisAngle(dir, spin);
-  // the cubes a hover peels loose are smaller than the ones that build the shape
-  float shrink = mix(1.0, 0.55, peel * max(1.0 - uCubes, melt));
-  vec3 world = c + R * (aPos * scale * vis * shrink * uSize);
+  vec3 world = c + R * (aPos * scale * vis * uSize);
   if (uShadow > 0.5) world = toFloor(world);
   vN = R * aNormal;
   vLocal = aPos;
   vWorld = world;
   // a faint warmth on the cubes just as they melt in (the blob's leak keeps its own glow)
   float hot = melt * (1.0 - melt) * 4.0 * (1.0 - max(peel, debris));
-  vGlow = arc * 0.3 + near * 0.35 + (1.0 - uCubes) * 0.6 * (1.0 - max(peel, debris)) + hot * 0.35 + peel * 0.25;
+  vGlow = arc * 0.3 + near * 0.35 + (1.0 - uCubes) * 0.6 * (1.0 - max(peel, debris)) + hot * 0.35;
   gl_Position = uProj * vec4(world - vec3(0.0, 0.0, uCamZ), 1.0);
 }`;
 
@@ -912,7 +916,8 @@ void main() {
   if (uPeel > 0.001) {
     float pe = peelEdge() - chunk(vObj);
     if (pe < 0.0) discard;
-    edge = max(edge, (1.0 - smoothstep(0.0, 0.035, pe)) * min(1.0, uPeel * 3.0));
+    // the same soft warm rim as the skin's edge while it forms
+    edge = max(edge, (1.0 - smoothstep(0.0, 0.05, pe)) * 0.45 * min(1.0, uPeel * 3.0));
   }
   if (uShadow > 0.5) {
     o = vec4(1.0);
