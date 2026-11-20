@@ -288,10 +288,12 @@ vec3 centreOf(vec4 A, vec4 B, vec4 seed, out float e, out float arc, out float n
   vec3 pb = ringB > 0.5 ? orbit(B.xyz) : B.xyz;
   debris = mix(ringA, ringB, step(0.5, e));
   vec3 p = mix(pa, pb, e) + dir * arc * (0.05 + seed.x * 0.05);
-  p += dir * 0.005 * sin(uTime * 1.6 + seed.y * 40.0);
+  // a slight shimmer in flight only, so a formed shape sits perfectly flush
+  p += dir * 0.005 * sin(uTime * 1.6 + seed.y * 40.0) * arc;
   p += dir * uScatter * (0.7 + seed.x * 1.8);
   // w holds the cube's scale, plus 2 x the part it belongs to (the planet's globe and ring, each helix strand and the rungs)
-  scale = mix(mod(A.w, 2.0), mod(B.w, 2.0), e) * (1.0 - 0.1 * arc) * (1.0 - 0.75 * uScatter);
+  // full size (flush with its neighbours) once in place, a little smaller while in flight
+  scale = mix(mod(A.w, 2.0), mod(B.w, 2.0), e) * (1.0 - 0.25 * arc) * (1.0 - 0.75 * uScatter);
   vec3 c = uRot * p;
   // the pointer parts the cubes around it
   vec4 c0 = uProj * vec4(c - vec3(0.0, 0.0, uCamZ), 1.0);
@@ -551,7 +553,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   const g = small ? 13 : 20; // solid cube edge
   const N = g * g * g; // every cube in the solid cube is used
   const spacing = (2 * 0.62) / (g - 1);
-  const size = spacing * 0.86;
+  const size = spacing; // formed cubes sit flush, with no gap between them
 
   // every shape is filled with cubes right through
   const shapes = [

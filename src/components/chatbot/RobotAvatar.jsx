@@ -43,7 +43,7 @@ void main() {
   // the cubes keep square to the ball and only tip a touch as they dance
   float tip = uAmp * 0.12 * sin(t * 1.9 + aCell.w * 6.3);
   float ct = cos(tip), st = sin(tip);
-  vec3 q = aPos * 0.86;
+  vec3 q = aPos; // flush: no gap between cubes at rest
   q = vec3(q.x * ct - q.y * st, q.x * st + q.y * ct, q.z);
   vec3 nn = vec3(aNormal.x * ct - aNormal.y * st, aNormal.x * st + aNormal.y * ct, aNormal.z);
   vec3 w = uRot * ((p + q) / ${GRID + 1}.6);
