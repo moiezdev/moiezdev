@@ -234,6 +234,43 @@ function helix(sp, base) {
   }, sp, base);
 }
 
+/**
+ * A brain: two hemispheres split by a deep fissure, their surface folded into ridges and grooves, with
+ * the cerebellum tucked under the back and the brain stem below. Each hemisphere is its own part, and so
+ * is the cerebellum with the stem, so strings never cross the fissure.
+ */
+function brain(sp, base) {
+  const S = 1.25; // a little bigger than the other shapes' unit size, so the folds have room
+  const inside = (p) => {
+    const [x, y, z] = p.map((c) => c / S);
+    // cerebellum and stem, under the back
+    const cb = Math.hypot(x / 0.22, (y + 0.24) / 0.13, (z + 0.24) / 0.17);
+    const stem = Math.hypot(x / 0.07, (z + 0.12) / 0.075) <= 1 && y < -0.2 && y > -0.5;
+    if (cb <= 1 || stem) {
+      // fine horizontal folds on the cerebellum
+      if (cb <= 1 && cb > 0.8 && Math.sin((y + 0.24) * 110) > 0.55) return -1;
+      return 2;
+    }
+    // the hemispheres: one egg-shaped half each side of the fissure, flatter underneath
+    const side = x < 0 ? 0 : 1;
+    const hx = Math.abs(x) - 0.215;
+    const yy = y > 0 ? y / 0.36 : y / 0.25;
+    const d = Math.hypot(hx / 0.235, yy, z / (0.47 - 0.05 * y));
+    if (Math.abs(x) < 0.022 && y > -0.12) return -1; // the fissure between them
+    if (d > 1.04) return -1;
+    // the folds: grooves where a ridged noise is near zero, cut into the outer skin
+    if (d > 0.84) {
+      // winding folds: stripes bent by noise, so they snake over the surface like gyri
+      const w = noise3(x * 4 + 3, y * 4 + 7, z * 4 + 1);
+      const f = Math.sin((y * 9 + z * 6 + x * 3) + w * 9 + noise3(x * 9 + 9, y * 9, z * 9 + 5) * 3);
+      if (Math.abs(f) < 0.32) return -1; // a groove (sulcus)
+      if (d > 0.96 && Math.abs(f) < 0.62) return -1; // the ridges (gyri) stand proud
+    }
+    return side;
+  };
+  return voxelize(null, sp, base, { inside, box: 0.56 * S });
+}
+
 const MOBIUS_R = 0.72;
 const MOBIUS_W = 0.095;
 const MOBIUS_T = 0.011; // half the band's thickness
@@ -287,6 +324,7 @@ export function buildShapes(small) {
   const shapes = [
     ['cube', voxelCube(spacing, spacing)],
     ['torus knot', torusKnot(spacing, spacing)],
+    ['brain', brain(spacing, spacing)],
     ['möbius loop', mobius(spacing, spacing)],
     ['planet', planet(spacing, spacing, small ? 450 : 900)],
     ['double helix', helix(spacing, spacing)],
