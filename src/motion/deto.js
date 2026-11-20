@@ -157,6 +157,34 @@ float strand(vec3 p, float side) {
   }
   return length(p - vec3(side * 0.42 * cos(HK * y), y, side * 0.42 * sin(HK * y)));
 }
+// two people shaking hands, full figures in profile facing each other, simple and smooth like poured liquid: a
+// head, a body, two legs, two arms, and on the clasped hands just a thumb
+float capsule(vec3 p, vec3 a, vec3 b, float r) {
+  vec3 pa = p - a;
+  vec3 ba = b - a;
+  float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
+  return length(pa - ba * h) - r;
+}
+// one figure, standing left of the middle and facing it (+x); its right side is +z. Seen side-on, so the legs stand
+// apart front and back (a relaxed stance) and the far arm swings a little back, or they would hide each other.
+float figure(vec3 p) {
+  vec3 q = p - vec3(-0.44, 0.0, 0.0);
+  float d = smin(length(q - vec3(0.03, 0.79, 0.0)) - 0.13, capsule(q, vec3(0.0, 0.52, 0.0), vec3(0.0, 0.1, 0.0), 0.14), 0.05);
+  d = smin(d, capsule(q, vec3(0.03, 0.05, 0.05), vec3(0.15, -0.9, 0.07), 0.07), 0.07);
+  d = smin(d, capsule(q, vec3(-0.03, 0.05, -0.05), vec3(-0.14, -0.9, -0.07), 0.07), 0.07);
+  // the far arm hangs a little behind
+  d = smin(d, capsule(q, vec3(0.0, 0.47, -0.15), vec3(-0.09, 0.04, -0.18), 0.062), 0.06);
+  // the near arm reaches forward to the middle, where the two hands clasp, a thumb over the top
+  float arm = capsule(q, vec3(0.0, 0.47, 0.15), vec3(0.2, 0.31, 0.1), 0.064);
+  arm = smin(arm, capsule(q, vec3(0.2, 0.31, 0.1), vec3(0.4, 0.29, 0.03), 0.058), 0.04);
+  arm = smin(arm, length(q - vec3(0.44, 0.29, 0.015)) - 0.078, 0.04);
+  arm = smin(arm, capsule(q, vec3(0.4, 0.33, 0.07), vec3(0.47, 0.4, 0.06), 0.03), 0.02);
+  return smin(d, arm, 0.06);
+}
+float hands(vec3 p) {
+  // the second figure is the first turned round the middle, so its right hand meets the first one's
+  return smin(figure(p), figure(vec3(-p.x, p.y, -p.z)), 0.03);
+}
 float helix(vec3 p) {
   float strands = min(strand(p, 1.0), strand(p, -1.0));
   strands -= 0.085;
@@ -177,6 +205,7 @@ float shapeOf(int i, vec3 p) {
   if (i == 2) return knot(p);
   if (i == 3) return mobius(p);
   if (i == 4) return planet(p);
+  if (i == 6) return hands(p);
   return helix(p);
 }
 
@@ -286,9 +315,10 @@ const LOOK = {
   light: { base: [0.09, 0.095, 0.1], envLow: [0.01, 0.01, 0.012], envHigh: [0.42, 0.43, 0.45], spec: [0.85, 0.85, 0.87], rim: [0.22, 0.23, 0.25] },
 };
 
-const NAMES = ['toxic sludge', 'cube', 'torus knot', 'möbius loop', 'planet', 'double helix'];
+const NAMES = ['toxic sludge', 'cube', 'torus knot', 'möbius loop', 'planet', 'double helix', 'handshake'];
 const PLANET = NAMES.indexOf('planet');
 const HELIX = NAMES.indexOf('double helix');
+const HANDS = NAMES.indexOf('handshake');
 
 const ss = (a, b, x) => {
   const u = Math.min(1, Math.max(0, (x - a) / (b - a)));
@@ -374,7 +404,7 @@ export function createDeto(canvas, { theme, gentle = false } = {}) {
   let checkedAt = 0;
   let checked = false;
 
-  function drive(time, dtRaw, { a, b, m, view }) {
+  function drive(time, dtRaw, { a, b, m, view, snap }) {
     const ts = gentle ? 0.5 : 1;
     const dt = Math.min(0.05, Math.max(0, dtRaw)) * ts;
     const t = time * ts;
@@ -397,6 +427,8 @@ export function createDeto(canvas, { theme, gentle = false } = {}) {
     }
     const moving = a !== b && m < 1;
     const tr = view.size * 0.38;
+    // a jump to a new place (the hero scrolled away and Contact came in): start there, nothing flies across
+    if (snap) body = null;
     if (!body) {
       body = { x: view.x, y: view.y, vx: 0, vy: 0, r: tr, vr: 0 };
       for (const s of spine) {
@@ -479,10 +511,15 @@ export function createDeto(canvas, { theme, gentle = false } = {}) {
     // its slow turn, per shape: the planet holds still (only its debris orbits), the double helix stands straight
     // upright (turning only about its own axis); the change eases in, never snaps
     const shown = moving && m < 0.5 ? a : b;
-    const settle = 1 - Math.exp(-dt * 2);
-    spin += ((shown === PLANET ? 0 : 1) - spin) * settle;
-    pitch += ((shown === HELIX ? 0 : 0.5 + Math.sin(t * 0.13) * 0.08) - pitch) * settle;
-    yaw += dt * 0.15 * spin;
+    // the handshake holds still too, seen from the front and a little above
+    const settle = snap ? 1 : 1 - Math.exp(-dt * 2);
+    spin += ((shown === PLANET || shown === HANDS ? 0 : 1) - spin) * settle;
+    pitch += ((shown === HELIX ? 0 : shown === HANDS ? 0.18 : 0.5 + Math.sin(t * 0.13) * 0.08) - pitch) * settle;
+    yaw += dt * 0.08 * spin;
+    if (shown === HANDS) {
+      const front = Math.round(yaw / (2 * Math.PI)) * 2 * Math.PI;
+      yaw += (front - yaw) * settle;
+    }
 
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT);

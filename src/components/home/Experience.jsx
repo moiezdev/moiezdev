@@ -9,9 +9,8 @@ const Experience = () => {
 
   return (
     <section className="w-full px-5 py-20 md:py-28 lg:py-32" id="experience">
-      <div className="app-container forge-side forge-side--start">
+      <div className="app-container">
         <SectionTitle
-          forge="möbius loop"
           eyebrow={t('experience.eyebrow')}
           title={t('experience.headline')}
           buttonText={t('experience.viewAll')}

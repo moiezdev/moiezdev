@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import { MdOutlineChatBubbleOutline, MdOutlineManageSearch, MdOutlineScience } from 'react-icons/md';
 import { Chevron } from '../ui/SectionTitle';
-import { ForgeSpot } from './ForgeLayer';
 import Reveal from '../../motion/Reveal';
 import TechChip from '../ui/TechChip';
 import { chatbot } from '../../data';
@@ -49,8 +48,7 @@ const AiHighlight = () => {
 
   return (
     <section className="band-tint w-full px-5 py-20 md:py-28 lg:py-32" id="ai">
-      <div className="app-container forge-side forge-side--end">
-        <ForgeSpot shape="double helix" />
+      <div className="app-container">
         <div className="ai-split grid grid-cols-[minmax(0,1fr)] gap-14 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-20">
         <Reveal className="min-w-0">
           <p className="eyebrow mb-3">{t('ai.eyebrow')}</p>
