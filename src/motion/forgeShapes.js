@@ -271,7 +271,9 @@ function cloud(n) {
     const d = [rand(-1, 1), rand(-1, 1), rand(-1, 1)];
     const l = Math.hypot(...d) || 1;
     const r = rand(0.95, 1.65);
-    pts.push([(d[0] / l) * r, (d[1] / l) * r, (d[2] / l) * r, 0.4]);
+    // only half the cubes show in the opening cloud (Moiz: it was too dense); the rest start hidden
+    // (scale 0) and grow in flight as the first shape forms
+    pts.push([(d[0] / l) * r, (d[1] / l) * r, (d[2] / l) * r, i % 2 ? 0 : 0.4]);
   }
   return pts;
 }
