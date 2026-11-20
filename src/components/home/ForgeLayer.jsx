@@ -15,6 +15,13 @@ import { usePrefersReducedMotion } from '../../motion/reducedMotion';
 const CYCLE = ['toxic sludge', 'cube', 'torus knot', 'double helix', 'möbius loop', 'planet'];
 const HOLD_S = 4;
 const MORPH_S = 2.6;
+// how strong the hero's Deto is drawn (it sits behind the hero's text)
+const HERO_OPACITY = 0.32;
+// the handshake: the two stand still for REACH_AT seconds, raise their hands to the clasp over REACH_S, then pump
+// for PUMP_S
+const REACH_AT = 0.8;
+const REACH_S = 1.4;
+const PUMP_S = 1.5;
 // how one change of shape is spent: 0-0.28 the standing shape melts into round liquid, it stays round to 0.6, then
 // the next shape slowly grows out of it. Every stage eases into the next, so nothing jerks.
 // Deto's morph phases are 0-0.22 melt, 0.22-0.78 round, 0.78-1 form.
@@ -31,11 +38,11 @@ const place = (el, W, H) => {
   const sr = sec ? sec.getBoundingClientRect() : null;
   const y = sr ? Math.max(H / 2, sr.top + Math.min(sr.height, H) / 2) : H / 2;
   const centre = { x: W / 2, y, size: Math.min(W * 0.92, H * 0.9), lift: 0 };
-  // the hero's blob sits dim behind the portrait, and scrolls with it
+  // the hero's Deto stands dim in the middle of the hero, behind its text and portrait, and scrolls with it
   const stage = el.closest('.hero-stage');
   if (stage) {
-    const r = stage.getBoundingClientRect();
-    return { x: r.left + r.width / 2, y: r.top + r.height * 0.45, size: Math.min(Math.max(r.width, r.height) * 0.9, H * 0.57), lift: 0 };
+    const r = (stage.closest('section') || stage).getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + Math.min(r.height, H) / 2, size: Math.min(W * 0.62, H * 0.72), lift: 0, dim: true };
   }
   const box = el.closest('.forge-side');
   if (!box || W < 1024) return centre;
@@ -95,6 +102,7 @@ export default function ForgeLayer() {
       // the hero's Deto scrolls away with the hero, and once Contact comes up from the bottom Deto starts over there.
       let lastAnchor = null;
       let clock = 0;
+      let shakeT = -1;
       const scene = (dt) => {
         const W = window.innerWidth;
         const H = window.innerHeight;
@@ -108,11 +116,22 @@ export default function ForgeLayer() {
         lastAnchor = anchor;
         const p = place(anchor, W, H);
         setLift(p.lift);
+        // dim in the hero, so it never competes with the text and buttons; full strength for the handshake
+        const opacity = p.dim ? HERO_OPACITY : 1;
+        if (canvas.style.opacity !== String(opacity)) canvas.style.opacity = String(opacity);
         const view = { x: p.x, y: p.y, size: p.size };
         if (useContact) {
+          // the handshake plays each time Contact comes up: the two stand, arms at their sides; after a moment they
+          // reach out and clasp hands, pump three times, and hold the clasp
+          if (snap || shakeT < 0) shakeT = 0;
+          shakeT += dt;
+          const reach = Math.min(1, Math.max(0, (shakeT - REACH_AT) / REACH_S));
+          const u = shakeT - REACH_AT - REACH_S;
+          const pump = u > 0 && u < PUMP_S ? 0.035 * Math.sin((u / PUMP_S) * 6 * Math.PI) * (1 - u / PUMP_S) : 0;
           const hands = forge.shapeIndex('handshake');
-          return { a: hands, b: hands, m: 1, view, snap };
+          return { a: hands, b: hands, m: 1, view, snap, pose: { reach, pump } };
         }
+        shakeT = -1;
         // the hero's cycle: each shape stands for HOLD_S seconds, then melts into the round liquid and the next one
         // grows out of it over MORPH_S seconds, round and round
         clock += dt;
