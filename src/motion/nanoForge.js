@@ -20,197 +20,6 @@ const CYCLE = MORPH + HOLD;
 const FLOOR_Y = -1.12; // the floor the shadow falls on, below the shapes
 
 
-// ---------- shapes: n points, xyz in about [-1, 1], w = cube scale (0 hides a spare cube) ----------
-
-const rand = (a, b) => a + Math.random() * (b - a);
-
-/** Sort so cube i lands near cube i of the next shape: by height band, then around the y axis. */
-function settle(pts) {
-  const band = (p) => Math.round((p[1] + 1.2) * 14);
-  pts.sort((a, b) => band(a) - band(b) || Math.atan2(a[2], a[0]) - Math.atan2(b[2], b[0]));
-  const out = new Float32Array(pts.length * 4);
-  pts.forEach((p, i) => out.set([p[0], p[1], p[2], p[3] ?? 1], i * 4));
-  return out;
-}
-
-/** Fill up to n with hidden spares that sit inside the shape (so a morph never flies in from 0,0,0). */
-function pad(pts, n) {
-  if (pts.length > n) {
-    for (let i = pts.length - 1; i > 0; i--) {
-      const j = (Math.random() * (i + 1)) | 0;
-      [pts[i], pts[j]] = [pts[j], pts[i]];
-    }
-    pts.length = n;
-  }
-  while (pts.length < n) {
-    const p = pts[(Math.random() * pts.length) | 0];
-    pts.push([p[0], p[1], p[2], 0]);
-  }
-  return pts;
-}
-
-/**
- * Fill a volume with cubes on a grid, so every shape is solid cubes right through, not a shell.
- * sample() returns a random point inside the volume as [x, y, z, part]. The grid spacing is the
- * largest that still fits n cubes, so each shape sizes its cubes to use (nearly) all of them: thin
- * shapes get small cubes, roomy ones big cubes. w = cube scale relative to the base + 2 x part.
- */
-function voxelize(n, sample, base, { min = 0.3, max = 1.9, samples = n * 22 } = {}) {
-  const S = new Float32Array(samples * 4);
-  for (let i = 0; i < samples; i++) S.set(sample(), i * 4);
-  const cells = (sp) => {
-    const m = new Map();
-    const inv = 1 / sp;
-    for (let i = 0; i < samples * 4; i += 4) {
-      const x = Math.round(S[i] * inv);
-      const y = Math.round(S[i + 1] * inv);
-      const z = Math.round(S[i + 2] * inv);
-      const key = (x + 512) * 1048576 + (y + 512) * 1024 + (z + 512);
-      if (!m.has(key)) m.set(key, [x * sp, y * sp, z * sp, sp / base + 2 * S[i + 3]]);
-    }
-    return m;
-  };
-  let lo = base * min;
-  let hi = base * max;
-  let best = cells(hi);
-  if (cells(lo).size <= n) best = cells(lo);
-  else
-    for (let it = 0; it < 11; it++) {
-      const mid = (lo + hi) / 2;
-      const c = cells(mid);
-      if (c.size > n) lo = mid;
-      else {
-        hi = mid;
-        best = c;
-      }
-    }
-  return pad([...best.values()], n);
-}
-
-/** A point in a disc of radius r around p, square to the tangent t. */
-function disc(p, t, r) {
-  const tl = Math.hypot(...t) || 1;
-  let o = [rand(-1, 1), rand(-1, 1), rand(-1, 1)];
-  const d = (o[0] * t[0] + o[1] * t[1] + o[2] * t[2]) / (tl * tl);
-  o = [o[0] - t[0] * d, o[1] - t[1] * d, o[2] - t[2] * d];
-  const ol = Math.hypot(...o) || 1;
-  const k = (r * Math.sqrt(Math.random())) / ol;
-  return [p[0] + o[0] * k, p[1] + o[1] * k, p[2] + o[2] * k];
-}
-
-/** A solid cube of g x g x g cubes: the most "transformium" of the set. */
-function voxelCube(g) {
-  const pts = [];
-  const h = 0.62;
-  const f = (v) => (v / (g - 1)) * 2 * h - h;
-  for (let x = 0; x < g; x++) for (let y = 0; y < g; y++) for (let z = 0; z < g; z++) pts.push([f(x), f(y), f(z)]);
-  return pts;
-}
-
-const knotAt = (u) => {
-  const r = Math.cos(3 * u) + 2.1;
-  return [(r * Math.cos(2 * u)) / 3.3, (r * Math.sin(2 * u)) / 3.3, (Math.sin(3 * u) * 1.1) / 3.3];
-};
-function torusKnot(n, base) {
-  return voxelize(n, () => {
-    const u = rand(0, TAU);
-    const p = knotAt(u);
-    const q = knotAt(u + 0.001);
-    return [...disc(p, [q[0] - p[0], q[1] - p[1], q[2] - p[2]], 0.155), 0];
-  }, base);
-}
-
-/** A solid globe of cubes, and a belt of loose debris (its own part, so no strings run between them). */
-function planet(n, base) {
-  const ringN = Math.round(Math.sqrt(n) * 8);
-  const pts = voxelize(n - ringN, () => {
-    let p;
-    do p = [rand(-1, 1), rand(-1, 1), rand(-1, 1)];
-    while (Math.hypot(...p) > 1);
-    return [p[0] * 0.5, p[1] * 0.5, p[2] * 0.5, 0];
-  }, base);
-  const tilt = 0.42;
-  for (let i = 0; i < ringN; i++) {
-    const a = rand(0, TAU);
-    const r = Math.sqrt(rand(0.7 * 0.7, 1.08 * 1.08));
-    const x = Math.cos(a) * r;
-    const z = Math.sin(a) * r;
-    // a loose belt of debris: some thickness, and rocks of every size
-    const y = rand(-0.045, 0.045) * (0.4 + Math.random());
-    const scale = 0.3 + Math.random() ** 1.8 * 0.85;
-    // w = 2 + scale: the second part (the ring)
-    pts.push([x, y * Math.cos(tilt) - z * Math.sin(tilt), y * Math.sin(tilt) + z * Math.cos(tilt), 2 + scale]);
-  }
-  return pts;
-}
-
-const HELIX_TURNS = 0.75; // per half: 1.5 turns top to bottom
-const HELIX_RUNGS = 9;
-function helix(n, base) {
-  return voxelize(n, () => {
-    if (Math.random() < 0.8) {
-      // each strand is its own part (0 or 1), so no strings jump the gap between them
-      const side = Math.random() < 0.5 ? 0 : 1;
-      const t = rand(-1, 1);
-      const at = (tt) => {
-        const a = tt * TAU * HELIX_TURNS + side * Math.PI;
-        return [Math.cos(a) * 0.4, tt * 0.95, Math.sin(a) * 0.4];
-      };
-      const p = at(t);
-      const q = at(t + 0.001);
-      return [...disc(p, [q[0] - p[0], q[1] - p[1], q[2] - p[2]], 0.075), side];
-    }
-    // the rungs are a third part
-    const k = Math.floor(rand(0, HELIX_RUNGS));
-    const t = (k / (HELIX_RUNGS - 1)) * 1.8 - 0.9;
-    const a = t * TAU * HELIX_TURNS;
-    const s = rand(-0.4, 0.4);
-    return [...disc([Math.cos(a) * s, t * 0.95, Math.sin(a) * s], [Math.cos(a), 0, Math.sin(a)], 0.04), 2];
-  }, base);
-}
-
-const MOBIUS_R = 0.72;
-const MOBIUS_W = 0.17;
-const MOBIUS_T = 0.05; // half the band's thickness
-/** A point on the Möbius band: u around the loop (one full twist per 2π), v across it. */
-// tipped towards the viewer so the twist reads, instead of lying flat like a ring
-const MOBIUS_TILT = 0.95;
-const mobiusAt = (u, v) => {
-  const r = MOBIUS_R + v * Math.cos(u / 2);
-  const y = v * Math.sin(u / 2);
-  const z = r * Math.sin(u);
-  const c = Math.cos(MOBIUS_TILT);
-  const s = Math.sin(MOBIUS_TILT);
-  return [r * Math.cos(u), y * c - z * s, y * s + z * c];
-};
-
-/** A thick Möbius band of cubes. */
-function mobius(n, base) {
-  const e = 1e-3;
-  return voxelize(n, () => {
-    const u = rand(0, TAU);
-    const v = rand(-MOBIUS_W, MOBIUS_W);
-    const p = mobiusAt(u, v);
-    const du = mobiusAt(u + e, v).map((c, k) => c - p[k]);
-    const dv = mobiusAt(u, v + e).map((c, k) => c - p[k]);
-    const nn = [du[1] * dv[2] - du[2] * dv[1], du[2] * dv[0] - du[0] * dv[2], du[0] * dv[1] - du[1] * dv[0]];
-    const l = Math.hypot(...nn) || 1;
-    const t = rand(-MOBIUS_T, MOBIUS_T) / l;
-    return [p[0] + nn[0] * t, p[1] + nn[1] * t, p[2] + nn[2] * t, 0];
-  }, base);
-}
-
-function cloud(n) {
-  const pts = [];
-  for (let i = 0; i < n; i++) {
-    const d = [rand(-1, 1), rand(-1, 1), rand(-1, 1)];
-    const l = Math.hypot(...d) || 1;
-    const r = rand(0.95, 1.65);
-    pts.push([(d[0] / l) * r, (d[1] / l) * r, (d[2] / l) * r, 0.4]);
-  }
-  return pts;
-}
-
 // ---------- look ----------
 
 const LOOK = {
@@ -285,8 +94,8 @@ vec3 centreOf(vec4 A, vec4 B, vec4 seed, out float e, out float arc, out float n
   arc = sin(3.14159265 * e);
   dir = normalize(seed.yzw * 2.0 - 1.0 + vec3(1e-4));
   // a straight flight with only a slight outward give, so cubes don't pass through each other
-  float ringA = uRingA * step(0.5, floor(A.w * 0.5));
-  float ringB = uRingB * step(0.5, floor(B.w * 0.5));
+  float ringA = uRingA * step(0.5, floor(A.w * 0.125));
+  float ringB = uRingB * step(0.5, floor(B.w * 0.125));
   vec3 pa = ringA > 0.5 ? orbit(A.xyz) : A.xyz;
   vec3 pb = ringB > 0.5 ? orbit(B.xyz) : B.xyz;
   debris = mix(ringA, ringB, step(0.5, e));
@@ -294,9 +103,9 @@ vec3 centreOf(vec4 A, vec4 B, vec4 seed, out float e, out float arc, out float n
   // a slight shimmer in flight only, so a formed shape sits perfectly flush
   p += dir * 0.005 * sin(uTime * 1.6 + seed.y * 40.0) * arc;
   p += dir * uScatter * (0.7 + seed.x * 1.8);
-  // w holds the cube's scale, plus 2 x the part it belongs to (the planet's globe and ring, each helix strand and the rungs)
+  // w holds the cube's scale, plus 8 x the part it belongs to (the planet's globe and ring, each helix strand and the rungs)
   // full size (flush with its neighbours) once in place, a little smaller while in flight
-  scale = mix(mod(A.w, 2.0), mod(B.w, 2.0), e) * (1.0 - 0.25 * arc) * (1.0 - 0.75 * uScatter);
+  scale = mix(mod(A.w, 8.0), mod(B.w, 8.0), e) * (1.0 - 0.25 * arc) * (1.0 - 0.75 * uScatter);
   vec3 c = uRot * p;
   // the pointer parts the cubes around it
   vec4 c0 = uProj * vec4(c - vec3(0.0, 0.0, uCamZ), 1.0);
@@ -402,8 +211,8 @@ void main() {
   // cubes in flight are strung together; the strings let go once the shape has formed
   float on = uStrings;
   // never string two separate parts together (the globe and its ring)
-  float sameA = float(floor(aA.w * 0.5) == floor(aA2.w * 0.5));
-  float sameB = float(floor(aB.w * 0.5) == floor(aB2.w * 0.5));
+  float sameA = float(floor(aA.w * 0.125) == floor(aA2.w * 0.125));
+  float sameB = float(floor(aB.w * 0.125) == floor(aB2.w * 0.125));
   float same = mix(sameA, sameB, step(0.5, (e1 + e2) * 0.5));
   vAlpha = same * smoothstep(uMaxLen, uMaxLen * 0.3, len) * step(0.01, s1 * s2) * on * (0.5 + 0.4 * max(arc1, arc2) + 0.5 * uScatter);
   gl_Position = uProj * vec4(c1 - vec3(0.0, 0.0, uCamZ), 1.0);
@@ -505,10 +314,11 @@ function rotation(yaw, pitch, roll = 0) {
  *   scroll?: () => number,          0 with the hero at the top, 1 once it has gone
  *   pointer?: () => {x:number, y:number, active:boolean},  in the canvas's CSS px
  *   onShape?: (index:number, name:string, total:number) => void,
+ *   data: ReturnType<typeof import('./forgeShapes.js').buildShapes>,  the shapes, built by forgeShapes.worker.js
  *   bleed?: number,                 how many times bigger than the stage the canvas is (default 1)
  * }} opts
  */
-export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () => ({ x: 0, y: 0, active: false }), onShape = () => {}, bleed = 1, gentle = false }) {
+export function createNanoForge(canvas, { data, theme, scroll = () => 0, pointer = () => ({ x: 0, y: 0, active: false }), onShape = () => {}, bleed = 1, gentle = false }) {
   const gl = canvas.getContext('webgl2', { antialias: true, alpha: true, premultipliedAlpha: true, powerPreference: 'high-performance' });
   if (!gl) return null;
 
@@ -552,20 +362,11 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   };
 
   // ---- sizes: fewer cubes on small or low-power screens ----
-  const small = Math.min(window.innerWidth, window.innerHeight) < 700 || (navigator.hardwareConcurrency || 8) <= 4;
-  const g = small ? 13 : 20; // solid cube edge
-  const N = g * g * g; // every cube in the solid cube is used
-  const spacing = (2 * 0.62) / (g - 1);
+  const { N, spacing, names, settled, start: startData } = data;
+  const small = N < 4000;
   const size = spacing; // formed cubes sit flush, with no gap between them
+  const shapes = names.map((name) => ({ name }));
 
-  // every shape is filled with cubes right through
-  const shapes = [
-    { name: 'cube', pts: voxelCube(g) },
-    { name: 'torus knot', pts: torusKnot(N, spacing) },
-    { name: 'möbius loop', pts: mobius(N, spacing) },
-    { name: 'planet', pts: planet(N, spacing) },
-    { name: 'double helix', pts: helix(N, spacing) },
-  ];
 
   const buf = (data, target = gl.ARRAY_BUFFER) => {
     const b = gl.createBuffer();
@@ -592,9 +393,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   for (let i = 0; i < seeds.length; i++) seeds[i] = Math.random();
   buf(seeds);
   attrib(4, 4, 1);
-  const settled = shapes.map((s) => settle(s.pts));
   const shapeBufs = settled.map((d) => buf(d));
-  const startData = settle(cloud(N));
   const startBuf = buf(startData);
   for (const loc of [2, 3]) {
     gl.enableVertexAttribArray(loc);
@@ -652,7 +451,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   gl.useProgram(cubeProg);
   gl.uniform1f(cubeProg.u('uSize'), size);
   gl.useProgram(lineProg);
-  gl.uniform1f(lineProg.u('uMaxLen'), spacing * 9);
+  gl.uniform1f(lineProg.u('uMaxLen'), 0.55);
 
   let W = 0;
   let H = 0;

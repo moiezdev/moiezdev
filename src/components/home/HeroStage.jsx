@@ -26,6 +26,27 @@ export default function HeroStage() {
     const start = async () => {
       const { createNanoForge } = await import('../../motion/nanoForge.js');
       if (cancelled) return;
+      // packing the shapes with thousands of cubes runs in a worker, so it never blocks scrolling
+      const small = Math.min(window.innerWidth, window.innerHeight) < 700 || (navigator.hardwareConcurrency || 8) <= 4;
+      let data;
+      try {
+        data = await new Promise((resolve, reject) => {
+          const worker = new Worker(new URL('../../motion/forgeShapes.worker.js', import.meta.url), { type: 'module' });
+          worker.onmessage = (e) => {
+            resolve(e.data);
+            worker.terminate();
+          };
+          worker.onerror = (e) => {
+            reject(e);
+            worker.terminate();
+          };
+          worker.postMessage({ small });
+        });
+      } catch {
+        const { buildShapes } = await import('../../motion/forgeShapes.js');
+        data = buildShapes(small);
+      }
+      if (cancelled) return;
 
       const root = document.documentElement;
       const canvas = document.createElement('canvas');
@@ -57,7 +78,7 @@ export default function HeroStage() {
 
       let forge;
       try {
-        forge = createNanoForge(canvas, { theme, scroll, pointer: () => ptr, bleed: BLEED, gentle: reduced });
+        forge = createNanoForge(canvas, { data, theme, scroll, pointer: () => ptr, bleed: BLEED, gentle: reduced });
       } catch (err) {
         console.warn('[nano forge]', err);
       }
