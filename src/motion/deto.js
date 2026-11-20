@@ -394,20 +394,18 @@ export function createDeto(canvas, { theme, gentle = false } = {}) {
     // a jump to a new place (the hero scrolled away and Contact came in): start there, nothing flies across
     if (snap) body = null;
     if (!body) {
-      body = { x: view.x, y: view.y, vx: 0, vy: 0, r: 0, vr: 0, born: 0 };
+      body = { x: view.x, y: view.y, vx: 0, vy: 0, r: tr, vr: 0 };
       for (const s of spine) {
         s[0] = view.x;
         s[1] = view.y;
       }
     }
-    // it stays exactly where it is put (it no longer travels, so nothing to lag or drop in from), and on first
-    // showing it grows out of its centre, smoothly and without overshooting (no jiggle)
+    // it stays exactly where it is put, at full size from the first frame (no drop-in, no grow, no jiggle)
     body.x = view.x;
     body.y = view.y;
     body.vx = 0;
     body.vy = 0;
-    body.born = Math.min(1, body.born + dt / 0.9);
-    body.r = tr * body.born * body.born * (3 - 2 * body.born);
+    body.r = tr;
     const ax = 0;
     const ay = 0;
     const R = Math.max(1, body.r);
