@@ -51,9 +51,13 @@ float box2(vec2 p, vec2 b, float r) {
 const float PI = 3.14159265;
 
 // ---- the shapes, about a unit in size ----
-// the first shape: a plain, still sphere (no ripple, no wobble)
+// the first shape: a round liquid whose surface keeps waving and dancing
 float sludge(vec3 p) {
-  return length(p) - 0.66;
+  vec3 n = normalize(p + 1e-5);
+  float t = uTime;
+  float r = 0.66 + 0.03 * sin(n.x * 3.1 + t * 1.7) * sin(n.y * 2.7 - t * 1.3) + 0.024 * sin(n.z * 4.3 + n.y * 2.0 + t * 2.1)
+    + 0.01 * sin(n.x * 9.0 + n.z * 7.0 - t * 3.2);
+  return length(p) - r;
 }
 float cube(vec3 p) {
   vec3 q = abs(p) - vec3(0.5);

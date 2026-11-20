@@ -4,7 +4,7 @@ import { usePrefersReducedMotion } from '../../motion/reducedMotion';
 /**
  * Deto, the home page's living liquid (src/motion/deto.js), on one fixed canvas behind the content (see MOTION.md).
  *
- * It lives only in the hero: dim, in the middle of the hero. It appears at once as a plain sphere, then runs
+ * It lives only in the hero: dim, in the middle of the hero. It appears at once as a round liquid whose surface waves and dances, then runs
  * through all its shapes on a timer, each turning straight into the next, and scrolls away with the hero. It never
  * takes the pointer.
  */
