@@ -4,8 +4,9 @@ import { usePrefersReducedMotion } from '../../motion/reducedMotion';
 /**
  * Deto, the home page's living liquid (src/motion/deto.js), on one fixed canvas behind the content (see MOTION.md).
  *
- * It lives only in the hero: dim, in the middle of the hero, it runs through all its shapes on a timer, melting each
- * into round liquid and growing the next out of it, and scrolls away with the hero. It never takes the pointer.
+ * It lives only in the hero: dim, in the middle of the hero. It grows out of its centre as a plain sphere, then runs
+ * through all its shapes on a timer, each turning straight into the next, and scrolls away with the hero. It never
+ * takes the pointer.
  */
 
 // the hero's cycle of shapes, and how long each stands and takes to change into the next (seconds)
@@ -14,12 +15,6 @@ const HOLD_S = 4;
 const MORPH_S = 2.6;
 // how strong the hero's Deto is drawn (it sits behind the hero's text)
 const HERO_OPACITY = 0.32;
-// how one change of shape is spent: 0-0.28 the standing shape melts into round liquid, it stays round to 0.6, then
-// the next shape slowly grows out of it. Every stage eases into the next, so nothing jerks.
-// Deto's morph phases are 0-0.22 melt, 0.22-0.78 round, 0.78-1 form.
-const TRAVEL = [0.28, 0.6];
-const wave = (u) => 0.5 - 0.5 * Math.cos(Math.PI * Math.min(1, Math.max(0, u)));
-const phase = (f) => (f < TRAVEL[0] ? 0.5 * wave(f / TRAVEL[0]) : f < TRAVEL[1] ? 0.5 : 0.5 + 0.5 * wave((f - TRAVEL[1]) / (1 - TRAVEL[1])));
 /** Where the hero's Deto stands: dim, in the middle of the hero section, scrolling with it. */
 const place = (el, W, H) => {
   const r = (el.closest('section') || el).getBoundingClientRect();
@@ -77,8 +72,8 @@ export default function ForgeLayer() {
         // dim, so it never competes with the hero's text and buttons
         if (canvas.style.opacity !== String(HERO_OPACITY)) canvas.style.opacity = String(HERO_OPACITY);
         const view = { x: p.x, y: p.y, size: p.size };
-        // the hero's cycle: each shape stands for HOLD_S seconds, then melts into the round liquid and the next one
-        // grows out of it over MORPH_S seconds, round and round
+        // the hero's cycle: each shape stands for HOLD_S seconds, then turns straight into the next one over
+        // MORPH_S seconds (no round liquid between), round and round
         clock += dt;
         const step = HOLD_S + MORPH_S;
         const n = Math.floor(clock / step);
@@ -87,7 +82,7 @@ export default function ForgeLayer() {
         const a = forge.shapeIndex(CYCLE[i]);
         if (into < HOLD_S) return { a, b: a, m: 1, view };
         const b = forge.shapeIndex(CYCLE[(i + 1) % CYCLE.length]);
-        return { a, b, m: phase((into - HOLD_S) / MORPH_S), view };
+        return { a, b, m: (into - HOLD_S) / MORPH_S, view };
       };
 
       const onResize = () => forge.resize();

@@ -31,7 +31,7 @@ uniform vec2 uP;        // the body's centre, device px (GL: origin bottom left)
 uniform float uR;       // device px per body unit
 uniform float uTime, uAmp;
 uniform int uA, uB;     // shapes being morphed between (equal while one stands)
-uniform float uMeltA, uFormB; // how much of shape A is left (melting into the round body), how much of B has formed
+uniform float uFormB; // how far shape A has turned straight into shape B (0 all A, 1 all B)
 uniform vec2 uDir;      // the direction of motion (screen axes, y up)
 uniform float uStretch; // along-motion stretch: 0 round, > 0 drawn out, < 0 squashed
 uniform vec2 uSpine[${SPINE}]; // the tail's spine, body units, relative to the centre
@@ -51,12 +51,9 @@ float box2(vec2 p, vec2 b, float r) {
 const float PI = 3.14159265;
 
 // ---- the shapes, about a unit in size ----
+// the first shape: a plain, still sphere (no ripple, no wobble)
 float sludge(vec3 p) {
-  vec3 n = normalize(p + 1e-5);
-  float t = uTime;
-  float r = 0.74 + 0.03 * sin(n.x * 3.1 + t * 1.7) * sin(n.y * 2.7 - t * 1.3) + 0.024 * sin(n.z * 4.3 + n.y * 2.0 + t * 2.1)
-    + 0.01 * sin(n.x * 9.0 + n.z * 7.0 - t * 3.2);
-  return length(p) - r;
+  return length(p) - 0.66;
 }
 float cube(vec3 p) {
   vec3 q = abs(p) - vec3(0.5);
@@ -189,11 +186,9 @@ float body(vec3 p) {
   float pd = dot(p, d);
   vec3 q = (pd / a) * d + (p - pd * d) / b;
   q = uRot * q;
-  // the round liquid it becomes between shapes, the shapes melting into it and growing out of it
-  float round_ = sludge(q);
-  float s = round_;
-  if (uMeltA > 0.001) s = mix(round_, shapeOf(uA, q), uMeltA);
-  else if (uFormB > 0.001) s = mix(round_, shapeOf(uB, q), uFormB);
+  // one shape turns straight into the next (no round liquid in between)
+  float s = shapeOf(uA, q);
+  if (uFormB > 0.001) s = mix(s, shapeOf(uB, q), uFormB);
   // a ripple across the surface, livelier while it is changing or being pushed
   vec3 n = normalize(q + 1e-5);
   s -= uAmp * (0.6 * sin(n.x * 5.0 + uTime * 1.9) * sin(n.y * 4.0 - uTime * 1.4) + 0.4 * sin(n.z * 7.0 + n.x * 3.0 + uTime * 2.6));
@@ -399,32 +394,22 @@ export function createDeto(canvas, { theme, gentle = false } = {}) {
     // a jump to a new place (the hero scrolled away and Contact came in): start there, nothing flies across
     if (snap) body = null;
     if (!body) {
-      body = { x: view.x, y: view.y, vx: 0, vy: 0, r: tr, vr: 0 };
+      body = { x: view.x, y: view.y, vx: 0, vy: 0, r: 0, vr: 0, born: 0 };
       for (const s of spine) {
         s[0] = view.x;
         s[1] = view.y;
       }
     }
-    // the body follows its target: softly and a little underdamped while it travels (inertia, a small give on
-    // arrival), firmly while a shape stands so it keeps to its place as the page scrolls
-    const k = moving ? 34 : 260;
-    // critically damped: it settles without overshooting (no jiggle)
-    const c = 2 * Math.sqrt(k);
-    const n = 4;
-    let ax = 0;
-    let ay = 0;
-    for (let i = 0; i < n; i++) {
-      const h = dt / n;
-      ax = k * (view.x - body.x) - c * body.vx;
-      ay = k * (view.y - body.y) - c * body.vy;
-      body.vx += ax * h;
-      body.vy += ay * h;
-      body.x += body.vx * h;
-      body.y += body.vy * h;
-      const ar = 60 * (tr - body.r) - 2 * Math.sqrt(60) * body.vr;
-      body.vr += ar * h;
-      body.r += body.vr * h;
-    }
+    // it stays exactly where it is put (it no longer travels, so nothing to lag or drop in from), and on first
+    // showing it grows out of its centre, smoothly and without overshooting (no jiggle)
+    body.x = view.x;
+    body.y = view.y;
+    body.vx = 0;
+    body.vy = 0;
+    body.born = Math.min(1, body.born + dt / 0.9);
+    body.r = tr * body.born * body.born * (3 - 2 * body.born);
+    const ax = 0;
+    const ay = 0;
     const R = Math.max(1, body.r);
     // in body units per second
     const speed = Math.hypot(body.vx, body.vy) / R;
@@ -464,9 +449,8 @@ export function createDeto(canvas, { theme, gentle = false } = {}) {
     const tailLen = Math.hypot(spineU[(SPINE - 1) * 2], spineU[(SPINE - 1) * 2 + 1]);
     // the tail shows only while it is drawn out (gathered up it would sit inside a standing shape)
     const tailAmt = ss(0.15, 0.9, tailLen);
-    // the shape: A melts into the round liquid, B grows out of it
-    const meltA = moving ? 1 - ss(0, 0.22, m) : 0;
-    const formB = moving ? ss(0.78, 1, m) : 1;
+    // the shape: A turns straight into B, easing in and out
+    const formB = moving ? ss(0, 1, m) : 0;
     // the surface is livelier while it is changing shape or being pushed about
     const changing = moving ? Math.min(1, Math.abs(m - lastM) / Math.max(1e-4, dt) * 0.6) : 0;
     lastM = m;
@@ -490,7 +474,6 @@ export function createDeto(canvas, { theme, gentle = false } = {}) {
     gl.uniform1f(u('uAmp'), 0);
     gl.uniform1i(u('uA'), Math.max(0, a));
     gl.uniform1i(u('uB'), Math.max(0, b));
-    gl.uniform1f(u('uMeltA'), meltA);
     gl.uniform1f(u('uFormB'), formB);
     gl.uniform2f(u('uDir'), dirX, dirY);
     gl.uniform1f(u('uStretch'), stretch);
