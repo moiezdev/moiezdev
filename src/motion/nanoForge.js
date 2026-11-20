@@ -1,27 +1,24 @@
 /**
- * Nano forge: a few thousand machined micro-cubes that keep tearing themselves
- * apart and re-assembling into new shapes in the hero stage (a cube, a torus
- * knot, a Möbius loop, a ringed planet, a double helix, and a living liquid-metal blob). Once the cubes are in
- * place they fuse into the real, smooth solid of that shape; when it's time for
- * the next one the solid breaks back up into cubes. While cubes are loose they
- * are strung together by hairlines.
+ * Nano forge: a few thousand machined micro-cubes that keep flying apart and
+ * re-assembling into new shapes in the hero stage (a cube, a torus knot, a
+ * Möbius loop, a ringed planet and a double helix). The shapes are only ever
+ * cubes: nothing fuses into a smooth solid. While the cubes are in flight they
+ * are strung together by hairlines, which let go once the shape has formed.
  *
  * Real 3D on one WebGL2 canvas, no library: one instanced cube mesh with the
- * whole morph in the vertex shader, one line pass that reuses the same maths,
- * and one mesh per solid. Every shape is precomputed, so per frame the CPU only
- * updates a few uniforms. Cheap enough for phones.
+ * whole morph in the vertex shader, and one line pass that reuses the same
+ * maths. Every shape is precomputed, so per frame the CPU only updates a few
+ * uniforms. Cheap enough for phones.
  *
  * Returns null when WebGL2 isn't available (the stage then keeps its static glow).
  */
 
 const TAU = Math.PI * 2;
-const BREAK = 1.2; // seconds for a solid to break back into cubes
 const MORPH = 4.0; // seconds for the cubes to fly to the next shape
-const FUSE = 1.5; // seconds for them to fuse into its solid
-const HOLD = 6.0; // seconds the solid holds
-const CYCLE = BREAK + MORPH + FUSE + HOLD;
+const HOLD = 6.0; // seconds the formed shape holds
+const CYCLE = MORPH + HOLD;
 const FLOOR_Y = -1.12; // the floor the shadow falls on, below the shapes
-const PEEL_THR = 0.706; // chunk noise above this covers ~15% of a surface: the share a hover peels back into cubes
+
 
 // ---------- shapes: n points, xyz in about [-1, 1], w = cube scale (0 hides a spare cube) ----------
 
@@ -164,18 +161,6 @@ function mobius(n) {
   return pts;
 }
 
-/** Cubes over the sludge's resting blob (a sphere; the shader makes it move). */
-function sludge(n) {
-  const pts = [];
-  const golden = Math.PI * (3 - Math.sqrt(5));
-  for (let i = 0; i < n; i++) {
-    const y = 1 - (i / (n - 1)) * 2;
-    const r = Math.sqrt(1 - y * y);
-    pts.push([Math.cos(golden * i) * r * 0.54, y * 0.54, Math.sin(golden * i) * r * 0.54]);
-  }
-  return pts;
-}
-
 function cloud(n) {
   const pts = [];
   for (let i = 0; i < n; i++) {
@@ -185,209 +170,6 @@ function cloud(n) {
     pts.push([(d[0] / l) * r, (d[1] / l) * r, (d[2] / l) * r, 0.4]);
   }
   return pts;
-}
-
-// ---------- solids: the smooth shape each cube formation fuses into ----------
-
-function builder() {
-  const P = [];
-  const N = [];
-  const I = [];
-  return {
-    P,
-    N,
-    I,
-    v(x, y, z, nx, ny, nz) {
-      P.push(x, y, z);
-      N.push(nx, ny, nz);
-      return P.length / 3 - 1;
-    },
-    quad(a, b, c, d) {
-      I.push(a, b, c, a, c, d);
-    },
-    done() {
-      return { P: new Float32Array(P), N: new Float32Array(N), I: new Uint32Array(I) };
-    },
-  };
-}
-
-/** A box of half-size h with its edges and corners rounded to radius r. */
-function roundedBox(h, r) {
-  const b = builder();
-  const inner = h - r;
-  // grid lines across a face: dense over the rounded strips, sparse over the flat middle
-  const ticks = [];
-  for (let i = 0; i <= 8; i++) ticks.push(-h + (r * i) / 8);
-  for (let i = 1; i < 4; i++) ticks.push(-inner + (2 * inner * i) / 4);
-  for (let i = 0; i <= 8; i++) ticks.push(inner + (r * i) / 8);
-  const faces = [
-    [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
-    [[-1, 0, 0], [0, 0, 1], [0, 1, 0]],
-    [[0, 1, 0], [0, 0, 1], [1, 0, 0]],
-    [[0, -1, 0], [1, 0, 0], [0, 0, 1]],
-    [[0, 0, 1], [1, 0, 0], [0, 1, 0]],
-    [[0, 0, -1], [0, 1, 0], [1, 0, 0]],
-  ];
-  const m = ticks.length;
-  for (const [n, u, w] of faces) {
-    const idx = [];
-    for (let i = 0; i < m; i++) {
-      for (let j = 0; j < m; j++) {
-        const p = [0, 1, 2].map((k) => n[k] * h + u[k] * ticks[i] + w[k] * ticks[j]);
-        const q = p.map((c) => Math.max(-inner, Math.min(inner, c)));
-        const d = norm(sub(p, q));
-        idx.push(b.v(q[0] + d[0] * r, q[1] + d[1] * r, q[2] + d[2] * r, ...d));
-      }
-    }
-    for (let i = 0; i < m - 1; i++) for (let j = 0; j < m - 1; j++) b.quad(idx[i * m + j], idx[(i + 1) * m + j], idx[(i + 1) * m + j + 1], idx[i * m + j + 1]);
-  }
-  return b;
-}
-
-function sphere(b, r, su = 56, sv = 36) {
-  const row = [];
-  for (let j = 0; j <= sv; j++) {
-    const ph = (j / sv) * Math.PI;
-    const ring = [];
-    for (let i = 0; i <= su; i++) {
-      const th = (i / su) * TAU;
-      const n = [Math.sin(ph) * Math.cos(th), Math.cos(ph), Math.sin(ph) * Math.sin(th)];
-      ring.push(b.v(n[0] * r, n[1] * r, n[2] * r, ...n));
-    }
-    row.push(ring);
-  }
-  for (let j = 0; j < sv; j++) for (let i = 0; i < su; i++) b.quad(row[j][i], row[j + 1][i], row[j + 1][i + 1], row[j][i + 1]);
-  return b;
-}
-
-const sub = (a, c) => [a[0] - c[0], a[1] - c[1], a[2] - c[2]];
-const norm = (a) => {
-  const l = Math.hypot(...a) || 1;
-  return [a[0] / l, a[1] / l, a[2] / l];
-};
-const dot = (a, c) => a[0] * c[0] + a[1] * c[1] + a[2] * c[2];
-const cross = (a, c) => [a[1] * c[2] - a[2] * c[1], a[2] * c[0] - a[0] * c[2], a[0] * c[1] - a[1] * c[0]];
-
-/** A round tube along curve(u), u in [0, 1], with frames carried along the curve (no twisting). */
-function tube(b, curve, segs, r, radial = 14, caps = true) {
-  const e = 1e-4;
-  let N = null;
-  const rings = [];
-  let first = null;
-  let last = null;
-  for (let i = 0; i <= segs; i++) {
-    const u = i / segs;
-    const p = curve(u);
-    const T = norm(sub(curve(Math.min(1, u + e)), curve(Math.max(0, u - e))));
-    if (!N) {
-      const any = Math.abs(T[1]) < 0.9 ? [0, 1, 0] : [1, 0, 0];
-      N = norm(cross(T, any));
-    } else {
-      N = norm(sub(N, T.map((t) => t * dot(N, T))));
-    }
-    const B = cross(T, N);
-    const ring = [];
-    for (let j = 0; j <= radial; j++) {
-      const a = (j / radial) * TAU;
-      const n = [0, 1, 2].map((k) => N[k] * Math.cos(a) + B[k] * Math.sin(a));
-      ring.push(b.v(p[0] + n[0] * r, p[1] + n[1] * r, p[2] + n[2] * r, ...n));
-    }
-    rings.push(ring);
-    if (i === 0) first = [p, T];
-    last = [p, T];
-  }
-  for (let i = 0; i < segs; i++) for (let j = 0; j < radial; j++) b.quad(rings[i][j], rings[i + 1][j], rings[i + 1][j + 1], rings[i][j + 1]);
-  if (caps) {
-    for (const [[p, T], ring, s] of [[first, rings[0], -1], [last, rings[segs], 1]]) {
-      const c = b.v(...p, T[0] * s, T[1] * s, T[2] * s);
-      const flat = ring.map((idx) => b.v(b.P[idx * 3], b.P[idx * 3 + 1], b.P[idx * 3 + 2], T[0] * s, T[1] * s, T[2] * s));
-      for (let j = 0; j < radial; j++) b.I.push(c, flat[j], flat[j + 1]);
-    }
-  }
-  return b;
-}
-
-/**
- * A Möbius band with thickness 2h. Going round the loop twice with the surface pushed out along
- * its normal covers both faces in one sheet, because the normal comes back flipped after one lap.
- */
-function mobiusSolid(h, su = 360, sv = 14) {
-  const b = builder();
-  const e = 1e-4;
-  const normal = (u, v) => {
-    const du = sub(mobiusAt(u + e, v), mobiusAt(u - e, v));
-    const dv = sub(mobiusAt(u, v + e), mobiusAt(u, v - e));
-    return norm(cross(du, dv));
-  };
-  const grid = [];
-  for (let i = 0; i <= su; i++) {
-    const u = (i / su) * 2 * TAU;
-    const row = [];
-    for (let j = 0; j <= sv; j++) {
-      const v = -MOBIUS_W + (j / sv) * 2 * MOBIUS_W;
-      const n = normal(u, v);
-      const p = mobiusAt(u, v);
-      row.push(b.v(p[0] + n[0] * h, p[1] + n[1] * h, p[2] + n[2] * h, ...n));
-    }
-    grid.push(row);
-  }
-  for (let i = 0; i < su; i++) for (let j = 0; j < sv; j++) b.quad(grid[i][j], grid[i + 1][j], grid[i + 1][j + 1], grid[i][j + 1]);
-  // the band's single edge, also two laps long, closed off as a thin wall
-  const wall = [];
-  for (let i = 0; i <= su; i++) {
-    const u = (i / su) * 2 * TAU;
-    const n = normal(u, MOBIUS_W);
-    const p = mobiusAt(u, MOBIUS_W);
-    const out = norm(sub(mobiusAt(u, MOBIUS_W + e), mobiusAt(u, MOBIUS_W - e)));
-    wall.push([b.v(p[0] + n[0] * h, p[1] + n[1] * h, p[2] + n[2] * h, ...out), b.v(p[0] - n[0] * h, p[1] - n[1] * h, p[2] - n[2] * h, ...out)]);
-  }
-  for (let i = 0; i < su; i++) b.quad(wall[i][0], wall[i + 1][0], wall[i + 1][1], wall[i][1]);
-  return b;
-}
-
-const knotCurve = (u) => {
-  const t = u * TAU;
-  const r = Math.cos(3 * t) + 2.1;
-  return [(r * Math.cos(2 * t)) / 3.3, (r * Math.sin(2 * t)) / 3.3, (Math.sin(3 * t) * 1.1) / 3.3];
-};
-
-/** The solid behind each formation, sized so the cube faces sit flush with its surface. */
-function solidFor(name, size) {
-  const half = size / 2;
-  switch (name) {
-    case 'cube':
-      return roundedBox(0.62 + half, 0.16).done();
-    case 'torus knot':
-      return tube(builder(), knotCurve, 420, 0.42 / 3.3 + half * 0.6, 18, false).done();
-    case 'möbius loop':
-      return mobiusSolid(half).done();
-    case 'toxic sludge':
-      // a unit sphere: the vertex shader turns it into the moving blob
-      return sphere(builder(), 1, 144, 104).done();
-    case 'planet': {
-      // only the globe fuses; the ring stays a belt of loose debris
-      return sphere(builder(), 0.5 + half * 0.6).done();
-    }
-    case 'double helix': {
-      const b = builder();
-      for (const off of [0, Math.PI]) {
-        tube(b, (u) => {
-          const t = u * 2 - 1;
-          const a = t * TAU * HELIX_TURNS + off;
-          return [Math.cos(a) * 0.4, t * 0.95, Math.sin(a) * 0.4];
-        }, 220, 0.035 + half, 12);
-      }
-      for (let k = 0; k < HELIX_RUNGS; k++) {
-        const t = (k / (HELIX_RUNGS - 1)) * 1.8 - 0.9;
-        const a = t * TAU * HELIX_TURNS;
-        const p0 = [Math.cos(a) * 0.4, t * 0.95, Math.sin(a) * 0.4];
-        tube(b, (u) => [p0[0] * (1 - 2 * u), p0[1], p0[2] * (1 - 2 * u)], 2, half * 0.9, 10, false);
-      }
-      return b.done();
-    }
-    default:
-      return null;
-  }
 }
 
 // ---------- look ----------
@@ -421,104 +203,7 @@ const LOOK = {
   },
 };
 
-// ---------- the hover's inside: a packed matrix of small cubes under each patch that can peel ----------
-
-const pcg = (v) => {
-  const st = (Math.imul(v, 747796405) + 2891336453) >>> 0;
-  const w = Math.imul(((st >>> ((st >>> 28) + 4)) ^ st) >>> 0, 277803737) >>> 0;
-  return ((w >>> 22) ^ w) >>> 0;
-};
-const hashJS = (x, y, z) => pcg((Math.imul(x + 1000, 73856093) ^ Math.imul(y + 1000, 19349663) ^ Math.imul(z + 1000, 83492791)) >>> 0) / 4294967295;
-/** The same value as chunk() in the shaders. */
-function chunkJS(p) {
-  const q = p.map((c) => c * 3.5 + 7.3);
-  const i = q.map(Math.floor);
-  const f = q.map((c, k) => {
-    const t = c - i[k];
-    return t * t * (3 - 2 * t);
-  });
-  const h = (a, b, c) => hashJS(i[0] + a, i[1] + b, i[2] + c);
-  const m = (a, b, t) => a + (b - a) * t;
-  return m(
-    m(m(h(0, 0, 0), h(1, 0, 0), f[0]), m(h(0, 1, 0), h(1, 1, 0), f[0]), f[1]),
-    m(m(h(0, 0, 1), h(1, 0, 1), f[0]), m(h(0, 1, 1), h(1, 1, 1), f[0]), f[1]),
-    f[2],
-  );
-}
-
-/**
- * Small cubes packed just under the solid's skin, only where a hover can peel it, so an opening shows a
- * dense matrix instead of a hollow shell. Each is [x, y, z, chunk] in the solid's own space.
- */
-function fillers(mesh, count, [recess, depth], { round = 0 } = {}) {
-  const { P, N, I } = mesh;
-  const tris = I.length / 3;
-  const cum = new Float64Array(tris);
-  let total = 0;
-  const at = (k) => [P[k * 3], P[k * 3 + 1], P[k * 3 + 2]];
-  for (let t = 0; t < tris; t++) {
-    const a = at(I[t * 3]);
-    const b = at(I[t * 3 + 1]);
-    const c = at(I[t * 3 + 2]);
-    total += Math.hypot(...cross(sub(b, a), sub(c, a))) / 2;
-    cum[t] = total;
-  }
-  const out = new Float32Array(count * 4);
-  let n = 0;
-  for (let tries = 0; n < count && tries < count * 60; tries++) {
-    const x = Math.random() * total;
-    let lo = 0;
-    let hi = tris - 1;
-    while (lo < hi) {
-      const mid = (lo + hi) >> 1;
-      if (cum[mid] < x) lo = mid + 1;
-      else hi = mid;
-    }
-    const ids = [I[lo * 3], I[lo * 3 + 1], I[lo * 3 + 2]];
-    let u = Math.random();
-    let v = Math.random();
-    if (u + v > 1) {
-      u = 1 - u;
-      v = 1 - v;
-    }
-    const wts = [1 - u - v, u, v];
-    const p = [0, 1, 2].map((k) => ids.reduce((acc, id, j) => acc + P[id * 3 + k] * wts[j], 0));
-    const nn = norm([0, 1, 2].map((k) => ids.reduce((acc, id, j) => acc + N[id * 3 + k] * wts[j], 0)));
-    const ch = chunkJS(round ? norm(p) : p);
-    if (ch < PEEL_THR - 0.02) continue;
-    // sunk below the skin, so an opening reads as a dent with the matrix at its floor
-    const d = recess + depth * Math.random() ** 0.8;
-    const q = round ? norm(p).map((c) => c * (round - d)) : [0, 1, 2].map((k) => p[k] - nn[k] * d);
-    out.set([q[0], q[1], q[2], ch], n * 4);
-    n++;
-  }
-  return out.subarray(0, n * 4);
-}
-
 // ---------- shaders ----------
-
-const NOISE = `
-// an integer hash (PCG), so the JS twin in chunkJS() gives the very same patches
-float hash(vec3 p) {
-  uvec3 u = uvec3(ivec3(p) + 1000);
-  uint v = (u.x * 73856093u) ^ (u.y * 19349663u) ^ (u.z * 83492791u);
-  uint st = v * 747796405u + 2891336453u;
-  uint w = ((st >> ((st >> 28u) + 4u)) ^ st) * 277803737u;
-  return float((w >> 22u) ^ w) / 4294967295.0;
-}
-float noise(vec3 p) {
-  vec3 i = floor(p);
-  vec3 f = fract(p);
-  f = f * f * (3.0 - 2.0 * f);
-  return mix(
-    mix(mix(hash(i), hash(i + vec3(1, 0, 0)), f.x), mix(hash(i + vec3(0, 1, 0)), hash(i + vec3(1, 1, 0)), f.x), f.y),
-    mix(mix(hash(i + vec3(0, 0, 1)), hash(i + vec3(1, 0, 1)), f.x), mix(hash(i + vec3(0, 1, 1)), hash(i + vec3(1, 1, 1)), f.x), f.y),
-    f.z);
-}
-// big patches that come away from the solid on hover (above PEEL_THR is ~15% of the surface)
-float chunk(vec3 obj) { return noise(obj * 3.5 + 7.3); }
-uniform float uPeel, uPeelThr;
-float peelEdge() { return mix(1.1, uPeelThr, uPeel); }`;
 
 /** Flattens a point onto the floor under the shape, lit from a little above and to the left. */
 const FLOOR = `
@@ -533,39 +218,11 @@ vec3 toFloor(vec3 w) {
   return uPitch * u;
 }`;
 
-const LEAK = `
-// the blob's liquid leaks out of its cube ball at scattered spots, each starting at its own moment, and the
-// puddles spread until they meet and cover the ball. uFront is how far that has got (0..1; -1: no blob forming).
-// leakGap(n) < 0 where the liquid has reached direction n.
-uniform float uFront;
-const int LEAKS = 9;
-const vec4 LEAK[9] = vec4[9](
-  vec4(-0.42, 0.52, 0.74, 0.0), vec4(0.71, -0.18, 0.68, 0.08), vec4(0.12, 0.93, -0.35, 0.16),
-  vec4(-0.8, -0.45, 0.4, 0.05), vec4(0.3, -0.85, -0.43, 0.22), vec4(-0.55, 0.1, -0.83, 0.12),
-  vec4(0.88, 0.42, -0.2, 0.28), vec4(0.05, -0.2, 0.98, 0.18), vec4(-0.2, -0.6, -0.1, 0.3));
-float leakGap(vec3 n) {
-  float g = 9.0;
-  for (int i = 0; i < LEAKS; i++) {
-    float f = clamp((uFront - LEAK[i].w) / (0.85 - LEAK[i].w), 0.0, 1.0);
-    float reach = 1.35 * f * (2.0 - f) - 0.05;
-    g = min(g, acos(clamp(dot(n, normalize(LEAK[i].xyz)), -1.0, 1.0)) - reach);
-  }
-  return g;
-}`;
-
-/** Where cube `seed` is between shape A and shape B: shared by the cubes and the lines between them. */
 const CENTRE = `
 uniform mat4 uProj;
 uniform mat3 uRot;
 uniform float uCamZ, uMix, uTime, uScatter, uAspect, uPointerOn;
 uniform vec2 uPointer;
-uniform float uRound; // 1 when the standing solid is the sludge, whose skin is a unit sphere
-${LEAK}
-// cubes (and their strings) the liquid has covered are gone
-float uncovered(vec4 A, vec4 B) {
-  if (uFront < -0.5) return 1.0;
-  return smoothstep(-0.22, 0.02, leakGap(normalize(mix(A.xyz, B.xyz, uMix) + vec3(1e-4))));
-}
 uniform float uRingA, uRingB, uOrbit; // 1 when shape A / B is the planet, whose ring stays loose debris
 const vec3 RING_AXIS = vec3(0.0, 0.9130889, 0.4077604); // the ring's normal: (0, cos 0.42, sin 0.42)
 mat3 axisAngle(vec3 a, float t) {
@@ -580,9 +237,8 @@ vec3 orbit(vec3 p) {
   float r = length(p - RING_AXIS * dot(p, RING_AXIS));
   return axisAngle(RING_AXIS, uOrbit / pow(max(r, 0.5), 1.5)) * p;
 }
-${NOISE}
 
-vec3 centreOf(vec4 A, vec4 B, vec4 seed, out float e, out float arc, out float near, out float scale, out vec3 dir, out float peel, out float debris) {
+vec3 centreOf(vec4 A, vec4 B, vec4 seed, out float e, out float arc, out float near, out float scale, out vec3 dir, out float debris) {
   // built from the core outwards, each cube a little out of step
   float delay = seed.x * 0.42 + clamp(length(B.xyz), 0.0, 1.2) * 0.22;
   e = clamp((uMix - delay) / 0.3, 0.0, 1.0);
@@ -598,10 +254,6 @@ vec3 centreOf(vec4 A, vec4 B, vec4 seed, out float e, out float arc, out float n
   vec3 p = mix(pa, pb, e) + dir * arc * (0.05 + seed.x * 0.05);
   p += dir * 0.005 * sin(uTime * 1.6 + seed.y * 40.0);
   p += dir * uScatter * (0.7 + seed.x * 1.8);
-  // on hover, the cubes under the patches that peel away come loose and drift out a little
-  vec3 obj = mix(A.xyz, B.xyz, e);
-  peel = uPeel > 0.001 ? smoothstep(peelEdge() - 0.015, peelEdge() + 0.015, chunk(uRound > 0.5 ? normalize(obj) : obj)) : 0.0;
-  p += (normalize(obj + vec3(1e-4)) * 0.09 + dir * 0.05 + dir * 0.02 * sin(uTime * 2.0 + seed.z * 30.0)) * peel * uPeel;
   // w holds the cube's scale, plus 2 x the part it belongs to (the planet's globe and ring, each helix strand and the rungs)
   scale = mix(mod(A.w, 2.0), mod(B.w, 2.0), e) * (1.0 - 0.1 * arc) * (1.0 - 0.75 * uScatter);
   vec3 c = uRot * p;
@@ -641,7 +293,7 @@ layout(location=1) in vec3 aNormal;
 layout(location=2) in vec4 aA;
 layout(location=3) in vec4 aB;
 layout(location=4) in vec4 aSeed;
-uniform float uSize, uCubes;
+uniform float uSize;
 out vec3 vN;
 out vec3 vLocal;
 out vec3 vWorld;
@@ -649,49 +301,19 @@ out float vGlow;
 ${CENTRE}
 ${FLOOR}
 void main() {
-  float e, arc, near, scale, peel, debris;
+  float e, arc, near, scale, debris;
   vec3 dir;
-  vec3 c = centreOf(aA, aB, aSeed, e, arc, near, scale, dir, peel, debris);
-  // while the solid stands the cubes are gone, except the planet's debris and the ones a hover has peeled loose
-  float vis = max(max(uCubes, peel), debris);
+  vec3 c = centreOf(aA, aB, aSeed, e, arc, near, scale, dir, debris);
   // no tumbling in flight: cubes keep square to the grid and only turn when scattered by scroll;
   // the ring's debris turns slowly as it orbits
   float spin = uScatter * aSeed.w * 5.0 + debris * uOrbit * (aSeed.w - 0.5) * 4.0;
   mat3 R = uRot * axisAngle(dir, spin);
-  // the cubes a hover peels loose are smaller than the ones that build the shape
-  float shrink = mix(1.0, 0.55, peel * (1.0 - uCubes));
-  vis *= max(uncovered(aA, aB), peel);
-  vec3 world = c + R * (aPos * scale * vis * shrink * uSize);
+  vec3 world = c + R * (aPos * scale * uSize);
   if (uShadow > 0.5) world = toFloor(world);
   vN = R * aNormal;
   vLocal = aPos;
   vWorld = world;
-  vGlow = arc * 0.3 + near * 0.35 + (1.0 - uCubes) * 0.6 * (1.0 - max(peel, debris)) + peel * 0.25;
-  gl_Position = uProj * vec4(world - vec3(0.0, 0.0, uCamZ), 1.0);
-}`;
-
-const FILL_VS = `#version 300 es
-precision highp float;
-layout(location=0) in vec3 aPos;
-layout(location=1) in vec3 aNormal;
-layout(location=2) in vec4 aF; // position inside the solid, and the chunk value of the patch above it
-uniform mat4 uProj;
-uniform mat3 uRot;
-uniform float uCamZ, uSize;
-out vec3 vN;
-out vec3 vLocal;
-out vec3 vWorld;
-out float vGlow;
-${NOISE}
-void main() {
-  float show = uPeel > 0.001 ? smoothstep(peelEdge() - 0.01, peelEdge() + 0.02, aF.w) : 0.0;
-  // sizes vary a little, so the matrix reads as packed rather than gridded
-  float r = fract(sin(float(gl_InstanceID) * 12.9898) * 43758.5453);
-  vec3 world = uRot * (aF.xyz + aPos * uSize * (0.5 + 0.35 * r) * show);
-  vN = uRot * aNormal;
-  vLocal = aPos;
-  vWorld = world;
-  vGlow = 0.0;
+  vGlow = arc * 0.3 + near * 0.35;
   gl_Position = uProj * vec4(world - vec3(0.0, 0.0, uCamZ), 1.0);
 }`;
 
@@ -727,17 +349,17 @@ layout(location=4) in vec4 aSeed;
 layout(location=5) in vec4 aA2;
 layout(location=6) in vec4 aB2;
 layout(location=7) in vec4 aSeed2;
-uniform float uCubes, uMaxLen;
+uniform float uStrings, uMaxLen;
 out float vAlpha;
 ${CENTRE}
 void main() {
-  float e1, arc1, near1, s1, p1, k1, e2, arc2, near2, s2, p2, k2;
+  float e1, arc1, near1, s1, k1, e2, arc2, near2, s2, k2;
   vec3 d1, d2;
-  vec3 c1 = centreOf(aA, aB, aSeed, e1, arc1, near1, s1, d1, p1, k1);
-  vec3 c2 = centreOf(aA2, aB2, aSeed2, e2, arc2, near2, s2, d2, p2, k2);
+  vec3 c1 = centreOf(aA, aB, aSeed, e1, arc1, near1, s1, d1, k1);
+  vec3 c2 = centreOf(aA2, aB2, aSeed2, e2, arc2, near2, s2, d2, k2);
   float len = distance(c1, c2);
-  // loose cubes are strung together, and so are the ones a hover peels off
-  float on = max(uCubes * min(uncovered(aA, aB), uncovered(aA2, aB2)), min(p1, p2));
+  // cubes in flight are strung together; the strings let go once the shape has formed
+  float on = uStrings;
   // never string two separate parts together (the globe and its ring)
   float sameA = float(floor(aA.w * 0.5) == floor(aA2.w * 0.5));
   float sameB = float(floor(aB.w * 0.5) == floor(aB2.w * 0.5));
@@ -755,115 +377,6 @@ out vec4 o;
 void main() {
   float a = clamp(vAlpha * uLineAlpha, 0.0, 1.0);
   o = vec4(uLine * a, a);
-}`;
-
-const SOLID_VS = `#version 300 es
-precision highp float;
-layout(location=0) in vec3 aPos;
-layout(location=1) in vec3 aNormal;
-uniform mat4 uProj;
-uniform mat3 uRot;
-uniform float uCamZ, uTime, uLiquid, uSquash;
-uniform vec3 uSway;
-${LEAK}
-uniform vec4 uTend[6]; // direction, reach
-out vec3 vN;
-out vec3 vWorld;
-out vec3 vObj;
-${FLOOR}
-
-// the sludge: a blob that ripples, sways and keeps pushing out tendrils that get pulled back
-float reach(vec3 n) {
-  float r = 0.0;
-  for (int i = 0; i < 6; i++) {
-    float a = max(dot(n, uTend[i].xyz), 0.0);
-    r += uTend[i].w * (pow(a, 44.0) + 0.18 * pow(a, 6.0));
-  }
-  return r;
-}
-vec3 surf(vec3 n) {
-  float t = uTime;
-  float r = 0.52
-    + 0.022 * sin(n.x * 3.1 + t * 1.7) * sin(n.y * 2.7 - t * 1.3)
-    + 0.018 * sin(n.z * 4.3 + n.y * 2.0 + t * 2.1)
-    + 0.007 * sin(n.x * 9.0 + n.z * 7.0 - t * 3.2)
-    + reach(n);
-  // the coat always sits just over where the cubes were, so the blob never changes size; while it
-  // spreads it swells into a rolling lip at its edges
-  float coat = uFront < 0.0 || uFront > 0.999 ? 0.0 : 1.0;
-  float lip = exp(-pow(leakGap(n) / 0.14, 2.0));
-  r += 0.05 + coat * 0.035 * lip;
-  vec3 p = n * r;
-  p.y *= uSquash;
-  p.xz /= sqrt(uSquash);
-  return p + uSway;
-}
-
-void main() {
-  vec3 pos = aPos;
-  vec3 nrm = aNormal;
-  if (uLiquid > 0.5) {
-    vec3 n = normalize(aPos);
-    vec3 t1 = normalize(cross(n, abs(n.y) < 0.9 ? vec3(0.0, 1.0, 0.0) : vec3(1.0, 0.0, 0.0)));
-    vec3 t2 = cross(n, t1);
-    pos = surf(n);
-    vec3 pa = surf(normalize(n + t1 * 0.012));
-    vec3 pb = surf(normalize(n + t2 * 0.012));
-    nrm = normalize(cross(pa - pos, pb - pos));
-    if (dot(nrm, pos - uSway) < 0.0) nrm = -nrm;
-  }
-  vObj = aPos;
-  vec3 w = uRot * pos;
-  vN = uRot * nrm;
-  vWorld = w;
-  if (uShadow > 0.5) w = toFloor(w);
-  gl_Position = uProj * vec4(w - vec3(0.0, 0.0, uCamZ), 1.0);
-}`;
-
-const SOLID_FS = `#version 300 es
-precision highp float;
-in vec3 vN;
-in vec3 vWorld;
-in vec3 vObj;
-uniform float uReveal, uLiquid, uShadow, uTime;
-${LEAK}
-uniform vec3 uEdge;
-out vec4 o;
-${SHADE}
-${NOISE}
-void main() {
-  // the skin grows over the cubes in patches, with a hot edge where it's still forming
-  float nz = noise(vObj * 6.0) * 0.7 + noise(vObj * 15.0) * 0.3;
-  float thr = uReveal * 1.16 - 0.08;
-  if (uLiquid > 0.5) {
-    // the liquid covers the ball from where it leaks out, its edges wavering as they run
-    if (leakGap(normalize(vObj)) > (noise(vObj * 4.0 + uTime * 0.6) - 0.5) * 0.3) discard;
-  } else if (nz > thr) discard;
-  float edge = uLiquid > 0.5 ? 0.0 : 1.0 - smoothstep(0.0, 0.06, thr - nz);
-  // a hover peels big patches away, and their cubes come loose
-  if (uPeel > 0.001) {
-    float pe = peelEdge() - chunk(vObj);
-    if (pe < 0.0) discard;
-    edge = max(edge, (1.0 - smoothstep(0.0, 0.035, pe)) * min(1.0, uPeel * 3.0));
-  }
-  if (uShadow > 0.5) {
-    o = vec4(1.0);
-    return;
-  }
-  // face the viewer whichever way a triangle is wound (holes show the inside)
-  vec3 n = normalize(vN);
-  bool inside = dot(n, vec3(0.0, 0.0, uCamZ) - vWorld) < 0.0;
-  if (inside) n = -n;
-  vec3 col = shade(n, vWorld);
-  // the inner wall of an opening is in shadow, so a dent reads as a dent
-  if (inside) col *= 0.45;
-  if (uLiquid > 0.5) {
-    // the same metal as every other shape, just wetter: a tighter, brighter highlight
-    vec3 v = normalize(vec3(0.0, 0.0, uCamZ) - vWorld);
-    vec3 r = reflect(-v, n);
-    col += uSpec * (pow(max(dot(r, normalize(vec3(-0.55, 0.85, 0.6))), 0.0), 120.0) * 0.6);
-  }
-  o = vec4(col + uGlow * edge * 1.3, 1.0);
 }`;
 
 /** The floor shadow: drawn small into its own texture, then laid down softly blurred. */
@@ -976,21 +489,17 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     return p;
   };
   let cubeProg;
-  let fillProg;
   let lineProg;
-  let solidProg;
   let shadowProg;
   try {
     cubeProg = program(CUBE_VS, CUBE_FS);
-    fillProg = program(FILL_VS, CUBE_FS);
     lineProg = program(LINE_VS, LINE_FS);
-    solidProg = program(SOLID_VS, SOLID_FS);
     shadowProg = program(SHADOW_VS, SHADOW_FS);
   } catch (err) {
     console.warn('[nano forge]', err);
     return null;
   }
-  const progs = [cubeProg, lineProg, solidProg, shadowProg, fillProg];
+  const progs = [cubeProg, lineProg, shadowProg];
   /** Set a uniform on every program that has it. */
   const setAll = (name, fn) => {
     for (const p of progs) {
@@ -1009,15 +518,12 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   const size = spacing * 0.86;
 
   const shapes = [
-    // the forge opens on the liquid-metal blob
-    { name: 'toxic sludge', liquid: true, pts: sludge(N) },
     { name: 'cube', pts: voxelCube(N, g) },
     { name: 'torus knot', pts: pad(torusKnot(N), N) },
     { name: 'möbius loop', pts: mobius(N) },
     { name: 'planet', pts: pad(planet(N), N) },
     { name: 'double helix', pts: pad(helix(N), N) },
   ];
-  for (const s of shapes) if (!s.mesh) s.mesh = solidFor(s.name, size);
 
   const buf = (data, target = gl.ARRAY_BUFFER) => {
     const b = gl.createBuffer();
@@ -1075,33 +581,6 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   const lineStart = lineBufs.pop();
   for (const loc of [2, 3, 5, 6]) gl.enableVertexAttribArray(loc);
 
-  // ---- solids ----
-  const solidVaos = shapes.map((s) => {
-    const vao = gl.createVertexArray();
-    gl.bindVertexArray(vao);
-    buf(s.mesh.P);
-    attrib(0, 3);
-    buf(s.mesh.N);
-    attrib(1, 3);
-    buf(s.mesh.I, gl.ELEMENT_ARRAY_BUFFER);
-    return { vao, count: s.mesh.I.length };
-  });
-  // the packed inside for each solid, for hover peels (the planet's ring never peels, it's loose already)
-  // [how far below the skin the matrix starts, how deep it goes]
-  const FILL_DEPTH = { cube: [0.08, 0.14], 'torus knot': [0.05, 0.06], 'möbius loop': [0.005, 0.008], planet: [0.08, 0.14], 'double helix': [0.015, 0.02], 'toxic sludge': [0.08, 0.14] };
-  const fillVaos = shapes.map((s) => {
-    const data = fillers(s.mesh, small ? 2000 : 4500, FILL_DEPTH[s.name] ?? [0.04, 0.08], { round: s.liquid ? 0.57 : 0 });
-    const vao = gl.createVertexArray();
-    gl.bindVertexArray(vao);
-    buf(mesh.P);
-    attrib(0, 3);
-    buf(mesh.N);
-    attrib(1, 3);
-    buf(mesh.I, gl.ELEMENT_ARRAY_BUFFER);
-    buf(data);
-    attrib(2, 4, 1);
-    return { vao, count: data.length / 4 };
-  });
   gl.bindVertexArray(null);
 
   let pairKey = '';
@@ -1130,8 +609,6 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
   gl.useProgram(cubeProg);
   gl.uniform1f(cubeProg.u('uSize'), size);
-  gl.useProgram(fillProg);
-  gl.uniform1f(fillProg.u('uSize'), size);
   gl.useProgram(lineProg);
   gl.uniform1f(lineProg.u('uMaxLen'), spacing * 9);
 
@@ -1174,7 +651,6 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   gl.bindFramebuffer(gl.FRAMEBUFFER, null);
   setAll('uCamZ', (l) => gl.uniform1f(l, CAM));
   setAll('uFloor', (l) => gl.uniform1f(l, FLOOR_Y));
-  setAll('uPeelThr', (l) => gl.uniform1f(l, PEEL_THR));
 
   let lookTheme = null;
   const applyLook = () => {
@@ -1191,25 +667,21 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
 
   // eased interaction state
   let near = 0;
-  let peel = 0; // 0..1, eased: how far the hover peel has gone
   let calm = 0; // 1 while the planet stands still
   let px = 0;
   let py = 0;
   let scatter = 0;
   let shown = -1;
   let yaw = 0.6;
-  let face = 0; // 1 while a flat shape (text) turns to face the viewer
+  const ss = (e0, e1, x) => {
+    const u = Math.min(1, Math.max(0, (x - e0) / (e1 - e0)));
+    return u * u * (3 - 2 * u);
+  };
 
-  /**
-   * a, b: shapes to morph between (a = -1 is the opening cloud); mix: 0..1 of that morph.
-   * solid: which shape's solid stands (-1: none) and how far it has formed (0..1).
-   */
-  const draw = ({ a, b, mix, solid, reveal, t, yaw: y, pitch }) => {
+  /** a, b: shapes to morph between (a = -1 is the opening cloud); mix: 0..1 of that morph. */
+  const draw = ({ a, b, mix, t, yaw: y, pitch }) => {
     applyLook();
     bindPair(a, b);
-    // the solid gives way to its cubes as the hero scrolls off
-    const skin = solid >= 0 ? reveal * (1 - Math.min(1, scatter * 5)) : 0;
-    const liquid = solid >= 0 && shapes[solid].liquid;
     const rot = rotation(y, pitch, Math.sin(t * 0.13) * 0.06 * (1 - calm));
     setAll('uRot', (l) => gl.uniformMatrix3fv(l, false, rot));
     setAll('uPitch', (l) => gl.uniformMatrix3fv(l, false, rotation(0, pitch)));
@@ -1218,42 +690,13 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     setAll('uScatter', (l) => gl.uniform1f(l, scatter));
     setAll('uPointer', (l) => gl.uniform2f(l, px, py));
     setAll('uPointerOn', (l) => gl.uniform1f(l, near));
-    // the blob forms differently from the other shapes
-    const ss = (e0, e1, x) => { const u = Math.min(1, Math.max(0, (x - e0) / (e1 - e0))); return u * u * (3 - 2 * u); };
-    // the blob: liquid leaks out of its cube ball at scattered spots until it's covered, then settles
-    const front = liquid ? skin : -1;
-    setAll('uCubes', (l) => gl.uniform1f(l, liquid ? 1 - ss(0.85, 1, skin) : 1 - skin));
-    setAll('uFront', (l) => gl.uniform1f(l, front));
-    setAll('uPeel', (l) => gl.uniform1f(l, peel * skin));
-    setAll('uRound', (l) => gl.uniform1f(l, liquid ? 1 : 0));
     const isPlanet = (i) => (i >= 0 && shapes[i].name === 'planet' ? 1 : 0);
     setAll('uRingA', (l) => gl.uniform1f(l, isPlanet(a)));
     setAll('uRingB', (l) => gl.uniform1f(l, isPlanet(b)));
     setAll('uOrbit', (l) => gl.uniform1f(l, t * 0.3));
+    // strings only while the cubes are in flight (or scattered by scroll): a formed shape is just cubes
+    const strings = Math.max(Math.min(ss(0, 0.08, mix), 1 - ss(0.82, 1, mix)), scatter);
 
-    const drawSolid = () => {
-      if (skin <= 0.001) return;
-      gl.useProgram(solidProg);
-      gl.uniform1f(solidProg.u('uReveal'), skin);
-      gl.uniform1f(solidProg.u('uLiquid'), liquid ? 1 : 0);
-      if (liquid) {
-        // the blob sways (it keeps its size), and each tendril creeps out, then snaps back
-        gl.uniform3f(solidProg.u('uSway'), Math.sin(t * 1.1) * 0.035, Math.sin(t * 1.7) * 0.02, Math.cos(t * 0.9) * 0.025);
-        gl.uniform1f(solidProg.u('uSquash'), 1);
-        const tend = new Float32Array(24);
-        for (let i = 0; i < 6; i++) {
-          const th = i * 2.4 + t * (0.17 + i * 0.03);
-          const ph = Math.sin(t * (0.23 + i * 0.05) + i * 1.7) * 1.1;
-          const ct = Math.cos(ph);
-          const ph01 = (t * (0.21 + i * 0.037) + i * 0.29) % 1;
-          const out = ph01 < 0.72 ? (ph01 / 0.72) ** 1.6 : (1 - (ph01 - 0.72) / 0.28) ** 3;
-          tend.set([Math.cos(th) * ct, Math.sin(ph), Math.sin(th) * ct, out * (0.07 + (i % 3) * 0.02)], i * 4);
-        }
-        gl.uniform4fv(solidProg.u('uTend[0]'), tend);
-      }
-      gl.bindVertexArray(solidVaos[solid].vao);
-      gl.drawElements(gl.TRIANGLES, solidVaos[solid].count, gl.UNSIGNED_INT, 0);
-    };
     const drawCubes = () => {
       gl.useProgram(cubeProg);
       gl.enable(gl.CULL_FACE);
@@ -1270,7 +713,6 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.disable(gl.DEPTH_TEST);
     setAll('uShadow', (l) => gl.uniform1f(l, 1));
-    drawSolid();
     drawCubes();
     setAll('uShadow', (l) => gl.uniform1f(l, 0));
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
@@ -1287,19 +729,12 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     gl.bindTexture(gl.TEXTURE_2D, null);
     gl.enable(gl.DEPTH_TEST);
 
-    // 3. the shape itself, and the packed cubes a hover opens it onto
-    drawSolid();
+    // 3. the cubes themselves
     drawCubes();
-    if (skin > 0.001 && peel * skin > 0.001 && fillVaos[solid].count) {
-      gl.useProgram(fillProg);
-      gl.enable(gl.CULL_FACE);
-      gl.bindVertexArray(fillVaos[solid].vao);
-      gl.drawElementsInstanced(gl.TRIANGLES, mesh.I.length, gl.UNSIGNED_SHORT, 0, fillVaos[solid].count);
-      gl.disable(gl.CULL_FACE);
-    }
 
-    if (skin < 0.999 || peel * skin > 0.001) {
+    if (strings > 0.001) {
       gl.useProgram(lineProg);
+      gl.uniform1f(lineProg.u('uStrings'), strings);
       gl.enable(gl.BLEND);
       gl.depthMask(false);
       gl.bindVertexArray(lineVao);
@@ -1324,28 +759,18 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
         resize();
       }
     }
-    // gentle (reduced motion): no swarm flying in, half speed, no scroll scatter or scroll spin
+    // gentle (reduced motion): no swarm flying in (it opens on the formed first shape), half speed, no scroll
     if (gentle) {
-      t = t * 0.5 + BREAK + MORPH + FUSE;
+      t = t * 0.5 + MORPH;
       dt *= 0.5;
     }
-    // a cycle: the last shape's skin breaks up into cubes, they fly to the next shape, and fuse into its skin
+    // a cycle: the cubes fly from the last shape to the next one, then hold it
     const k = Math.floor(t / CYCLE);
     const phase = t - k * CYCLE;
     const target = k % shapes.length;
     const from = k === 0 ? -1 : (k - 1) % shapes.length;
-    const fuse = Math.min(1, Math.max(0, (phase - BREAK - MORPH) / FUSE));
-    let solid = -1;
-    let reveal = 0;
-    if (phase < BREAK && from >= 0) {
-      solid = from;
-      reveal = 1 - phase / BREAK;
-    } else if (fuse > 0) {
-      solid = target;
-      reveal = fuse;
-    }
-    // name the shape as it fuses
-    if (target !== shown && (fuse > 0 || k === 0)) {
+    const mix = Math.min(1, phase / MORPH);
+    if (target !== shown && (mix > 0.85 || k === 0)) {
       shown = target;
       onShape(target, shapes[target].name, shapes.length);
     }
@@ -1354,45 +779,33 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     const inside = p.active && p.x > -W * 0.25 && p.x < W * 1.25 && p.y > -H * 0.25 && p.y < H * 1.25;
     // hover only: the pointer parts nearby cubes but never turns the shape
     near += ((inside ? 1 : 0) - near) * ease;
-    // hovering the stage itself peels about 15% of the standing solid back into cubes
-    const mx = (W * (1 - 1 / bleed)) / 2;
-    const my = (H * (1 - 1 / bleed)) / 2;
-    const over = p.active && p.x >= mx && p.x <= W - mx && p.y >= my && p.y <= H - my;
-    peel += ((over ? 1 : 0) - peel) * Math.min(1, dt * 2.2);
     if (p.active) {
       px = (p.x / Math.max(1, W)) * 2 - 1;
       py = 1 - (p.y / Math.max(1, H)) * 2;
     }
-    // solids keep turning; text swings round to face you, then sways
-    const flat = shapes[target].flat && phase > BREAK + MORPH * 0.15;
-    face += ((flat ? 1 : 0) - face) * Math.min(1, dt * 3);
-    const facing = Math.round(yaw / TAU) * TAU + Math.sin(t * 0.55) * 0.35;
     // while the planet stands, the globe stops turning and only its debris ring orbits
-    const planetUp = solid >= 0 && shapes[solid].name === 'planet';
+    const planetUp = shapes[target].name === 'planet' && mix > 0.9;
     calm += ((planetUp ? 1 : 0) - calm) * Math.min(1, dt * 1.5);
-    yaw += dt * 0.32 * (1 - face) * (1 - calm) + (facing - yaw) * Math.min(1, dt * 3.5) * face;
+    yaw += dt * 0.32 * (1 - calm);
     const sp = gentle ? 0 : Math.min(1, Math.max(0, scroll()));
     scatter += (Math.min(1, Math.max(0, (sp - 0.08) / 0.7)) - scatter) * Math.min(1, dt * 8);
     draw({
       a: from,
       b: target,
-      mix: Math.min(1, Math.max(0, (phase - BREAK) / MORPH)),
-      solid,
-      reveal,
+      mix,
       t,
       yaw: yaw + sp * 1.6,
-      pitch: 0.38 - face * 0.26 + Math.sin(t * 0.21) * 0.08 * (1 - calm),
+      pitch: 0.38 + Math.sin(t * 0.21) * 0.08 * (1 - calm),
     });
   }
 
-  /** One finished shape, no motion (reduced motion). */
+  /** One finished shape, no motion. */
   function still(index = shapes.findIndex((s) => s.name === 'torus knot')) {
     scatter = 0;
     near = 0;
-    peel = 0;
     shown = index;
     onShape(index, shapes[index].name, shapes.length);
-    draw({ a: index, b: index, mix: 1, solid: index, reveal: 1, t: 2, yaw: 0.7, pitch: 0.42 });
+    draw({ a: index, b: index, mix: 1, t: 2, yaw: 0.7, pitch: 0.42 });
   }
 
   function destroy() {
