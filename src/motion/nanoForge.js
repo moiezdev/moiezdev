@@ -15,9 +15,16 @@
  */
 
 const TAU = Math.PI * 2;
-const BREAK = 1.2; // seconds for a solid to break back into cubes
+const BREAK = 1.4; // seconds for a solid to break back into cubes
 const MORPH = 4.0; // seconds for the cubes to fly to the next shape
-const FUSE = 1.5; // seconds for them to fuse into its solid
+const FUSE = 0.6; // seconds the skin keeps sweeping once the last cubes have landed
+const FUSE_START = 0.47; // the skin starts to sweep up the shape this far into the flight, behind the first cubes to land
+// the way that front travels, in the shape's own space: bottom to top, leaning a little to one side and the front
+const SWEEP = (() => {
+  const v = [0.22, 1, 0.18];
+  const l = Math.hypot(...v);
+  return v.map((c) => c / l);
+})();
 const HOLD = 6.0; // seconds the solid holds
 const CYCLE = BREAK + MORPH + FUSE + HOLD;
 const FLOOR_Y = -1.12; // the floor the shadow falls on, below the shapes
@@ -505,9 +512,9 @@ function noiseJS(p) {
 const chunkJS = (p) => noiseJS(p.map((c) => c * 3.5 + 7.3));
 /** The same value as skin() in the shaders: where on a shape its solid forms first (low) and last (high). */
 const skinJS = (p) =>
-  noiseJS(p.map((c, k) => c * 2.4 + [3.1, 1.7, 5.3][k])) * 0.62 +
-  noiseJS(p.map((c, k) => c * 6.5 + [8.2, 2.9, 4.4][k])) * 0.28 +
-  noiseJS(p.map((c) => c * 17 + 1.3)) * 0.1;
+  dot(p, SWEEP) * 0.5 +
+  noiseJS(p.map((c, k) => c * 3.2 + [3.1, 1.7, 5.3][k])) * 0.12 +
+  noiseJS(p.map((c, k) => c * 9 + [8.2, 2.9, 4.4][k])) * 0.05;
 
 /**
  * Small cubes packed just under the solid's skin, only where a hover can peel it, so an opening shows a
@@ -580,9 +587,11 @@ float noise(vec3 p) {
 }
 // big patches that come away from the solid on hover (above PEEL_THR is ~15% of the surface)
 float chunk(vec3 obj) { return noise(obj * 3.5 + 7.3); }
-// where on a shape its solid forms first (low) and last (high): broad patches with ragged edges (skinJS is its twin)
+// where on a shape its solid forms first (low) and last (high): one front that sweeps up the shape from the
+// bottom, slightly on the slant, its edge wavering a little so it reads as grown rather than wiped (skinJS is its twin)
+const vec3 SWEEP = vec3(${SWEEP.map((v) => v.toFixed(5)).join(', ')});
 float skin(vec3 p) {
-  return noise(p * 2.4 + vec3(3.1, 1.7, 5.3)) * 0.62 + noise(p * 6.5 + vec3(8.2, 2.9, 4.4)) * 0.28 + noise(p * 17.0 + 1.3) * 0.1;
+  return dot(p, SWEEP) * 0.5 + noise(p * 3.2 + vec3(3.1, 1.7, 5.3)) * 0.12 + noise(p * 9.0 + vec3(8.2, 2.9, 4.4)) * 0.05;
 }
 // the skin stands where skin() < uThr; uFuse is 1 while a solid (not the blob) is forming or breaking up
 uniform float uThr, uFuse;
@@ -632,7 +641,10 @@ float gRise;
 
 vec3 centreOf(vec4 A, vec4 B, vec4 seed, vec4 S, out float e, out float arc, out float near, out float scale, out vec3 dir, out float peel, out float debris, out float melt) {
   // built from the core outwards, each cube a little out of step
-  float delay = seed.x * 0.42 + clamp(length(B.xyz), 0.0, 1.2) * 0.22;
+  // cubes that fuse land in the order the skin sweeps up the shape (S.w - 1 is their place in it, 0..1), so the
+  // skin can follow close behind them and the shape turns solid while its upper parts are still flying in;
+  // the rest (the planet's ring) are built from the core outwards
+  float delay = S.w > 0.5 ? (S.w - 1.0) * 0.62 + seed.x * 0.08 : seed.x * 0.42 + clamp(length(B.xyz), 0.0, 1.2) * 0.22;
   e = clamp((uMix - delay) / 0.3, 0.0, 1.0);
   e = e * e * e * (e * (e * 6.0 - 15.0) + 10.0);
   arc = sin(3.14159265 * e);
@@ -1123,6 +1135,13 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
   // where each cube melts into its shape's solid, and the pace the skin spreads at
   const snaps = shapes.map((s, i) => snapFor(s.name, settled[i], size));
   const skinTables = snaps.map((d) => skinTable(d));
+  // each fusing cube's place in the sweep (0..1), kept in w as 1 + place: the order its shape is built in
+  for (const d of snaps) {
+    const idx = [];
+    for (let i = 0; i < d.length / 4; i++) if (d[i * 4 + 3] > 0) idx.push([skinJS([d[i * 4], d[i * 4 + 1], d[i * 4 + 2]]), i]);
+    idx.sort((x, y) => x[0] - y[0]);
+    idx.forEach(([, i], r) => (d[i * 4 + 3] = 1 + r / Math.max(1, idx.length - 1)));
+  }
   const snapBufs = snaps.map((d) => buf(d));
   for (const loc of [2, 3, 8]) {
     gl.enableVertexAttribArray(loc);
@@ -1287,7 +1306,8 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
    */
   const draw = ({ a, b, mix, solid, reveal, t, yaw: y, pitch }) => {
     applyLook();
-    bindPair(a, b, solid);
+    // while the cubes fly in, the next shape's snap targets set the order they land in
+    bindPair(a, b, solid >= 0 ? solid : b);
     // the solid gives way to its cubes as the hero scrolls off
     const skin = solid >= 0 ? reveal * (1 - Math.min(1, scatter * 5)) : 0;
     const liquid = solid >= 0 && shapes[solid].liquid;
@@ -1416,7 +1436,9 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     const phase = t - k * CYCLE;
     const target = k % shapes.length;
     const from = k === 0 ? -1 : (k - 1) % shapes.length;
-    const fuse = Math.min(1, Math.max(0, (phase - BREAK - MORPH) / FUSE));
+    // the skin follows the cubes up the shape as they land: it starts during the flight and ends FUSE after it
+    const fuse0 = BREAK + MORPH * FUSE_START;
+    const fuse = Math.min(1, Math.max(0, (phase - fuse0) / (BREAK + MORPH + FUSE - fuse0)));
     let solid = -1;
     let reveal = 0;
     // eased at both ends, so the skin starts spreading gently and settles instead of stopping dead
@@ -1426,7 +1448,8 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
       reveal = 1 - soft(phase / BREAK);
     } else if (fuse > 0) {
       solid = target;
-      reveal = soft(fuse);
+      // close to linear, so the skin keeps pace just behind the cubes landing; only lightly eased at the ends
+      reveal = fuse + (soft(fuse) - fuse) * 0.35;
     }
     // name the shape as it fuses
     if (target !== shown && (fuse > 0 || k === 0)) {
