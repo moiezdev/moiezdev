@@ -15,9 +15,9 @@
  */
 
 const TAU = Math.PI * 2;
-const BREAK = 1.05; // seconds for a solid to break back into cubes
-const MORPH = 3.0; // seconds for the cubes to fly to the next shape
-const FUSE = 0.45; // seconds the slime keeps spreading once the last cubes have landed
+const BREAK = 1.25; // seconds for a solid to break back into cubes
+const MORPH = 3.5; // seconds for the cubes to fly to the next shape
+const FUSE = 0.55; // seconds the slime keeps spreading once the last cubes have landed
 const FUSE_START = 0.42; // the slime starts to spread over the shape this far into the flight, behind the first cubes to land
 /**
  * Where the slime first grabs a shape: two spots on it, picked at random each time a shape forms (seeded by
