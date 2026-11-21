@@ -15,9 +15,9 @@
  */
 
 const TAU = Math.PI * 2;
-const BREAK = 1.4; // seconds for a solid to break back into cubes
-const MORPH = 4.0; // seconds for the cubes to fly to the next shape
-const FUSE = 0.6; // seconds the skin keeps sweeping once the last cubes have landed
+const BREAK = 1.05; // seconds for a solid to break back into cubes
+const MORPH = 3.0; // seconds for the cubes to fly to the next shape
+const FUSE = 0.45; // seconds the skin keeps sweeping once the last cubes have landed
 const FUSE_START = 0.47; // the skin starts to sweep up the shape this far into the flight, behind the first cubes to land
 // the way that front travels, in the shape's own space: bottom to top, leaning a little to one side and the front
 const SWEEP = (() => {
