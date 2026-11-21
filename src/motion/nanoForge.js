@@ -17,21 +17,28 @@
 const TAU = Math.PI * 2;
 const BREAK = 1.05; // seconds for a solid to break back into cubes
 const MORPH = 3.0; // seconds for the cubes to fly to the next shape
-const FUSE = 0.45; // seconds the skin keeps sweeping once the last cubes have landed
-const FUSE_START = 0.42; // the skin starts to sweep up the shape this far into the flight, behind the first cubes to land
+const FUSE = 0.45; // seconds the slime keeps spreading once the last cubes have landed
+const FUSE_START = 0.42; // the slime starts to spread over the shape this far into the flight, behind the first cubes to land
 /**
- * The way the front travels, in the shape's own space: a fresh random side every time a shape forms
- * (seeded by the cycle, so breaking up recedes the same way it came).
+ * Where the slime first grabs a shape: two spots on it, picked at random each time a shape forms (seeded by
+ * the cycle, so breaking up lets go the same way it took hold). Returns two [x, y, z] points on fusing cubes.
  */
-function sweepDir(k) {
+function slimeSeeds(k, snap) {
+  const on = [];
+  for (let i = 0; i < snap.length / 4; i++) if (snap[i * 4 + 3] > 0) on.push(i);
   const r = (n) => {
     const x = Math.sin((k + 1) * 127.1 + n * 311.7) * 43758.5453;
     return x - Math.floor(x);
   };
-  const z = r(1) * 2 - 1;
-  const a = r(2) * TAU;
-  const q = Math.sqrt(1 - z * z);
-  return [q * Math.cos(a), z, q * Math.sin(a)];
+  const at = (u) => {
+    const i = on[Math.min(on.length - 1, Math.floor(u * on.length))] ?? 0;
+    return [snap[i * 4], snap[i * 4 + 1], snap[i * 4 + 2]];
+  };
+  const a = at(r(1));
+  // the second grab lands well away from the first, so the slime closes in from two sides
+  let b = at(r(2));
+  for (let n = 3; n < 12 && Math.hypot(...sub(a, b)) < 0.7; n++) b = at(r(n));
+  return [a, b];
 }
 const HOLD = 6.0; // seconds the solid holds
 const CYCLE = BREAK + MORPH + FUSE + HOLD;
@@ -445,13 +452,13 @@ function snapFor(name, pts, size) {
 const BLOB_R = 0.57; // the blob's resting radius: just over its ball of cubes
 const SKIN_LEAD = 0.24; // the cubes start to close up this far (in skin() units) ahead of the skin
 const SKIN_TAIL = 0.12; // and are fully gone this far behind it
-/** The lowest and highest skin() over a shape's fusing cubes, for a sweep direction. */
-function skinRange(snap, dir) {
+/** The lowest and highest skin() over a shape's fusing cubes, for where the slime grabbed it. */
+function skinRange(snap, seeds) {
   let lo = Infinity;
   let hi = -Infinity;
   for (let i = 0; i < snap.length / 4; i++) {
     if (snap[i * 4 + 3] <= 0) continue;
-    const v = skinJS([snap[i * 4], snap[i * 4 + 1], snap[i * 4 + 2]], dir);
+    const v = skinJS([snap[i * 4], snap[i * 4 + 1], snap[i * 4 + 2]], seeds);
     lo = Math.min(lo, v);
     hi = Math.max(hi, v);
   }
@@ -517,10 +524,11 @@ function noiseJS(p) {
 /** The same value as chunk() in the shaders. */
 const chunkJS = (p) => noiseJS(p.map((c) => c * 3.5 + 7.3));
 /** The same value as skin() in the shaders: where on a shape its solid forms first (low) and last (high). */
-const skinJS = (p, dir) =>
-  dot(p, dir) * 0.5 +
-  noiseJS(p.map((c, k) => c * 3.2 + [3.1, 1.7, 5.3][k])) * 0.12 +
-  noiseJS(p.map((c, k) => c * 9 + [8.2, 2.9, 4.4][k])) * 0.05;
+const skinJS = (p, [a, b]) => {
+  const d = Math.min(Math.hypot(...sub(p, a)), Math.hypot(...sub(p, b)) + 0.25);
+  const ridge = (1 - Math.abs(noiseJS(p.map((c, k) => c * 4.2 + [3.1, 1.7, 5.3][k])) * 2 - 1)) ** 3;
+  return d * 0.5 + noiseJS(p.map((c, k) => c * 2.6 + [8.2, 2.9, 4.4][k])) * 0.16 - ridge * 0.26 + noiseJS(p.map((c) => c * 9 + 1.3)) * 0.05;
+};
 
 /**
  * Small cubes packed just under the solid's skin, only where a hover can peel it, so an opening shows a
@@ -593,12 +601,16 @@ float noise(vec3 p) {
 }
 // big patches that come away from the solid on hover (above PEEL_THR is ~15% of the surface)
 float chunk(vec3 obj) { return noise(obj * 3.5 + 7.3); }
-// where on a shape its solid forms first (low) and last (high): one front that sweeps across the shape from a
-// random side, its edge wavering a little so it reads as grown rather than wiped (skinJS is its twin)
-uniform vec3 uSweep;
+// where on a shape its solid forms first (low) and last (high): a slime that grabs the shape at two random
+// spots and spreads from them, throwing tendrils ahead of itself, its edge wavering a little so it reads as grown rather than wiped (skinJS is its twin)
+uniform vec3 uSeedA, uSeedB;
 uniform vec2 uSkinRange; // the lowest and highest skin() over the shape forming, so the cubes land in step with it
 float skin(vec3 p) {
-  return dot(p, uSweep) * 0.5 + noise(p * 3.2 + vec3(3.1, 1.7, 5.3)) * 0.12 + noise(p * 9.0 + vec3(8.2, 2.9, 4.4)) * 0.05;
+  float d = min(length(p - uSeedA), length(p - uSeedB) + 0.25);
+  // veins of ridged noise run ahead of the main body as tendrils, so the slime reaches out before it covers
+  float ridge = 1.0 - abs(noise(p * 4.2 + vec3(3.1, 1.7, 5.3)) * 2.0 - 1.0);
+  ridge = ridge * ridge * ridge;
+  return d * 0.5 + noise(p * 2.6 + vec3(8.2, 2.9, 4.4)) * 0.16 - ridge * 0.26 + noise(p * 9.0 + 1.3) * 0.05;
 }
 // the skin stands where skin() < uThr; uFuse is 1 while a solid (not the blob) is forming or breaking up
 uniform float uThr, uFuse;
@@ -648,7 +660,7 @@ float gRise;
 
 vec3 centreOf(vec4 A, vec4 B, vec4 seed, vec4 S, out float e, out float arc, out float near, out float scale, out vec3 dir, out float peel, out float debris, out float melt) {
   // built from the core outwards, each cube a little out of step
-  // cubes that fuse land in the order the skin sweeps across the shape, so the skin can follow close behind
+  // cubes that fuse land in the order the slime reaches them, so the skin can follow close behind
   // them and the shape turns solid while its far side is still flying in;
   // the rest (the planet's ring) are built from the core outwards
   float delay = S.w > 0.5 ? clamp((skin(S.xyz) - uSkinRange.x) / max(1e-3, uSkinRange.y - uSkinRange.x), 0.0, 1.0) * 0.62 + seed.x * 0.08 : seed.x * 0.42 + clamp(length(B.xyz), 0.0, 1.2) * 0.22;
@@ -1305,6 +1317,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
    */
   let rangeKey = '';
   let range = [0, 1];
+  let grab = [[0, 0, 0], [0, 0, 0]];
   const draw = ({ a, b, mix, solid, reveal, t, yaw: y, pitch, sweepK = 0 }) => {
     applyLook();
     // while the cubes fly in, the next shape's snap targets set the order they land in
@@ -1326,15 +1339,16 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
     // the blob only starts to move once its skin has nearly closed, and calms again before it breaks up
     setAll('uCubes', (l) => gl.uniform1f(l, 1));
     setAll('uFuse', (l) => gl.uniform1f(l, solid >= 0 ? 1 : 0));
-    // the shape in play (forming, standing or breaking up) and the side its skin sweeps from this time
+    // the shape in play (forming, standing or breaking up) and where the slime grabs it this time
     const inPlay = solid >= 0 ? solid : b;
     const key = `${inPlay}:${sweepK}`;
-    const dir = sweepDir(sweepK);
     if (key !== rangeKey) {
       rangeKey = key;
-      range = skinRange(snaps[inPlay], dir);
+      grab = slimeSeeds(sweepK, snaps[inPlay]);
+      range = skinRange(snaps[inPlay], grab);
     }
-    setAll('uSweep', (l) => gl.uniform3f(l, dir[0], dir[1], dir[2]));
+    setAll('uSeedA', (l) => gl.uniform3fv(l, grab[0]));
+    setAll('uSeedB', (l) => gl.uniform3fv(l, grab[1]));
     setAll('uSkinRange', (l) => gl.uniform2f(l, range[0], range[1]));
     setAll('uThr', (l) => gl.uniform1f(l, solid >= 0 ? skinThreshold(range, skin) : -9));
     setAll('uAlive', (l) => gl.uniform1f(l, liquid ? ss(0.75, 1, skin) : 0));
@@ -1500,7 +1514,7 @@ export function createNanoForge(canvas, { theme, scroll = () => 0, pointer = () 
       t,
       yaw: yaw + sp * 1.6,
       pitch: 0.38 - face * 0.26 + Math.sin(t * 0.21) * 0.08 * (1 - calm),
-      // a breaking solid recedes the way it came; the next one sweeps in from a new side
+      // a breaking solid lets go the way it took hold; the next one is grabbed at new spots
       sweepK: solid >= 0 && solid === from && phase < BREAK ? k - 1 : k,
     });
   }
